@@ -1,0 +1,392 @@
+scalar DateTime
+scalar Date
+
+type Query {
+  tasks(
+    id: Int
+    taskType: TaskType
+    status: TaskStatus
+    userId: Int
+    directionId: Int
+    isSubscribed: Boolean
+    privacy: Privacy
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): TaskConnection
+
+  ideas(
+    id: Int
+    status: IdeaStatus
+    userId: Int
+    directionId: Int
+    isSubscribed: Boolean
+    privacy: Privacy
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): IdeaConnection
+
+  users(
+    id: Int
+    email: String
+    login: String
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): UserConnection
+
+  directions(id: Int): [Direction!]!
+
+  comments(
+    entityId: Int
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): CommentConnection
+
+  notifications(
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): NotificationConnection
+}
+
+type Mutation {
+  addTask(input: AddTaskInput!): AddIdeaPayload
+  addIdea(input: AddIdeaInput!): AddIdeaPayload
+  addDirection(input: AddDirectionInput!): AddDirectionPayload
+  addRecurringTask(input: AddRecurringTaskInput!): AddIdeaPayload
+  addComment(input: AddCommentInput!): AddCommentPayload
+
+  updateUser(input: UpdateUserInput!): UpdateUserPayload
+  updateTask(input: UpdateTaskInput!): UpdateTaskPayload
+  updateIdea(input: UpdateIdeaInput!): UpdateIdeaPayload
+  updateDirection(input: UpdateDirectionInput!): UpdateDirectionPayload
+  updateComment(input: UpdateCommentInput!): UpdateCommentPayload
+
+  subscribe(input: SubscribeInput!): SubscribePayload
+  unsubscribe(input: UnsubscribeInput!): UnsubscribePayload
+}
+
+input UpdateCommentInput {
+  commentId: Int!
+  deletedDate: Date
+  text: String
+}
+
+type UpdateCommentPayload {
+  comment: Comment
+}
+
+input UnsubscribeInput {
+  entityId: Int!
+}
+
+type UnsubscribePayload {
+  entity: Entity
+}
+
+input UpdateDirectionInput {
+  id: ID!
+  name: String
+  details: String
+  privacy: Privacy
+}
+
+type UpdateDirectionPayload {
+  direction: Direction
+}
+
+input UpdateIdeaInput {
+  id: ID!
+  description: String
+  details: String
+  generation: Generation
+  directionId: Int
+  deletedDate: Date
+  privacy: Privacy
+}
+
+type UpdateIdeaPayload {
+  idea: Idea
+}
+
+input UpdateTaskInput {
+  id: ID!,
+  description: String
+  details: String
+  assigneeId: String
+  directionId: Int
+  startDate: Date
+  doneDate: Date
+  deletedDate: Date
+  privacy: Privacy
+}
+
+type UpdateTaskPayload {
+  task: Task
+}
+
+input UpdateUserInput {
+  login: String
+  email: String
+  password: String
+  displayName: String
+}
+
+type UpdateUserPayload {
+  user: User
+}
+
+input AddCommentInput {
+  entityId: Int!
+  text: String!
+}
+
+type AddCommentPayload {
+  comment: Comment
+}
+
+input SubscribeInput {
+  entityId: Int!
+}
+
+type SubscribePayload {
+  entity: Entity
+}
+
+input AddDirectionInput {
+  id: ID!
+  name: String!
+  details: String
+}
+
+type AddDirectionPayload {
+  direction: Direction
+}
+
+input AddRecurringTaskInput {
+  description: String!
+  details: String
+  assigneeId: String
+  directionId: Int
+  startDate: Date!
+  repetitionMode: RepeatMode!
+  # repeat every n days if repeat mode is custom
+  repeatEvery: Int
+  numberOfRepetitions: Int!
+}
+
+input AddIdeaInput {
+  description: String!
+  details: String
+  assigneeId: String!
+  directionId: Int!
+  generation: Generation!
+}
+
+type AddIdeaPayload {
+  idea: Idea
+}
+
+input AddTaskInput {
+  description: String!
+  details: String
+  assigneeId: String!
+  directionId: Int!
+  startDate: Date!
+}
+
+type AddTaskPayload {
+  task: Task
+}
+
+enum RepeatMode {
+  DAY
+  WEEK
+  MONTH
+  YEAR
+  CUSTOM
+}
+
+type Task implements Entity {
+  id: Int!
+  description: String!
+  details: String
+  createdBy: User!
+  # null or self
+  assignee: User
+  startDate: Date!
+  doneDate: Date
+  direction: Direction
+  creationDate: Date!
+  deletedDate: Date
+  privacy: Privacy!
+  comments: [Comment!]!
+  subscribers: [User!]!
+  groupID: Int
+  changeNotifications: [Notification!]!
+}
+
+type TaskConnection {
+  pageInfo: PageInfo!
+  edges: [TaskEdge!]
+  nodes: [Task!]
+}
+
+type IdeaConnection {
+  pageInfo: PageInfo!
+  edges: [IdeaEdge!]
+  nodes: [Idea!]
+}
+
+type UserConnection {
+  pageInfo: PageInfo!
+  edges: [UserEdge!]
+  nodes: [User!]
+}
+
+type CommentConnection {
+  pageInfo: PageInfo!
+  edges: [CommentEdge!]
+  nodes: [Comment!]
+}
+
+type NotificationConnection {
+  pageInfo: PageInfo!
+  edges: [NotificationEdge!]
+  nodes: [Notification!]
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type TaskEdge {
+  cursor: String!
+  node: Task!
+}
+
+enum Generation {
+  HOT
+  LATER
+  TOO_GOOD_TO_DELETE
+}
+
+type Idea implements Entity {
+  id: Int!
+  description: String!
+  details: String
+  generation: Generation!
+  createdBy: User!
+  direction: Direction
+  creationDate: Date!
+  deletedDate: Date
+  privacy: Privacy!
+  comments: [Comment!]!
+  subscribers: [User!]!
+  changeNotifications: [Notification!]!
+}
+
+type IdeaEdge {
+  cursor: String!
+  node: Idea!
+}
+
+type User {
+  id: Int!
+  login: String!
+  password: String!
+  displayName: String!
+  email: String!
+  notificationReadTime: DateTime
+  tasks: [Task!]!
+  ideas: [Idea!]!
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+type Comment {
+  id: Int!
+  author: User!
+  time: DateTime!
+  text: String!
+  deletedDate: Date
+  entity: Entity!
+}
+
+type CommentEdge {
+  cursor: String!
+  node: Comment!
+}
+
+enum TaskStatus {
+  ACTIVE
+  FUTURE
+  ARCHIVE
+  DELETED
+}
+
+enum TaskType {
+  PRIVATE
+  ASSIGNED_TO_ME
+  ASSIGNED_BY_ME
+}
+
+enum IdeaStatus {
+  ACTIVE
+  DELETED
+}
+
+enum Privacy {
+  PRIVATE
+  PUBLIC
+}
+
+type Direction {
+  id: Int!
+  name: String!
+  details: String
+  owner: User!
+  privacy: Privacy!
+  tasks: [Task!]!
+  ideas: [Idea!]!
+}
+
+type Notification {
+  id: ID!
+  time: DateTime!
+  author: User!
+  message: String!
+}
+
+type NotificationEdge {
+  cursor: String!
+  node: Comment!
+}
+
+interface Entity {
+  id: Int!
+  description: String!
+  details: String
+  createdBy: User!
+  direction: Direction
+  creationDate: Date!
+  deletedDate: Date
+  privacy: Privacy!
+  comments: [Comment!]
+  subscribers: [User!]!
+  changeNotifications: [Notification!]!
+}

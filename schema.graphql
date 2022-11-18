@@ -27,320 +27,77 @@ type Query {
 }
 
 type Mutation {
-  taskAdd(input: TaskAddInput!): TaskAddPayload
-  ideaAdd(input: IdeaAddInput!): IdeaAddPayload
-  directionAdd(input: DirectionAddInput!): DirectionAddPayload
-  taskAddComment(input: TaskAddCommentInput!): TaskAddCommentPayload
-  ideaAddComment(input: IdeaAddCommentInput!): IdeaAddCommentPayload 
+  taskAdd(input: TaskAddInput!): Task
+  ideaAdd(input: IdeaAddInput!): Idea
+  directionAdd(input: DirectionAddInput!): Direction
+  taskAddComment(input: TaskAddCommentInput!): Comment
+  ideaAddComment(input: IdeaAddCommentInput!): Comment 
+  tasksGenerate(input: TasksGenerateInput!): [ID!]
 
-  taskSetDescription(input: TaskSetDescriptionInput!): TaskSetDescriptionPayload
-  taskSetDetails(input: TaskSetDetailsInput!): TaskSetDetailsPayload
-  taskSetDirection(input: TaskSetDirectionInput!): TaskSetDirectionPayload
-  taskSetDeletionDate(input: TaskSetDeletionDateInput!): TaskSetDeletionDatePayload
-  taskSetAssignee(input: TaskSetAssigneeInput!): TaskSetAssigneePayload
-  taskSetStartDate(input: TaskSetStartDateInput!): TaskSetStartDatePayload
-  taskSetCompletionDate(input: TaskSetCompletionDateInput!): TaskSetCompletionDatePayload
-  taskSetRepeatMode(input: TaskSetRepeatModeInput!): TaskSetRepeatModePayload
+  taskSetDescription(taskId: ID!, description: String!): ID
+  taskSetDetails(taskId: ID!, details: String): ID
+  taskSetDirection(taskId: ID!, directionId: ID): ID
+  taskSetDeletionDate(taskId: ID!, deletionDate: String): ID
+  taskSetAssignee(taskId: ID!, assigneeId: ID): ID
+  taskSetStartDate(taskId: ID!, startDate: String): ID
+  taskSetCompletionDate(taskId: ID!, completionDate: String): ID
+  taskRecurringDeleteAll(groupID: ID!): [ID!]
 
-  ideaSetDescription(input: IdeaSetDescriptionInput!): IdeaSetDescriptionPayload
-  ideaSetDetails(input: IdeaSetDetailsInput!): IdeaSetDetailsPayload
-  ideaSetDirection(input: IdeaSetDirectionInput!): IdeaSetDirectionPayload
-  ideaSetDeletionDate(input: IdeaSetDeletionDateInput!): IdeaSetDeletionDatePayload
-  ideaSetGeneration(input: IdeaSetGenerationInput!): IdeaSetGenerationPayload
-  ideaSetReviewDate(input: IdeaSetReviewDateInput!): IdeaSetReviewDatePayload
+  ideaSetDescription(ideaId: ID!, description: String!): ID
+  ideaSetDetails(entityId: ID!, details: String): ID
+  ideaSetDirection(ideaId: ID!, directionId: ID): ID
+  ideaSetDeletionDate(ideaId: ID!, deletionDate: String): ID
+  ideaSetGeneration(ideaId: ID!, generation: Generation!): ID
+  ideaSetReviewDate(ideaId: ID!, reviewDate: String): ID
 
-  commentSetText(input: CommentSetTextInput!): CommentSetTextPayload
+  commentSetText(commentId: ID!, text: String!): ID
 
-  directionSetName(input: DirectionSetNameInput!): DirectionSetNamePayload
-  directionSetDetails(input: DirectionSetDetailsInput!): DirectionSetDetailsPayload
-  directionAddMember(input: DirectionAddMemberInput!): DirectionAddMemberPayload
-  directionRemoveMember(input: DirectionRemoveMemberInput!): DirectionRemoveMemberPayload
+  directionSetName(directionId: ID!, name: String!): ID
+  directionSetDetails(directionId: ID!, details: String): ID
+  directionAddMember(directionId: ID!, userId: ID!): ID
+  directionRemoveMember(directionId: ID!, userId: ID!): ID
 
-  userSetNotificationReadTime(input: UserSetNotificationReadTimeInput!): UserSetNotificationReadTimePayload
-  userSetLogin(input: UserSetLoginInput!): UserSetLoginPayload
-  userSetDisplayName(input: UserSetDisplayNameInput!): UserSetDisplayNamePayload
-  userSetEmail(input: UserSetEmailInput!): UserSetEmailPayload
-  userSetPassword(input: UserSetPasswordInput!): UserSetPasswordPayload
+  userSetNotificationReadTime(notificationReadTime: String!): ID
+  userSetLogin(login: String!): ID
+  userSetDisplayName(displayName: String!): ID
+  userSetEmail(email: String!): ID
+  userSetPassword(password: String!): ID
 
-  taskSubscribe(input: TaskSubscribeInput!): TaskSubscribePayload
-  ideaSubscribe(input: IdeaSubscribeInput!): IdeaSubscribePayload
+  taskSubscribe(taskId: ID!): ID
+  ideaSubscribe(ideaId: ID!): ID
 
-  taskUnsubscribe(input: TaskUnsubscribeInput!): TaskUnsubscribePayload
-  ideaUnsubscribe(input: IdeaUnsubscribeInput!): IdeaUnsubscribePayload
+  taskUnsubscribe(taskId: ID!): ID
+  ideaUnsubscribe(ideaId: ID!): ID
 }
 
-input DirectionAddMemberInput {
-  directionId: ID!
-  userId: ID!
-}
-
-type DirectionAddMemberPayload {
-  direction: Direction
-}
-
-input DirectionRemoveMemberInput {
-  directionId: ID!
-  userId: ID!
-}
-
-type DirectionRemoveMemberPayload {
-  direction: Direction
-}
-
-input UserSetNotificationReadTimeInput {
-  notificationReadTime: String
-}
-
-type UserSetNotificationReadTimePayload {
-  user: User
-}
-
-input UserSetLoginInput {
-  login: String!
-}
-
-type UserSetLoginPayload {
-  user: User
-}
-
-input UserSetDisplayNameInput {
-  displayName: String!
-}
-
-type UserSetDisplayNamePayload {
-  user: User
-}
-
-input UserSetEmailInput {
-  email: String!
-}
-
-type UserSetEmailPayload {
-  user: User
-}
-
-input UserSetPasswordInput {
-  password: String!
-}
-
-type UserSetPasswordPayload {
-  user: User
-}
-
-input DirectionSetNameInput {
-  directionId: ID!
-  name: String!
-}
-
-type DirectionSetNamePayload {
-  direction: Direction
-}
-
-input DirectionSetDetailsInput {
-  directionId: ID!
+input TasksGenerateInput {
+  description: String!
   details: String
-}
-
-type DirectionSetDetailsPayload {
-  direction: Direction
-}
-
-input CommentSetTextInput {
-  commentId: ID!
-  text: String!
-}
-
-type CommentSetTextPayload {
-  comment: Comment
-}
-
-input IdeaSetReviewDateInput {
-  reviewDate: String
-}
-
-type IdeaSetReviewDatePayload {
-  idea: Idea
-}
-
-input IdeaSetGenerationInput {
-  ideaId: ID!
-  generation: Generation!
-}
-
-type IdeaSetGenerationPayload {
-  idea: Idea
-}
-
-input TaskSetRepeatModeInput {
-  taskId: ID!
-  repeatMode: RepeatMode
-  repeatEvery: Int
-  numberOfRepetitions: Int
-}
-
-type TaskSetRepeatModePayload {
-  task: Task
-  repeatMode: RepeatMode
-  repeatEvery: Int
-  numberOfRepetitions: Int
-}
-
-input TaskSetCompletionDateInput {
-  taskId: ID!
-  completionDate: String
-}
-
-type TaskSetCompletionDatePayload {
-  task: Task
-}
-
-input TaskSetStartDateInput {
-  taskId: ID!
-  startDate: String
-}
-
-type TaskSetStartDatePayload {
-  task: Task
-}
-
-input TaskSetAssigneeInput {
-  taskId: ID!
   assigneeId: ID
-}
-
-type TaskSetAssigneePayload {
-  task: Task
-}
-
-input IdeaSetDeletionDateInput {
-  ideaId: ID!
-  deletionDate: String
-}
-
-type IdeaSetDeletionDatePayload {
-  idea: Idea
-}
-
-input TaskSetDeletionDateInput {
-  taskId: ID!
-  deletionDate: String
-}
-
-type TaskSetDeletionDatePayload {
-  task: Task
-}
-
-input IdeaSetDirectionInput {
-  ideaId: ID!
   directionId: ID
-}
-
-type IdeaSetDirectionPayload {
-  idea: Idea
-}
-
-input TaskSetDirectionInput {
-  taskId: ID!
-  directionId: ID
-}
-
-type TaskSetDirectionPayload {
-  task: Task
-}
-
-input IdeaSetDescriptionInput {
-  ideaId: ID!
-  description: String!
-}
-
-type IdeaSetDescriptionPayload {
-  idea: Idea
-}
-
-input TaskSetDescriptionInput {
-  taskId: ID!
-  description: String!
-}
-
-type TaskSetDescriptionPayload {
-  task: Task
-}
-
-input IdeaSetDetailsInput {
-  entityId: ID!
-  details: String
-}
-
-type IdeaSetDetailsPayload {
-  idea: Idea
-}
-
-input TaskSetDetailsInput {
-  taskId: ID!
-  details: String
-}
-
-type TaskSetDetailsPayload {
-  task: Task
-}
-
-input TaskUnsubscribeInput {
-  taskId: ID!
-}
-
-type TaskUnsubscribePayload {
-  task: Task
-}
-
-input IdeaUnsubscribeInput {
-  ideaId: ID!
-}
-
-type IdeaUnsubscribePayload {
-  idea: Idea
+  startDate: String!
+  creationDate: String!
+  repeatMode: RepeatMode!
+  repeatEvery: Int
+  numberOfRepetitions: Int!
 }
 
 input IdeaAddCommentInput {
   ideaId: ID!
   text: String!
-}
-
-type IdeaAddCommentPayload {
-  comment: Comment
+  time: String!
 }
 
 input TaskAddCommentInput {
   taskId: ID!
   text: String!
-}
-
-type TaskAddCommentPayload {
-  comment: Comment
-}
-
-input IdeaSubscribeInput {
-  ideaId: ID!
-}
-
-type IdeaSubscribePayload {
-  idea: Idea
-}
-
-input TaskSubscribeInput {
-  taskId: ID!
-}
-
-type TaskSubscribePayload {
-  task: Task
+  time: String!
 }
 
 input DirectionAddInput {
   name: String!
+  creationDate: String!
   details: String
-}
-
-type DirectionAddPayload {
-  direction: Direction
 }
 
 input IdeaAddInput {
@@ -349,10 +106,7 @@ input IdeaAddInput {
   assigneeId: ID
   directionId: ID
   generation: Generation!
-}
-
-type IdeaAddPayload {
-  idea: Idea
+  creationDate: String!
 }
 
 input TaskAddInput {
@@ -361,19 +115,7 @@ input TaskAddInput {
   assigneeId: ID
   directionId: ID
   startDate: String!
-  repeatMode: RepeatMode
-  """
-  Repeat every n days if repeatMode is custom
-  """
-  repeatEvery: Int
-  numberOfRepetitions: Int
-}
-
-type TaskAddPayload {
-  task: Task
-  repeatMode: RepeatMode
-  repeatEvery: Int
-  numberOfRepetitions: Int
+  creationDate: String!
 }
 
 enum RepeatMode {
@@ -493,24 +235,7 @@ union ActionItem = User | Task | Idea | Comment
 type Notification {
   id: ID!
   time: String
-  actor: User            # who
-  actionType: ActionType # action
-  actionItem: ActionItem # what
+  actor: User           
+  actionType: ActionType
+  actionItem: ActionItem
 }
-
-# notification use cases
-#
-# who     | action     | what       | where
-#–––––––––+––––––––––––+––––––––––––+––––––––––––
-# user A  | updated    |            | task B
-# user A  | updated    |            | idea B
-# user A  | deleted    |            | task B
-# user A  | deleted    |            | idea B
-# user A  | added      | comment B  | task C
-# user A  | added      | comment B  | idea C
-# user A  | updated    |            | direction B
-# user A  | added      | task B     | direction C
-# user A  | added      | idea B     | direction C
-# user A  | deleted    | task B     | direction C
-# user A  | deleted    | idea B     | direction C
-# user A  | assigned   | user B     | task C

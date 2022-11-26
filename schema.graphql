@@ -27,12 +27,43 @@ type Query {
 }
 
 type Mutation {
-  taskAdd(input: TaskAddInput!): Task
-  ideaAdd(input: IdeaAddInput!): Idea
-  directionAdd(input: DirectionAddInput!): Direction
-  taskAddComment(input: TaskAddCommentInput!): Comment
-  ideaAddComment(input: IdeaAddCommentInput!): Comment 
-  tasksGenerate(input: TasksGenerateInput!): [ID!]
+  taskAdd(
+    description: String!
+    details: String
+    assigneeId: ID
+    directionId: ID
+    startDate: String!
+    creationDate: String!
+  ): Task
+
+  ideaAdd(
+    description: String!
+    details: String
+    directionId: ID
+    generation: Generation!
+    creationDate: String!
+  ): Idea
+
+  directionAdd(
+    name: String!
+    creationDate: String!
+    details: String
+  ): Direction
+
+  tasksGenerate(
+    description: String!
+    details: String
+    assigneeId: ID
+    directionId: ID
+    startDate: String!
+    creationDate: String!
+    repeatMode: RepeatMode!
+    repeatEvery: Int
+    numberOfRepetitions: Int!
+  ): [ID!]
+
+  taskAddComment(taskId: ID!, text: String!, time: String!): Comment
+  ideaAddComment(ideaId: ID!, text: String!, time: String!): Comment 
 
   taskSetDescription(taskId: ID!, description: String!): ID
   taskSetDetails(taskId: ID!, details: String): ID
@@ -70,54 +101,6 @@ type Mutation {
   ideaUnsubscribe(ideaId: ID!): ID
 }
 
-input TasksGenerateInput {
-  description: String!
-  details: String
-  assigneeId: ID
-  directionId: ID
-  startDate: String!
-  creationDate: String!
-  repeatMode: RepeatMode!
-  repeatEvery: Int
-  numberOfRepetitions: Int!
-}
-
-input IdeaAddCommentInput {
-  ideaId: ID!
-  text: String!
-  time: String!
-}
-
-input TaskAddCommentInput {
-  taskId: ID!
-  text: String!
-  time: String!
-}
-
-input DirectionAddInput {
-  name: String!
-  creationDate: String!
-  details: String
-}
-
-input IdeaAddInput {
-  description: String!
-  details: String
-  assigneeId: ID
-  directionId: ID
-  generation: Generation!
-  creationDate: String!
-}
-
-input TaskAddInput {
-  description: String!
-  details: String
-  assigneeId: ID
-  directionId: ID
-  startDate: String!
-  creationDate: String!
-}
-
 enum RepeatMode {
   DAY
   WEEK
@@ -139,8 +122,14 @@ type Task {
   deletionDate: String
   comments: [Comment!]
   subscribers: [User!]
+  repeatMode: RepeatMode
+  repeatEvery: Int
+  numberOfRepetitions: Int
   groupID: ID
-  notifications: [Notification!]
+  notifications(
+    startDate: String
+    endDate: String
+  ): [Notification!]
 }
 
 enum Generation {
@@ -161,7 +150,10 @@ type Idea {
   reviewDate: String
   comments: [Comment!]
   subscribers: [User!]
-  notifications: [Notification!]
+  notifications(
+    startDate: String
+    endDate: String
+  ): [Notification!]
 }
 
 type User {
@@ -170,9 +162,6 @@ type User {
   password: String
   displayName: String
   email: String
-  """
-  Last notification read time
-  """
   notificationReadTime: String
   tasks: [Task!]
   ideas: [Idea!]
@@ -193,6 +182,10 @@ type Direction {
   members: [User!]
   tasks: [Task!]
   ideas: [Idea!]
+  notifications(
+    startDate: String
+    endDate: String
+  ): [Notification!]
 }
 
 enum ActionType {
@@ -237,5 +230,8 @@ type Notification {
   time: String
   actor: User           
   actionType: ActionType
+  field: String
+  oldValue: String
+  newValue: String
   actionItem: ActionItem
 }

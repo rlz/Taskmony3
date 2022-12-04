@@ -32,8 +32,7 @@ type Mutation {
     details: String
     assigneeId: ID
     directionId: ID
-    startDate: String!
-    creationDate: String!
+    startAt: String!
   ): Task
 
   ideaAdd(
@@ -41,12 +40,10 @@ type Mutation {
     details: String
     directionId: ID
     generation: Generation!
-    creationDate: String!
   ): Idea
 
   directionAdd(
     name: String!
-    creationDate: String!
     details: String
   ): Direction
 
@@ -55,31 +52,30 @@ type Mutation {
     details: String
     assigneeId: ID
     directionId: ID
-    startDate: String!
-    creationDate: String!
+    startAt: String!
     repeatMode: RepeatMode!
     repeatEvery: Int
     numberOfRepetitions: Int!
   ): [ID!]
 
-  taskAddComment(taskId: ID!, text: String!, time: String!): Comment
-  ideaAddComment(ideaId: ID!, text: String!, time: String!): Comment 
+  taskAddComment(taskId: ID!, text: String!): Comment
+  ideaAddComment(ideaId: ID!, text: String!): Comment 
 
   taskSetDescription(taskId: ID!, description: String!): ID
   taskSetDetails(taskId: ID!, details: String): ID
   taskSetDirection(taskId: ID!, directionId: ID): ID
-  taskSetDeletionDate(taskId: ID!, deletionDate: String): ID
+  taskSetDeletedAt(taskId: ID!, deletedAt: String): ID
   taskSetAssignee(taskId: ID!, assigneeId: ID): ID
-  taskSetStartDate(taskId: ID!, startDate: String): ID
-  taskSetCompletionDate(taskId: ID!, completionDate: String): ID
-  taskRecurringDeleteAll(groupID: ID!): [ID!]
+  taskSetStartAt(taskId: ID!, startAt: String): ID
+  taskSetCompletedAt(taskId: ID!, completedAt: String): ID
+  taskRecurringDeleteAll(groupId: ID!): [ID!]
 
   ideaSetDescription(ideaId: ID!, description: String!): ID
   ideaSetDetails(entityId: ID!, details: String): ID
   ideaSetDirection(ideaId: ID!, directionId: ID): ID
-  ideaSetDeletionDate(ideaId: ID!, deletionDate: String): ID
+  ideaSetDeletedAt(ideaId: ID!, deletedAt: String): ID
   ideaSetGeneration(ideaId: ID!, generation: Generation!): ID
-  ideaSetReviewDate(ideaId: ID!, reviewDate: String): ID
+  ideaSetReviewedAt(ideaId: ID!, reviewedAt: String): ID
 
   commentSetText(commentId: ID!, text: String!): ID
 
@@ -115,20 +111,20 @@ type Task {
   details: String
   createdBy: User
   assignee: User
-  startDate: String
-  completionDate: String
+  startAt: String
+  completedAt: String
   direction: Direction
-  creationDate: String
-  deletionDate: String
+  createdAt: String
+  deletedAt: String
   comments: [Comment!]
   subscribers: [User!]
   repeatMode: RepeatMode
   repeatEvery: Int
   numberOfRepetitions: Int
-  groupID: ID
+  groupId: ID
   notifications(
-    startDate: String
-    endDate: String
+    start: String
+    end: String
   ): [Notification!]
 }
 
@@ -145,14 +141,14 @@ type Idea {
   generation: Generation
   createdBy: User
   direction: Direction
-  creationDate: String
-  deletionDate: String
-  reviewDate: String
+  createdAt: String
+  deletedAt: String
+  reviewedAt: String
   comments: [Comment!]
   subscribers: [User!]
   notifications(
-    startDate: String
-    endDate: String
+    start: String
+    end: String
   ): [Notification!]
 }
 
@@ -165,12 +161,13 @@ type User {
   notificationReadTime: String
   tasks: [Task!]
   ideas: [Idea!]
+  directions: [Direction!]
 }
 
 type Comment {
   id: ID!
   author: User
-  time: String
+  createdAt: String
   text: String
 }
 
@@ -179,12 +176,13 @@ type Direction {
   name: String
   details: String
   owner: User
+  createdAt: String
   members: [User!]
   tasks: [Task!]
   ideas: [Idea!]
   notifications(
-    startDate: String
-    endDate: String
+    start: String
+    end: String
   ): [Notification!]
 }
 
@@ -227,7 +225,7 @@ union ActionItem = User | Task | Idea | Comment
 
 type Notification {
   id: ID!
-  time: String
+  modifiedAt: String
   actor: User           
   actionType: ActionType
   field: String

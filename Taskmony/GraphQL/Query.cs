@@ -1,23 +1,27 @@
 using System.Security.Claims;
 using HotChocolate.AspNetCore.Authorization;
 using Taskmony.Models;
-using Taskmony.Repositories;
+using Taskmony.Services;
 
 namespace Taskmony.GraphQL;
 
 public class Query
 {
     [Authorize]
-    public IQueryable<User> GetUsers([Service] IUserRepository repository, [Service] IHttpContextAccessor httpContextAccessor,
-        [GraphQLType(typeof(ListType<NonNullType<IdType>>))] Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
+    public IQueryable<User> GetUsers([Service] IUserService userService,
+        [Service] IHttpContextAccessor httpContextAccessor,
+        Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
     {
-        if (id is null && email is null && login is null)
-        {
-            var claimsIdentity = httpContextAccessor.HttpContext?.User.Identity as ClaimsIdentity;
-            var currentUserId = Guid.Parse(claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty);
-            return repository.GetUsers(new[] { currentUserId }, null, null, null, null);
-        }
+        var currentUserId =
+            Guid.Parse(httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var users = userService.GetUsers(id, email, login, offset, limit, currentUserId);
 
-        return repository.GetUsers(id, email, login, offset, limit);
+        return users.Select(x => new User
+        {
+            Id = x.Id,
+            Email = x.Id == currentUserId ? x.Email : null,
+            Login = x.Login,
+            DisplayName = x.DisplayName
+        });
     }
 }

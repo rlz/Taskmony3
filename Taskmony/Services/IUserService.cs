@@ -10,4 +10,7 @@ public interface IUserService
     Task<string?> AddUserAsync(UserRegisterRequest request);
 
     string? ValidateUserCredentials(string login, string password);
+
+    IQueryable<User> GetUsers(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit,
+        Guid currentUserId);
 }

@@ -4,6 +4,12 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Taskmony.Data;
 using Taskmony.GraphQL;
+using Taskmony.GraphQL.Comments;
+using Taskmony.GraphQL.Directions;
+using Taskmony.GraphQL.Ideas;
+using Taskmony.GraphQL.Notifications;
+using Taskmony.GraphQL.Tasks;
+using Taskmony.GraphQL.Users;
 using Taskmony.Repositories;
 using Taskmony.Services;
 
@@ -55,21 +61,28 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
     };
 });
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddDbContext<TaskmonyDbContext>(opt => opt.UseNpgsql(
+builder.Services.AddPooledDbContextFactory<TaskmonyDbContext>(opt => opt.UseNpgsql(
     builder.Configuration.GetConnectionString("TaskmonyDatabase")));
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services
     .AddGraphQLServer()
-    .AddProjections()
     .AddAuthorization()
-    .AddQueryType<Query>();
+    .AddQueryType<Query>()
+    .AddType<TaskType>()
+    .AddType<IdeaType>()
+    .AddType<UserType>()
+    .AddType<DirectionType>()
+    .AddType<CommentType>()
+    .AddType<NotificationType>()
+    .BindRuntimeType<Guid, IdType>();
 
 var app = builder.Build();
 
@@ -85,7 +98,6 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-// Playground url: http://localhost:%s/graphql/
 app.UseEndpoints(endpoints => endpoints.MapGraphQL());
 
 app.MapControllers();

@@ -16,14 +16,14 @@ public class TokenService : ITokenService
         _config = config;
     }
 
-    public (string?, UserAuthResponse) CreateToken(User user)
+    public (string? error, UserAuthResponse response) CreateToken(User user)
     {
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.GivenName, user.DisplayName),
-            new Claim(ClaimTypes.Name, user.Login)
+            new Claim(ClaimTypes.Email, user.Email!),
+            new Claim(ClaimTypes.GivenName, user.DisplayName!),
+            new Claim(ClaimTypes.Name, user.Login!)
         };
 
         var token = new JwtSecurityToken(
@@ -40,7 +40,7 @@ public class TokenService : ITokenService
         return (null, new UserAuthResponse
         {
             Id = user.Id,
-            DisplayName = user.DisplayName,
+            DisplayName = user.DisplayName!,
             AccessToken = new JwtSecurityTokenHandler().WriteToken(token)
         });
     }

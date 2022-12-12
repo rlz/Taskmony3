@@ -9,9 +9,9 @@ public class UserRepository : IUserRepository
 {
     private readonly TaskmonyDbContext _context;
 
-    public UserRepository(TaskmonyDbContext context)
+    public UserRepository(IDbContextFactory<TaskmonyDbContext> contextFactory)
     {
-        _context = context;
+        _context = contextFactory.CreateDbContext();
     }
 
     public async Task<string?> AddUserAsync(User user)

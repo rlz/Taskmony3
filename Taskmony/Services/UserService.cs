@@ -53,6 +53,27 @@ public class UserService : IUserService
         }
     }
 
+    public IQueryable<User> GetUsers(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit,
+        Guid currentUserId)
+    {
+        if (id is null && email is null && login is null)
+        {
+            id = new[] {currentUserId};
+        }
+
+        email = email?
+            .Where(e => !string.IsNullOrWhiteSpace(e))
+            .Select(e => e.Trim())
+            .ToArray();
+
+        login = login?
+            .Where(l => !string.IsNullOrWhiteSpace(l))
+            .Select(l => l.Trim())
+            .ToArray();
+
+        return _userRepository.GetUsers(id, email, login, offset, limit);
+    }
+
     public string? ValidateUserCredentials(string login, string password)
     {
         if (login is null || login.Length < 4)

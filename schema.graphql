@@ -23,7 +23,12 @@ type Query {
     limit: Int
   ): [User!]
 
-  directions(id: [ID!]): [Direction!]
+  directions(
+    id: [ID!]
+    withNotificationsAfter: String
+    offset: Int
+    limit: Int
+  ): [Direction!]
 }
 
 type Mutation {
@@ -116,7 +121,10 @@ type Task {
   direction: Direction
   createdAt: String
   deletedAt: String
-  comments: [Comment!]
+  comments(
+    offset: Int
+    limit: Int
+  ): [Comment!]
   subscribers: [User!]
   repeatMode: RepeatMode
   repeatEvery: Int
@@ -144,7 +152,10 @@ type Idea {
   createdAt: String
   deletedAt: String
   reviewedAt: String
-  comments: [Comment!]
+  comments(
+    offset: Int
+    limit: Int
+  ): [Comment!]
   subscribers: [User!]
   notifications(
     start: String
@@ -166,7 +177,7 @@ type User {
 
 type Comment {
   id: ID!
-  author: User
+  createdBy: User
   createdAt: String
   text: String
 }
@@ -175,8 +186,9 @@ type Direction {
   id: ID!
   name: String
   details: String
-  owner: User
+  createdBy: User
   createdAt: String
+  deletedAt: String
   members: [User!]
   tasks: [Task!]
   ideas: [Idea!]
@@ -211,6 +223,14 @@ enum ActionType {
   Member added to the direction
   """
   MEMBER_ADDED
+  """
+  Member removed from the direction
+  """
+  MEMBER_REMOVED
+  """
+  Member left the direction
+  """
+  MEMBER_LEFT
   """
   Comment added to the task or idea
   """

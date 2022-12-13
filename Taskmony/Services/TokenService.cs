@@ -1,47 +1,35 @@
+using Taskmony.Auth;
 using Taskmony.DTOs;
-using Taskmony.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace Taskmony.Services;
 
 public class TokenService : ITokenService
 {
-    private readonly IConfiguration _config;
+    private readonly IJwtProvider _jwtProvider;
+    private readonly IUserService _userService;
 
-    public TokenService(IConfiguration config)
+    public TokenService(IJwtProvider jwtProvider, IUserService userService)
     {
-        _config = config;
+        _jwtProvider = jwtProvider;
+        _userService = userService;
     }
 
-    public (string? error, UserAuthResponse response) CreateToken(User user)
+    public async Task<(string? error, UserAuthResponse? response)> Authenticate(UserAuthRequest request)
     {
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email!),
-            new Claim(ClaimTypes.GivenName, user.DisplayName!),
-            new Claim(ClaimTypes.Name, user.Login!)
-        };
+        var (error, user) = await _userService.GetUserAsync(request);
 
-        var token = new JwtSecurityToken(
-            issuer: _config["Authentication:Schemes:Bearer:ValidIssuer"],
-            audience: _config["Authentication:Schemes:Bearer:ValidAudience"],
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config["Authentication:Schemes:Bearer:Key"]!)),
-                SecurityAlgorithms.HmacSha256
-            )
-        );
-
-        return (null, new UserAuthResponse
+        if (error is not null)
         {
-            Id = user.Id,
-            DisplayName = user.DisplayName!,
-            AccessToken = new JwtSecurityTokenHandler().WriteToken(token)
-        });
+            return (error, null);
+        }
+
+        if (user is null)
+        {
+            return ("User not found", null);
+        }
+
+        var token = _jwtProvider.GenerateToken(user);
+
+        return (null, new UserAuthResponse(user.Id, user.DisplayName!, token));
     }
 }

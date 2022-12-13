@@ -25,7 +25,7 @@ public class TaskmonyDbContext : DbContext
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
 
     public DbSet<TaskSubscription> TaskSubscriptions => Set<TaskSubscription>();
-    
+
     public DbSet<IdeaSubscription> IdeaSubscriptions => Set<IdeaSubscription>();
 
     public DbSet<Comment> Comments => Set<Comment>();
@@ -67,6 +67,10 @@ public class TaskmonyDbContext : DbContext
         modelBuilder.Entity<User>()
             .HasMany(u => u.Directions)
             .WithMany(d => d.Members);
+
+        modelBuilder.Entity<User>()
+            .Property(u => u.Password)
+            .HasColumnName("PasswordHash");
 
         modelBuilder.Entity<Models.Task>()
             .Property(u => u.Id)

@@ -1,4 +1,3 @@
-using Taskmony.DTOs;
 using Taskmony.Models;
 
 namespace Taskmony.Repositories;
@@ -7,7 +6,7 @@ public interface IUserRepository
 {
     Task<string?> AddUserAsync(User user);
 
-    Task<User?> GetUserAsync(UserAuthRequest request);
+    Task<User?> GetUserAsync(string login);
 
     Task<bool> SaveChangesAsync();
 

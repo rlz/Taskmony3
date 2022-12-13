@@ -31,10 +31,9 @@ public class UserRepository : IUserRepository
         return null;
     }
 
-    public async Task<User?> GetUserAsync(UserAuthRequest request)
+    public async Task<User?> GetUserAsync(string login)
     {
-        return await _context.Users.FirstOrDefaultAsync(x =>
-            x.Login == request.Login && x.Password == request.Password);
+        return await _context.Users.FirstOrDefaultAsync(x => x.Login == login);
     }
 
     public IQueryable<User> GetUsers(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)

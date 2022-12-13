@@ -1,7 +1,6 @@
-using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Taskmony.Auth;
 using Taskmony.Data;
 using Taskmony.GraphQL;
 using Taskmony.GraphQL.Comments;
@@ -44,26 +43,17 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new()
-    {
-        ValidateActor = true,
-        ValidateAudience = true,
-        ValidateIssuer = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Authentication:Schemes:Bearer:ValidIssuer"],
-        ValidAudience = builder.Configuration["Authentication:Schemes:Bearer:ValidAudience"],
-        IssuerSigningKey =
-            new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Authentication:Schemes:Bearer:Key"]!))
-    };
-});
+builder.Services.AddAuthentication().AddJwtBearer();
+
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection("Authentication:Schemes:Bearer"));
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
 
 builder.Services.AddHttpContextAccessor();
 

@@ -18,28 +18,9 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login(UserAuthRequest request)
+    public async Task<ActionResult> Login([FromBody] UserAuthRequest request)
     {
-        var validationError = _userService.ValidateUserCredentials(request.Login, request.Password);
-
-        if (validationError is not null)
-        {
-            return BadRequest(validationError);
-        }
-
-        var (error, user) = await _userService.GetUserAsync(request);
-
-        if (error is not null)
-        {
-            return BadRequest(error);
-        }
-
-        if (user is null)
-        {
-            return NotFound("User not found");
-        }
-
-        var result = _tokenService.CreateToken(user);
+        var result = await _tokenService.Authenticate(request);
 
         if (result.error is not null)
         {
@@ -50,7 +31,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult> Register(UserRegisterRequest request)
+    public async Task<ActionResult> Register([FromBody] UserRegisterRequest request)
     {
         var error = await _userService.AddUserAsync(request);
 

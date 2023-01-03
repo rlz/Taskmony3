@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
-using Taskmony.DTOs;
-using Taskmony.Models;
 
 namespace Taskmony.Repositories;
 
@@ -14,29 +12,27 @@ public class UserRepository : IUserRepository
         _context = contextFactory.CreateDbContext();
     }
 
-    public async Task<string?> AddUserAsync(User user)
+    public async Task AddAsync(Models.User user)
     {
-        if (await _context.Users.AnyAsync(x => x.Login == user.Login || x.Email == user.Email))
-        {
-            return "User with this login or email already exists";
-        }
-
         await _context.Users.AddAsync(user);
-
-        if (!await SaveChangesAsync())
-        {
-            return "Failed to add user";
-        }
-
-        return null;
     }
 
-    public async Task<User?> GetUserAsync(string login)
+    public async Task<bool> AnyWithEmailAsync(string email)
+    {
+        return await _context.Users.AnyAsync(x => x.Email == email);
+    }
+
+    public async Task<bool> AnyWithLoginAsync(string login)
+    {
+        return await _context.Users.AnyAsync(x => x.Login == login);
+    }
+
+    public async Task<Models.User?> GetByLoginAsync(string login)
     {
         return await _context.Users.FirstOrDefaultAsync(x => x.Login == login);
     }
 
-    public IQueryable<User> GetUsers(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
+    public IQueryable<Models.User> Get(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
     {
         var query = _context.Users.AsQueryable();
 

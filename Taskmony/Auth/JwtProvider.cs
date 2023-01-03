@@ -30,7 +30,7 @@ public class JwtProvider : IJwtProvider
             issuer: _options.Issuer,
             audience: _options.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(60),
+            expires: DateTime.UtcNow.AddMinutes(_options.ExpirationMinutes),
             signingCredentials: new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret)),
                 SecurityAlgorithms.HmacSha256

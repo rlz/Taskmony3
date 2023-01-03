@@ -9,36 +9,24 @@ namespace Taskmony.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly ITokenService _tokenService;
 
-    public AccountController(IUserService userService, ITokenService tokenService)
+    public AccountController(IUserService userService)
     {
         _userService = userService;
-        _tokenService = tokenService;
     }
 
     [HttpPost("login")]
     public async Task<ActionResult> Login([FromBody] UserAuthRequest request)
     {
-        var result = await _tokenService.Authenticate(request);
+        var response = await _userService.AuthenticateAsync(request);
 
-        if (result.error is not null)
-        {
-            return BadRequest(result.error);
-        }
-
-        return Ok(result.response);
+        return Ok(response);
     }
 
     [HttpPost("register")]
     public async Task<ActionResult> Register([FromBody] UserRegisterRequest request)
     {
-        var error = await _userService.AddUserAsync(request);
-
-        if (error is not null)
-        {
-            return BadRequest(error);
-        }
+        await _userService.AddAsync(request);
 
         return Ok();
     }

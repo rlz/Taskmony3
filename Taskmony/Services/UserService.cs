@@ -1,7 +1,11 @@
 using System.Text.RegularExpressions;
+using Taskmony.Auth;
 using Taskmony.DTOs;
+using Taskmony.Errors;
+using Taskmony.Exceptions;
 using Taskmony.Models;
 using Taskmony.Repositories;
+using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Services;
 
@@ -9,70 +13,62 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IJwtProvider _jwtProvider;
 
-    public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
+    public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher, IJwtProvider jwtProvider)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
+        _jwtProvider = jwtProvider;
     }
 
-    public async Task<string?> AddUserAsync(UserRegisterRequest request)
+    public async Task AddAsync(UserRegisterRequest request)
     {
-        var error = ValidateCredentials(request.Login, request.Password, request.Email);
+        ValidateCredentials(request.Login, request.Password, request.Email);
 
-        if (error is not null)
+        if (await _userRepository.AnyWithLoginAsync(request.Login))
         {
-            return error;
+            throw new DomainException(UserErrors.LoginIsAlreadyInUse);
         }
 
-        try
+        if (await _userRepository.AnyWithEmailAsync(request.Email))
         {
-            return await _userRepository.AddUserAsync(new User
-            {
-                Login = request.Login,
-                Password = _passwordHasher.HashPassword(request.Password),
-                Email = request.Email,
-                DisplayName = request.DisplayName
-            });
+            throw new DomainException(UserErrors.EmailIsAlreadyInUse);
         }
-        catch (Exception)
+
+        await _userRepository.AddAsync(new User
         {
-            return "Failed to add user";
-        }
+            Login = request.Login,
+            Password = _passwordHasher.HashPassword(request.Password),
+            Email = request.Email,
+            DisplayName = request.DisplayName
+        });
+
+        await _userRepository.SaveChangesAsync();
     }
 
-    public async Task<(string? error, User? user)> GetUserAsync(UserAuthRequest request)
+    public async Task<UserAuthResponse> AuthenticateAsync(UserAuthRequest request)
     {
-        var error = ValidateCredentials(request.Login, request.Password);
+        ValidateCredentials(request.Login, request.Password);
 
-        if (error is not null)
+        var user = await _userRepository.GetByLoginAsync(request.Login);
+
+        if (user is null)
         {
-            return (error, null);
+            throw new DomainException(UserErrors.WrongLoginOrPassword);
         }
 
-        try
+        if (!_passwordHasher.VerifyPassword(request.Password, user.Password!))
         {
-            var user = await _userRepository.GetUserAsync(request.Login);
-
-            if (user is null)
-            {
-                return ("User not found", null);
-            }
-
-            if (!_passwordHasher.VerifyPassword(request.Password, user.Password!))
-            {
-                return ("Wrong password", null);
-            }
-
-            return (null, await _userRepository.GetUserAsync(request.Login));
+            throw new DomainException(UserErrors.WrongLoginOrPassword);
         }
-        catch
-        {
-            return ("Failed to get user", null);
-        }
+
+        var token = _jwtProvider.GenerateToken(user);
+
+        return new UserAuthResponse(user.Id, user.DisplayName!, token);
     }
 
-    public IQueryable<User> GetUsers(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit,
+    public IQueryable<User> Get(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit,
         Guid currentUserId)
     {
         if (id is null && email is null && login is null)
@@ -90,46 +86,34 @@ public class UserService : IUserService
             .Select(l => l.Trim())
             .ToArray();
 
-        return _userRepository.GetUsers(id, email, login, offset, limit);
+        return _userRepository.Get(id, email, login, offset, limit);
     }
 
-    public string? ValidateCredentials(string login, string password)
+    public void ValidateCredentials(string login, string password)
     {
-        if (login is null || login.Length < 4)
+        if (login is null || login.Length < 4 || !login.All(c => char.IsLetterOrDigit(c)))
         {
-            return "Login must contain at least 4 characters";
+            throw new DomainException(UserErrors.InvalidLoginFormat);
         }
 
-        if (!login.All(c => char.IsLetterOrDigit(c)))
-        {
-            return "Login must contain only letters and digits";
-        }
-
+        //8+ characters, at least one uppercase letter, one lowercase letter and one number
         if (!Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,128}$"))
         {
-            return "Password must contain minimum eight characters, at least " +
-                   "one uppercase letter, one lowercase letter and one number";
+            throw new DomainException(UserErrors.InvalidPasswordFormat);
         }
-
-        return null;
     }
 
-    public string? ValidateCredentials(string login, string password, string email)
+    private void ValidateCredentials(string login, string password, string email)
     {
-        if (email is null || email.Length < 4)
-        {
-            return "Email must contain at least 4 characters";
-        }
-
         try
         {
             _ = new System.Net.Mail.MailAddress(email);
         }
         catch
         {
-            return "Invalid email format";
+            throw new DomainException(UserErrors.InvalidEmailFormat);
         }
 
-        return ValidateCredentials(login, password);
+        ValidateCredentials(login, password);
     }
 }

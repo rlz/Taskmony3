@@ -2,8 +2,8 @@ namespace Taskmony.Models.Enums;
 
 public enum ActionItemType : byte
 {
-    User,
-    Task,
-    Idea,
-    Comment
+    User = 0,
+    Task = 1,
+    Idea = 2,
+    Comment = 3
 }

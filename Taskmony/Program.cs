@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Taskmony.Auth;
 using Taskmony.Data;
+using Taskmony.Errors;
 using Taskmony.GraphQL;
 using Taskmony.GraphQL.Comments;
 using Taskmony.GraphQL.Directions;
+using Taskmony.GraphQL.Errors;
 using Taskmony.GraphQL.Ideas;
 using Taskmony.GraphQL.Notifications;
 using Taskmony.GraphQL.Tasks;
@@ -51,9 +53,9 @@ builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IUserIdentifierProvider, UserIdentifierProvider>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -64,6 +66,12 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services
     .AddGraphQLServer()
+    .AddErrorFilter(provider =>
+    {
+        return new ErrorFilter(
+            provider.GetRequiredService<ILogger<ErrorFilter>>(),
+            builder.Environment);
+    })
     .AddAuthorization()
     .AddQueryType<Query>()
     .AddType<TaskType>()
@@ -82,10 +90,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
 app.UseRouting();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints => endpoints.MapGraphQL());

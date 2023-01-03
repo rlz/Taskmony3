@@ -83,7 +83,7 @@ public class PasswordHasher : IPasswordHasher, IDisposable
         }
     }
 
-    private static bool ByteArraysEqual(byte[] a, byte[] b)
+    private static bool ByteArraysEqual(byte[]? a, byte[]? b)
     {
         if (a == null && b == null)
         {

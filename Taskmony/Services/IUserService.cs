@@ -1,14 +1,15 @@
 using Taskmony.DTOs;
 using Taskmony.Models;
+using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Services;
 
 public interface IUserService
 {
-    Task<(string? error, User? user)> GetUserAsync(UserAuthRequest request);
+    Task<UserAuthResponse> AuthenticateAsync(UserAuthRequest request);
 
-    Task<string?> AddUserAsync(UserRegisterRequest request);
+    Task AddAsync(UserRegisterRequest request);
 
-    IQueryable<User> GetUsers(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit,
+    IQueryable<User> Get(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit,
         Guid currentUserId);
 }

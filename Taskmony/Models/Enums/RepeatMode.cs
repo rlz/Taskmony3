@@ -2,9 +2,9 @@ namespace Taskmony.Models.Enums;
 
 public enum RepeatMode : byte
 {
-    Day,
-    Week,
-    Month,
-    Year,
-    Custom
+    Day = 0,
+    Week = 1,
+    Month = 2,
+    Year = 3,
+    Custom = 4
 }

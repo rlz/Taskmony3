@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using HotChocolate.AspNetCore.Authorization;
 using Taskmony.Models;
 using Taskmony.Services;
@@ -9,17 +8,15 @@ public class Query
 {
     [Authorize]
     public IQueryable<User> GetUsers([Service] IUserService userService,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        [Service] IUserIdentifierProvider userIdentifierProvider,
         Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
     {
-        var currentUserId =
-            Guid.Parse(httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var users = userService.GetUsers(id, email, login, offset, limit, currentUserId);
+        var users = userService.Get(id, email, login, offset, limit, userIdentifierProvider.UserId);
 
         return users.Select(x => new User
         {
             Id = x.Id,
-            Email = x.Id == currentUserId ? x.Email : null,
+            Email = x.Id == userIdentifierProvider.UserId ? x.Email : null,
             Login = x.Login,
             DisplayName = x.DisplayName
         });

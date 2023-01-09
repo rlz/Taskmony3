@@ -35,9 +35,11 @@ function App() {
 
 function Home() {
   return (
-    <div className="flex h-full">
+    <div className="flex h-full bg-slate-50">
       <SideMenu/>
+      <div className="w-full">
       <Outlet />
+      </div>
     </div>
   );
 }

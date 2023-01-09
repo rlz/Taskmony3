@@ -1,6 +1,7 @@
 using Taskmony.Models;
 using Taskmony.Models.Comments;
 using Taskmony.Models.Enums;
+using Taskmony.Models.Notifications;
 
 namespace Taskmony.GraphQL.Ideas;
 
@@ -11,6 +12,7 @@ public class IdeaType : ObjectType<Idea>
         descriptor.Field(i => i.CreatedById).Ignore();
         descriptor.Field(i => i.DirectionId).Ignore();
         descriptor.Field(i => i.Subscriptions).Ignore();
+        descriptor.Field(i => i.ActionItemType).Ignore();
 
         descriptor.Field(i => i.CreatedBy).Type<ObjectType<User>>();
         descriptor.Field(i => i.ReviewedAt).Type<StringType>();

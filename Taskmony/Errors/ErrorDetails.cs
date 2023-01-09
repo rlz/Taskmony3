@@ -1,4 +1,3 @@
-using System.Net;
 using System.Text.Json;
 
 namespace Taskmony.Errors;
@@ -9,13 +8,10 @@ public class ErrorDetails
 
     public string Code { get; }
 
-    public int Status { get; }
-
-    public ErrorDetails(string message, string code, int status = (int)HttpStatusCode.BadRequest)
+    public ErrorDetails(string message, string code)
     {
         Message = message;
         Code = code;
-        Status = status;
     }
 
     public override string ToString()

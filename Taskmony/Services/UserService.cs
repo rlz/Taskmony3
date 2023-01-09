@@ -26,17 +26,17 @@ public class UserService : IUserService
     {
         ValidateCredentials(request.Login, request.Password, request.Email);
 
-        if (await _userRepository.AnyWithLoginAsync(request.Login))
+        if (await _userRepository.AnyUserWithLoginAsync(request.Login))
         {
             throw new DomainException(UserErrors.LoginIsAlreadyInUse);
         }
 
-        if (await _userRepository.AnyWithEmailAsync(request.Email))
+        if (await _userRepository.AnyUserWithEmailAsync(request.Email))
         {
             throw new DomainException(UserErrors.EmailIsAlreadyInUse);
         }
 
-        await _userRepository.AddAsync(new User
+        await _userRepository.AddUserAsync(new User
         {
             Login = request.Login,
             Password = _passwordHasher.HashPassword(request.Password),
@@ -51,7 +51,7 @@ public class UserService : IUserService
     {
         ValidateCredentials(request.Login, request.Password);
 
-        var user = await _userRepository.GetByLoginAsync(request.Login);
+        var user = await _userRepository.GetUserByLoginAsync(request.Login);
 
         if (user is null)
         {
@@ -68,8 +68,8 @@ public class UserService : IUserService
         return new UserAuthResponse(user.Id, user.DisplayName!, token);
     }
 
-    public IQueryable<User> Get(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit,
-        Guid currentUserId)
+    public async Task<IEnumerable<User>> GetUsersAsync(Guid[]? id, string[]? email, string[]? login,
+        int? offset, int? limit, Guid currentUserId)
     {
         if (id is null && email is null && login is null)
         {
@@ -86,7 +86,15 @@ public class UserService : IUserService
             .Select(l => l.Trim())
             .ToArray();
 
-        return _userRepository.Get(id, email, login, offset, limit);
+        var users = await _userRepository.GetUsersAsync(id, email, login, offset, limit);
+
+        return users.Select(x => new User
+        {
+            Id = x.Id,
+            Email = x.Id == currentUserId ? x.Email : null,
+            Login = x.Id == currentUserId ? x.Login : null,
+            DisplayName = x.DisplayName
+        });
     }
 
     public void ValidateCredentials(string login, string password)

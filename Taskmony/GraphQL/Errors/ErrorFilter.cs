@@ -1,5 +1,5 @@
-using Taskmony.Exceptions;
 using Taskmony.Errors;
+using Taskmony.Exceptions;
 
 namespace Taskmony.GraphQL.Errors;
 
@@ -24,17 +24,19 @@ public class ErrorFilter : IErrorFilter
                 .New()
                 .SetCode(ex.Error.Code)
                 .SetMessage(ex.Error.Message)
+                .SetPath(error.Path)
                 .Build();
         }
 
-        if (_environment.IsDevelopment())
+        if (error.Exception is null || _environment.IsDevelopment())
+        {
             return error;
+        }
 
         return ErrorBuilder
             .New()
             .SetCode(GeneralErrors.InternalServerError.Code)
             .SetMessage(GeneralErrors.InternalServerError.Message)
-            .SetPath(error.Path)
             .Build();
     }
 }

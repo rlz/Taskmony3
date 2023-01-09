@@ -2,14 +2,18 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Taskmony.Models.Comments;
 using Taskmony.Models.Enums;
+using Taskmony.Models.Notifications;
 using Taskmony.Models.Subscriptions;
 
 namespace Taskmony.Models;
 
-public class Idea
+public class Idea : IActionItem
 {
     [Key]
     public Guid Id { get; set; }
+
+    [NotMapped]
+    public ActionItemType ActionItemType => ActionItemType.Idea;
 
     [Required]
     public string? Description { get; set; }
@@ -19,8 +23,7 @@ public class Idea
     [Required]
     public User? CreatedBy { get; set; }
 
-    [Required]
-    public Guid? CreatedById { get; set; }
+    public Guid CreatedById { get; set; }
 
     [Required]
     public DateTime? CreatedAt { get; set; }

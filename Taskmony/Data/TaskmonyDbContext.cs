@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 using Taskmony.Models;
 using Taskmony.Models.Comments;
+using Taskmony.Models.Notifications;
 using Taskmony.Models.Subscriptions;
 
 namespace Taskmony.Data;

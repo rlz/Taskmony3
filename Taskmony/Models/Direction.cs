@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Taskmony.Models.Notifications;
 
 namespace Taskmony.Models;
 
@@ -16,8 +17,7 @@ public class Direction
     [Required]
     public User? CreatedBy { get; set; }
 
-    [Required]
-    public Guid? CreatedById { get; set; }
+    public Guid CreatedById { get; set; }
 
     [Required]
     public DateTime? CreatedAt { get; set; }

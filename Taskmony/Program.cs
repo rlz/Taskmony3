@@ -5,6 +5,7 @@ using Taskmony.Data;
 using Taskmony.Errors;
 using Taskmony.GraphQL;
 using Taskmony.GraphQL.Comments;
+using Taskmony.GraphQL.Converters;
 using Taskmony.GraphQL.Directions;
 using Taskmony.GraphQL.Errors;
 using Taskmony.GraphQL.Ideas;
@@ -52,10 +53,23 @@ builder.Services.Configure<JwtOptions>(
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ITaskRepository, TaskRepository>();
+builder.Services.AddTransient<ICommentRepository, CommentRepository>();
+builder.Services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
+builder.Services.AddTransient<IIdeaRepository, IdeaRepository>();
+builder.Services.AddTransient<IDirectionRepository, DirectionRepository>();
+
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
-builder.Services.AddScoped<IUserIdentifierProvider, UserIdentifierProvider>();
+builder.Services.AddTransient<ITimeConverter, TimeConverter>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ITaskService, TaskService>();
+builder.Services.AddTransient<ICommentService, CommentService>();
+builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
+builder.Services.AddTransient<INotificationService, NotificationService>();
+builder.Services.AddTransient<IIdeaService, IdeaService>();
+builder.Services.AddTransient<IDirectionService, DirectionService>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -66,21 +80,21 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services
     .AddGraphQLServer()
-    .AddErrorFilter(provider =>
-    {
-        return new ErrorFilter(
-            provider.GetRequiredService<ILogger<ErrorFilter>>(),
-            builder.Environment);
-    })
+    .AddErrorFilter(provider => new ErrorFilter(
+        provider.GetRequiredService<ILogger<ErrorFilter>>(),
+        builder.Environment))
     .AddAuthorization()
-    .AddQueryType<Query>()
+    .AddHttpRequestInterceptor<HttpRequestInterceptor>()
+    .AddQueryType<QueryType>()
     .AddType<TaskType>()
     .AddType<IdeaType>()
     .AddType<UserType>()
     .AddType<DirectionType>()
     .AddType<CommentType>()
     .AddType<NotificationType>()
-    .BindRuntimeType<Guid, IdType>();
+    .BindRuntimeType<Guid, IdType>()
+    .AddTypeConverter<StringToGuidConverter>()
+    .AddTypeConverter<DateTimeToStringConverter>();
 
 var app = builder.Build();
 
@@ -97,7 +111,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => endpoints.MapGraphQL());
+app.MapGraphQL();
 
 app.MapControllers();
 

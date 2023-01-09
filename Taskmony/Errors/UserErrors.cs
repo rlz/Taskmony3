@@ -1,11 +1,9 @@
-using System.Net;
-
 namespace Taskmony.Errors;
 
 public static class UserErrors
 {
     public static ErrorDetails WrongLoginOrPassword =>
-        new("Wrong login or password", "WRONG_LOGIN_OR_PASSWORD", (int)HttpStatusCode.NotFound);
+        new("Wrong login or password", "WRONG_LOGIN_OR_PASSWORD");
 
     public static ErrorDetails LoginIsAlreadyInUse =>
         new("User with specified login already exists", "LOGIN_IS_ALREADY_IN_USE");

@@ -1,13 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using Taskmony.Models.Comments;
+using Taskmony.Models.Enums;
+using Taskmony.Models.Notifications;
 using Taskmony.Models.Subscriptions;
 
 namespace Taskmony.Models;
 
-public class User
+public class User : IActionItem
 {
     [Key]
     public Guid Id { get; set; }
+
+    public ActionItemType ActionItemType => ActionItemType.User;
 
     [Required]
     public string? Login { get; set; }
@@ -39,7 +43,7 @@ public class User
     public ICollection<Idea>? Ideas { get; set; }
 
     /// <summary>
-    /// Directions in which the user is a member (including own directions?)
+    /// Directions in which the user is a member (including own directions)
     /// </summary>
     public ICollection<Direction>? Directions { get; set; }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import SideMenu from "../side-menu/side-menu";
+import {SideMenu} from "../side-menu/side-menu";
 import {
   BrowserRouter,
   Routes,
@@ -35,10 +35,10 @@ function App() {
 
 function Home() {
   return (
-    <>
-      <SideMenu />
+    <div className="flex h-full">
+      <SideMenu/>
       <Outlet />
-    </>
+    </div>
   );
 }
 

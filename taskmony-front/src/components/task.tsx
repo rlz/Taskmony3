@@ -1,10 +1,11 @@
 import yes from "../images/checkbox-yes.svg";
 import no from "../images/checkbox-yes.svg";
 import follow from "../images/followed.svg";
-
-import commentsI from "../images/comments.svg";
+import divider from "../images/divider.svg";
+import commentsI from "../images/comment2.svg";
 import createdByI from "../images/by.svg";
-import recurrentI from "../images/recurrent.svg";
+// import recurrentI from "../images/recurrent.svg";
+import recurrentI from "../images/arrows-rotate.svg";
 
 type TaskProps = {
   label: string;
@@ -34,7 +35,7 @@ export const Task = ({
       </div>
       <div
       className={
-        "gap flex justify-start pl-2 pb-2 w-full"
+        "gap flex justify-start pb-2 w-full ml-1"
       }
     >
       {recurrent && <TaskDetails
@@ -59,11 +60,11 @@ export const TaskDetails = ({
   icon, label, hasBorder
 }: TaskDetailsProps) => {
   return (
-        <div className="flex flex-nowrap gap-2 mr-1 ml-2">
+        <div className="flex flex-nowrap gap-1 mr-1 ml-1">
           <img src={icon}></img>
-          <span className={"font-semibold inline whitespace-nowrap text-xs text-blue-500"}>
+          <span className={"font-semibold inline whitespace-nowrap text-xs text-blue-500 mr-1"}>
             {label}
           </span>
-          {hasBorder && <div className="border border-grey-60"/>}
+          {hasBorder && <img src={divider}></img>}
         </div>
       )};

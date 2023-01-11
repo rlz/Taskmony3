@@ -59,9 +59,9 @@ public class TaskType : ObjectType<Task>
         public async Task<User> GetCreatedBy([Parent] Task task, [Service] IUserService userService,
             [GlobalState] Guid userId)
         {
-            var result = await userService.GetUsersAsync(new[] {task.CreatedById}, 
+            var result = await userService.GetUsersAsync(new[] { task.CreatedById },
                 null, null, null, null, userId);
-                
+
             return result.First();
         }
 
@@ -73,7 +73,7 @@ public class TaskType : ObjectType<Task>
                 return null;
             }
 
-            var result = await userService.GetUsersAsync(new[] {task.AssigneeId.Value},
+            var result = await userService.GetUsersAsync(new[] { task.AssigneeId.Value },
                 null, null, null, null, userId);
 
             return result.First();

@@ -6,7 +6,9 @@ public interface IDirectionRepository
 {
     Task<Direction?> GetDirectionByIdAsync(Guid id);
 
-    Task<IEnumerable<Direction>> GetUserDirectionsAsync(Guid userId);
-    
+    Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, int? offset, int? limit, Guid userId);
+
+    Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId);
+
     Task<bool> SaveChangesAsync();
 }

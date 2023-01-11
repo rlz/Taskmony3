@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Taskmony.Data;
@@ -11,9 +12,11 @@ using Taskmony.Data;
 namespace Taskmony.Migrations
 {
     [DbContext(typeof(TaskmonyDbContext))]
-    partial class TaskmonyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230111141804_ConfigureJoinTableMembership")]
+    partial class ConfigureJoinTableMembership
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +48,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
 
                     b.UseTptMappingStrategy();
                 });
@@ -79,7 +82,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Directions", (string)null);
+                    b.ToTable("Directions");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Directions.Membership", b =>
@@ -99,7 +102,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Memberships", (string)null);
+                    b.ToTable("Memberships");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Idea", b =>
@@ -142,7 +145,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("DirectionId");
 
-                    b.ToTable("Ideas", (string)null);
+                    b.ToTable("Ideas");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Notifications.Notification", b =>
@@ -188,7 +191,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("ActorId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Subscriptions.Subscription", b =>
@@ -210,7 +213,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Subscriptions", (string)null);
+                    b.ToTable("Subscriptions");
 
                     b.UseTptMappingStrategy();
                 });
@@ -270,7 +273,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("DirectionId");
 
-                    b.ToTable("Tasks", (string)null);
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("Taskmony.Models.User", b =>
@@ -307,7 +310,7 @@ namespace Taskmony.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Comments.IdeaComment", b =>
@@ -319,7 +322,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("IdeaId");
 
-                    b.ToTable("IdeaComments", (string)null);
+                    b.ToTable("IdeaComments");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Comments.TaskComment", b =>
@@ -331,7 +334,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("TaskComments", (string)null);
+                    b.ToTable("TaskComments");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Subscriptions.IdeaSubscription", b =>
@@ -343,7 +346,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("IdeaId");
 
-                    b.ToTable("IdeaSubscriptions", (string)null);
+                    b.ToTable("IdeaSubscriptions");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Subscriptions.TaskSubscription", b =>
@@ -355,7 +358,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("TaskSubscriptions", (string)null);
+                    b.ToTable("TaskSubscriptions");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Comments.Comment", b =>

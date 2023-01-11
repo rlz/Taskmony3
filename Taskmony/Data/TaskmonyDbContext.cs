@@ -16,6 +16,8 @@ public class TaskmonyDbContext : DbContext
     public DbSet<User> Users => Set<User>();
 
     public DbSet<Direction> Directions => Set<Direction>();
+    
+    public DbSet<Membership> Memberships => Set<Membership>();
 
     public DbSet<Idea> Ideas => Set<Idea>();
 
@@ -67,7 +69,12 @@ public class TaskmonyDbContext : DbContext
 
         modelBuilder.Entity<User>()
             .HasMany(u => u.Directions)
-            .WithMany(d => d.Members);
+            .WithMany(d => d.Members)
+            .UsingEntity<Membership>();
+        
+        modelBuilder.Entity<Membership>()
+            .Property(m => m.CreatedAt)
+            .HasDefaultValueSql("now()");
 
         modelBuilder.Entity<User>()
             .Property(u => u.Password)

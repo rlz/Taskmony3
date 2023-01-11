@@ -46,4 +46,11 @@ public class Query
     {
         return await ideaService.GetIdeasAsync(id, directionId, offset, limit, userId);
     }
+
+    [Authorize]
+    public async Task<IEnumerable<Direction>?> GetDirections([Service] IDirectionService directionService,
+        [GlobalState] Guid userId, Guid[]? id, int? offset, int? limit)
+    {
+        return await directionService.GetDirectionsAsync(id, offset, limit, userId);
+    }
 }

@@ -13,8 +13,6 @@ public interface IUserRepository
 
     Task<User?> GetUserByLoginAsync(string login);
 
-    Task<bool> SaveChangesAsync();
-    
     /// <summary>
     /// Gets users filtered by the given parameters
     /// </summary>
@@ -25,4 +23,6 @@ public interface IUserRepository
     /// <param name="limit">max number of the users sorted by creation date and id to return</param>
     /// <returns>collection of users</returns>
     Task<IEnumerable<User>> GetUsersAsync(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit);
+
+    Task<bool> SaveChangesAsync();
 }

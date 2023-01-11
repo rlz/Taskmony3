@@ -4,7 +4,7 @@ namespace Taskmony.Repositories;
 
 public interface IDirectionRepository
 {
-    Task<Direction?> GetDirectionAsync(Guid directionId);
+    Task<Direction?> GetDirectionByIdAsync(Guid id);
 
     Task<IEnumerable<Direction>> GetUserDirectionsAsync(Guid userId);
     

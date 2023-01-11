@@ -61,6 +61,7 @@ public class TaskType : ObjectType<Task>
         {
             var result = await userService.GetUsersAsync(new[] {task.CreatedById}, 
                 null, null, null, null, userId);
+                
             return result.First();
         }
 
@@ -85,7 +86,7 @@ public class TaskType : ObjectType<Task>
                 return null;
             }
 
-            return await directionService.GetDirectionAsync(task.DirectionId.Value);
+            return await directionService.GetDirectionByIdAsync(task.DirectionId.Value);
         }
 
         public async Task<IEnumerable<Comment>?> GetComments([Parent] Task task,

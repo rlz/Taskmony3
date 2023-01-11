@@ -3,7 +3,7 @@ namespace Taskmony.Services;
 public interface ITaskService
 {
     /// <summary>
-    /// Returns current user tasks filtered by the given parameters
+    /// Gets current user tasks filtered by the given parameters
     /// </summary>
     /// <param name="id">an array of the user ids to filter by</param>
     /// <param name="directionId">an array of the direction ids to filter by</param>

@@ -19,7 +19,7 @@ public class CommentRepository : ICommentRepository, IAsyncDisposable
 
         query = query.Where(c => c.TaskId == taskId);
 
-        return await GetAsync(query, offset, limit);
+        return await GetCommentsAsync(query, offset, limit);
     }
 
     public async Task<IEnumerable<Comment>> GetIdeaCommentsAsync(Guid ideaId, int? offset, int? limit)
@@ -28,10 +28,10 @@ public class CommentRepository : ICommentRepository, IAsyncDisposable
 
         query = query.Where(i => i.IdeaId == ideaId);
 
-        return await GetAsync(query, offset, limit);
+        return await GetCommentsAsync(query, offset, limit);
     }
 
-    private async Task<IEnumerable<Comment>> GetAsync(IQueryable<Comment> query, int? offset, int? limit)
+    private async Task<IEnumerable<Comment>> GetCommentsAsync(IQueryable<Comment> query, int? offset, int? limit)
     {
         if (offset is not null)
         {
@@ -50,6 +50,11 @@ public class CommentRepository : ICommentRepository, IAsyncDisposable
         }
 
         return await query.ToListAsync();
+    }
+
+    public async Task<Comment?> GetCommentById(Guid id)
+    {
+        return await _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<bool> SaveChangesAsync()

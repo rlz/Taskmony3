@@ -39,4 +39,11 @@ public class Query
     {
         return await taskService.GetTasksAsync(id, directionId, offset, limit, userId);
     }
+
+    [Authorize]
+    public async Task<IEnumerable<Idea>?> GetIdeas([Service] IIdeaService ideaService,
+    [GlobalState] Guid userId, Guid[]? id, Guid?[]? directionId, int? offset, int? limit)
+    {
+        return await ideaService.GetIdeasAsync(id, directionId, offset, limit, userId);
+    }
 }

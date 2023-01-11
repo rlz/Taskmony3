@@ -21,4 +21,9 @@ public class CommentService : ICommentService
     {
         return await _commentRepository.GetIdeaCommentsAsync(ideaId, offset, limit);
     }
+
+    public async Task<Comment?> GetCommentById(Guid id)
+    {
+        return await _commentRepository.GetCommentById(id);
+    }
 }

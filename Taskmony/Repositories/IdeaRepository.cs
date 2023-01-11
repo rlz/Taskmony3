@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
+using Taskmony.Models;
 
 namespace Taskmony.Repositories;
 
@@ -20,5 +21,51 @@ public class IdeaRepository : IIdeaRepository, IAsyncDisposable
     public ValueTask DisposeAsync()
     {
         return _context.DisposeAsync();
+    }
+
+    public async Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[] directionId, int? offset,
+        int? limit, Guid userId)
+    {
+        var query = _context.Ideas.AsQueryable();
+
+        if (directionId.Contains(null))
+        {
+            query = query.Where(t => t.DirectionId != null && directionId.Contains(t.DirectionId)
+                                     || t.DirectionId == null && t.CreatedById == userId);
+        }
+        else
+        {
+            query = query.Where(t => t.DirectionId != null && directionId.Contains(t.DirectionId));
+        }
+
+        if (id is not null)
+        {
+            query = query.Where(t => id.Contains(t.Id));
+        }
+
+        query = AddPagination(query, offset, limit);
+
+        return await query.ToListAsync();
+    }
+
+    private IQueryable<Idea> AddPagination(IQueryable<Idea> query, int? offset, int? limit)
+    {
+        if (offset is not null)
+        {
+            query = query
+                .OrderBy(t => t.CreatedAt)
+                .ThenBy(t => t.Id)
+                .Skip(offset.Value);
+        }
+
+        if (limit is not null)
+        {
+            query = query
+                .OrderBy(t => t.CreatedAt)
+                .ThenBy(t => t.Id)
+                .Take(limit.Value);
+        }
+
+        return query;
     }
 }

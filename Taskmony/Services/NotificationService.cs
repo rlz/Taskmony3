@@ -27,24 +27,25 @@ public class NotificationService : INotificationService
     {
         if (actionItemType == ActionItemType.User)
         {
-            var user = await _userService.GetUsersAsync(new[] {actionItemId}, null, null, null, null, currentUserId);
+            var user = await _userService.GetUsersAsync(new[] { actionItemId }, null, null, null, null, currentUserId);
             return user.FirstOrDefault();
         }
 
         if (actionItemType == ActionItemType.Task)
         {
-            var task = await _taskService.GetTasksAsync(new[] {actionItemId}, null, null, null, currentUserId);
+            var task = await _taskService.GetTasksAsync(new[] { actionItemId }, null, null, null, currentUserId);
             return task.FirstOrDefault();
         }
 
         if (actionItemType == ActionItemType.Idea)
         {
-            throw new NotImplementedException();
+            var idea = await _ideaService.GetIdeasAsync(new[] { actionItemId }, null, null, null, currentUserId);
+            return idea.FirstOrDefault();
         }
 
         if (actionItemType == ActionItemType.Comment)
         {
-            throw new NotImplementedException();
+            return await _commentService.GetCommentById(actionItemId);
         }
 
         return null;

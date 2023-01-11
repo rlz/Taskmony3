@@ -15,13 +15,16 @@ public class NotificationType : ObjectType<Notification>
         descriptor.Field(n => n.ActionItemId).Ignore();
         descriptor.Field(n => n.ActionItemType).Ignore();
 
-        descriptor.Field(n => n.Actor).Type<ObjectType<User>>();
         descriptor.Field(n => n.ModifiedAt).Type<StringType>();
         descriptor.Field(n => n.ActionType).Type<EnumType<ActionType>>();
 
         descriptor.Field(n => n.ActionItem)
             .ResolveWith<Resolvers>(r => r.GetActionItem(default!, default!, default!))
             .Type<ActionItem>();
+
+        descriptor.Field(n => n.Actor)
+            .Type<ObjectType<User>>()
+            .ResolveWith<Resolvers>(r => r.GetActor(default!, default!, default!));
     }
 
     private class Resolvers
@@ -36,6 +39,15 @@ public class NotificationType : ObjectType<Notification>
 
             return await notificationService.GetActionItemAsync(notification.ActionItemType.Value,
                 notification.ActionItemId.Value, userId);
+        }
+
+        public async Task<User> GetActor([Parent] Notification notification, 
+            [Service] IUserService userService, [GlobalState] Guid userId)
+        {
+            var result = await userService.GetUsersAsync(new[] { notification.ActorId },
+                null, null, null, null, userId);
+
+            return result.First();
         }
     }
 }

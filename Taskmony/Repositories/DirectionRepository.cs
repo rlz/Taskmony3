@@ -13,9 +13,9 @@ public class DirectionRepository : IDirectionRepository, IAsyncDisposable
         _context = contextFactory.CreateDbContext();
     }
 
-    public async Task<Direction?> GetDirectionAsync(Guid directionId)
+    public async Task<Direction?> GetDirectionByIdAsync(Guid id)
     {
-        return await _context.Directions.FindAsync(directionId);
+        return await _context.Directions.FindAsync(id);
     }
 
     public async Task<IEnumerable<Direction>> GetUserDirectionsAsync(Guid userId)

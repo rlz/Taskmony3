@@ -3,7 +3,7 @@ namespace Taskmony.Repositories;
 public interface ITaskRepository
 {
     /// <summary>
-    /// Returns user tasks filtered by the given parameters
+    /// Gets user tasks filtered by the given parameters
     /// </summary>
     /// <param name="id">an array of the task ids to filter by</param>
     /// <param name="directionId">an array of the direction ids to filter by</param>

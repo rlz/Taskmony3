@@ -16,7 +16,7 @@ public interface IUserRepository
     Task<bool> SaveChangesAsync();
     
     /// <summary>
-    /// Returns users filtered by the given parameters
+    /// Gets users filtered by the given parameters
     /// </summary>
     /// <param name="id">an array of the user ids to filter by</param>
     /// <param name="email">an array of the user emails to filter by</param>

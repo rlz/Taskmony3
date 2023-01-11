@@ -94,6 +94,7 @@ builder.Services
     .AddType<NotificationType>()
     .BindRuntimeType<Guid, IdType>()
     .AddTypeConverter<StringToGuidConverter>()
+    .AddTypeConverter<GuidToStringConverter>()
     .AddTypeConverter<DateTimeToStringConverter>();
 
 var app = builder.Build();

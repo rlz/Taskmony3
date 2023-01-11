@@ -24,7 +24,7 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<IEnumerable<User>> GetIdeaSubscribersAsync(Guid ideaId, Guid currentUserId)
     {
-        var subscriptions = await _subscriptionRepository.GetTaskSubscriptionsAsync(ideaId);
+        var subscriptions = await _subscriptionRepository.GetIdeaSubscriptionsAsync(ideaId);
 
         return await GetSubscribersAsync(subscriptions, currentUserId);
     }

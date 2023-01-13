@@ -13,6 +13,7 @@ import MyIdeas from "../../pages/my-ideas/my-ideas";
 import Archive from "../../pages/archive/archive";
 import ErrorPage from "../../pages/error-page/error-page";
 import Login from "../../pages/login/login";
+import Direction from "../../pages/direction/direction";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="tasks" element={<MyTasks />} />
             <Route path="ideas" element={<MyIdeas />} />
             <Route path="archive/:element" element={<Archive />} />
+            <Route path="directions/:id/:element" element={<Direction />} />
             <Route path="" element={<Navigate to="/tasks" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/tasks" replace />} />

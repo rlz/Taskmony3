@@ -12,6 +12,7 @@ import MenuItem from "./menu-item";
 import { useState } from "react";
 import { Profile } from "./profile";
 import { ShortMenuItem } from "./short-menu-item";
+import { AddBtn2 } from "../add-btn/add-btn2";
 
 export const SideMenu = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -131,7 +132,7 @@ const DirectionsMenu = () => {
           <ul>
             <li>
               <MenuItem
-                to={"directions/1"}
+                to={"directions/1/tasks"}
                 name={"Project #1"}
                 icon={direction}
                 isActive={false}
@@ -139,7 +140,7 @@ const DirectionsMenu = () => {
             </li>
             <li>
               <MenuItem
-                to={"directions/1"}
+                to={"directions/2/tasks"}
                 name={"Project #1"}
                 icon={direction}
                 isActive={false}
@@ -147,7 +148,7 @@ const DirectionsMenu = () => {
             </li>
             <li>
               <MenuItem
-                to={"directions/1"}
+                to={"directions/3/tasks"}
                 name={"Project #1"}
                 icon={direction}
                 isActive={false}
@@ -156,12 +157,7 @@ const DirectionsMenu = () => {
           </ul>
         </nav>
       )}
-      <div className={"gap-4 flex m-4"}>
-        <img src={addCircle}></img>
-        <p className={"font-semibold text-sm text-gray-800"}>
-          add a new direction
-        </p>
-      </div>
+      <AddBtn2 label={"add a new direction"} onClick={()=>{}}/>
     </div>
   );
 };

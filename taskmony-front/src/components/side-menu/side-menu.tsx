@@ -65,7 +65,7 @@ const SmallMenu = ({toggleOpen} : SmallMenuProps) => {
           </li>
           <li>
             <ShortMenuItem
-              to={"archive"}
+              to={"archive/tasks"}
               name={"Archive"}
               icon={archive}
               isActive={false}
@@ -100,7 +100,7 @@ const Menu = () => {
           </li>
           <li>
             <MenuItem
-              to={"archive"}
+              to={"archive/tasks"}
               name={"Archive"}
               icon={archive}
               isActive={false}
@@ -131,7 +131,7 @@ const DirectionsMenu = () => {
           <ul>
             <li>
               <MenuItem
-                to={"directions"}
+                to={"directions/1"}
                 name={"Project #1"}
                 icon={direction}
                 isActive={false}
@@ -139,7 +139,7 @@ const DirectionsMenu = () => {
             </li>
             <li>
               <MenuItem
-                to={"directions"}
+                to={"directions/1"}
                 name={"Project #1"}
                 icon={direction}
                 isActive={false}
@@ -147,7 +147,7 @@ const DirectionsMenu = () => {
             </li>
             <li>
               <MenuItem
-                to={"directions"}
+                to={"directions/1"}
                 name={"Project #1"}
                 icon={direction}
                 isActive={false}

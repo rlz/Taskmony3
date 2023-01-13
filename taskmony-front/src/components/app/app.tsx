@@ -23,7 +23,7 @@ function App() {
           <Route path="/" element={<Home />}>
             <Route path="tasks" element={<MyTasks />} />
             <Route path="ideas" element={<MyIdeas />} />
-            <Route path="archive" element={<Archive />} />
+            <Route path="archive/:element" element={<Archive />} />
             <Route path="" element={<Navigate to="/tasks" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/tasks" replace />} />

@@ -73,7 +73,7 @@ public class UserService : IUserService
     {
         if (id is null && email is null && login is null)
         {
-            id = new[] {currentUserId};
+            id = new[] { currentUserId };
         }
 
         email = email?
@@ -92,7 +92,7 @@ public class UserService : IUserService
         {
             Id = x.Id,
             Email = x.Id == currentUserId ? x.Email : null,
-            Login = x.Id == currentUserId ? x.Login : null,
+            Login = x.Login,
             DisplayName = x.DisplayName
         });
     }

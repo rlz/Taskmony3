@@ -22,7 +22,7 @@ public class DateTimeToStringConverter : IChangeTypeProvider
             {
                 if (input is DateTime dateTime)
                 {
-                    return _timeConverter.DateTimeToRfc3339(dateTime);
+                    return _timeConverter.DateTimeToString(dateTime);
                 }
 
                 return input;

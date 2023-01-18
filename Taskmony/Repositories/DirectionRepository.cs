@@ -60,6 +60,11 @@ public class DirectionRepository : IDirectionRepository, IAsyncDisposable
             .ToListAsync();
     }
 
+    public async Task<bool> AnyMemberWithId(Guid directionId, Guid memberId)
+    {
+        return await _context.Memberships.AnyAsync(m => m.DirectionId == directionId && m.UserId == memberId);
+    }
+
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() >= 0;

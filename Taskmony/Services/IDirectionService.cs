@@ -11,4 +11,6 @@ public interface IDirectionService
     Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, int? offset, int? limit, Guid currentUserId);
 
     Task<IEnumerable<User>> GetDirectionMembersAsync(Guid id, Guid currentUserId);
+
+    Task<bool> AnyMemberWithId(Guid directionId, Guid memberId);
 }

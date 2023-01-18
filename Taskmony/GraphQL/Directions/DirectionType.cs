@@ -52,8 +52,8 @@ public class DirectionType : ObjectType<Direction>
             [Service] INotificationService notificationService, [Service] ITimeConverter timeConverter,
             string? start, string? end)
         {
-            DateTime? startDateTime = start is null ? null : timeConverter.Rfc3339ToDateTimeUtc(start);
-            DateTime? endDateTime = end is null ? null : timeConverter.Rfc3339ToDateTimeUtc(end);
+            DateTime? startDateTime = start is null ? null : timeConverter.StringToDateTimeUtc(start);
+            DateTime? endDateTime = end is null ? null : timeConverter.StringToDateTimeUtc(end);
 
             return await notificationService.GetDirectionNotificationsAsync(direction.Id, startDateTime, endDateTime);
         }

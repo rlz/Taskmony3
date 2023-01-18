@@ -58,6 +58,26 @@ public class TaskRepository : ITaskRepository, IAsyncDisposable
         return query;
     }
 
+    public async Task AddTask(Models.Task task)
+    {
+        await _context.Tasks.AddAsync(task);
+    }
+
+    public async Task AddTasks(IReadOnlyCollection<Models.Task> tasks)
+    {
+        await _context.Tasks.AddRangeAsync(tasks);
+    }
+
+    public async Task<Models.Task?> GetTaskByIdAsync(Guid id)
+    {
+        return await _context.Tasks.FindAsync(id);
+    }
+
+    public async Task<IEnumerable<Models.Task>> GetNotCompletedTasksByGroupIdAsync(Guid id)
+    {
+        return await _context.Tasks.Where(t => t.GroupId == id && t.CompletedAt == null).ToListAsync();
+    }
+
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() >= 0;

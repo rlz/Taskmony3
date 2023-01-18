@@ -10,5 +10,7 @@ public interface IDirectionRepository
 
     Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId);
 
+    Task<bool> AnyMemberWithId(Guid directionId, Guid memberId);
+
     Task<bool> SaveChangesAsync();
 }

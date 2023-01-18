@@ -17,11 +17,14 @@ public class TaskConfiguration : IEntityTypeConfiguration<Models.Task>
             .IsRequired()
             .HasDefaultValueSql("now()");
 
+        builder.Property(t => t.StartAt)
+            .IsRequired()
+            .HasDefaultValueSql("now()");
+
         builder.Ignore(t => t.ActionItemType);
         builder.Ignore(t => t.NumberOfRepetitions);
         builder.Ignore(t => t.Notifications);
 
         builder.Property(t => t.Description).IsRequired();
-        builder.Property(t => t.StartAt).IsRequired();
     }
 }

@@ -315,7 +315,7 @@ public class TaskService : ITaskService
         return tasks;
     }
 
-    private async Task<Task> GetTaskOrThrowAsync(Guid id, Guid currentUserId)
+    public async Task<Task> GetTaskOrThrowAsync(Guid id, Guid currentUserId)
     {
         var task = await _taskRepository.GetTaskByIdAsync(id);
 

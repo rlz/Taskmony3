@@ -57,6 +57,16 @@ public class CommentRepository : ICommentRepository, IAsyncDisposable
         return await _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
     }
 
+    public async Task AddComment(TaskComment comment)
+    {
+        await _context.TaskComments.AddAsync(comment);
+    }
+
+    public async Task AddComment(IdeaComment comment)
+    {
+        await _context.IdeaComments.AddAsync(comment);
+    }
+
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;

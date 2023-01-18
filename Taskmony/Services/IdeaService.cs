@@ -160,7 +160,7 @@ public class IdeaService : IIdeaService
         return await _ideaRepository.SaveChangesAsync();
     }
 
-    private async Task<Idea> GetIdeaOrThrowAsync(Guid id, Guid currentUserId)
+    public async Task<Idea> GetIdeaOrThrowAsync(Guid id, Guid currentUserId)
     {
         var idea = await _ideaRepository.GetIdeaByIdAsync(id);
 

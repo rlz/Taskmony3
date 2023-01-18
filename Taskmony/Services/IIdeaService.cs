@@ -8,6 +8,8 @@ public interface IIdeaService
     Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[]? directionId,
         int? offset, int? limit, Guid currentUserId);
 
+    Task<Idea> GetIdeaOrThrowAsync(Guid id, Guid currentUserId);
+
     Task<Idea> AddIdea(Idea idea);
 
     Task<bool> SetIdeaDescription(Guid id, string description, Guid currentUserId);

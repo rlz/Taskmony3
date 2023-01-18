@@ -16,6 +16,8 @@ public interface ITaskService
     Task<IEnumerable<Models.Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId,
         int? offset, int? limit, Guid currentUserId);
 
+    Task<Models.Task> GetTaskOrThrowAsync(Guid id, Guid currentUserId);
+
     Task<Models.Task> AddTask(Models.Task task);
 
     Task<Guid[]> AddRepeatingTask(Models.Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions);

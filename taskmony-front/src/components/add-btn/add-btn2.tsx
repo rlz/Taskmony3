@@ -8,7 +8,7 @@ type BtnProps = {
 
 export const AddBtn2 = ({ label, onClick, style }: BtnProps) => {
   return (
-    <div className={"gap-4 flex m-4 "+ style } onClick={()=>onClick()}>
+    <div className={"gap-4 flex m-4 cursor-pointer "+ style } onClick={()=>onClick()}>
     <img src={addCircle}></img>
     <p className={"font-semibold text-sm text-gray-800"}>
       {label}

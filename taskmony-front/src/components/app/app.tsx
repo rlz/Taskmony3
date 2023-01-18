@@ -16,6 +16,7 @@ import Login from "../../pages/login/login";
 import Direction from "../../pages/direction/direction";
 import { NotificationsBtn } from "../notifications/notifications-btn";
 import { NotificationsModal } from "../notifications/notifications-modal";
+import { AddDirectionModal } from "../add-direction-modal/add-direction-modal";
 
 function App() {
   return (
@@ -46,7 +47,7 @@ function Home() {
       <div className="w-full">
       <Outlet />
       </div>
-      {openNotif && <NotificationsModal close={()=>setOpenNotif(false)}/>}
+      {openNotif && <NotificationsModal close={()=>setOpenNotif(false)}/>}     
     </div>
   );
 }

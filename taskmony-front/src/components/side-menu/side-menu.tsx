@@ -14,14 +14,16 @@ import { Profile } from "./profile";
 import { ShortMenuItem } from "./short-menu-item";
 import { AddBtn2 } from "../add-btn/add-btn2";
 import { ProfileMenuModal } from "../profile-menu-modal/profile-menu-modal";
+import { AddDirectionModal } from "../add-direction-modal/add-direction-modal";
 
 export const SideMenu = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const toggleOpen = () => setIsOpen(!isOpen);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState<boolean>(false);
-
+  const [openNewDirection, setOpenNewDirection] = useState(false);
   return (
     <div className={`${isOpen ? "w-1/6" : ""} border border-grey-60 h-full`}>
+    {openNewDirection && <AddDirectionModal close={()=>setOpenNewDirection(false)}/>}
       {isProfileMenuOpen ? (
         <ProfileMenuModal close={() => setIsProfileMenuOpen(false)} />
       ) : isOpen ? (
@@ -31,7 +33,7 @@ export const SideMenu = () => {
             isOpen={isOpen}
             onClick={() => setIsProfileMenuOpen(true)}
           />{" "}
-          <Menu /> <DirectionsMenu />
+          <Menu /> <DirectionsMenu openDirection={()=>setOpenNewDirection(true)} />
         </>
       ) : (
         <SmallMenu toggleOpen={toggleOpen} />
@@ -123,7 +125,11 @@ const Menu = () => {
   );
 };
 
-const DirectionsMenu = () => {
+type DirectionsMenuPropsT = {
+  openDirection: Function; 
+}
+
+const DirectionsMenu = ({openDirection} : DirectionsMenuPropsT) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   return (
@@ -167,7 +173,7 @@ const DirectionsMenu = () => {
           </ul>
         </nav>
       )}
-      <AddBtn2 label={"add a new direction"} onClick={() => {}} />
+      <AddBtn2 label={"add a new direction"} onClick={openDirection} />
     </div>
   );
 };

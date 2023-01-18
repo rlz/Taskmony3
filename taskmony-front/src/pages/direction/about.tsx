@@ -3,15 +3,19 @@ import edit from "../../images/edit.svg";
 import { AddBtn2 } from "../../components/add-btn/add-btn2";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { useState } from "react";
+import { AddUserModal } from "../../components/add-user-modal/add-user-modal";
 
 
 export const About = () => {
+
   const text = `Facit igitur Lucius noster prudenter, qui audire de summo bono potissimum velit;
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Haeret in salebra. Invidiosum nomen est, infame, suspectum.
     An hoc usque quaque, aliter in vita?`;
     const [isOpen, setIsOpen] = useState<boolean>(true);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   return (
     <div>
+      {isModalOpen && <AddUserModal close={()=>setIsModalOpen(false)}/>}
       <div className="flex justify-end"><LeaveBtn onClick={()=>{}}/></div>
       <AboutElement text={text}/>
       <FilterDivider isOpen={isOpen} setIsOpen={setIsOpen} title="USERS:" />
@@ -23,7 +27,7 @@ export const About = () => {
         </>
       )}
       <div className="object-center w-full">
-        <AddBtn2 label="add a new user" style="justify-center" onClick={() => {}} />
+        <AddBtn2 label="add a new user" style="justify-center" onClick={()=>setIsModalOpen(true)} />
       </div>
     </div>
   );

@@ -20,7 +20,11 @@ export const ProfileMenuModal = ({ close }: ModalPropsT) => {
   );
 };
 
-export const Input = ({ label }) => {
+type InputPropsT = {
+    label:string
+  };
+
+export const Input = ({ label } : InputPropsT) => {
   return (
     <input
       type="text"
@@ -30,7 +34,12 @@ export const Input = ({ label }) => {
   );
 };
 
-export const Btn = ({ onClick, label }) => {
+type BtnPropsT = {
+    label:string,
+    onClick: Function
+  };
+
+export const Btn = ({ onClick, label } : BtnPropsT) => {
   return (
     <div
       className={"p-1 w-fit mt-2 mb-2 bg-blue-400 rounded-md"}

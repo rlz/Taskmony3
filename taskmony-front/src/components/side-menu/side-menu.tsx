@@ -13,19 +13,29 @@ import { useState } from "react";
 import { Profile } from "./profile";
 import { ShortMenuItem } from "./short-menu-item";
 import { AddBtn2 } from "../add-btn/add-btn2";
+import { ProfileMenuModal } from "../profile-menu-modal/profile-menu-modal";
 
 export const SideMenu = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
-
   const toggleOpen = () => setIsOpen(!isOpen);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState<boolean>(false);
+
   return (
-    <div className={`${isOpen? "w-1/6" : ""} border border-grey-60 h-full`}>
-      {isOpen ? (
+    <div className={`${isOpen ? "w-1/6" : ""} border border-grey-60 h-full`}>
+      {isProfileMenuOpen ? (
+        <ProfileMenuModal close={() => setIsProfileMenuOpen(false)} />
+      ) : isOpen ? (
         <>
-          <Profile toggleOpen={toggleOpen} isOpen={isOpen} /> <Menu />{" "}
-          <DirectionsMenu />
+          <Profile
+            toggleOpen={toggleOpen}
+            isOpen={isOpen}
+            onClick={() => setIsProfileMenuOpen(true)}
+          />{" "}
+          <Menu /> <DirectionsMenu />
         </>
-      ) : <SmallMenu toggleOpen={toggleOpen}/>}
+      ) : (
+        <SmallMenu toggleOpen={toggleOpen} />
+      )}
     </div>
   );
 };
@@ -33,20 +43,20 @@ type SmallMenuProps = {
   toggleOpen: Function;
 };
 
-const SmallMenu = ({toggleOpen} : SmallMenuProps) => {
+const SmallMenu = ({ toggleOpen }: SmallMenuProps) => {
   return (
     <div>
       <nav>
         <ul>
-        <li>
-        <div onClick={() => toggleOpen()}>
-        <ShortMenuItem
-              to={""}
-              name={""}
-              icon={menuClose}
-              isActive={false}
-            />
-        </div>
+          <li>
+            <div onClick={() => toggleOpen()}>
+              <ShortMenuItem
+                to={""}
+                name={""}
+                icon={menuClose}
+                isActive={false}
+              />
+            </div>
           </li>
           <li>
             <ShortMenuItem
@@ -157,7 +167,7 @@ const DirectionsMenu = () => {
           </ul>
         </nav>
       )}
-      <AddBtn2 label={"add a new direction"} onClick={()=>{}}/>
+      <AddBtn2 label={"add a new direction"} onClick={() => {}} />
     </div>
   );
 };

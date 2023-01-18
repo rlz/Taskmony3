@@ -6,12 +6,13 @@ import { Avatar } from "./avatar";
 type ProfileProps = {
   toggleOpen: Function;
   isOpen: boolean;
+  onClick: Function
 };
 
-export const Profile = ({ toggleOpen, isOpen }: ProfileProps) => {
+export const Profile = ({ toggleOpen, isOpen, onClick }: ProfileProps) => {
   return (
     <div className={"gap-4 flex m-4 mb-8 ml-5 justify-between"}>
-      <div className={"gap-6 flex justify-between"}>
+      <div className={"gap-6 flex justify-between cursor-pointer"} onClick={() => onClick()}>
         <div>
           <p className={"font-semibold text-sm"}>
             John Doe

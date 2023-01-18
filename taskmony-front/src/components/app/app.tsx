@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {SideMenu} from "../side-menu/side-menu";
 import {
   BrowserRouter,
@@ -15,6 +15,7 @@ import ErrorPage from "../../pages/error-page/error-page";
 import Login from "../../pages/login/login";
 import Direction from "../../pages/direction/direction";
 import { NotificationsBtn } from "../notifications/notifications-btn";
+import { NotificationsModal } from "../notifications/notifications-modal";
 
 function App() {
   return (
@@ -37,13 +38,15 @@ function App() {
 }
 
 function Home() {
+  const [openNotif, setOpenNotif] = useState(false);
   return (
     <div className="flex h-full bg-slate-50">
-      <NotificationsBtn/>
+      {!openNotif && <NotificationsBtn onClick={()=>{setOpenNotif(true);console.log(openNotif);}}/>}
       <SideMenu/>
       <div className="w-full">
       <Outlet />
       </div>
+      {openNotif && <NotificationsModal close={()=>setOpenNotif(false)}/>}
     </div>
   );
 }

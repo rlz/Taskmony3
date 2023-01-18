@@ -1,9 +1,13 @@
 import notifications from "../../images/notifications.svg";
 import './badge.css';
 
-export const NotificationsBtn = () => {
+type NotificationsBtnPropsT = {
+    onClick: Function,
+}
+
+export const NotificationsBtn = ({onClick} : NotificationsBtnPropsT) => {
     return (
-      <div className={"absolute top-0 right-0 m-4"}>
+      <div className={"absolute top-0 right-0 m-4"} onClick={(e)=>onClick()}>
         	<button data-after-text="2" data-after-type="badge top right" type="button"><img src={notifications} className={"block m-0"}/></button>
       </div>
     );  

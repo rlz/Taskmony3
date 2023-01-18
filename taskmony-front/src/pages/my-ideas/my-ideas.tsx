@@ -29,7 +29,7 @@ function Filter() {
   const [isOpen1, setIsOpen1] = useState<boolean>(true);
   const [isOpen2, setIsOpen2] = useState<boolean>(true);
   return (
-    <div className="w-1/5 mt-28">
+    <div className="w-1/5 mt-12">
       <FilterDivider
         isOpen={isOpen1}
         setIsOpen={setIsOpen1}

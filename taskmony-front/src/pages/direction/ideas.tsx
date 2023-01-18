@@ -8,7 +8,7 @@ import { Idea } from "../../components/idea";
 function Ideas() {
   return (
     <div className="flex w-full">
-      <div className="w-3/4  m-3">
+      <div className="w-3/4 m-3 ml-0">
         <AddBtn label={"add a new idea"} onClick={() => {}} />
         <Idea
           label={"idea #1"}
@@ -28,7 +28,7 @@ function Filter() {
   const [isOpen1, setIsOpen1] = useState<boolean>(true);
   const [isOpen2, setIsOpen2] = useState<boolean>(true);
   return (
-    <div className="w-1/5 mt-28">
+    <div className="w-1/5 mt-4">
       <FilterDivider
         isOpen={isOpen1}
         setIsOpen={setIsOpen1}

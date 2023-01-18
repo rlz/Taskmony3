@@ -8,7 +8,7 @@ import hrLine from "../../images/hr-line.svg";
 export const ArchivedTasks = () => {
     return (
       <div className="flex w-full">
-        <div className="w-3/4  m-3">
+        <div className="w-3/4 m-3 ml-0">
           <Idea label={"task #2"} direction="Taskmony" />
           <Idea label={"task #3"} direction="Taskmony" />
         </div>
@@ -21,7 +21,7 @@ export const ArchivedTasks = () => {
     const [isOpen1, setIsOpen1] = useState<boolean>(true);
     const [isOpen2, setIsOpen2] = useState<boolean>(true);
     return (
-      <div className="w-1/5 mt-28">
+      <div className="w-1/5 mt-4">
           <>
             <FilterItem label="deleted" checked radio />
             <FilterItem label="completed" checked={false} radio />

@@ -8,7 +8,7 @@ import hrLine from "../../images/hr-line.svg";
 export const ArchivedDirections = () => {
     return (
       <div className="flex w-full">
-        <div className="w-3/4  m-3">
+        <div className="w-3/4  m-3 ml-0">
           <Idea label={"direction #2"}  />
           <Idea label={"direction #3"}  />
         </div>
@@ -20,7 +20,7 @@ export const ArchivedDirections = () => {
   function Filter() {
     const [isOpen1, setIsOpen1] = useState<boolean>(true);
     return (
-      <div className="w-1/5 mt-28">
+      <div className="w-1/5 mt-4">
         <FilterDivider
           isOpen={isOpen1}
           setIsOpen={setIsOpen1}

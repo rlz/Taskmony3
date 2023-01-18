@@ -20,14 +20,12 @@ function Archive() {
   }}
 
   return (
-    <div className="flex w-full">
-      <div className="w-3/4  m-3">
+    <div className="p-3 w-full">
         <h1 className="font-bold text-3xl">Archive</h1>
         <Menu />
         {
           renderSwitch(type)
           }
-    </div>
     </div>
   );
 }

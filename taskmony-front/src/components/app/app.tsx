@@ -14,6 +14,7 @@ import Archive from "../../pages/archive/archive";
 import ErrorPage from "../../pages/error-page/error-page";
 import Login from "../../pages/login/login";
 import Direction from "../../pages/direction/direction";
+import { NotificationsBtn } from "../notifications/notifications-btn";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
 function Home() {
   return (
     <div className="flex h-full bg-slate-50">
+      <NotificationsBtn/>
       <SideMenu/>
       <div className="w-full">
       <Outlet />

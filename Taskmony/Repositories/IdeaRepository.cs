@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
 using Taskmony.Models;
+using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories;
 
@@ -11,16 +12,6 @@ public class IdeaRepository : IIdeaRepository, IAsyncDisposable
     public IdeaRepository(IDbContextFactory<TaskmonyDbContext> contextFactory)
     {
         _context = contextFactory.CreateDbContext();
-    }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync() >= 0;
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        return _context.DisposeAsync();
     }
 
     public async Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[] directionId, int? offset,
@@ -67,5 +58,25 @@ public class IdeaRepository : IIdeaRepository, IAsyncDisposable
         }
 
         return query;
+    }
+
+    public async Task<Idea?> GetIdeaByIdAsync(Guid id)
+    {
+        return await _context.Ideas.FindAsync(id);
+    }
+
+    public async Task AddIdea(Idea idea)
+    {
+        await _context.Ideas.AddAsync(idea);
+    }
+
+    public async Task<bool> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        return _context.DisposeAsync();
     }
 }

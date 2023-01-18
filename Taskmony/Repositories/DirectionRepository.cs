@@ -67,7 +67,7 @@ public class DirectionRepository : IDirectionRepository, IAsyncDisposable
 
     public async Task<bool> SaveChangesAsync()
     {
-        return await _context.SaveChangesAsync() >= 0;
+        return await _context.SaveChangesAsync() > 0;
     }
 
     public ValueTask DisposeAsync()

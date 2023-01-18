@@ -88,6 +88,7 @@ builder.Services
     .AddQueryType<Query>()
     .AddMutationType()
     .AddTypeExtension<TaskMutations>()
+    .AddTypeExtension<IdeaMutations>()
     .AddType<TaskType>()
     .AddType<IdeaType>()
     .AddType<UserType>()

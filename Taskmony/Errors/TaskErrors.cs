@@ -22,14 +22,8 @@ public static class TaskErrors
     public static ErrorDetails CompleteDeletedTask =>
         new("Cannot complete deleted task", "COMPLETE_DELETED_TASK");
 
-    public static ErrorDetails InvalidDeletedAt =>
-        new("Task cannot be deleted in the future", "INVALID_DELETED_AT");
-
     public static ErrorDetails AlreadyCompleted =>
         new("Task is already completed", "TASK_ALREADY_COMPLETED");
-
-    public static ErrorDetails AlreadyDeletd => 
-        new("Task is already deleted", "TASK_ALREADY_DELETED");
 
     public static ErrorDetails RepeatEveryIsMissing => 
         new("Repeat every must be specified if repeat mode is custom", "REPEAT_EVERY_IS_MISSING");

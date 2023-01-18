@@ -16,4 +16,7 @@ public static class ValidationErrors
 
     public static ErrorDetails InvalidCompletedAt => 
         new("Completion date must not be in the future", "INVALID_COMPLETED_AT");
+
+    public static ErrorDetails InvalidReviewedAt => 
+        new("Review date must not be in the future", "INVALID_REVIEWED_AT");
 }

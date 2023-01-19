@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
 using Taskmony.Models;
+using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories;
 
@@ -63,6 +64,21 @@ public class DirectionRepository : IDirectionRepository, IAsyncDisposable
     public async Task<bool> AnyMemberWithId(Guid directionId, Guid memberId)
     {
         return await _context.Memberships.AnyAsync(m => m.DirectionId == directionId && m.UserId == memberId);
+    }
+
+    public async Task AddDirection(Direction direction)
+    {
+        await _context.Directions.AddAsync(direction);
+    }
+
+    public void AddMember(Membership membership)
+    {
+        _context.Memberships.Add(membership);
+    }
+
+    public void RemoveMember(Membership membership)
+    {
+        _context.Memberships.Remove(membership);
     }
 
     public async Task<bool> SaveChangesAsync()

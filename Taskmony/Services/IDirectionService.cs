@@ -15,4 +15,16 @@ public interface IDirectionService
     Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId);
 
     Task<bool> AnyMemberWithId(Guid directionId, Guid memberId);
+
+    Task<Direction> AddDirection(Direction direction);
+
+    Task<bool> SetDirectionName(Guid id, string name, Guid currentUserId);
+
+    Task<bool> SetDirectionDetails(Guid id, string? details, Guid currentUserId);
+
+    Task<bool> AddMember(Guid directionId, Guid memberId, Guid currentUserId);
+
+    Task<bool> RemoveMember(Guid directionId, Guid memberId, Guid currentUserId);
+
+    Task<bool> SetDirectionDeletedAt(Guid id, DateTime? deletedAtUtc, Guid currentUserId);
 }

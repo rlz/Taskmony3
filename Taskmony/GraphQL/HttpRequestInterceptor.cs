@@ -16,7 +16,7 @@ public class HttpRequestInterceptor : DefaultHttpRequestInterceptor
                                     ?? throw new ArgumentException("User identifier claim is required",
                                         nameof(context)));
 
-            requestBuilder.SetProperty("userId", userId);
+            requestBuilder.SetProperty("currentUserId", userId);
         }
 
         return base.OnCreateAsync(context, requestExecutor, requestBuilder,

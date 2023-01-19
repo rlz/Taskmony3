@@ -35,17 +35,15 @@ public class DirectionType : ObjectType<Direction>
     private class Resolvers
     {
         public async Task<User> GetCreatedBy([Parent] Direction direction, UserByIdDataLoader userById,
-            [GlobalState] Guid userId)
+            [GlobalState] Guid currentUserId)
         {
             return await userById.LoadAsync(direction.CreatedById);
         }
 
-        public async Task<IEnumerable<User>?> GetMembers([Parent] Direction direction, 
-            UserByIdDataLoader userById, [Service] IDirectionService directionService)
+        public async Task<IEnumerable<User>?> GetMembers([Parent] Direction direction,
+            [Service] IDirectionService directionService, [GlobalState] Guid currentUserId)
         {
-            var memberIds = await directionService.GetMemberIdsAsync(direction.Id);
-
-            return await userById.LoadAsync(memberIds.ToArray());
+            return await directionService.GetDirectionMembersAsync(direction.Id, currentUserId);
         }
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Direction direction,

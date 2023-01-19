@@ -8,57 +8,57 @@ public class UserMutations
 {
     [Authorize]
     public async Task<Guid?> UserSetNotificationReadTime([Service] IUserService userService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid userId, string notificationReadTime, string readAt)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, string notificationReadTime, string readAt)
     {
         var notificationReadTimeUtc = timeConverter.StringToDateTimeUtc(notificationReadTime);
 
-        if (await userService.SetNotificationReadTime(userId, notificationReadTimeUtc, userId))
+        if (await userService.SetNotificationReadTime(currentUserId, notificationReadTimeUtc, currentUserId))
         {
-            return userId;
+            return currentUserId;
         }
 
         return null;
     }
 
     [Authorize]
-    public async Task<Guid?> UserSetLogin([Service] IUserService userService, [GlobalState] Guid userId, string login)
+    public async Task<Guid?> UserSetLogin([Service] IUserService userService, [GlobalState] Guid currentUserId, string login)
     {
-        if (await userService.SetLogin(userId, login, userId))
+        if (await userService.SetLogin(currentUserId, login, currentUserId))
         {
-            return userId;
+            return currentUserId;
         }
 
         return null;
     }
 
     [Authorize]
-    public async Task<Guid?> UserSetDisplayName([Service] IUserService userService, [GlobalState] Guid userId, string displayName)
+    public async Task<Guid?> UserSetDisplayName([Service] IUserService userService, [GlobalState] Guid currentUserId, string displayName)
     {
-        if (await userService.SetDisplayName(userId, displayName, userId))
+        if (await userService.SetDisplayName(currentUserId, displayName, currentUserId))
         {
-            return userId;
+            return currentUserId;
         }
 
         return null;
     }
 
     [Authorize]
-    public async Task<Guid?> UserSetEmail([Service] IUserService userService, [GlobalState] Guid userId, string email)
+    public async Task<Guid?> UserSetEmail([Service] IUserService userService, [GlobalState] Guid currentUserId, string email)
     {
-        if (await userService.SetEmail(userId, email, userId))
+        if (await userService.SetEmail(currentUserId, email, currentUserId))
         {
-            return userId;
+            return currentUserId;
         }
 
         return null;
     }
 
     [Authorize]
-    public async Task<Guid?> UserSetPassword([Service] IUserService userService, [GlobalState] Guid userId, string password)
+    public async Task<Guid?> UserSetPassword([Service] IUserService userService, [GlobalState] Guid currentUserId, string password)
     {
-        if (await userService.SetPassword(userId, password, userId))
+        if (await userService.SetPassword(currentUserId, password, currentUserId))
         {
-            return userId;
+            return currentUserId;
         }
 
         return null;

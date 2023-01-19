@@ -9,11 +9,11 @@ public class CommentMutations
 {
     [Authorize]
     public async Task<Comment?> TaskAddComment([Service] ICommentService commentService, 
-        [GlobalState] Guid userId, Guid taskId, string text)
+        [GlobalState] Guid currentUserId, Guid taskId, string text)
     {
         var comment = new TaskComment
         {
-            CreatedById = userId,
+            CreatedById = currentUserId,
             Text = text,
             TaskId = taskId
         };
@@ -23,11 +23,11 @@ public class CommentMutations
 
     [Authorize]
     public async Task<Comment?> IdeaAddComment([Service] ICommentService commentService, 
-        [GlobalState] Guid userId, Guid ideaId, string text)
+        [GlobalState] Guid currentUserId, Guid ideaId, string text)
     {
         var comment = new IdeaComment
         {
-            CreatedById = userId,
+            CreatedById = currentUserId,
             Text = text,
             IdeaId = ideaId
         };
@@ -37,9 +37,9 @@ public class CommentMutations
 
     [Authorize]
     public async Task<Guid?> CommentSetText([Service] ICommentService commentService,
-        [GlobalState] Guid userId, Guid commentId, string text)
+        [GlobalState] Guid currentUserId, Guid commentId, string text)
     {
-        if (await commentService.SetCommentText(commentId, text, userId))
+        if (await commentService.SetCommentText(commentId, text, currentUserId))
         {
             return commentId;
         }

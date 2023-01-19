@@ -26,4 +26,7 @@ public static class ValidationErrors
     public static ErrorDetails InvalidNotificationReadTime => new(
         "Notification read time must not be in the future",
         "INVALID_NOTIFICATION_READ_TIME");
+
+    public static ErrorDetails InvalidDirectionName => 
+        new("Direction name must not be empty", "INVALID_DIRECTION_NAME");
 }

@@ -1,4 +1,5 @@
 using Taskmony.Models;
+using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories;
 
@@ -11,6 +12,12 @@ public interface IDirectionRepository
     Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId);
 
     Task<bool> AnyMemberWithId(Guid directionId, Guid memberId);
+
+    Task AddDirection(Direction direction);
+
+    void AddMember(Membership membership);
+
+    void RemoveMember(Membership membership);
 
     Task<bool> SaveChangesAsync();
 }

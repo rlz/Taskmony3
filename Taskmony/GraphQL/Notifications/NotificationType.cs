@@ -31,7 +31,7 @@ public class NotificationType : ObjectType<Notification>
     private class Resolvers
     {
         public async Task<IActionItem?> GetActionItem([Parent] Notification notification,
-            [Service] INotificationService notificationService, [GlobalState] Guid userId)
+            [Service] INotificationService notificationService, [GlobalState] Guid currentUserId)
         {
             if (notification.ActionItemType is null || notification.ActionItemId is null)
             {
@@ -39,11 +39,11 @@ public class NotificationType : ObjectType<Notification>
             }
 
             return await notificationService.GetActionItemAsync(notification.ActionItemType.Value,
-                notification.ActionItemId.Value, userId);
+                notification.ActionItemId.Value, currentUserId);
         }
 
         public async Task<User> GetActor([Parent] Notification notification, 
-            UserByIdDataLoader userById, [GlobalState] Guid userId)
+            UserByIdDataLoader userById, [GlobalState] Guid currentUserId)
         {
             return await userById.LoadAsync(notification.ActorId);
         }

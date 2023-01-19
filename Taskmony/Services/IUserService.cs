@@ -23,6 +23,8 @@ public interface IUserService
     Task<IEnumerable<User>> GetUsersAsync(Guid[]? id, string[]? email, string[]? login, int? offset,
         int? limit, Guid currentUserId);
 
+    Task<User> GetUserOrThrowAsync(Guid id);
+
     Task<bool> SetNotificationReadTime(Guid id, DateTime notificationReadTime, Guid currentUserId);
 
     Task<bool> SetLogin(Guid id, string login, Guid currentUserId);

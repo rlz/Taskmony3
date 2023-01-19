@@ -93,6 +93,7 @@ builder.Services
     .AddTypeExtension<TaskMutations>()
     .AddTypeExtension<IdeaMutations>()
     .AddTypeExtension<CommentMutations>()
+    .AddTypeExtension<DirectionMutations>()
     .AddType<TaskType>()
     .AddType<IdeaType>()
     .AddType<UserType>()

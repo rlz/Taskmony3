@@ -52,7 +52,7 @@ public class IdeaType : ObjectType<Idea>
     private class Resolvers
     {
         public async Task<User> GetCreatedBy([Parent] Idea idea, UserByIdDataLoader userById,
-            [GlobalState] Guid userId)
+            [GlobalState] Guid currentUserId)
         {
             return await userById.LoadAsync(idea.CreatedById);
         }
@@ -74,9 +74,9 @@ public class IdeaType : ObjectType<Idea>
         }
 
         public async Task<IEnumerable<User>?> GetSubscribers([Parent] Idea idea,
-            [Service] ISubscriptionService subscriptionService, [GlobalState] Guid userId)
+            [Service] ISubscriptionService subscriptionService, [GlobalState] Guid currentUserId)
         {
-            return await subscriptionService.GetIdeaSubscribersAsync(idea.Id, userId);
+            return await subscriptionService.GetIdeaSubscribersAsync(idea.Id, currentUserId);
         }
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Idea idea,

@@ -14,7 +14,7 @@ public class CommentType : ObjectType<Comment>
 
         descriptor.Field(c => c.CreatedBy)
             .Type<ObjectType<User>>()
-            .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!));
 
         descriptor.Field(c => c.Text).Type<StringType>();
         descriptor.Field(c => c.CreatedAt).Type<StringType>();
@@ -22,8 +22,7 @@ public class CommentType : ObjectType<Comment>
 
     private class Resolvers
     {
-        public async Task<User> GetCreatedBy([Parent] Comment comment, UserByIdDataLoader userById,
-            [GlobalState] Guid userId)
+        public async Task<User> GetCreatedBy([Parent] Comment comment, UserByIdDataLoader userById)
         {
             return await userById.LoadAsync(comment.CreatedById);
         }

@@ -58,13 +58,13 @@ public class TaskType : ObjectType<Task>
     private class Resolvers
     {
         public async Task<User> GetCreatedBy([Parent] Task task, UserByIdDataLoader userById,
-            [GlobalState] Guid userId)
+            [GlobalState] Guid currentUserId)
         {
-            return await userById.LoadAsync(userId);
+            return await userById.LoadAsync(currentUserId);
         }
 
         public async Task<User?> GetAssignee([Parent] Task task, UserByIdDataLoader userById,
-            [GlobalState] Guid userId)
+            [GlobalState] Guid currentUserId)
         {
             if (task.AssigneeId is null)
             {
@@ -91,9 +91,9 @@ public class TaskType : ObjectType<Task>
         }
 
         public async Task<IEnumerable<User>?> GetSubscribers([Parent] Task task,
-            [Service] ISubscriptionService subscriptionService, [GlobalState] Guid userId)
+            [Service] ISubscriptionService subscriptionService, [GlobalState] Guid currentUserId)
         {
-            return await subscriptionService.GetTaskSubscribersAsync(task.Id, userId);
+            return await subscriptionService.GetTaskSubscribersAsync(task.Id, currentUserId);
         }
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Task task,

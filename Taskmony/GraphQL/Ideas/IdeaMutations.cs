@@ -9,12 +9,12 @@ namespace Taskmony.GraphQL.Tasks;
 public class IdeaMutations
 {
     [Authorize]
-    public async Task<Idea?> IdeaAdd([Service] IIdeaService ideaService, [GlobalState] Guid userId,
+    public async Task<Idea?> IdeaAdd([Service] IIdeaService ideaService, [GlobalState] Guid currentUserId,
         string description, string? details, Guid? directionId, Generation generation)
     {
         var idea = new Idea
         {
-            CreatedById = userId,
+            CreatedById = currentUserId,
             Description = description,
             Details = details,
             DirectionId = directionId,
@@ -26,9 +26,9 @@ public class IdeaMutations
 
     [Authorize]
     public async Task<Guid?> IdeaSetDescription([Service] IIdeaService ideaService,
-        [GlobalState] Guid userId, Guid ideaId, string description)
+        [GlobalState] Guid currentUserId, Guid ideaId, string description)
     {
-        if (await ideaService.SetIdeaDescription(ideaId, description, userId))
+        if (await ideaService.SetIdeaDescription(ideaId, description, currentUserId))
         {
             return ideaId;
         }
@@ -38,9 +38,9 @@ public class IdeaMutations
 
     [Authorize]
     public async Task<Guid?> IdeaSetDetails([Service] IIdeaService ideaService,
-        [GlobalState] Guid userId, Guid ideaId, string? details)
+        [GlobalState] Guid currentUserId, Guid ideaId, string? details)
     {
-        if (await ideaService.SetIdeaDetails(ideaId, details, userId))
+        if (await ideaService.SetIdeaDetails(ideaId, details, currentUserId))
         {
             return ideaId;
         }
@@ -50,9 +50,9 @@ public class IdeaMutations
 
     [Authorize]
     public async Task<Guid?> IdeaSetDirection([Service] IIdeaService ideaService,
-        [GlobalState] Guid userId, Guid ideaId, Guid? directionId)
+        [GlobalState] Guid currentUserId, Guid ideaId, Guid? directionId)
     {
-        if (await ideaService.SetIdeaDirection(ideaId, directionId, userId))
+        if (await ideaService.SetIdeaDirection(ideaId, directionId, currentUserId))
         {
             return ideaId;
         }
@@ -62,11 +62,11 @@ public class IdeaMutations
 
     [Authorize]
     public async Task<Guid?> IdeaSetDeletedAt([Service] IIdeaService ideaService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid userId, Guid ideaId, string? deletedAt)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid ideaId, string? deletedAt)
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
 
-        if (await ideaService.SetIdeaDeletedAt(ideaId, deletedAtUtc, userId))
+        if (await ideaService.SetIdeaDeletedAt(ideaId, deletedAtUtc, currentUserId))
         {
             return ideaId;
         }
@@ -76,9 +76,9 @@ public class IdeaMutations
 
     [Authorize]
     public async Task<Guid?> IdeaSetGeneration([Service] IIdeaService ideaService,
-        [GlobalState] Guid userId, Guid ideaId, Generation generation)
+        [GlobalState] Guid currentUserId, Guid ideaId, Generation generation)
     {
-        if (await ideaService.SetIdeaGeneration(ideaId, generation, userId))
+        if (await ideaService.SetIdeaGeneration(ideaId, generation, currentUserId))
         {
             return ideaId;
         }
@@ -88,11 +88,11 @@ public class IdeaMutations
 
     [Authorize]
     public async Task<Guid?> IdeaSetReviewedAt([Service] IIdeaService ideaService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid userId, Guid ideaId, string? reviewedAt)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid ideaId, string? reviewedAt)
     {
         DateTime? reviewedAtUtc = reviewedAt is null ? null : timeConverter.StringToDateTimeUtc(reviewedAt);
 
-        if (await ideaService.SetIdeaReviewedAt(ideaId, reviewedAtUtc, userId))
+        if (await ideaService.SetIdeaReviewedAt(ideaId, reviewedAtUtc, currentUserId))
         {
             return ideaId;
         }

@@ -10,12 +10,12 @@ public class TaskMutations
 {
     [Authorize]
     public async Task<Task?> TaskAdd([Service] ITaskService taskService, [Service] ITimeConverter timeConverter,
-        [GlobalState] Guid userId, string description, string? details, Guid? assigneeId, Guid? directionId,
+        [GlobalState] Guid currentUserId, string description, string? details, Guid? assigneeId, Guid? directionId,
         string? startAt)
     {
         var task = new Task
         {
-            CreatedById = userId,
+            CreatedById = currentUserId,
             Description = description,
             Details = details,
             AssigneeId = assigneeId,
@@ -28,12 +28,12 @@ public class TaskMutations
 
     [Authorize]
     public async Task<Guid[]?> TasksGenerate([Service] ITaskService taskService, [Service] ITimeConverter timeConverter,
-        [GlobalState] Guid userId, string description, string? details, Guid? assigneeId, Guid? directionId, string? startAt,
+        [GlobalState] Guid currentUserId, string description, string? details, Guid? assigneeId, Guid? directionId, string? startAt,
         RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions)
     {
         var task = new Task
         {
-            CreatedById = userId,
+            CreatedById = currentUserId,
             Description = description,
             Details = details,
             AssigneeId = assigneeId,
@@ -49,9 +49,9 @@ public class TaskMutations
 
     [Authorize]
     public async Task<Guid?> TaskSetDescription([Service] ITaskService taskService,
-        [GlobalState] Guid userId, Guid taskId, string description)
+        [GlobalState] Guid currentUserId, Guid taskId, string description)
     {
-        if (await taskService.SetTaskDescription(taskId, description, userId))
+        if (await taskService.SetTaskDescription(taskId, description, currentUserId))
         {
             return taskId;
         }
@@ -61,9 +61,9 @@ public class TaskMutations
 
     [Authorize]
     public async Task<Guid?> TaskSetDetails([Service] ITaskService taskService,
-    [GlobalState] Guid userId, Guid taskId, string? details)
+    [GlobalState] Guid currentUserId, Guid taskId, string? details)
     {
-        if (await taskService.SetTaskDetails(taskId, details, userId))
+        if (await taskService.SetTaskDetails(taskId, details, currentUserId))
         {
             return taskId;
         }
@@ -73,9 +73,9 @@ public class TaskMutations
 
     [Authorize]
     public async Task<Guid?> TaskSetDirection([Service] ITaskService taskService,
-        [GlobalState] Guid userId, Guid taskId, Guid? directionId)
+        [GlobalState] Guid currentUserId, Guid taskId, Guid? directionId)
     {
-        if (await taskService.SetTaskDirection(taskId, directionId, userId))
+        if (await taskService.SetTaskDirection(taskId, directionId, currentUserId))
         {
             return taskId;
         }
@@ -85,11 +85,11 @@ public class TaskMutations
 
     [Authorize]
     public async Task<Guid?> TaskSetDeletedAt([Service] ITaskService taskService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid userId, Guid taskId, string? deletedAt)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, string? deletedAt)
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
 
-        if (await taskService.SetTaskDeletedAt(taskId, deletedAtUtc, userId))
+        if (await taskService.SetTaskDeletedAt(taskId, deletedAtUtc, currentUserId))
         {
             return taskId;
         }
@@ -99,9 +99,9 @@ public class TaskMutations
 
     [Authorize]
     public async Task<Guid?> TaskSetAssignee([Service] ITaskService taskService,
-        [GlobalState] Guid userId, Guid taskId, Guid? assigneeId)
+        [GlobalState] Guid currentUserId, Guid taskId, Guid? assigneeId)
     {
-        if (await taskService.SetTaskAssignee(taskId, assigneeId, userId))
+        if (await taskService.SetTaskAssignee(taskId, assigneeId, currentUserId))
         {
             return taskId;
         }
@@ -111,11 +111,11 @@ public class TaskMutations
 
     [Authorize]
     public async Task<Guid?> TaskSetStartAt([Service] ITaskService taskService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid userId, Guid taskId, string startAt)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, string startAt)
     {
         var startAtUtc = timeConverter.StringToDateTimeUtc(startAt);
 
-        if (await taskService.SetTaskStartAt(taskId, startAtUtc, userId))
+        if (await taskService.SetTaskStartAt(taskId, startAtUtc, currentUserId))
         {
             return taskId;
         }
@@ -125,11 +125,11 @@ public class TaskMutations
 
     [Authorize]
     public async Task<Guid?> TaskSetCompletedAt([Service] ITaskService taskService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid userId, Guid taskId, string? completedAt)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, string? completedAt)
     {
         DateTime? completedAtUtc = completedAt is null ? null : timeConverter.StringToDateTimeUtc(completedAt);
 
-        if (await taskService.SetTaskCompletedAt(taskId, completedAtUtc, userId))
+        if (await taskService.SetTaskCompletedAt(taskId, completedAtUtc, currentUserId))
         {
             return taskId;
         }
@@ -139,8 +139,8 @@ public class TaskMutations
 
     [Authorize]
     public async Task<Guid[]?> TaskRecurringDeleteAll([Service] ITaskService taskService,
-        [GlobalState] Guid userId, Guid groupId)
+        [GlobalState] Guid currentUserId, Guid groupId)
     {
-        return await taskService.SetRecurringTaskDeletedAt(groupId, DateTime.UtcNow, userId);
+        return await taskService.SetRecurringTaskDeletedAt(groupId, DateTime.UtcNow, currentUserId);
     }
 }

@@ -1,3 +1,5 @@
+using Taskmony.Errors;
+using Taskmony.Exceptions;
 using Taskmony.Models;
 using Taskmony.Repositories;
 
@@ -45,5 +47,109 @@ public class DirectionService : IDirectionService
     {
         var userDirections = await _directionRepository.GetDirectionsAsync(null, null, null, userId);
         return userDirections.Select(d => d.Id);
+    }
+
+    public async Task<Direction> AddDirection(Direction direction)
+    {
+        ValidateDirectionName(direction.Name);
+
+        await _directionRepository.AddDirection(direction);
+
+        _directionRepository.AddMember(new Membership
+        {
+            DirectionId = direction.Id,
+            UserId = direction.CreatedById
+        });
+
+        await _directionRepository.SaveChangesAsync();
+
+        return direction;
+    }
+
+    public async Task<bool> AddMember(Guid directionId, Guid memberId, Guid currentUserId)
+    {
+        var direction = await GetDirectionOrThrowAsync(directionId, currentUserId);
+        var user = await _userService.GetUserOrThrowAsync(memberId);
+
+        _directionRepository.AddMember(new Membership
+        {
+            DirectionId = direction.Id,
+            UserId = user.Id
+        });
+
+        return await _directionRepository.SaveChangesAsync();
+    }
+
+    public async Task<bool> RemoveMember(Guid directionId, Guid memberId, Guid currentUserId)
+    {
+        var direction = await GetDirectionOrThrowAsync(directionId, currentUserId);
+        var user = await _userService.GetUserOrThrowAsync(memberId);
+
+        _directionRepository.RemoveMember(new Membership
+        {
+            DirectionId = direction.Id,
+            UserId = user.Id
+        });
+
+        return await _directionRepository.SaveChangesAsync();
+    }
+
+    public async Task<bool> SetDirectionDeletedAt(Guid id, DateTime? deletedAtUtc, Guid currentUserId)
+    {
+        var direction = await GetDirectionOrThrowAsync(id, currentUserId);
+
+        if (deletedAtUtc is not null && direction.DeletedAt is not null)
+        {
+            throw new DomainException(DirectionErrors.AlreadyDeleted);
+        }
+
+        if (deletedAtUtc is not null && deletedAtUtc > DateTime.UtcNow)
+        {
+            throw new DomainException(ValidationErrors.InvalidDeletedAt);
+        }
+
+        direction.DeletedAt = deletedAtUtc;
+
+        return await _directionRepository.SaveChangesAsync();
+    }
+
+    public async Task<bool> SetDirectionDetails(Guid id, string? details, Guid currentUserId)
+    {
+        var direction = await GetDirectionOrThrowAsync(id, currentUserId);
+
+        direction.Details = details;
+
+        return await _directionRepository.SaveChangesAsync();
+    }
+
+    public async Task<bool> SetDirectionName(Guid id, string name, Guid currentUserId)
+    {
+        var direction = await GetDirectionOrThrowAsync(id, currentUserId);
+
+        ValidateDirectionName(name);
+
+        direction.Name = name;
+
+        return await _directionRepository.SaveChangesAsync();
+    }
+
+    private async Task<Direction> GetDirectionOrThrowAsync(Guid id, Guid currentUserId)
+    {
+        var direction = await _directionRepository.GetDirectionByIdAsync(id);
+
+        if (direction is null || !await _directionRepository.AnyMemberWithId(id, currentUserId))
+        {
+            throw new DomainException(DirectionErrors.NotFound);
+        }
+
+        return direction;
+    }
+
+    private void ValidateDirectionName(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new DomainException(ValidationErrors.InvalidDirectionName);
+        }
     }
 }

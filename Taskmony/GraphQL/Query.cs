@@ -10,7 +10,7 @@ public class Query
 {
     [Authorize]
     public async Task<IEnumerable<User>?> GetUsers([Service] IUserService userService,
-        [GlobalState] Guid userId,
+        [GlobalState] Guid currentUserId,
         IResolverContext resolverContext,
         Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
     {
@@ -30,27 +30,27 @@ public class Query
             }
         }
 
-        return await userService.GetUsersAsync(id, email, login, offset, limit, userId);
+        return await userService.GetUsersAsync(id, email, login, offset, limit, currentUserId);
     }
 
     [Authorize]
     public async Task<IEnumerable<Models.Task>?> GetTasks([Service] ITaskService taskService,
-        [GlobalState] Guid userId, Guid[]? id, Guid?[]? directionId, int? offset, int? limit)
+        [GlobalState] Guid currentUserId, Guid[]? id, Guid?[]? directionId, int? offset, int? limit)
     {
-        return await taskService.GetTasksAsync(id, directionId, offset, limit, userId);
+        return await taskService.GetTasksAsync(id, directionId, offset, limit, currentUserId);
     }
 
     [Authorize]
     public async Task<IEnumerable<Idea>?> GetIdeas([Service] IIdeaService ideaService,
-    [GlobalState] Guid userId, Guid[]? id, Guid?[]? directionId, int? offset, int? limit)
+    [GlobalState] Guid currentUserId, Guid[]? id, Guid?[]? directionId, int? offset, int? limit)
     {
-        return await ideaService.GetIdeasAsync(id, directionId, offset, limit, userId);
+        return await ideaService.GetIdeasAsync(id, directionId, offset, limit, currentUserId);
     }
 
     [Authorize]
     public async Task<IEnumerable<Direction>?> GetDirections([Service] IDirectionService directionService,
-        [GlobalState] Guid userId, Guid[]? id, int? offset, int? limit)
+        [GlobalState] Guid currentUserId, Guid[]? id, int? offset, int? limit)
     {
-        return await directionService.GetDirectionsAsync(id, offset, limit, userId);
+        return await directionService.GetDirectionsAsync(id, offset, limit, currentUserId);
     }
 }

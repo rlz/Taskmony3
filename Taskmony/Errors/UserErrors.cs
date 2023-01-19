@@ -21,4 +21,6 @@ public static class UserErrors
 
     public static ErrorDetails InvalidEmailFormat =>
         new("Invalid email format", "INVALID_EMAIL_FORMAT");
+
+    public static ErrorDetails NotFound => new("User not found", "USER_NOT_FOUND");
 }

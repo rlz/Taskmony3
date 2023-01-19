@@ -40,10 +40,12 @@ public class DirectionType : ObjectType<Direction>
             return await userById.LoadAsync(direction.CreatedById);
         }
 
-        public async Task<IEnumerable<User>?> GetMembers([Parent] Direction direction,
-            [Service] IDirectionService directionService, [GlobalState] Guid userId)
+        public async Task<IEnumerable<User>?> GetMembers([Parent] Direction direction, 
+            UserByIdDataLoader userById, [Service] IDirectionService directionService)
         {
-            return await directionService.GetDirectionMembersAsync(direction.Id, userId);
+            var memberIds = await directionService.GetMemberIdsAsync(direction.Id);
+
+            return await userById.LoadAsync(memberIds.ToArray());
         }
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Direction direction,

@@ -22,4 +22,8 @@ public static class ValidationErrors
 
     public static ErrorDetails InvalidCommentText =>
         new("Comment text must not be empty", "INVALID_COMMENT_TEXT");
+
+    public static ErrorDetails InvalidNotificationReadTime => new(
+        "Notification read time must not be in the future",
+        "INVALID_NOTIFICATION_READ_TIME");
 }

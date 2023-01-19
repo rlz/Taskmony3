@@ -13,6 +13,8 @@ public interface IUserRepository
 
     Task<User?> GetUserByLoginAsync(string login);
 
+    Task<User?> GetUserByIdAsync(Guid id);
+
     /// <summary>
     /// Gets users filtered by the given parameters
     /// </summary>

@@ -6,9 +6,9 @@ namespace Taskmony.Services;
 
 public interface IUserService
 {
-    Task<UserAuthResponse> AuthenticateAsync(UserAuthRequest request);
+    Task<UserAuthResponse> AuthenticateUserAsync(UserAuthRequest request);
 
-    Task AddAsync(UserRegisterRequest request);
+    Task AddUserAsync(UserRegisterRequest request);
 
     /// <summary>
     /// Gets users filtered by the given parameters
@@ -22,4 +22,14 @@ public interface IUserService
     /// <returns>users with fields visible to current user</returns>
     Task<IEnumerable<User>> GetUsersAsync(Guid[]? id, string[]? email, string[]? login, int? offset,
         int? limit, Guid currentUserId);
+
+    Task<bool> SetNotificationReadTime(Guid id, DateTime notificationReadTime, Guid currentUserId);
+
+    Task<bool> SetLogin(Guid id, string login, Guid currentUserId);
+
+    Task<bool> SetDisplayName(Guid id, string displayName, Guid currentUserId);
+
+    Task<bool> SetEmail(Guid id, string email, Guid currentUserId);
+
+    Task<bool> SetPassword(Guid id, string password, Guid currentUserId);
 }

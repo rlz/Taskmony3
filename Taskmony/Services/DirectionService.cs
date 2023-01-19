@@ -36,6 +36,11 @@ public class DirectionService : IDirectionService
         return await _directionRepository.GetDirectionsAsync(id, offset, limit, currentUserId);
     }
 
+    public Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId)
+    {
+        return _directionRepository.GetMemberIdsAsync(directionId);
+    }
+
     public async Task<IEnumerable<Guid>> GetUserDirectionIds(Guid userId)
     {
         var userDirections = await _directionRepository.GetDirectionsAsync(null, null, null, userId);

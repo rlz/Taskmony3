@@ -89,6 +89,7 @@ builder.Services
     .AddHttpRequestInterceptor<HttpRequestInterceptor>()
     .AddQueryType<Query>()
     .AddMutationType()
+    .AddTypeExtension<UserMutations>()
     .AddTypeExtension<TaskMutations>()
     .AddTypeExtension<IdeaMutations>()
     .AddTypeExtension<CommentMutations>()

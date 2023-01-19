@@ -34,6 +34,11 @@ public class UserRepository : IUserRepository, IAsyncDisposable
         return await _context.Users.FirstOrDefaultAsync(x => x.Login == login);
     }
 
+    public async Task<User?> GetUserByIdAsync(Guid id)
+    {
+        return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+    }
+
     public async Task<IEnumerable<User>> GetUsersAsync(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
     {
         var query = _context.Users.AsQueryable();

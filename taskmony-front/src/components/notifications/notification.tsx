@@ -22,6 +22,7 @@ type NotificationProps = {
   createdBy?: string;
   direction?:string;
   details?:string;
+  notRead?:boolean
 };
 
 export const NotificationItem = ({
@@ -30,7 +31,8 @@ export const NotificationItem = ({
   time,
   createdBy,
   direction,
-  details
+  details,
+  notRead
 }: NotificationProps) => {
   const iconByType = (type : string) =>
   {switch(type){
@@ -44,7 +46,7 @@ export const NotificationItem = ({
   }};
 
   return (
-    <div className="w-full bg-white rounded-lg drop-shadow-sm">
+    <div className={`w-full drop-shadow-sm bg-white rounded-lg`}>
       <div className={"gap-4 flex justify-between p-2 mt-2 mb"}>
         <div >
         <div className="flex  gap-2">

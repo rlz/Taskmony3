@@ -19,6 +19,7 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
         createdBy="Ann Smith"
         time="12:30 1.12.22"
         type='userAdded'
+        notRead
       />
             <NotificationItem
         label={"Sam Green was removed from “Taskmony”"}
@@ -26,6 +27,7 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
         createdBy="Ann Smith"
         time="12:30 1.12.22"
         type='userDeleted'
+        notRead
       />
             <NotificationItem
         label={"Task “Create UI for notifications” was added"}

@@ -20,3 +20,30 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/*scrollbar */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  margin-right: 2px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: none;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgb(203 213 225);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(203 213 225);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgb(203 213 225);
+}
+

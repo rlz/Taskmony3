@@ -1,3 +1,4 @@
+using Taskmony.GraphQL.DataLoaders;
 using Taskmony.Models;
 using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
@@ -42,12 +43,9 @@ public class NotificationType : ObjectType<Notification>
         }
 
         public async Task<User> GetActor([Parent] Notification notification, 
-            [Service] IUserService userService, [GlobalState] Guid userId)
+            UserByIdDataLoader userById, [GlobalState] Guid userId)
         {
-            var result = await userService.GetUsersAsync(new[] { notification.ActorId },
-                null, null, null, null, userId);
-
-            return result.First();
+            return await userById.LoadAsync(notification.ActorId);
         }
     }
 }

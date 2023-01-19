@@ -1,3 +1,4 @@
+using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Notifications;
 using Taskmony.GraphQL.Users;
 using Taskmony.Models;
@@ -56,16 +57,13 @@ public class TaskType : ObjectType<Task>
 
     private class Resolvers
     {
-        public async Task<User> GetCreatedBy([Parent] Task task, [Service] IUserService userService,
+        public async Task<User> GetCreatedBy([Parent] Task task, UserByIdDataLoader userById,
             [GlobalState] Guid userId)
         {
-            var result = await userService.GetUsersAsync(new[] { task.CreatedById },
-                null, null, null, null, userId);
-
-            return result.First();
+            return await userById.LoadAsync(userId);
         }
 
-        public async Task<User?> GetAssignee([Parent] Task task, [Service] IUserService userService,
+        public async Task<User?> GetAssignee([Parent] Task task, UserByIdDataLoader userById,
             [GlobalState] Guid userId)
         {
             if (task.AssigneeId is null)
@@ -73,20 +71,17 @@ public class TaskType : ObjectType<Task>
                 return null;
             }
 
-            var result = await userService.GetUsersAsync(new[] { task.AssigneeId.Value },
-                null, null, null, null, userId);
-
-            return result.First();
+            return await userById.LoadAsync(task.AssigneeId.Value);
         }
 
-        public async Task<Direction?> GetDirection([Parent] Task task, [Service] IDirectionService directionService)
+        public async Task<Direction?> GetDirection([Parent] Task task, DirectionByIdDataLoader directionById)
         {
             if (task.DirectionId is null)
             {
                 return null;
             }
 
-            return await directionService.GetDirectionByIdAsync(task.DirectionId.Value);
+            return await directionById.LoadAsync(task.DirectionId.Value);
         }
 
         public async Task<IEnumerable<Comment>?> GetComments([Parent] Task task,

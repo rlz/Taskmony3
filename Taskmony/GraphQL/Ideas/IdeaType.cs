@@ -1,3 +1,4 @@
+using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Users;
 using Taskmony.Models;
 using Taskmony.Models.Comments;
@@ -50,23 +51,20 @@ public class IdeaType : ObjectType<Idea>
 
     private class Resolvers
     {
-        public async Task<User> GetCreatedBy([Parent] Idea idea, [Service] IUserService userService,
+        public async Task<User> GetCreatedBy([Parent] Idea idea, UserByIdDataLoader userById,
             [GlobalState] Guid userId)
         {
-            var result = await userService.GetUsersAsync(new[] { idea.CreatedById },
-                null, null, null, null, userId);
-
-            return result.First();
+            return await userById.LoadAsync(idea.CreatedById);
         }
 
-        public async Task<Direction?> GetDirection([Parent] Idea idea, [Service] IDirectionService directionService)
+        public async Task<Direction?> GetDirection([Parent] Idea idea, DirectionByIdDataLoader directionById)
         {
             if (idea.DirectionId is null)
             {
                 return null;
             }
 
-            return await directionService.GetDirectionByIdAsync(idea.DirectionId.Value);
+            return await directionById.LoadAsync(idea.DirectionId.Value);
         }
 
         public async Task<IEnumerable<Comment>?> GetComments([Parent] Idea idea,

@@ -6,6 +6,7 @@ using Taskmony.Errors;
 using Taskmony.GraphQL;
 using Taskmony.GraphQL.Comments;
 using Taskmony.GraphQL.Converters;
+using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Directions;
 using Taskmony.GraphQL.Errors;
 using Taskmony.GraphQL.Ideas;
@@ -70,6 +71,7 @@ builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
 builder.Services.AddTransient<INotificationService, NotificationService>();
 builder.Services.AddTransient<IIdeaService, IdeaService>();
 builder.Services.AddTransient<IDirectionService, DirectionService>();
+builder.Services.AddTransient<IUserIdentifierProvider, UserIdentifierProvider>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -96,6 +98,7 @@ builder.Services
     .AddType<DirectionType>()
     .AddType<CommentType>()
     .AddType<NotificationType>()
+    .AddDataLoader<UserByIdDataLoader>()
     .BindRuntimeType<Guid, IdType>()
     .AddTypeConverter<StringToGuidConverter>()
     .AddTypeConverter<GuidToStringConverter>()

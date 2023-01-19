@@ -1,3 +1,4 @@
+using Taskmony.GraphQL.DataLoaders;
 using Taskmony.Models;
 using Taskmony.Models.Comments;
 using Taskmony.Services;
@@ -21,12 +22,10 @@ public class CommentType : ObjectType<Comment>
 
     private class Resolvers
     {
-        public async Task<User> GetCreatedBy([Parent] Comment comment, [Service] IUserService userService,
+        public async Task<User> GetCreatedBy([Parent] Comment comment, UserByIdDataLoader userById,
             [GlobalState] Guid userId)
         {
-            var result = await userService.GetUsersAsync(new[] { comment.CreatedById },
-                null, null, null, null, userId);
-            return result.First();
+            return await userById.LoadAsync(comment.CreatedById);
         }
     }
 }

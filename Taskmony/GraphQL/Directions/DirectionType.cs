@@ -1,3 +1,4 @@
+using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Notifications;
 using Taskmony.Models;
 using Taskmony.Models.Notifications;
@@ -33,13 +34,10 @@ public class DirectionType : ObjectType<Direction>
 
     private class Resolvers
     {
-        public async Task<User> GetCreatedBy([Parent] Direction direction, [Service] IUserService userService,
+        public async Task<User> GetCreatedBy([Parent] Direction direction, UserByIdDataLoader userById,
             [GlobalState] Guid userId)
         {
-            var result = await userService.GetUsersAsync(new[] { direction.CreatedById },
-                null, null, null, null, userId);
-
-            return result.First();
+            return await userById.LoadAsync(direction.CreatedById);
         }
 
         public async Task<IEnumerable<User>?> GetMembers([Parent] Direction direction,

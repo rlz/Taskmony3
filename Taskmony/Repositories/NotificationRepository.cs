@@ -14,12 +14,12 @@ public class NotificationRepository : INotificationRepository, IAsyncDisposable
         _context = contextFactory.CreateDbContext();
     }
 
-    public async Task<IEnumerable<Notification>> GetNotificationsAsync(NotifiableType notifiableType,
-        Guid notifiableId, DateTime? start, DateTime? end)
+    public async Task<IEnumerable<Notification>> GetNotificationsAsync(Guid notifiableId, DateTime? start,
+        DateTime? end)
     {
         var query = _context.Notifications.AsQueryable();
 
-        query = query.Where(n => n.NotifiableType == notifiableType && n.NotifiableId == notifiableId);
+        query = query.Where(n => n.NotifiableId == notifiableId);
 
         if (start is not null)
         {
@@ -32,6 +32,39 @@ public class NotificationRepository : INotificationRepository, IAsyncDisposable
         }
 
         return await query.ToListAsync();
+    }
+
+    public async Task<IEnumerable<Notification>> GetNotificationsAsync(Guid[] notifiableIds, DateTime? start,
+        DateTime? end)
+    {
+        var groupedByNotifiable = _context.Notifications.Where(n => notifiableIds.Contains(n.NotifiableId))
+            .GroupBy(n => n.NotifiableId);
+
+        if (start is not null && end is not null)
+        {
+            return (await groupedByNotifiable
+                    .Select(g => g.Where(n => n.ModifiedAt >= start && n.ModifiedAt <= end))
+                    .ToListAsync())
+                .SelectMany(g => g);
+        }
+
+        if (start is not null)
+        {
+            return (await groupedByNotifiable
+                    .Select(g => g.Where(n => n.ModifiedAt >= start))
+                    .ToListAsync())
+                .SelectMany(g => g);
+        }
+
+        if (end is not null)
+        {
+            return (await groupedByNotifiable
+                    .Select(g => g.Where(n => n.ModifiedAt <= end))
+                    .ToListAsync())
+                .SelectMany(g => g);
+        }
+
+        return await _context.Notifications.Where(n => notifiableIds.Contains(n.NotifiableId)).ToListAsync();
     }
 
     public async Task<bool> SaveChangesAsync()

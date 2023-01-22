@@ -10,7 +10,7 @@ public interface IIdeaRepository
 
     Task<Idea?> GetIdeaByIdAsync(Guid id);
 
-    Task AddIdea(Idea idea);
+    Task AddIdeaAsync(Idea idea);
 
     Task<bool> SaveChangesAsync();
 }

@@ -1,7 +1,6 @@
 using Taskmony.GraphQL.DataLoaders;
 using Taskmony.Models;
 using Taskmony.Models.Comments;
-using Taskmony.Services;
 
 namespace Taskmony.GraphQL.Comments;
 

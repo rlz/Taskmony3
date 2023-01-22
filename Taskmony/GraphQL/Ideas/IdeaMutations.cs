@@ -21,14 +21,14 @@ public class IdeaMutations
             Generation = generation
         };
 
-        return await ideaService.AddIdea(idea);
+        return await ideaService.AddIdeaAsync(idea);
     }
 
     [Authorize]
     public async Task<Guid?> IdeaSetDescription([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, string description)
     {
-        if (await ideaService.SetIdeaDescription(ideaId, description, currentUserId))
+        if (await ideaService.SetIdeaDescriptionAsync(ideaId, description, currentUserId))
         {
             return ideaId;
         }
@@ -40,7 +40,7 @@ public class IdeaMutations
     public async Task<Guid?> IdeaSetDetails([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, string? details)
     {
-        if (await ideaService.SetIdeaDetails(ideaId, details, currentUserId))
+        if (await ideaService.SetIdeaDetailsAsync(ideaId, details, currentUserId))
         {
             return ideaId;
         }
@@ -52,7 +52,7 @@ public class IdeaMutations
     public async Task<Guid?> IdeaSetDirection([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, Guid? directionId)
     {
-        if (await ideaService.SetIdeaDirection(ideaId, directionId, currentUserId))
+        if (await ideaService.SetIdeaDirectionAsync(ideaId, directionId, currentUserId))
         {
             return ideaId;
         }
@@ -66,7 +66,7 @@ public class IdeaMutations
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
 
-        if (await ideaService.SetIdeaDeletedAt(ideaId, deletedAtUtc, currentUserId))
+        if (await ideaService.SetIdeaDeletedAtAsync(ideaId, deletedAtUtc, currentUserId))
         {
             return ideaId;
         }
@@ -78,7 +78,7 @@ public class IdeaMutations
     public async Task<Guid?> IdeaSetGeneration([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, Generation generation)
     {
-        if (await ideaService.SetIdeaGeneration(ideaId, generation, currentUserId))
+        if (await ideaService.SetIdeaGenerationAsync(ideaId, generation, currentUserId))
         {
             return ideaId;
         }
@@ -92,7 +92,7 @@ public class IdeaMutations
     {
         DateTime? reviewedAtUtc = reviewedAt is null ? null : timeConverter.StringToDateTimeUtc(reviewedAt);
 
-        if (await ideaService.SetIdeaReviewedAt(ideaId, reviewedAtUtc, currentUserId))
+        if (await ideaService.SetIdeaReviewedAtAsync(ideaId, reviewedAtUtc, currentUserId))
         {
             return ideaId;
         }

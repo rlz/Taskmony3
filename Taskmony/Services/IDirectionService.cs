@@ -10,6 +10,8 @@ public interface IDirectionService
 
     Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, int? offset, int? limit, Guid currentUserId);
 
+    Task<IEnumerable<Direction>> GetDirectionByIdsAsync(Guid[] ids);
+
     Task<IEnumerable<User>> GetDirectionMembersAsync(Guid id, Guid currentUserId);
 
     Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId);

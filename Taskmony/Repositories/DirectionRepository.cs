@@ -32,6 +32,13 @@ public class DirectionRepository : IDirectionRepository, IAsyncDisposable
         return await query.ToListAsync();
     }
 
+    public async Task<IEnumerable<Direction>> GetDirectionByIdsAsync(Guid[] ids)
+    {
+        return await _context.Directions
+            .Where(d => ids.Contains(d.Id))
+            .ToListAsync();
+    }
+
     private IQueryable<Direction> AddPagination(IQueryable<Direction> query, int? offset, int? limit)
     {
         if (offset is not null)
@@ -61,12 +68,12 @@ public class DirectionRepository : IDirectionRepository, IAsyncDisposable
             .ToListAsync();
     }
 
-    public async Task<bool> AnyMemberWithId(Guid directionId, Guid memberId)
+    public async Task<bool> AnyMemberWithIdAsync(Guid directionId, Guid memberId)
     {
         return await _context.Memberships.AnyAsync(m => m.DirectionId == directionId && m.UserId == memberId);
     }
 
-    public async Task AddDirection(Direction direction)
+    public async Task AddDirectionAsync(Direction direction)
     {
         await _context.Directions.AddAsync(direction);
     }

@@ -33,6 +33,16 @@ public class CommentService : ICommentService
         return await _commentRepository.GetCommentById(id);
     }
 
+    public async Task<IEnumerable<Comment>> GetCommentsByTaskIds(Guid[] ids, int? offset, int? limit)
+    {
+        return await _commentRepository.GetCommentsByTaskIdsAsync(ids, offset, limit);
+    }
+
+    public async Task<IEnumerable<Comment>> GetCommentsByIdeaIds(Guid[] ids, int? offset, int? limit)
+    {
+        return await _commentRepository.GetCommentsByIdeaIdsAsync(ids, offset, limit);
+    }
+
     public async Task<Comment> AddComment(TaskComment comment)
     {
         await _taskService.GetTaskOrThrowAsync(comment.TaskId, comment.CreatedById);

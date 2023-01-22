@@ -1,3 +1,4 @@
+using HotChocolate.Resolvers;
 using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Notifications;
 using Taskmony.GraphQL.Users;
@@ -31,16 +32,16 @@ public class TaskType : ObjectType<Task>
 
         descriptor.Field(t => t.CreatedBy)
             .Type<ObjectType<User>>()
-            .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!));
 
         descriptor.Field(t => t.Assignee)
-            .ResolveWith<Resolvers>(r => r.GetAssignee(default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetAssignee(default!, default!));
 
         descriptor.Field(t => t.Comments)
             .Type<ListType<NonNullType<ObjectType<Comment>>>>()
             .Argument("offset", a => a.Type<IntType>())
             .Argument("limit", a => a.Type<IntType>())
-            .ResolveWith<Resolvers>(r => r.GetComments(default!, default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetComments(default!, default!, default!, default, default));
 
         //Extension
         descriptor
@@ -52,19 +53,18 @@ public class TaskType : ObjectType<Task>
             .Type<ListType<NonNullType<NotificationType>>>()
             .Argument("start", a => a.Type<StringType>())
             .Argument("end", a => a.Type<StringType>())
-            .ResolveWith<Resolvers>(r => r.GetNotifications(default!, default!, default!, default!, default!));
+            .ResolveWith<Resolvers>(r =>
+                r.GetNotifications(default!, default!, default!, default!, default, default));
     }
 
     private class Resolvers
     {
-        public async Task<User> GetCreatedBy([Parent] Task task, UserByIdDataLoader userById,
-            [GlobalState] Guid currentUserId)
+        public async Task<User> GetCreatedBy([Parent] Task task, UserByIdDataLoader userById)
         {
-            return await userById.LoadAsync(currentUserId);
+            return await userById.LoadAsync(task.CreatedById);
         }
 
-        public async Task<User?> GetAssignee([Parent] Task task, UserByIdDataLoader userById,
-            [GlobalState] Guid currentUserId)
+        public async Task<User?> GetAssignee([Parent] Task task, UserByIdDataLoader userById)
         {
             if (task.AssigneeId is null)
             {
@@ -84,10 +84,21 @@ public class TaskType : ObjectType<Task>
             return await directionById.LoadAsync(task.DirectionId.Value);
         }
 
-        public async Task<IEnumerable<Comment>?> GetComments([Parent] Task task,
-            [Service] ICommentService commentService, int? offset, int? limit)
+        public async Task<IEnumerable<Comment>?> GetComments([Parent] Task task, IResolverContext context,
+            [Service] IServiceProvider serviceProvider, int? offset, int? limit)
         {
-            return await commentService.GetTaskCommentsAsync(task.Id, offset, limit);
+            return await context.GroupDataLoader<Guid, Comment>(
+                async (keys, ct) =>
+                {
+                    await using var scope = serviceProvider.CreateAsyncScope();
+                    
+                    var commentService = scope.ServiceProvider.GetRequiredService<ICommentService>();
+
+                    var comments = await commentService.GetCommentsByTaskIds(keys.ToArray(), offset, limit);
+
+                    return comments.ToLookup(c => ((TaskComment)c).TaskId);
+                }
+            ).LoadAsync(task.Id);
         }
 
         public async Task<IEnumerable<User>?> GetSubscribers([Parent] Task task,
@@ -96,14 +107,26 @@ public class TaskType : ObjectType<Task>
             return await subscriptionService.GetTaskSubscribersAsync(task.Id, currentUserId);
         }
 
-        public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Task task,
-            [Service] INotificationService notificationService, [Service] ITimeConverter timeConverter,
+        public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Task task, IResolverContext context,
+            [Service] IServiceProvider serviceProvider, [Service] ITimeConverter timeConverter,
             string? start, string? end)
         {
-            DateTime? startDateTime = start is null ? null : timeConverter.StringToDateTimeUtc(start);
-            DateTime? endDateTime = end is null ? null : timeConverter.StringToDateTimeUtc(end);
+            DateTime? startUtc = start is null ? null : timeConverter.StringToDateTimeUtc(start);
+            DateTime? endUtc = end is null ? null : timeConverter.StringToDateTimeUtc(end);
 
-            return await notificationService.GetTaskNotificationsAsync(task.Id, startDateTime, endDateTime);
+            return await context.GroupDataLoader<Guid, Notification>(
+                async (keys, ct) =>
+                {
+                    await using var scope = serviceProvider.CreateAsyncScope();
+
+                    var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+
+                    var notifications =
+                        await notificationService.GetNotificationsByNotifiableIdsAsync(keys.ToArray(), startUtc, endUtc);
+
+                    return notifications.ToLookup(n => n.NotifiableId);
+                }
+            ).LoadAsync(task.Id);
         }
     }
 }

@@ -58,12 +58,12 @@ public class TaskRepository : ITaskRepository, IAsyncDisposable
         return query;
     }
 
-    public async Task AddTask(Models.Task task)
+    public async Task AddTaskAsync(Models.Task task)
     {
         await _context.Tasks.AddAsync(task);
     }
 
-    public async Task AddTasks(IReadOnlyCollection<Models.Task> tasks)
+    public async Task AddTasksAsync(IReadOnlyCollection<Models.Task> tasks)
     {
         await _context.Tasks.AddRangeAsync(tasks);
     }

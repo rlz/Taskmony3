@@ -8,6 +8,10 @@ public interface ICommentService
 
     Task<IEnumerable<Comment>> GetIdeaCommentsAsync(Guid ideaId, int? offset, int? limit);
 
+    Task<IEnumerable<Comment>> GetCommentsByTaskIds(Guid[] ids, int? offset, int? limit);
+
+    Task<IEnumerable<Comment>> GetCommentsByIdeaIds(Guid[] ids, int? offset, int? limit);
+
     Task<Comment?> GetCommentById(Guid id);
 
     Task<Comment> AddComment(TaskComment comment);

@@ -18,7 +18,7 @@ public class DirectionService : IDirectionService
 
     public async Task<bool> AnyMemberWithId(Guid directionId, Guid memberId)
     {
-        return await _directionRepository.AnyMemberWithId(directionId, memberId);
+        return await _directionRepository.AnyMemberWithIdAsync(directionId, memberId);
     }
 
     public async Task<Direction?> GetDirectionByIdAsync(Guid id)
@@ -38,6 +38,11 @@ public class DirectionService : IDirectionService
         return await _directionRepository.GetDirectionsAsync(id, offset, limit, currentUserId);
     }
 
+    public async Task<IEnumerable<Direction>> GetDirectionByIdsAsync(Guid[] ids)
+    {
+        return await _directionRepository.GetDirectionByIdsAsync(ids);
+    }
+
     public Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId)
     {
         return _directionRepository.GetMemberIdsAsync(directionId);
@@ -53,7 +58,7 @@ public class DirectionService : IDirectionService
     {
         ValidateDirectionName(direction.Name);
 
-        await _directionRepository.AddDirection(direction);
+        await _directionRepository.AddDirectionAsync(direction);
 
         _directionRepository.AddMember(new Membership
         {
@@ -137,7 +142,7 @@ public class DirectionService : IDirectionService
     {
         var direction = await _directionRepository.GetDirectionByIdAsync(id);
 
-        if (direction is null || !await _directionRepository.AnyMemberWithId(id, currentUserId))
+        if (direction is null || !await _directionRepository.AnyMemberWithIdAsync(id, currentUserId))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }

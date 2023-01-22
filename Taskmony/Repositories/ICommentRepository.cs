@@ -5,7 +5,11 @@ namespace Taskmony.Repositories;
 public interface ICommentRepository
 {
     Task<IEnumerable<Comment>> GetTaskCommentsAsync(Guid taskId, int? offset, int? limit);
-    
+
+    Task<IEnumerable<Comment>> GetCommentsByTaskIdsAsync(Guid[] ids, int? offset, int? limit);
+
+    Task<IEnumerable<Comment>> GetCommentsByIdeaIdsAsync(Guid[] ids, int? offset, int? limit);
+
     Task<IEnumerable<Comment>> GetIdeaCommentsAsync(Guid ideaId, int? offset, int? limit);
 
     Task<Comment?> GetCommentById(Guid id);
@@ -13,6 +17,6 @@ public interface ICommentRepository
     Task AddComment(TaskComment comment);
 
     Task AddComment(IdeaComment comment);
-    
+
     Task<bool> SaveChangesAsync();
 }

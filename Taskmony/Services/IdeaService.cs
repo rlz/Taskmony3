@@ -40,7 +40,7 @@ public class IdeaService : IIdeaService
         return await _ideaRepository.GetIdeasAsync(id, directionId, offset, limit, currentUserId);
     }
 
-    public async Task<Idea> AddIdea(Idea idea)
+    public async Task<Idea> AddIdeaAsync(Idea idea)
     {
         if (idea.DirectionId is not null &&
             !await _directionService.AnyMemberWithId(idea.DirectionId.Value, idea.CreatedById))
@@ -48,14 +48,14 @@ public class IdeaService : IIdeaService
             throw new DomainException(DirectionErrors.NotFound);
         }
 
-        await _ideaRepository.AddIdea(idea);
+        await _ideaRepository.AddIdeaAsync(idea);
 
         await _ideaRepository.SaveChangesAsync();
 
         return idea;
     }
 
-    public async Task<bool> SetIdeaDescription(Guid id, string description, Guid currentUserId)
+    public async Task<bool> SetIdeaDescriptionAsync(Guid id, string description, Guid currentUserId)
     {
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
@@ -74,7 +74,7 @@ public class IdeaService : IIdeaService
         return await _ideaRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetIdeaDetails(Guid id, string? details, Guid currentUserId)
+    public async Task<bool> SetIdeaDetailsAsync(Guid id, string? details, Guid currentUserId)
     {
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
@@ -88,7 +88,7 @@ public class IdeaService : IIdeaService
         return await _ideaRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetIdeaDirection(Guid id, Guid? directionId, Guid currentUserId)
+    public async Task<bool> SetIdeaDirectionAsync(Guid id, Guid? directionId, Guid currentUserId)
     {
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
@@ -108,7 +108,7 @@ public class IdeaService : IIdeaService
         return await _ideaRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetIdeaDeletedAt(Guid id, DateTime? deletedAtUtc, Guid currentUserId)
+    public async Task<bool> SetIdeaDeletedAtAsync(Guid id, DateTime? deletedAtUtc, Guid currentUserId)
     {
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
@@ -127,7 +127,7 @@ public class IdeaService : IIdeaService
         return await _ideaRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetIdeaGeneration(Guid id, Generation generation, Guid currentUserId)
+    public async Task<bool> SetIdeaGenerationAsync(Guid id, Generation generation, Guid currentUserId)
     {
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
@@ -141,7 +141,7 @@ public class IdeaService : IIdeaService
         return await _ideaRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetIdeaReviewedAt(Guid id, DateTime? reviewedAtUtc, Guid currentUserId)
+    public async Task<bool> SetIdeaReviewedAtAsync(Guid id, DateTime? reviewedAtUtc, Guid currentUserId)
     {
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 

@@ -5,20 +5,24 @@ namespace Taskmony.GraphQL.DataLoaders;
 
 public class UserByIdDataLoader : BatchDataLoader<Guid, User>
 {
-    private readonly IUserService _userService;
-    private readonly IUserIdentifierProvider _userIdentifierProvider;
+    private readonly IServiceProvider _serviceProvider;
 
-    public UserByIdDataLoader(IUserService userService, IBatchScheduler batchScheduler,
-        DataLoaderOptions options, IUserIdentifierProvider userIdentifierProvider) : base(batchScheduler, options)
+    public UserByIdDataLoader(IBatchScheduler batchScheduler, IServiceProvider serviceProvider,
+        DataLoaderOptions options) : base(batchScheduler, options)
     {
-        _userService = userService;
-        _userIdentifierProvider = userIdentifierProvider;
+        _serviceProvider = serviceProvider;
     }
 
     protected override async Task<IReadOnlyDictionary<Guid, User>> LoadBatchAsync(IReadOnlyList<Guid> keys,
         CancellationToken cancellationToken)
     {
-        var users = await _userService.GetUsersAsync(keys.ToArray(), null, null, null, null, _userIdentifierProvider.UserId);
+        await using var scope = _serviceProvider.CreateAsyncScope();
+        
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+        var userIdentifierProvider = scope.ServiceProvider.GetRequiredService<IUserIdentifierProvider>();
+
+        var users = await userService.GetUsersAsync(keys.ToArray(), null, null, null, null,
+            userIdentifierProvider.UserId);
 
         return users.ToDictionary(u => u.Id);
     }

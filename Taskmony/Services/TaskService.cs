@@ -49,7 +49,7 @@ public class TaskService : ITaskService
         return tasks;
     }
 
-    public async Task<Task> AddTask(Task task)
+    public async Task<Task> AddTaskAsync(Task task)
     {
         if (task.DirectionId is not null &&
             !await _directionService.AnyMemberWithId(task.DirectionId.Value, task.CreatedById))
@@ -70,14 +70,14 @@ public class TaskService : ITaskService
             }
         }
 
-        await _taskRepository.AddTask(task);
+        await _taskRepository.AddTaskAsync(task);
 
         await _taskRepository.SaveChangesAsync();
 
         return task;
     }
 
-    public async Task<Guid[]> AddRepeatingTask(Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions)
+    public async Task<Guid[]> AddRepeatingTaskAsync(Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions)
     {
         if (task.RepeatMode == RepeatMode.Custom && task.RepeatEvery is null)
         {
@@ -86,7 +86,7 @@ public class TaskService : ITaskService
 
         var tasks = GenerateTasks(task, repeatMode, repeatEvery, numberOfRepetitions);
 
-        await _taskRepository.AddTasks(tasks);
+        await _taskRepository.AddTasksAsync(tasks);
 
         await _taskRepository.SaveChangesAsync();
 
@@ -137,7 +137,7 @@ public class TaskService : ITaskService
         };
     }
 
-    public async Task<bool> SetTaskDescription(Guid id, string description, Guid currentUserId)
+    public async Task<bool> SetTaskDescriptionAsync(Guid id, string description, Guid currentUserId)
     {
         if (string.IsNullOrWhiteSpace(description))
         {
@@ -156,7 +156,7 @@ public class TaskService : ITaskService
         return await _taskRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetTaskDetails(Guid id, string? details, Guid currentUserId)
+    public async Task<bool> SetTaskDetailsAsync(Guid id, string? details, Guid currentUserId)
     {
         var task = await GetTaskOrThrowAsync(id, currentUserId);
 
@@ -170,7 +170,7 @@ public class TaskService : ITaskService
         return await _taskRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetTaskDirection(Guid id, Guid? directionId, Guid currentUserId)
+    public async Task<bool> SetTaskDirectionAsync(Guid id, Guid? directionId, Guid currentUserId)
     {
         var task = await GetTaskOrThrowAsync(id, currentUserId);
 
@@ -190,7 +190,7 @@ public class TaskService : ITaskService
         return await _taskRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetTaskAssignee(Guid id, Guid? assigneeId, Guid currentUserId)
+    public async Task<bool> SetTaskAssigneeAsync(Guid id, Guid? assigneeId, Guid currentUserId)
     {
         var task = await GetTaskOrThrowAsync(id, currentUserId);
 
@@ -215,7 +215,7 @@ public class TaskService : ITaskService
         return await _taskRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetTaskStartAt(Guid id, DateTime startAtUtc, Guid currentUserId)
+    public async Task<bool> SetTaskStartAtAsync(Guid id, DateTime startAtUtc, Guid currentUserId)
     {
         var task = await GetTaskOrThrowAsync(id, currentUserId);
 
@@ -229,7 +229,7 @@ public class TaskService : ITaskService
         return await _taskRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetTaskDeletedAt(Guid id, DateTime? deletedAtUtc, Guid currentUserId)
+    public async Task<bool> SetTaskDeletedAtAsync(Guid id, DateTime? deletedAtUtc, Guid currentUserId)
     {
         var task = await GetTaskOrThrowAsync(id, currentUserId);
 
@@ -253,7 +253,7 @@ public class TaskService : ITaskService
         return await _taskRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetTaskCompletedAt(Guid id, DateTime? completedAtUtc, Guid currentUserId)
+    public async Task<bool> SetTaskCompletedAtAsync(Guid id, DateTime? completedAtUtc, Guid currentUserId)
     {
         var task = await GetTaskOrThrowAsync(id, currentUserId);
 
@@ -282,7 +282,7 @@ public class TaskService : ITaskService
         return await _taskRepository.SaveChangesAsync();
     }
 
-    public async Task<Guid[]> SetRecurringTaskDeletedAt(Guid groupId, DateTime? deletedAtUtc, Guid currentUserId)
+    public async Task<Guid[]> SetRecurringTaskDeletedAtAsync(Guid groupId, DateTime? deletedAtUtc, Guid currentUserId)
     {
         var tasks = await GetTasksOrThrowAsync(groupId, currentUserId);
 

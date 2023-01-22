@@ -12,7 +12,7 @@ public class UserMutations
     {
         var notificationReadTimeUtc = timeConverter.StringToDateTimeUtc(notificationReadTime);
 
-        if (await userService.SetNotificationReadTime(currentUserId, notificationReadTimeUtc, currentUserId))
+        if (await userService.SetNotificationReadTimeAsync(currentUserId, notificationReadTimeUtc, currentUserId))
         {
             return currentUserId;
         }
@@ -23,7 +23,7 @@ public class UserMutations
     [Authorize]
     public async Task<Guid?> UserSetLogin([Service] IUserService userService, [GlobalState] Guid currentUserId, string login)
     {
-        if (await userService.SetLogin(currentUserId, login, currentUserId))
+        if (await userService.SetLoginAsync(currentUserId, login, currentUserId))
         {
             return currentUserId;
         }
@@ -34,7 +34,7 @@ public class UserMutations
     [Authorize]
     public async Task<Guid?> UserSetDisplayName([Service] IUserService userService, [GlobalState] Guid currentUserId, string displayName)
     {
-        if (await userService.SetDisplayName(currentUserId, displayName, currentUserId))
+        if (await userService.SetDisplayNameAsync(currentUserId, displayName, currentUserId))
         {
             return currentUserId;
         }
@@ -45,7 +45,7 @@ public class UserMutations
     [Authorize]
     public async Task<Guid?> UserSetEmail([Service] IUserService userService, [GlobalState] Guid currentUserId, string email)
     {
-        if (await userService.SetEmail(currentUserId, email, currentUserId))
+        if (await userService.SetEmailAsync(currentUserId, email, currentUserId))
         {
             return currentUserId;
         }
@@ -56,7 +56,7 @@ public class UserMutations
     [Authorize]
     public async Task<Guid?> UserSetPassword([Service] IUserService userService, [GlobalState] Guid currentUserId, string password)
     {
-        if (await userService.SetPassword(currentUserId, password, currentUserId))
+        if (await userService.SetPasswordAsync(currentUserId, password, currentUserId))
         {
             return currentUserId;
         }

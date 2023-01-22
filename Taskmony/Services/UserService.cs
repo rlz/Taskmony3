@@ -97,7 +97,7 @@ public class UserService : IUserService
         });
     }
 
-    public async Task<bool> SetEmail(Guid id, string email, Guid currentUserId)
+    public async Task<bool> SetEmailAsync(Guid id, string email, Guid currentUserId)
     {
         var user = await GetUserOrThrowAsync(id);
 
@@ -108,7 +108,7 @@ public class UserService : IUserService
         return await _userRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetLogin(Guid id, string login, Guid currentUserId)
+    public async Task<bool> SetLoginAsync(Guid id, string login, Guid currentUserId)
     {
         var user = await GetUserOrThrowAsync(id);
 
@@ -119,7 +119,7 @@ public class UserService : IUserService
         return await _userRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetDisplayName(Guid id, string displayName, Guid currentUserId)
+    public async Task<bool> SetDisplayNameAsync(Guid id, string displayName, Guid currentUserId)
     {
         var user = await GetUserOrThrowAsync(id);
 
@@ -128,7 +128,7 @@ public class UserService : IUserService
         return await _userRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetNotificationReadTime(Guid id, DateTime notificationReadTime, Guid currentUserId)
+    public async Task<bool> SetNotificationReadTimeAsync(Guid id, DateTime notificationReadTime, Guid currentUserId)
     {
         var user = await GetUserOrThrowAsync(id);
 
@@ -142,7 +142,7 @@ public class UserService : IUserService
         return await _userRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetPassword(Guid id, string password, Guid currentUserId)
+    public async Task<bool> SetPasswordAsync(Guid id, string password, Guid currentUserId)
     {
         var user = await GetUserOrThrowAsync(id);
 

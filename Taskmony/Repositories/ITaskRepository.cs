@@ -18,9 +18,9 @@ public interface ITaskRepository
 
     Task<IEnumerable<Models.Task>> GetNotCompletedTasksByGroupIdAsync(Guid id);
 
-    Task AddTask(Models.Task task);
+    Task AddTaskAsync(Models.Task task);
 
-    Task AddTasks(IReadOnlyCollection<Models.Task> tasks);
+    Task AddTasksAsync(IReadOnlyCollection<Models.Task> tasks);
 
     Task<bool> SaveChangesAsync();
 }

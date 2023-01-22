@@ -25,13 +25,13 @@ public interface IUserService
 
     Task<User> GetUserOrThrowAsync(Guid id);
 
-    Task<bool> SetNotificationReadTime(Guid id, DateTime notificationReadTime, Guid currentUserId);
+    Task<bool> SetNotificationReadTimeAsync(Guid id, DateTime notificationReadTime, Guid currentUserId);
 
-    Task<bool> SetLogin(Guid id, string login, Guid currentUserId);
+    Task<bool> SetLoginAsync(Guid id, string login, Guid currentUserId);
 
-    Task<bool> SetDisplayName(Guid id, string displayName, Guid currentUserId);
+    Task<bool> SetDisplayNameAsync(Guid id, string displayName, Guid currentUserId);
 
-    Task<bool> SetEmail(Guid id, string email, Guid currentUserId);
+    Task<bool> SetEmailAsync(Guid id, string email, Guid currentUserId);
 
-    Task<bool> SetPassword(Guid id, string password, Guid currentUserId);
+    Task<bool> SetPasswordAsync(Guid id, string password, Guid currentUserId);
 }

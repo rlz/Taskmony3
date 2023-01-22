@@ -5,20 +5,22 @@ namespace Taskmony.GraphQL.DataLoaders;
 
 public class DirectionByIdDataLoader : BatchDataLoader<Guid, Direction>
 {
-    private readonly IDirectionService _directionService;
-    private readonly IUserIdentifierProvider _userIdentifierProvider;
+    private readonly IServiceProvider _serviceProvider;
 
-    public DirectionByIdDataLoader(IDirectionService directionService, IBatchScheduler batchScheduler,
-        DataLoaderOptions options, IUserIdentifierProvider userIdentifierProvider) : base(batchScheduler, options)
+    public DirectionByIdDataLoader(IBatchScheduler batchScheduler, IServiceProvider serviceProvider,
+        DataLoaderOptions options) : base(batchScheduler, options)
     {
-        _directionService = directionService;
-        _userIdentifierProvider = userIdentifierProvider;
+        _serviceProvider = serviceProvider;
     }
 
     protected override async Task<IReadOnlyDictionary<Guid, Direction>> LoadBatchAsync(IReadOnlyList<Guid> keys,
         CancellationToken cancellationToken)
     {
-        var directions = await _directionService.GetDirectionsAsync(keys.ToArray(), null, null, _userIdentifierProvider.UserId);
+        await using var scope = _serviceProvider.CreateAsyncScope();
+
+        var directionService = scope.ServiceProvider.GetRequiredService<IDirectionService>();
+
+        var directions = await directionService.GetDirectionByIdsAsync(keys.ToArray());
 
         return directions.ToDictionary(d => d.Id);
     }

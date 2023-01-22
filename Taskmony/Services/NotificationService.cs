@@ -51,19 +51,15 @@ public class NotificationService : INotificationService
         return null;
     }
 
-    public async Task<IEnumerable<Notification>> GetTaskNotificationsAsync(Guid taskId, DateTime? start, DateTime? end)
-    {
-        return await _notificationRepository.GetNotificationsAsync(NotifiableType.Task, taskId, start, end);
-    }
-
-    public async Task<IEnumerable<Notification>> GetIdeaNotificationsAsync(Guid ideaId, DateTime? start, DateTime? end)
-    {
-        return await _notificationRepository.GetNotificationsAsync(NotifiableType.Idea, ideaId, start, end);
-    }
-
-    public async Task<IEnumerable<Notification>> GetDirectionNotificationsAsync(Guid directionId, DateTime? start,
+    public async Task<IEnumerable<Notification>> GetNotificationsByNotifiableIdAsync(Guid id, DateTime? start,
         DateTime? end)
     {
-        return await _notificationRepository.GetNotificationsAsync(NotifiableType.Direction, directionId, start, end);
+        return await _notificationRepository.GetNotificationsAsync(id, start, end);
+    }
+
+    public async Task<IEnumerable<Notification>> GetNotificationsByNotifiableIdsAsync(Guid[] ids, DateTime? start,
+        DateTime? end)
+    {
+        return await _notificationRepository.GetNotificationsAsync(ids, start, end);
     }
 }

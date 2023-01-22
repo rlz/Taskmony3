@@ -65,7 +65,7 @@ public class IdeaRepository : IIdeaRepository, IAsyncDisposable
         return await _context.Ideas.FindAsync(id);
     }
 
-    public async Task AddIdea(Idea idea)
+    public async Task AddIdeaAsync(Idea idea)
     {
         await _context.Ideas.AddAsync(idea);
     }

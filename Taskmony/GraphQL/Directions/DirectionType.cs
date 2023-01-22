@@ -1,3 +1,4 @@
+using HotChocolate.Resolvers;
 using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Notifications;
 using Taskmony.Models;
@@ -20,7 +21,7 @@ public class DirectionType : ObjectType<Direction>
 
         descriptor.Field(d => d.CreatedBy)
             .Type<ObjectType<User>>()
-            .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!));
 
         descriptor.Field(d => d.Members)
             .ResolveWith<Resolvers>(r => r.GetMembers(default!, default!, default!));
@@ -29,13 +30,12 @@ public class DirectionType : ObjectType<Direction>
             .Type<ListType<NonNullType<NotificationType>>>()
             .Argument("start", a => a.Type<StringType>())
             .Argument("end", a => a.Type<StringType>())
-            .ResolveWith<Resolvers>(r => r.GetNotifications(default!, default!, default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetNotifications(default!, default!, default!, default!, default, default));
     }
 
     private class Resolvers
     {
-        public async Task<User> GetCreatedBy([Parent] Direction direction, UserByIdDataLoader userById,
-            [GlobalState] Guid currentUserId)
+        public async Task<User> GetCreatedBy([Parent] Direction direction, UserByIdDataLoader userById)
         {
             return await userById.LoadAsync(direction.CreatedById);
         }
@@ -47,13 +47,25 @@ public class DirectionType : ObjectType<Direction>
         }
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Direction direction,
-            [Service] INotificationService notificationService, [Service] ITimeConverter timeConverter,
-            string? start, string? end)
+            IResolverContext context, [Service] IServiceProvider serviceProvider,
+            [Service] ITimeConverter timeConverter, string? start, string? end)
         {
-            DateTime? startDateTime = start is null ? null : timeConverter.StringToDateTimeUtc(start);
-            DateTime? endDateTime = end is null ? null : timeConverter.StringToDateTimeUtc(end);
+            DateTime? startUtc = start is null ? null : timeConverter.StringToDateTimeUtc(start);
+            DateTime? endUtc = end is null ? null : timeConverter.StringToDateTimeUtc(end);
 
-            return await notificationService.GetDirectionNotificationsAsync(direction.Id, startDateTime, endDateTime);
+            return await context.GroupDataLoader<Guid, Notification>(
+                async (keys, ct) =>
+                {
+                    await using var scope = serviceProvider.CreateAsyncScope();
+
+                    var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+
+                    var notifications =
+                        await notificationService.GetNotificationsByNotifiableIdsAsync(keys.ToArray(), startUtc, endUtc);
+
+                    return notifications.ToLookup(n => n.NotifiableId);
+                }
+            ).LoadAsync(direction.Id);
         }
     }
 }

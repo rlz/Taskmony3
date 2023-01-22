@@ -23,7 +23,7 @@ public class TaskMutations
             StartAt = startAt is null ? null : timeConverter.StringToDateTimeUtc(startAt)
         };
 
-        return await taskService.AddTask(task);
+        return await taskService.AddTaskAsync(task);
     }
 
     [Authorize]
@@ -44,14 +44,14 @@ public class TaskMutations
             NumberOfRepetitions = numberOfRepetitions
         };
 
-        return await taskService.AddRepeatingTask(task, repeatMode, repeatEvery, numberOfRepetitions);
+        return await taskService.AddRepeatingTaskAsync(task, repeatMode, repeatEvery, numberOfRepetitions);
     }
 
     [Authorize]
     public async Task<Guid?> TaskSetDescription([Service] ITaskService taskService,
         [GlobalState] Guid currentUserId, Guid taskId, string description)
     {
-        if (await taskService.SetTaskDescription(taskId, description, currentUserId))
+        if (await taskService.SetTaskDescriptionAsync(taskId, description, currentUserId))
         {
             return taskId;
         }
@@ -63,7 +63,7 @@ public class TaskMutations
     public async Task<Guid?> TaskSetDetails([Service] ITaskService taskService,
     [GlobalState] Guid currentUserId, Guid taskId, string? details)
     {
-        if (await taskService.SetTaskDetails(taskId, details, currentUserId))
+        if (await taskService.SetTaskDetailsAsync(taskId, details, currentUserId))
         {
             return taskId;
         }
@@ -75,7 +75,7 @@ public class TaskMutations
     public async Task<Guid?> TaskSetDirection([Service] ITaskService taskService,
         [GlobalState] Guid currentUserId, Guid taskId, Guid? directionId)
     {
-        if (await taskService.SetTaskDirection(taskId, directionId, currentUserId))
+        if (await taskService.SetTaskDirectionAsync(taskId, directionId, currentUserId))
         {
             return taskId;
         }
@@ -89,7 +89,7 @@ public class TaskMutations
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
 
-        if (await taskService.SetTaskDeletedAt(taskId, deletedAtUtc, currentUserId))
+        if (await taskService.SetTaskDeletedAtAsync(taskId, deletedAtUtc, currentUserId))
         {
             return taskId;
         }
@@ -101,7 +101,7 @@ public class TaskMutations
     public async Task<Guid?> TaskSetAssignee([Service] ITaskService taskService,
         [GlobalState] Guid currentUserId, Guid taskId, Guid? assigneeId)
     {
-        if (await taskService.SetTaskAssignee(taskId, assigneeId, currentUserId))
+        if (await taskService.SetTaskAssigneeAsync(taskId, assigneeId, currentUserId))
         {
             return taskId;
         }
@@ -115,7 +115,7 @@ public class TaskMutations
     {
         var startAtUtc = timeConverter.StringToDateTimeUtc(startAt);
 
-        if (await taskService.SetTaskStartAt(taskId, startAtUtc, currentUserId))
+        if (await taskService.SetTaskStartAtAsync(taskId, startAtUtc, currentUserId))
         {
             return taskId;
         }
@@ -129,7 +129,7 @@ public class TaskMutations
     {
         DateTime? completedAtUtc = completedAt is null ? null : timeConverter.StringToDateTimeUtc(completedAt);
 
-        if (await taskService.SetTaskCompletedAt(taskId, completedAtUtc, currentUserId))
+        if (await taskService.SetTaskCompletedAtAsync(taskId, completedAtUtc, currentUserId))
         {
             return taskId;
         }
@@ -141,6 +141,6 @@ public class TaskMutations
     public async Task<Guid[]?> TaskRecurringDeleteAll([Service] ITaskService taskService,
         [GlobalState] Guid currentUserId, Guid groupId)
     {
-        return await taskService.SetRecurringTaskDeletedAt(groupId, DateTime.UtcNow, currentUserId);
+        return await taskService.SetRecurringTaskDeletedAtAsync(groupId, DateTime.UtcNow, currentUserId);
     }
 }

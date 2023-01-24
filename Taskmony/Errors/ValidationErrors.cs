@@ -29,4 +29,7 @@ public static class ValidationErrors
 
     public static ErrorDetails InvalidDirectionName => 
         new("Direction name must not be empty", "INVALID_DIRECTION_NAME");
+    
+    public static ErrorDetails InvalidRepeatMode => 
+        new("Repeat mode is invalid", "INVALID_REPEAT_MODE");
 }

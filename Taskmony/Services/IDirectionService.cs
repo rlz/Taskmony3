@@ -5,17 +5,13 @@ namespace Taskmony.Services;
 public interface IDirectionService
 {
     Task<IEnumerable<Guid>> GetUserDirectionIds(Guid userId);
-
-    Task<Direction?> GetDirectionByIdAsync(Guid id);
-
+    
     Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, int? offset, int? limit, Guid currentUserId);
 
-    Task<IEnumerable<Direction>> GetDirectionByIdsAsync(Guid[] ids);
-
-    Task<IEnumerable<User>> GetDirectionMembersAsync(Guid id, Guid currentUserId);
-
-    Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId);
-
+    Task<IEnumerable<Direction>> GetDirectionsByIdsAsync(Guid[] ids);
+    
+    Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds);
+    
     Task<bool> AnyMemberWithId(Guid directionId, Guid memberId);
 
     Task<Direction> AddDirection(Direction direction);

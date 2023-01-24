@@ -2,7 +2,6 @@ using Taskmony.GraphQL.DataLoaders;
 using Taskmony.Models;
 using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
-using Taskmony.Services;
 
 namespace Taskmony.GraphQL.Notifications;
 
@@ -20,30 +19,36 @@ public class NotificationType : ObjectType<Notification>
         descriptor.Field(n => n.ActionType).Type<EnumType<ActionType>>();
 
         descriptor.Field(n => n.ActionItem)
-            .ResolveWith<Resolvers>(r => r.GetActionItem(default!, default!, default!))
+            .ResolveWith<Resolvers>(r => r.GetActionItem(default!, default!, default!, default!, default!))
             .Type<ActionItem>();
 
         descriptor.Field(n => n.Actor)
             .Type<ObjectType<User>>()
-            .ResolveWith<Resolvers>(r => r.GetActor(default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetActor(default!, default!));
     }
 
     private class Resolvers
     {
         public async Task<IActionItem?> GetActionItem([Parent] Notification notification,
-            [Service] INotificationService notificationService, [GlobalState] Guid currentUserId)
+            UserByIdDataLoader userById, TaskByIdDataLoader taskById,
+            IdeaByIdDataLoader ideaById, CommentByIdDataLoader commentById)
         {
-            if (notification.ActionItemType is null || notification.ActionItemId is null)
+            if (notification.ActionItemId is null)
             {
                 return null;
             }
 
-            return await notificationService.GetActionItemAsync(notification.ActionItemType.Value,
-                notification.ActionItemId.Value, currentUserId);
+            return notification.ActionItemType switch
+            {
+                ActionItemType.User => await userById.LoadAsync(notification.ActionItemId.Value),
+                ActionItemType.Task => await taskById.LoadAsync(notification.ActionItemId.Value),
+                ActionItemType.Idea => await ideaById.LoadAsync(notification.ActionItemId.Value),
+                ActionItemType.Comment => await commentById.LoadAsync(notification.ActionItemId.Value),
+                _ => null
+            };
         }
 
-        public async Task<User> GetActor([Parent] Notification notification, 
-            UserByIdDataLoader userById, [GlobalState] Guid currentUserId)
+        public async Task<User> GetActor([Parent] Notification notification, UserByIdDataLoader userById)
         {
             return await userById.LoadAsync(notification.ActorId);
         }

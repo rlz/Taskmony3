@@ -47,7 +47,7 @@ public class TaskType : ObjectType<Task>
         descriptor
             .Field("subscribers")
             .Type<ListType<NonNullType<UserType>>>()
-            .ResolveWith<Resolvers>(r => r.GetSubscribers(default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetSubscribers(default!, default!, default!, default!));
 
         descriptor.Field(i => i.Notifications)
             .Type<ListType<NonNullType<NotificationType>>>()
@@ -88,23 +88,32 @@ public class TaskType : ObjectType<Task>
             [Service] IServiceProvider serviceProvider, int? offset, int? limit)
         {
             return await context.GroupDataLoader<Guid, Comment>(
-                async (keys, ct) =>
+                async (ids, ct) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
-                    
-                    var commentService = scope.ServiceProvider.GetRequiredService<ICommentService>();
 
-                    var comments = await commentService.GetCommentsByTaskIds(keys.ToArray(), offset, limit);
+                    var comments = await scope.ServiceProvider.GetRequiredService<ICommentService>()
+                        .GetCommentsByTaskIds(ids.ToArray(), offset, limit);
 
                     return comments.ToLookup(c => ((TaskComment)c).TaskId);
-                }
+                }, "CommentByTaskId"
             ).LoadAsync(task.Id);
         }
 
-        public async Task<IEnumerable<User>?> GetSubscribers([Parent] Task task,
-            [Service] ISubscriptionService subscriptionService, [GlobalState] Guid currentUserId)
+        public async Task<IEnumerable<User>?> GetSubscribers([Parent] Task task, IResolverContext context,
+            UserByIdDataLoader userById, [Service] IServiceProvider serviceProvider)
         {
-            return await subscriptionService.GetTaskSubscribersAsync(task.Id, currentUserId);
+            var subscriberIds = await context.GroupDataLoader<Guid, Guid>(
+                async (taskIds, ct) =>
+                {
+                    await using var scope = serviceProvider.CreateAsyncScope();
+
+                    return await scope.ServiceProvider.GetRequiredService<ISubscriptionService>()
+                        .GetTaskSubscriberIdsAsync(taskIds.ToArray());
+                }, "SubscriberIdByTaskId"
+            ).LoadAsync(task.Id);
+
+            return await userById.LoadAsync(subscriberIds);
         }
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Task task, IResolverContext context,
@@ -115,17 +124,15 @@ public class TaskType : ObjectType<Task>
             DateTime? endUtc = end is null ? null : timeConverter.StringToDateTimeUtc(end);
 
             return await context.GroupDataLoader<Guid, Notification>(
-                async (keys, ct) =>
+                async (notifiableIds, ct) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
 
-                    var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
-
-                    var notifications =
-                        await notificationService.GetNotificationsByNotifiableIdsAsync(keys.ToArray(), startUtc, endUtc);
+                    var notifications = await scope.ServiceProvider.GetRequiredService<INotificationService>()
+                        .GetNotificationsByNotifiableIdsAsync(notifiableIds.ToArray(), startUtc, endUtc);
 
                     return notifications.ToLookup(n => n.NotifiableId);
-                }
+                }, "NotificationByTaskId"
             ).LoadAsync(task.Id);
         }
     }

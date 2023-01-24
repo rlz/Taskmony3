@@ -40,6 +40,11 @@ public class IdeaService : IIdeaService
         return await _ideaRepository.GetIdeasAsync(id, directionId, offset, limit, currentUserId);
     }
 
+    public async Task<IEnumerable<Idea>> GetIdeaByIdsAsync(Guid[] ids)
+    {
+        return await _ideaRepository.GetIdeaByIdsAsync(ids);
+    }
+
     public async Task<Idea> AddIdeaAsync(Idea idea)
     {
         if (idea.DirectionId is not null &&

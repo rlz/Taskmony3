@@ -4,5 +4,5 @@ public class TaskComment : Comment
 {
     public Guid TaskId { get; set; }
 
-    public Task Task { get; set; }
+    public Task Task { get; set; } = default!;
 }

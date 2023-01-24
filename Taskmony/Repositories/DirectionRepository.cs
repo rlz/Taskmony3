@@ -60,12 +60,13 @@ public class DirectionRepository : IDirectionRepository, IAsyncDisposable
         return query;
     }
 
-    public async Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId)
+    public async Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds)
     {
-        return await _context.Memberships
-            .Where(m => m.DirectionId == directionId)
-            .Select(m => m.UserId)
+        var memberships = await _context.Memberships
+            .Where(m => directionIds.Contains(m.DirectionId))
             .ToListAsync();
+        
+        return memberships.ToLookup(m => m.DirectionId, m => m.UserId);
     }
 
     public async Task<bool> AnyMemberWithIdAsync(Guid directionId, Guid memberId)

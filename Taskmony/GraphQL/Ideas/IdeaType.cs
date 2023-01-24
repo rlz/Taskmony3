@@ -26,7 +26,7 @@ public class IdeaType : ObjectType<Idea>
 
         descriptor.Field(i => i.CreatedBy)
             .Type<ObjectType<User>>()
-            .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!));
 
         descriptor.Field(i => i.Direction)
             .ResolveWith<Resolvers>(r => r.GetDirection(default!, default!));
@@ -47,13 +47,12 @@ public class IdeaType : ObjectType<Idea>
         descriptor
             .Field("subscribers")
             .Type<ListType<NonNullType<UserType>>>()
-            .ResolveWith<Resolvers>(r => r.GetSubscribers(default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetSubscribers(default!, default!, default!, default!));
     }
 
     private class Resolvers
     {
-        public async Task<User> GetCreatedBy([Parent] Idea idea, UserByIdDataLoader userById,
-            [GlobalState] Guid currentUserId)
+        public async Task<User> GetCreatedBy([Parent] Idea idea, UserByIdDataLoader userById)
         {
             return await userById.LoadAsync(idea.CreatedById);
         }
@@ -69,46 +68,54 @@ public class IdeaType : ObjectType<Idea>
         }
 
         public async Task<IEnumerable<Comment>?> GetComments([Parent] Idea idea, IResolverContext context,
-            IServiceProvider serviceProvider, int? offset, int? limit)
+            [Service] IServiceProvider serviceProvider, int? offset, int? limit)
         {
             return await context.GroupDataLoader<Guid, Comment>(
-                async (keys, ct) =>
+                async (ids, ct) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
 
-                    var commentService = scope.ServiceProvider.GetRequiredService<ICommentService>();
-
-                    var comments = await commentService.GetCommentsByIdeaIds(keys.ToArray(), offset, limit);
+                    var comments = await scope.ServiceProvider.GetRequiredService<ICommentService>()
+                        .GetCommentsByIdeaIds(ids.ToArray(), offset, limit);
 
                     return comments.ToLookup(c => ((IdeaComment)c).IdeaId);
-                }
+                }, "CommentByIdeaId"
             ).LoadAsync(idea.Id);
         }
 
-        public async Task<IEnumerable<User>?> GetSubscribers([Parent] Idea idea,
-            [Service] ISubscriptionService subscriptionService, [GlobalState] Guid currentUserId)
+        public async Task<IEnumerable<User>?> GetSubscribers([Parent] Idea idea, IResolverContext context,
+            [Service] IServiceProvider serviceProvider, UserByIdDataLoader userById)
         {
-            return await subscriptionService.GetIdeaSubscribersAsync(idea.Id, currentUserId);
+            var subscriberIds = await context.GroupDataLoader<Guid, Guid>(
+                async (ideaIds, ct) =>
+                {
+                    await using var scope = serviceProvider.CreateAsyncScope();
+
+                    return await scope.ServiceProvider.GetRequiredService<ISubscriptionService>()
+                        .GetIdeaSubscriberIdsAsync(ideaIds.ToArray());
+                }, "SubscriberIdByIdeaId"
+            ).LoadAsync(idea.Id);
+
+            return await userById.LoadAsync(subscriberIds);
         }
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Idea idea, IResolverContext context,
-            [Service] IServiceProvider serviceProvider, [Service] ITimeConverter timeConverter, string? start, string? end)
+            [Service] IServiceProvider serviceProvider, [Service] ITimeConverter timeConverter, string? start,
+            string? end)
         {
             DateTime? startUtc = start is null ? null : timeConverter.StringToDateTimeUtc(start);
             DateTime? endUtc = end is null ? null : timeConverter.StringToDateTimeUtc(end);
 
             return await context.GroupDataLoader<Guid, Notification>(
-                async (keys, ct) =>
+                async (notifiableIds, ct) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
 
-                    var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+                    var notifications = await scope.ServiceProvider.GetRequiredService<INotificationService>()
+                        .GetNotificationsByNotifiableIdsAsync(notifiableIds.ToArray(), startUtc, endUtc);
 
-                    var notifications =
-                        await notificationService.GetNotificationsByNotifiableIdsAsync(keys.ToArray(), startUtc, endUtc);
-                        
                     return notifications.ToLookup(n => n.NotifiableId);
-                }
+                }, "NotificationByIdeaId"
             ).LoadAsync(idea.Id);
         }
     }

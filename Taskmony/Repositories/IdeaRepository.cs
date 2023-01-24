@@ -65,6 +65,11 @@ public class IdeaRepository : IIdeaRepository, IAsyncDisposable
         return await _context.Ideas.FindAsync(id);
     }
 
+    public async Task<IEnumerable<Idea>> GetIdeaByIdsAsync(Guid[] ids)
+    {
+        return await _context.Ideas.Where(i => ids.Contains(i.Id)).ToListAsync();
+    }
+
     public async Task AddIdeaAsync(Idea idea)
     {
         await _context.Ideas.AddAsync(idea);

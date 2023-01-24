@@ -4,5 +4,5 @@ public class TaskSubscription : Subscription
 {
     public Guid TaskId { get; set; }
 
-    public Task Task { get; set; }
+    public Task Task { get; set; } = default!;
 }

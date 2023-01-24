@@ -14,6 +14,8 @@ public interface ITaskRepository
     Task<IEnumerable<Models.Task>> GetTasksAsync(Guid[]? id, Guid?[] directionId,
         int? offset, int? limit, Guid userId);
 
+    Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids);
+
     Task<Models.Task?> GetTaskByIdAsync(Guid id);
 
     Task<IEnumerable<Models.Task>> GetNotCompletedTasksByGroupIdAsync(Guid id);

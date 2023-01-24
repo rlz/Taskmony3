@@ -18,11 +18,21 @@ public class SubscriptionRepository : ISubscriptionRepository, IAsyncDisposable
         return await _context.TaskSubscriptions.Where(s => s.TaskId == taskId).ToListAsync();
     }
 
+    public async Task<IEnumerable<TaskSubscription>> GetTaskSubscriptionsAsync(Guid[] taskIds)
+    {
+        return await _context.TaskSubscriptions.Where(s => taskIds.Contains(s.TaskId)).ToListAsync();
+    }
+
     public async Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid ideaId)
     {
         return await _context.IdeaSubscriptions.Where(s => s.IdeaId == ideaId).ToListAsync();
     }
-    
+
+    public async Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid[] ideaIds)
+    {
+        return await _context.IdeaSubscriptions.Where(s => ideaIds.Contains(s.IdeaId)).ToListAsync();
+    }
+
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;

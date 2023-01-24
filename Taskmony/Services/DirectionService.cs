@@ -26,10 +26,9 @@ public class DirectionService : IDirectionService
         return await _directionRepository.GetDirectionByIdAsync(id);
     }
 
-    public async Task<IEnumerable<User>> GetDirectionMembersAsync(Guid id, Guid currentUserId)
+    public async Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds)
     {
-        var memberIds = await _directionRepository.GetMemberIdsAsync(id);
-        return await _userService.GetUsersAsync(memberIds.ToArray(), null, null, null, null, currentUserId);
+        return await _directionRepository.GetMemberIdsAsync(directionIds);
     }
 
     public async Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, int? offset, int? limit,
@@ -38,14 +37,9 @@ public class DirectionService : IDirectionService
         return await _directionRepository.GetDirectionsAsync(id, offset, limit, currentUserId);
     }
 
-    public async Task<IEnumerable<Direction>> GetDirectionByIdsAsync(Guid[] ids)
+    public async Task<IEnumerable<Direction>> GetDirectionsByIdsAsync(Guid[] ids)
     {
         return await _directionRepository.GetDirectionByIdsAsync(ids);
-    }
-
-    public Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId)
-    {
-        return _directionRepository.GetMemberIdsAsync(directionId);
     }
 
     public async Task<IEnumerable<Guid>> GetUserDirectionIds(Guid userId)

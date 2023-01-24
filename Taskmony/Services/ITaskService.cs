@@ -16,6 +16,8 @@ public interface ITaskService
     Task<IEnumerable<Models.Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId,
         int? offset, int? limit, Guid currentUserId);
 
+    Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids);
+
     Task<Models.Task> GetTaskOrThrowAsync(Guid id, Guid currentUserId);
 
     Task<Models.Task> AddTaskAsync(Models.Task task);

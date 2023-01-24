@@ -24,7 +24,7 @@ public class DirectionType : ObjectType<Direction>
             .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!));
 
         descriptor.Field(d => d.Members)
-            .ResolveWith<Resolvers>(r => r.GetMembers(default!, default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetMembers(default!, default!, default!, default!));
 
         descriptor.Field(i => i.Notifications)
             .Type<ListType<NonNullType<NotificationType>>>()
@@ -40,10 +40,20 @@ public class DirectionType : ObjectType<Direction>
             return await userById.LoadAsync(direction.CreatedById);
         }
 
-        public async Task<IEnumerable<User>?> GetMembers([Parent] Direction direction,
-            [Service] IDirectionService directionService, [GlobalState] Guid currentUserId)
+        public async Task<IEnumerable<User>?> GetMembers([Parent] Direction direction, IResolverContext context,
+            UserByIdDataLoader userById, [Service] IServiceProvider serviceProvider)
         {
-            return await directionService.GetDirectionMembersAsync(direction.Id, currentUserId);
+            var memberIds = await context.GroupDataLoader<Guid, Guid>(
+                async (directionIds, ct) =>
+                {
+                    await using var scope = serviceProvider.CreateAsyncScope();
+
+                    return await scope.ServiceProvider.GetRequiredService<IDirectionService>()
+                        .GetMemberIdsAsync(directionIds.ToArray());
+                }, "MemberIdByDirectionId"
+            ).LoadAsync(direction.Id);
+
+            return await userById.LoadAsync(memberIds);
         }
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Direction direction,
@@ -54,17 +64,15 @@ public class DirectionType : ObjectType<Direction>
             DateTime? endUtc = end is null ? null : timeConverter.StringToDateTimeUtc(end);
 
             return await context.GroupDataLoader<Guid, Notification>(
-                async (keys, ct) =>
+                async (notifiableIds, ct) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
-
-                    var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
-
-                    var notifications =
-                        await notificationService.GetNotificationsByNotifiableIdsAsync(keys.ToArray(), startUtc, endUtc);
+                    
+                    var notifications = await scope.ServiceProvider.GetRequiredService<INotificationService>()
+                        .GetNotificationsByNotifiableIdsAsync(notifiableIds.ToArray(), startUtc, endUtc);
 
                     return notifications.ToLookup(n => n.NotifiableId);
-                }
+                }, "NotificationByDirectionId"
             ).LoadAsync(direction.Id);
         }
     }

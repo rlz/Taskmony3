@@ -10,8 +10,8 @@ public interface IDirectionRepository
     Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, int? offset, int? limit, Guid userId);
 
     Task<IEnumerable<Direction>> GetDirectionByIdsAsync(Guid[] ids);
-
-    Task<IEnumerable<Guid>> GetMemberIdsAsync(Guid directionId);
+    
+    Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds);
 
     Task<bool> AnyMemberWithIdAsync(Guid directionId, Guid memberId);
 

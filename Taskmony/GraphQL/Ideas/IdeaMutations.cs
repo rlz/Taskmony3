@@ -3,7 +3,7 @@ using Taskmony.Models;
 using Taskmony.Models.Enums;
 using Taskmony.Services;
 
-namespace Taskmony.GraphQL.Tasks;
+namespace Taskmony.GraphQL.Ideas;
 
 [ExtendObjectType(OperationTypeNames.Mutation)]
 public class IdeaMutations

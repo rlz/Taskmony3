@@ -1,10 +1,8 @@
-using Taskmony.Models;
-
 namespace Taskmony.Services;
 
 public interface ISubscriptionService
 {
-    Task<IEnumerable<User>> GetTaskSubscribersAsync(Guid taskId, Guid currentUserId);
-
-    Task<IEnumerable<User>> GetIdeaSubscribersAsync(Guid ideaId, Guid currentUserId);
+    Task<ILookup<Guid, Guid>> GetTaskSubscriberIdsAsync(Guid[] taskIds);
+    
+    Task<ILookup<Guid, Guid>> GetIdeaSubscriberIdsAsync(Guid[] ideaIds);
 }

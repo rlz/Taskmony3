@@ -18,16 +18,6 @@ public class CommentService : ICommentService
         _ideaService = ideaService;
     }
 
-    public async Task<IEnumerable<Comment>> GetTaskCommentsAsync(Guid taskId, int? offset, int? limit)
-    {
-        return await _commentRepository.GetTaskCommentsAsync(taskId, offset, limit);
-    }
-
-    public async Task<IEnumerable<Comment>> GetIdeaCommentsAsync(Guid ideaId, int? offset, int? limit)
-    {
-        return await _commentRepository.GetIdeaCommentsAsync(ideaId, offset, limit);
-    }
-
     public async Task<Comment?> GetCommentById(Guid id)
     {
         return await _commentRepository.GetCommentById(id);
@@ -41,6 +31,11 @@ public class CommentService : ICommentService
     public async Task<IEnumerable<Comment>> GetCommentsByIdeaIds(Guid[] ids, int? offset, int? limit)
     {
         return await _commentRepository.GetCommentsByIdeaIdsAsync(ids, offset, limit);
+    }
+
+    public async Task<IEnumerable<Comment>> GetCommentsByIdsAsync(Guid[] ids)
+    {
+        return await _commentRepository.GetCommentsByIdsAsync(ids);
     }
 
     public async Task<Comment> AddComment(TaskComment comment)
@@ -90,11 +85,11 @@ public class CommentService : ICommentService
 
         if (comment is IdeaComment)
         {
-            await _ideaService.GetIdeaOrThrowAsync(((IdeaComment)comment).IdeaId, currentUserId);
+            await _ideaService.GetIdeaOrThrowAsync(((IdeaComment) comment).IdeaId, currentUserId);
         }
         else if (comment is TaskComment)
         {
-            await _taskService.GetTaskOrThrowAsync(((TaskComment)comment).TaskId, currentUserId);
+            await _taskService.GetTaskOrThrowAsync(((TaskComment) comment).TaskId, currentUserId);
         }
 
         return comment;

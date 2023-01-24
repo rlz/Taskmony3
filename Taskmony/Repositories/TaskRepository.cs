@@ -58,6 +58,11 @@ public class TaskRepository : ITaskRepository, IAsyncDisposable
         return query;
     }
 
+    public async Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids)
+    {
+        return await _context.Tasks.Where(t => ids.Contains(t.Id)).ToListAsync();
+    }
+
     public async Task AddTaskAsync(Models.Task task)
     {
         await _context.Tasks.AddAsync(task);

@@ -49,6 +49,11 @@ public class TaskService : ITaskService
         return tasks;
     }
 
+    public async Task<IEnumerable<Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids)
+    {
+        return await _taskRepository.GetTasksByIdsAsync(ids);
+    }
+
     public async Task<Task> AddTaskAsync(Task task)
     {
         if (task.DirectionId is not null &&
@@ -133,7 +138,7 @@ public class TaskService : ITaskService
             RepeatMode.Month => prev.AddMonths(1),
             RepeatMode.Year => prev.AddYears(1),
             RepeatMode.Custom => prev.AddDays(repeatEvery!.Value),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new DomainException(ValidationErrors.InvalidRepeatMode)
         };
     }
 

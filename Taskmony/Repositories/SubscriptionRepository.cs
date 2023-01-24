@@ -4,7 +4,7 @@ using Taskmony.Models.Subscriptions;
 
 namespace Taskmony.Repositories;
 
-public class SubscriptionRepository : ISubscriptionRepository, IAsyncDisposable
+public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposable, IAsyncDisposable
 {
     private readonly TaskmonyDbContext _context;
 
@@ -33,9 +33,46 @@ public class SubscriptionRepository : ISubscriptionRepository, IAsyncDisposable
         return await _context.IdeaSubscriptions.Where(s => ideaIds.Contains(s.IdeaId)).ToListAsync();
     }
 
+    public void AddTaskSubscription(TaskSubscription subscription)
+    {
+        _context.TaskSubscriptions.Add(subscription);
+    }
+
+    public void AddIdeaSubscription(IdeaSubscription subscription)
+    {
+        _context.IdeaSubscriptions.Add(subscription);
+    }
+
+    public void RemoveTaskSubscription(TaskSubscription subscription)
+    {
+        _context.TaskSubscriptions.Remove(subscription);
+    }
+
+    public void RemoveIdeaSubscription(IdeaSubscription subscription)
+    {
+        _context.IdeaSubscriptions.Remove(subscription);
+    }
+
+    public async Task<TaskSubscription?> GetTaskSubscriptionAsync(Guid taskId, Guid currentUserId)
+    {
+        return await _context.TaskSubscriptions.Where(s => s.TaskId == taskId && s.UserId == currentUserId)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<IdeaSubscription?> GetIdeaSubscriptionAsync(Guid ideaId, Guid currentUserId)
+    {
+        return await _context.IdeaSubscriptions.Where(s => s.IdeaId == ideaId && s.UserId == currentUserId)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
+    }
+
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 
     public ValueTask DisposeAsync()

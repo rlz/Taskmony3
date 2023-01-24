@@ -3,7 +3,7 @@ using Taskmony.Data;
 
 namespace Taskmony.Repositories;
 
-public class TaskRepository : ITaskRepository, IAsyncDisposable
+public sealed class TaskRepository : ITaskRepository, IDisposable, IAsyncDisposable
 {
     private readonly TaskmonyDbContext _context;
 
@@ -86,6 +86,11 @@ public class TaskRepository : ITaskRepository, IAsyncDisposable
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
+    }
+    
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 
     public ValueTask DisposeAsync()

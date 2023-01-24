@@ -11,6 +11,7 @@ using Taskmony.GraphQL.Directions;
 using Taskmony.GraphQL.Errors;
 using Taskmony.GraphQL.Ideas;
 using Taskmony.GraphQL.Notifications;
+using Taskmony.GraphQL.Subscriptions;
 using Taskmony.GraphQL.Tasks;
 using Taskmony.GraphQL.Users;
 using Taskmony.Repositories;
@@ -89,11 +90,12 @@ builder.Services
     .AddHttpRequestInterceptor<HttpRequestInterceptor>()
     .AddQueryType<Query>()
     .AddMutationType()
-    .AddTypeExtension<UserMutations>()
     .AddTypeExtension<TaskMutations>()
     .AddTypeExtension<IdeaMutations>()
     .AddTypeExtension<CommentMutations>()
     .AddTypeExtension<DirectionMutations>()
+    .AddTypeExtension<UserMutations>()
+    .AddSubscriptionType<SubscriptionMutations>()
     .AddType<TaskType>()
     .AddType<IdeaType>()
     .AddType<UserType>()

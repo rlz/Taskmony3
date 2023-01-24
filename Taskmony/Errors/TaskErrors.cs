@@ -30,4 +30,19 @@ public static class TaskErrors
 
     public static ErrorDetails UpdateCompletedOrDeletedTask =>
         new("Cannot change completed or deleted task", "UPDATE_COMPLETED_OR_DELETED_TASK");
+    
+    public static ErrorDetails SubscriptionNotFound => 
+        new("Task subscription not found", "SUBSCRIPTION_NOT_FOUND");
+    
+    public static ErrorDetails SubscribeToDeletedTask => 
+        new("Cannot subscribe to deleted task", "SUBSCRIBE_TO_DELETED_TASK");
+    
+    public static ErrorDetails SubscribeToCompletedTask =>
+        new("Cannot subscribe to completed task", "SUBSCRIBE_TO_COMPLETED_TASK");
+    
+    public static ErrorDetails SubscribeToPrivateTask =>
+        new("Cannot subscribe to task with no direction", "SUBSCRIBE_TO_PRIVATE_TASK");
+    
+    public static ErrorDetails AlreadySubscribedToTask =>
+        new("User is already subscribed to the specified task", "ALREADY_SUBSCRIBED_TO_TASK");
 }

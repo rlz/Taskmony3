@@ -5,7 +5,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories;
 
-public class UserRepository : IUserRepository, IAsyncDisposable
+public sealed class UserRepository : IUserRepository, IDisposable, IAsyncDisposable
 {
     private readonly TaskmonyDbContext _context;
 
@@ -87,6 +87,11 @@ public class UserRepository : IUserRepository, IAsyncDisposable
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
+    }
+    
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 
     public ValueTask DisposeAsync()

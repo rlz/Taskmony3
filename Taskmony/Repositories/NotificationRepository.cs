@@ -4,7 +4,7 @@ using Taskmony.Models.Notifications;
 
 namespace Taskmony.Repositories;
 
-public class NotificationRepository : INotificationRepository, IAsyncDisposable
+public sealed class NotificationRepository : INotificationRepository, IDisposable, IAsyncDisposable
 {
     private readonly TaskmonyDbContext _context;
 
@@ -49,6 +49,11 @@ public class NotificationRepository : INotificationRepository, IAsyncDisposable
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
+    }
+    
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 
     public async ValueTask DisposeAsync()

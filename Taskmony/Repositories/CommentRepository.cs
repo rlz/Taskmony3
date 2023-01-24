@@ -4,7 +4,7 @@ using Taskmony.Models.Comments;
 
 namespace Taskmony.Repositories;
 
-public class CommentRepository : ICommentRepository, IAsyncDisposable
+public sealed class CommentRepository : ICommentRepository, IDisposable, IAsyncDisposable
 {
     private readonly TaskmonyDbContext _context;
 
@@ -98,6 +98,11 @@ public class CommentRepository : ICommentRepository, IAsyncDisposable
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
+    }
+    
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 
     public ValueTask DisposeAsync()

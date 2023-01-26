@@ -42,7 +42,7 @@ type BtnPropsT = {
 export const Btn = ({ onClick, label } : BtnPropsT) => {
   return (
     <div
-      className={"p-1 w-fit mt-2 mb-2 bg-blue-400 rounded-md"}
+      className={"p-1 w-fit mt-2 mb-2 bg-blue-500 rounded-md"}
       onClick={() => onClick()}
     >
       <span className={"text-white"}>{label}</span>

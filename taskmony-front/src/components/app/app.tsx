@@ -33,7 +33,9 @@ function App() {
           <Route path="/" element={<Home />}>
             <Route path="tasks" element={<MyTasks />} />
             <Route path="ideas" element={<MyIdeas />} />
+            <Route path="archive/" element={<Navigate to="tasks" />} />
             <Route path="archive/:element" element={<Archive />} />
+            <Route path="directions/:id/" element={<Navigate to="tasks" />} />
             <Route path="directions/:id/:element" element={<Direction />} />
             <Route path="" element={<Navigate to="/tasks" replace />} />
           </Route>

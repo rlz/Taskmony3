@@ -117,7 +117,7 @@ const Menu = () => {
           </li>
           <li>
             <MenuItem
-              to={"archive/tasks"}
+              to={"archive"}
               name={"Archive"}
               icon={archive}
               isActive={false}
@@ -152,7 +152,7 @@ const DirectionsMenu = ({ openDirection }: DirectionsMenuPropsT) => {
           <ul>
             <li>
               <MenuItem
-                to={"directions/1/tasks"}
+                to={"directions/1"}
                 name={"Project #1"}
                 icon={direction}
                 isActive={false}
@@ -160,7 +160,7 @@ const DirectionsMenu = ({ openDirection }: DirectionsMenuPropsT) => {
             </li>
             <li>
               <MenuItem
-                to={"directions/2/tasks"}
+                to={"directions/2"}
                 name={"Project #1"}
                 icon={direction}
                 isActive={false}
@@ -168,7 +168,7 @@ const DirectionsMenu = ({ openDirection }: DirectionsMenuPropsT) => {
             </li>
             <li>
               <MenuItem
-                to={"directions/3/tasks"}
+                to={"directions/3"}
                 name={"Project #1"}
                 icon={direction}
                 isActive={false}

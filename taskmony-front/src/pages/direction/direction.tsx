@@ -7,6 +7,7 @@ import Tasks from "./tasks";
 function Direction() {
   const location = useLocation();
   const type = location.pathname.split("/").pop();
+  const directionId = location.pathname.split("/")[2];
   const renderSwitch = (type?: string) => {
     switch(type){
       case "about": return <About/>;
@@ -17,7 +18,7 @@ function Direction() {
   return (
     <div className="p-3 w-full">
         <h1 className="font-bold text-3xl">Project #1</h1>
-        <Menu />
+        <Menu directionId={directionId}/>
         {
           renderSwitch(type)
           }
@@ -25,12 +26,12 @@ function Direction() {
   );
 }
 
-const Menu = () => {
+const Menu = ({directionId}) => {
   return (
     <div className="flex gap-6 mt-4">
-    <MenuItem link={"/directions/1/tasks"} label={"Tasks"}/>
-    <MenuItem link={"/directions/1/ideas"} label={"Ideas"}/>
-    <MenuItem link={"/directions/1/about"} label={"About"}/>
+    <MenuItem link={`/directions/${directionId}/tasks`} label={"Tasks"}/>
+    <MenuItem link={`/directions/${directionId}/ideas`} label={"Ideas"}/>
+    <MenuItem link={`/directions/${directionId}/about`} label={"About"}/>
     </div>
   );
 };

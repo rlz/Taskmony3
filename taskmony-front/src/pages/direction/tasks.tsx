@@ -10,7 +10,8 @@ function Tasks() {
   return (
     <div className="flex w-full">
       <div className="w-3/4 m-3 ml-0">
-        <AddBtn label={"add a new task"} onClick={() => {}} />
+        <AddBtn label={"add a new task"} onClick={()=>{}} />
+
         <Task
           label={"task #1"}
           comments={1}

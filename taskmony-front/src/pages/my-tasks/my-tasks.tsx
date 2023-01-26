@@ -8,11 +8,14 @@ import { FilterDivider } from "../../components/filter/filter-divider";
 import { EditedTask } from "../../components/edited-task/edited-task";
 
 function MyTasks() {
+  const [newTask,setNewTask] = useState(false);
+
   return (
     <div className="flex w-full">
       <div className="w-3/4  m-3">
         <h1 className="font-bold text-3xl">My Tasks</h1>
-        <AddBtn label={"add a new task"} onClick={() => {}} />
+        <AddBtn label={"add a new task"} onClick={() => setNewTask(true)} />
+        {newTask && <EditedTask label={"new task"} save={() => setNewTask(false)}/> }
         <Task
           label={"task #1"}
           comments={1}
@@ -22,7 +25,7 @@ function MyTasks() {
         />
         <Task label={"task #1"} checked direction="Taskmony"/>
         <Task label={"task #1"} followed direction="Taskmony"/>
-        <EditedTask label={"task #1"} followed direction="Taskmony"/>
+        <Task label={"task #1"} followed direction="Taskmony"/>
       </div>
       <Filter />
     </div>

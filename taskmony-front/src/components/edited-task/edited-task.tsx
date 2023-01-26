@@ -1,5 +1,5 @@
 import yes from "../../images/checkbox-yes.svg";
-import no from "../../images/checkbox-yes.svg";
+import no from "../../images/checkbox-no.svg";
 import follow from "../../images/followed.svg";
 import divider from "../../images/divider.svg";
 import commentsI from "../../images/comment2.svg";
@@ -13,15 +13,17 @@ import { useState } from "react";
 import deleteI from "../../images/delete.svg";
 import add from "../../images/add-light.svg";
 import { SaveBtn } from "./save-btn";
+import { DatePicker } from "./date-picker";
 
 type TaskProps = {
-  label: string;
+  label?: string;
   checked?: boolean;
   followed?: boolean;
   comments?: number;
-  recurrent?: string;
+  recurrent?: boolean;
   createdBy?: string;
   direction?: string;
+  save: Function;
 };
 
 export const EditedTask = ({
@@ -32,20 +34,28 @@ export const EditedTask = ({
   recurrent,
   createdBy,
   direction,
+  save
 }: TaskProps) => {
+  const [labelV, setLabelV] = useState(label);
+  console.log((typeof checked === "undefined") || !checked)
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
-          <img src={checked ? yes : no}></img>
-          <span className={"font-semibold text-sm"}>{label}</span>
+          <img src={((typeof checked === "undefined") || !checked) ? no : yes}></img>
+          <input
+            className={"font-semibold text-sm focus:outline-none underline"}
+            placeholder={"task name"}
+            value={labelV}
+            onChange={(e) => setLabelV(e.target.value)}
+          />
         </div>
         {followed && <img src={follow}></img>}
       </div>
       <Description />
-      <Details />
-      <Comments />
-      <SaveBtn label={"save"} onClick={()=>{}}/>
+      <Details recurrent={recurrent} />
+      <Comments comments={comments} />
+      <SaveBtn label={"save"} onClick={save} />
     </div>
   );
 };
@@ -63,7 +73,7 @@ const Description = () => {
       <textarea
         placeholder={"details"}
         value={description}
-        onChange={(e) =>  setDescription(e.target.value)}
+        onChange={(e) => setDescription(e.target.value)}
         className="text-black font-light underline placeholder:text-black placeholder:font-light 
         placeholder:underline 
         focus:outline-none
@@ -79,13 +89,17 @@ const Description = () => {
       {hasDetails ? (
         details
       ) : (
-        <AddBtn label={"add details"} icon={add} onClick={() => setHasDetails(true)} />
+        <AddBtn
+          label={"add details"}
+          icon={add}
+          onClick={() => setHasDetails(true)}
+        />
       )}
     </div>
   );
 };
 
-const Details = () => {
+const Details = ({ recurrent }) => {
   return (
     <div className={"gap flex justify-start pb-2 w-full ml-1"}>
       <ItemPicker
@@ -100,52 +114,71 @@ const Details = () => {
         options={["none", "Taskmony"]}
         hasBorder
       />
-      <ItemPicker
+      <DatePicker
         title={"start date"}
-        option={"today"}
-        options={["today"]}
+        date={Date.now()}
         hasBorder
       />
       <ItemPicker
         title={"repeated"}
-        option={"yes"}
+        option={recurrent ? "yes" : "no"}
         options={["yes", "no"]}
         hasBorder
       />
-      <ItemPicker
-        title={"repeate mode"}
-        option={"weekly"}
-        options={["daily", "weekly", "monthly"]}
-        hasBorder
-      />
-      <ItemPicker
-        title={"every"}
-        option={"Thursday"}
-        options={["Monday", "Tuesday", "Wednesday","Thursday","Friday","Saturday","Sunday"]}
-        hasBorder
-      />
-      <ItemPicker
-        title={"until"}
-        option={"forever"}
-        options={["forever"]}
-        hasBorder
-      />
+      {recurrent && (
+        <>
+          <ItemPicker
+            title={"repeat mode"}
+            option={"weekly"}
+            options={["daily", "weekly", "monthly"]}
+            hasBorder
+          />
+          <ItemPicker
+            title={"every"}
+            option={"Thursday"}
+            options={[
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
+            ]}
+            hasBorder
+          />
+          <ItemPicker
+            title={"until"}
+            option={"forever"}
+            options={["forever"]}
+            hasBorder
+          />
+        </>
+      )}
     </div>
   );
 };
 
-const Comments = () => {
+const Comments = ({ comments }) => {
   const text = `Facit igitur Lucius noster prudenter, qui audire de summo bono potissimum velit;
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Haeret in salebra. Invidiosum nomen est, infame, suspectum.
   An hoc usque quaque, aliter in vita?`;
-  const [commentInput,setCommentInput] = useState(false);
+  const [commentInput, setCommentInput] = useState(false);
   return (
     <>
-      <Comment text={text} author={"Ann Smith"} time={"12:30 1.01.22"} />
-      <Comment text={text} author={"Ann Smith"} time={"12:30 1.01.22"} />
-      {commentInput && <CommentInput/>}
+      {comments && (
+        <>
+          <Comment text={text} author={"Ann Smith"} time={"12:30 1.01.22"} />
+          <Comment text={text} author={"Ann Smith"} time={"12:30 1.01.22"} />
+        </>
+      )}
+      {commentInput && <CommentInput />}
       <div className="flex justify-center p-1">
-        <AddBtn label={commentInput? "send comment" : "add a new comment"} icon={commentInput? undefined : add} onClick={() => setCommentInput(!commentInput)} />
+        <AddBtn
+          label={commentInput ? "send comment" : "add a new comment"}
+          icon={commentInput ? undefined : add}
+          onClick={() => setCommentInput(!commentInput)}
+        />
       </div>
     </>
   );

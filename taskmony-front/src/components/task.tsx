@@ -1,5 +1,5 @@
 import yes from "../images/checkbox-yes.svg";
-import no from "../images/checkbox-yes.svg";
+import no from "../images/checkbox-no.svg";
 import followBlue from "../images/followed.svg";
 import followGray from "../images/follow.svg";
 import divider from "../images/divider.svg";
@@ -7,6 +7,8 @@ import commentsI from "../images/comment2.svg";
 import createdByI from "../images/by.svg";
 // import recurrentI from "../images/recurrent.svg";
 import recurrentI from "../images/arrows-rotate.svg";
+import { useState } from "react";
+import { EditedTask } from "./edited-task/edited-task";
 
 type TaskProps = {
   label: string;
@@ -18,7 +20,24 @@ type TaskProps = {
   direction?: string;
 };
 
-export const Task = ({
+export const Task = (props) => {
+  const [edited,setEdited] = useState(false);
+  const open = () => {
+    if(edited) return;
+    setEdited(true);
+  }
+  const save = () => {
+    if(!edited) return;
+    setEdited(false);
+  }
+  return (
+  <div onClick={open}>
+  {edited ? <EditedTask {...props} save={save}/> : <TaskUnedited {...props}/>}
+  </div>
+  )
+}
+
+export const TaskUnedited = ({
   label,
   checked,
   followed,
@@ -28,7 +47,7 @@ export const Task = ({
   direction,
 }: TaskProps) => {
   return (
-    <div className="w-full bg-white rounded-lg drop-shadow-sm">
+    <div className="w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           <img src={checked ? yes : no}></img>

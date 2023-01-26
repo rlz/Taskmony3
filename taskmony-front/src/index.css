@@ -47,3 +47,4 @@ code {
   background: rgb(203 213 225);
 }
 
+body > iframe { display: none }

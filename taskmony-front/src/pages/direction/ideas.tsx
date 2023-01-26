@@ -15,9 +15,10 @@ function Ideas() {
           comments={1}
           createdBy="Ann Smith"
           direction="Taskmony"
+          followed={false}
         />
-        <Idea label={"idea #2"} direction="Taskmony" />
-        <Idea label={"idea #3"} followed direction="Taskmony" />
+        <Idea label={"idea #2"} direction="Taskmony" followed={false}/>
+        <Idea label={"idea #3"} followed direction="Taskmony" last/>
       </div>
       <Filter />
     </div>

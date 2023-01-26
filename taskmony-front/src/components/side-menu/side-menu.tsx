@@ -23,17 +23,21 @@ export const SideMenu = () => {
   const [openNewDirection, setOpenNewDirection] = useState(false);
   return (
     <div className={`${isOpen ? "w-1/6" : ""} border border-grey-60 h-full`}>
-    {openNewDirection && <AddDirectionModal close={()=>setOpenNewDirection(false)}/>}
-      {isProfileMenuOpen ? (
+      {openNewDirection && (
+        <AddDirectionModal close={() => setOpenNewDirection(false)} />
+      )}
+      {isProfileMenuOpen && (
         <ProfileMenuModal close={() => setIsProfileMenuOpen(false)} />
-      ) : isOpen ? (
+      )}
+      {isOpen ? (
         <>
           <Profile
             toggleOpen={toggleOpen}
             isOpen={isOpen}
             onClick={() => setIsProfileMenuOpen(true)}
           />{" "}
-          <Menu /> <DirectionsMenu openDirection={()=>setOpenNewDirection(true)} />
+          <Menu />{" "}
+          <DirectionsMenu openDirection={() => setOpenNewDirection(true)} />
         </>
       ) : (
         <SmallMenu toggleOpen={toggleOpen} />
@@ -126,10 +130,10 @@ const Menu = () => {
 };
 
 type DirectionsMenuPropsT = {
-  openDirection: Function; 
-}
+  openDirection: Function;
+};
 
-const DirectionsMenu = ({openDirection} : DirectionsMenuPropsT) => {
+const DirectionsMenu = ({ openDirection }: DirectionsMenuPropsT) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   return (

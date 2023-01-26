@@ -15,6 +15,7 @@ export const AddUserModal = ({ close }: ModalPropsT) => {
         className="cursor-pointer mr-0 ml-auto"
         onClick={(e) => close()}
       ></img>
+      {/* <h1 className="font-bold text-3xl mt-0 pt-0">New User</h1> */}
       <Input label={"Al"} />
       <AddBtn label={"add a new user"} onClick={() => {}} />
     </div>

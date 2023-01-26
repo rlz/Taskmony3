@@ -16,8 +16,9 @@ function Tasks() {
           comments={1}
           recurrent="every Thursday"
           createdBy="Ann Smith"
+          followed={false}
         />
-        <Task label={"task #1"} checked />
+        <Task label={"task #1"} checked followed={false}/>
         <Task label={"task #1"} followed/>
       </div>
       <Filter />

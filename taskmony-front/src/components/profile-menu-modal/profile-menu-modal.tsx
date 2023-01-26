@@ -6,7 +6,7 @@ type ModalPropsT = {
 
 export const ProfileMenuModal = ({ close }: ModalPropsT) => {
   return (
-    <div className="w-full relative top-0 left-0 p-3 pb-2 bg-slate-50 rounded-lg drop-shadow-lg ">
+    <div className="w-1/4 absolute top-0 left-0 p-3 m-4 pb-2 bg-slate-50 rounded-lg drop-shadow-lg z-40">
       <img
         src={deleteI}
         className="cursor-pointer mr-0 ml-auto"

@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import { TaskmonyTitle } from "../../components/taskmony-title";
 import deleteI from "../../images/delete.svg";
 import { Btn } from "./btn";
 import { Input } from "./input";
@@ -12,6 +13,7 @@ export const ForgotPassword = () => {
   }
   return (
     <>
+    <TaskmonyTitle/>
     <div className="w-full h-full absolute flex justify-center content-center bg-slate-50">
     <div className="w-1/3 m-auto pb-20">
     <h1 className="font-bold text-3xl">Reset password</h1>

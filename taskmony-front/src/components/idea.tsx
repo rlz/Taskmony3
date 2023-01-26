@@ -3,6 +3,10 @@ import follow from "../images/followed.svg";
 import divider from "../images/divider.svg";
 import commentsI from "../images/comment2.svg";
 import createdByI from "../images/by.svg";
+import followBlue from "../images/followed.svg";
+import followGray from "../images/follow.svg";
+import postponeBlue from "../images/circle-down-blue.svg";
+import postponeGray from "../images/circle-down-gray.svg";
 // import recurrentI from "../images/recurrent.svg";
 import recurrentI from "../images/arrows-rotate.svg";
 import { AddBtn } from "./add-btn/add-btn";
@@ -13,6 +17,7 @@ type IdeaProps = {
   comments?: number;
   createdBy?: string;
   direction?:string;
+  last?: boolean;
 };
 
 export const Idea = ({
@@ -20,7 +25,8 @@ export const Idea = ({
   followed,
   comments,
   createdBy,
-  direction
+  direction,
+  last
 }: IdeaProps) => {
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm">
@@ -28,8 +34,11 @@ export const Idea = ({
         <div className="flex  gap-2">
           <span className={"font-semibold text-sm"}>{label}</span>
         </div>
-        {followed && <img src={follow}></img>}
-      </div>
+        <div className="relative z-30 flex gap-2">
+        {(typeof followed !== 'undefined') && (<img className="w-4" src={followed?followBlue:followGray}></img>)}    
+        <img src={last?postponeGray:postponeBlue} className="w-4"></img>
+        </div>
+ </div>
       <div
       className={
         "gap flex justify-start pb-2 w-full ml-1"

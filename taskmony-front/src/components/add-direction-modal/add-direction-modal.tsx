@@ -16,6 +16,7 @@ export const AddDirectionModal = ({ close }: ModalPropsT) => {
         className="cursor-pointer mr-0 ml-auto"
         onClick={(e) => close()}
       ></img>
+      {/* <h1 className="font-bold text-3xl">New Direction</h1> */}
       <Input label={"direction name"} />
       <AddBtn label={"add a new direction"} onClick={() => {}} />
     </div>

@@ -18,7 +18,7 @@ function MyIdeas() {
           direction="Taskmony"
         />
         <Idea label={"idea #2"} direction="Taskmony" />
-        <Idea label={"idea #3"} followed direction="Taskmony" />
+        <Idea label={"idea #3"} followed direction="Taskmony" last/>
       </div>
       <Filter />
     </div>

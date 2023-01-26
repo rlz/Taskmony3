@@ -12,6 +12,7 @@ import { ItemPicker } from "./item-picker";
 import { useState } from "react";
 import deleteI from "../../images/delete.svg";
 import add from "../../images/add-light.svg";
+import { SaveBtn } from "./save-btn";
 
 type TaskProps = {
   label: string;
@@ -44,6 +45,7 @@ export const EditedTask = ({
       <Description />
       <Details />
       <Comments />
+      <SaveBtn label={"save"} onClick={()=>{}}/>
     </div>
   );
 };

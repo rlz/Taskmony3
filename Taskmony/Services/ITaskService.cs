@@ -16,13 +16,13 @@ public interface ITaskService
     Task<IEnumerable<Models.Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId,
         int? offset, int? limit, Guid currentUserId);
 
-    Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids);
+    Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(Guid[] ids);
 
     Task<Models.Task> GetTaskOrThrowAsync(Guid id, Guid currentUserId);
 
     Task<Models.Task> AddTaskAsync(Models.Task task);
 
-    Task<Guid[]> AddRepeatingTaskAsync(Models.Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions);
+    Task<Guid[]> AddRecurringTaskAsync(Models.Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions);
 
     Task<bool> SetTaskDescriptionAsync(Guid id, string description, Guid currentUserId);
 

@@ -60,12 +60,42 @@ public sealed class DirectionRepository : IDirectionRepository, IDisposable, IAs
         return query;
     }
 
-    public async Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds)
+    public async Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds, int? offset, int? limit)
     {
-        var memberships = await _context.Memberships
+        var groupedByDirection = _context.Memberships
             .Where(m => directionIds.Contains(m.DirectionId))
-            .ToListAsync();
-        
+            .GroupBy(m => m.DirectionId);
+
+        if (offset is not null && limit is not null)
+        {
+            return (await groupedByDirection
+                    .Select(g =>
+                        g.OrderBy(m => m.CreatedAt).ThenBy(m => m.DirectionId).Skip(offset.Value).Take(limit.Value))
+                    .ToListAsync())
+                .SelectMany(g => g)
+                .ToLookup(m => m.DirectionId, m => m.UserId);
+        }
+
+        if (offset is not null)
+        {
+            return (await groupedByDirection
+                    .Select(g => g.OrderBy(m => m.CreatedAt).ThenBy(m => m.DirectionId).Skip(offset.Value))
+                    .ToListAsync())
+                .SelectMany(g => g)
+                .ToLookup(m => m.DirectionId, m => m.UserId);
+        }
+
+        if (limit is not null)
+        {
+            return (await groupedByDirection
+                    .Select(g => g.OrderBy(m => m.CreatedAt).ThenBy(m => m.DirectionId).Take(limit.Value))
+                    .ToListAsync())
+                .SelectMany(g => g)
+                .ToLookup(m => m.DirectionId, m => m.UserId);
+        }
+
+        var memberships = await _context.Memberships.Where(m => directionIds.Contains(m.DirectionId)).ToListAsync();
+
         return memberships.ToLookup(m => m.DirectionId, m => m.UserId);
     }
 
@@ -93,7 +123,7 @@ public sealed class DirectionRepository : IDirectionRepository, IDisposable, IAs
     {
         return await _context.SaveChangesAsync() > 0;
     }
-    
+
     public void Dispose()
     {
         _context.Dispose();

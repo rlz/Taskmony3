@@ -19,16 +19,16 @@ public class SubscriptionService : ISubscriptionService
         _ideaService = ideaService;
     }
 
-    public async Task<ILookup<Guid, Guid>> GetTaskSubscriberIdsAsync(Guid[] taskIds)
+    public async Task<ILookup<Guid, Guid>> GetTaskSubscriberIdsAsync(Guid[] taskIds, int? offset, int? limit)
     {
-        var subscriptions = await _subscriptionRepository.GetTaskSubscriptionsAsync(taskIds);
+        var subscriptions = await _subscriptionRepository.GetTaskSubscriptionsAsync(taskIds, offset, limit);
 
         return subscriptions.ToLookup(s => s.TaskId, s => s.UserId);
     }
 
-    public async Task<ILookup<Guid, Guid>> GetIdeaSubscriberIdsAsync(Guid[] ideaIds)
+    public async Task<ILookup<Guid, Guid>> GetIdeaSubscriberIdsAsync(Guid[] ideaIds, int? offset, int? limit)
     {
-        var subscriptions = await _subscriptionRepository.GetIdeaSubscriptionsAsync(ideaIds);
+        var subscriptions = await _subscriptionRepository.GetIdeaSubscriptionsAsync(ideaIds, offset, limit);
 
         return subscriptions.ToLookup(s => s.IdeaId, s => s.UserId);
     }

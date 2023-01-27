@@ -58,7 +58,7 @@ public sealed class TaskRepository : ITaskRepository, IDisposable, IAsyncDisposa
         return query;
     }
 
-    public async Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids)
+    public async Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(Guid[] ids)
     {
         return await _context.Tasks.Where(t => ids.Contains(t.Id)).ToListAsync();
     }

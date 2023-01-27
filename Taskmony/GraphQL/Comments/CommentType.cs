@@ -1,4 +1,5 @@
 using Taskmony.GraphQL.DataLoaders;
+using Taskmony.GraphQL.Users;
 using Taskmony.Models;
 using Taskmony.Models.Comments;
 
@@ -12,7 +13,7 @@ public class CommentType : ObjectType<Comment>
         descriptor.Field(c => c.ActionItemType).Ignore();
 
         descriptor.Field(c => c.CreatedBy)
-            .Type<ObjectType<User>>()
+            .Type<UserType>()
             .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!));
 
         descriptor.Field(c => c.Text).Type<StringType>();

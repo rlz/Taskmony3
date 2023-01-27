@@ -49,7 +49,7 @@ public class TaskService : ITaskService
         return tasks;
     }
 
-    public async Task<IEnumerable<Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids)
+    public async Task<IEnumerable<Task>> GetTasksByIdsAsync(Guid[] ids)
     {
         return await _taskRepository.GetTasksByIdsAsync(ids);
     }
@@ -82,7 +82,7 @@ public class TaskService : ITaskService
         return task;
     }
 
-    public async Task<Guid[]> AddRepeatingTaskAsync(Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions)
+    public async Task<Guid[]> AddRecurringTaskAsync(Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions)
     {
         if (task.RepeatMode == RepeatMode.Custom && task.RepeatEvery is null)
         {

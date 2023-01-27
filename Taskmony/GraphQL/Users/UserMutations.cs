@@ -8,7 +8,7 @@ public class UserMutations
 {
     [Authorize]
     public async Task<Guid?> UserSetNotificationReadTime([Service] IUserService userService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, string notificationReadTime, string readAt)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, string notificationReadTime)
     {
         var notificationReadTimeUtc = timeConverter.StringToDateTimeUtc(notificationReadTime);
 

@@ -1,4 +1,5 @@
 using Taskmony.GraphQL.DataLoaders;
+using Taskmony.GraphQL.Users;
 using Taskmony.Models;
 using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
@@ -23,7 +24,7 @@ public class NotificationType : ObjectType<Notification>
             .Type<ActionItem>();
 
         descriptor.Field(n => n.Actor)
-            .Type<ObjectType<User>>()
+            .Type<UserType>()
             .ResolveWith<Resolvers>(r => r.GetActor(default!, default!));
     }
 

@@ -6,11 +6,11 @@ public interface ISubscriptionRepository
 {
     Task<IEnumerable<TaskSubscription>> GetTaskSubscriptionsAsync(Guid taskId);
     
-    Task<IEnumerable<TaskSubscription>> GetTaskSubscriptionsAsync(Guid[] taskIds);
+    Task<IEnumerable<TaskSubscription>> GetTaskSubscriptionsAsync(Guid[] taskIds, int? offset, int? limit);
 
     Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid ideaId);
     
-    Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid[] ideaIds);
+    Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid[] ideaIds, int? offset, int? limit);
     
     Task<TaskSubscription?> GetTaskSubscriptionAsync(Guid taskId, Guid currentUserId);
     

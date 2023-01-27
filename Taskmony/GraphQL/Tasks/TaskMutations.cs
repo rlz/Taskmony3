@@ -44,7 +44,7 @@ public class TaskMutations
             NumberOfRepetitions = numberOfRepetitions
         };
 
-        return await taskService.AddRepeatingTaskAsync(task, repeatMode, repeatEvery, numberOfRepetitions);
+        return await taskService.AddRecurringTaskAsync(task, repeatMode, repeatEvery, numberOfRepetitions);
     }
 
     [Authorize]

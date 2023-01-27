@@ -1,6 +1,7 @@
 using HotChocolate.Resolvers;
 using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Notifications;
+using Taskmony.GraphQL.Users;
 using Taskmony.Models;
 using Taskmony.Models.Notifications;
 using Taskmony.Services;
@@ -20,11 +21,14 @@ public class DirectionType : ObjectType<Direction>
         descriptor.Field(d => d.DeletedAt).Type<StringType>();
 
         descriptor.Field(d => d.CreatedBy)
-            .Type<ObjectType<User>>()
+            .Type<UserType>()
             .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!));
 
         descriptor.Field(d => d.Members)
-            .ResolveWith<Resolvers>(r => r.GetMembers(default!, default!, default!, default!));
+            .Type<ListType<NonNullType<UserType>>>()
+            .Argument("offset", a => a.Type<IntType>())
+            .Argument("limit", a => a.Type<IntType>())
+            .ResolveWith<Resolvers>(r => r.GetMembers(default!, default!, default!, default!, default, default));
 
         descriptor.Field(i => i.Notifications)
             .Type<ListType<NonNullType<NotificationType>>>()
@@ -41,15 +45,15 @@ public class DirectionType : ObjectType<Direction>
         }
 
         public async Task<IEnumerable<User>?> GetMembers([Parent] Direction direction, IResolverContext context,
-            UserByIdDataLoader userById, [Service] IServiceProvider serviceProvider)
+            UserByIdDataLoader userById, [Service] IServiceProvider serviceProvider, int? offset, int? limit)
         {
             var memberIds = await context.GroupDataLoader<Guid, Guid>(
-                async (directionIds, ct) =>
+                async (directionIds, _) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
 
                     return await scope.ServiceProvider.GetRequiredService<IDirectionService>()
-                        .GetMemberIdsAsync(directionIds.ToArray());
+                        .GetMemberIdsAsync(directionIds.ToArray(), offset, limit);
                 }, "MemberIdByDirectionId"
             ).LoadAsync(direction.Id);
 
@@ -64,7 +68,7 @@ public class DirectionType : ObjectType<Direction>
             DateTime? endUtc = end is null ? null : timeConverter.StringToDateTimeUtc(end);
 
             return await context.GroupDataLoader<Guid, Notification>(
-                async (notifiableIds, ct) =>
+                async (notifiableIds, _) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
                     

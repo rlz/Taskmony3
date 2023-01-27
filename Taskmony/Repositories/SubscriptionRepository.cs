@@ -18,8 +18,34 @@ public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposabl
         return await _context.TaskSubscriptions.Where(s => s.TaskId == taskId).ToListAsync();
     }
 
-    public async Task<IEnumerable<TaskSubscription>> GetTaskSubscriptionsAsync(Guid[] taskIds)
+    public async Task<IEnumerable<TaskSubscription>> GetTaskSubscriptionsAsync(Guid[] taskIds, int? offset, int? limit)
     {
+        var groupedByTask = _context.TaskSubscriptions.Where(s => taskIds.Contains(s.TaskId)).GroupBy(s => s.TaskId);
+
+        if (offset is not null && limit is not null)
+        {
+            return (await groupedByTask
+                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Skip(offset.Value).Take(limit.Value))
+                    .ToListAsync())
+                .SelectMany(g => g);
+        }
+
+        if (offset is not null)
+        {
+            return (await groupedByTask
+                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Skip(offset.Value))
+                    .ToListAsync())
+                .SelectMany(g => g);
+        }
+
+        if (limit is not null)
+        {
+            return (await groupedByTask
+                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Take(limit.Value))
+                    .ToListAsync())
+                .SelectMany(g => g);
+        }
+
         return await _context.TaskSubscriptions.Where(s => taskIds.Contains(s.TaskId)).ToListAsync();
     }
 
@@ -28,8 +54,34 @@ public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposabl
         return await _context.IdeaSubscriptions.Where(s => s.IdeaId == ideaId).ToListAsync();
     }
 
-    public async Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid[] ideaIds)
+    public async Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid[] ideaIds, int? offset, int? limit)
     {
+        var groupedByTask = _context.IdeaSubscriptions.Where(s => ideaIds.Contains(s.IdeaId)).GroupBy(s => s.IdeaId);
+
+        if (offset is not null && limit is not null)
+        {
+            return (await groupedByTask
+                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Skip(offset.Value).Take(limit.Value))
+                    .ToListAsync())
+                .SelectMany(g => g);
+        }
+
+        if (offset is not null)
+        {
+            return (await groupedByTask
+                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Skip(offset.Value))
+                    .ToListAsync())
+                .SelectMany(g => g);
+        }
+
+        if (limit is not null)
+        {
+            return (await groupedByTask
+                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Take(limit.Value))
+                    .ToListAsync())
+                .SelectMany(g => g);
+        }
+
         return await _context.IdeaSubscriptions.Where(s => ideaIds.Contains(s.IdeaId)).ToListAsync();
     }
 

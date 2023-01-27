@@ -26,9 +26,9 @@ public class DirectionService : IDirectionService
         return await _directionRepository.GetDirectionByIdAsync(id);
     }
 
-    public async Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds)
+    public async Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds, int? offset, int? limit)
     {
-        return await _directionRepository.GetMemberIdsAsync(directionIds);
+        return await _directionRepository.GetMemberIdsAsync(directionIds, offset, limit);
     }
 
     public async Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, int? offset, int? limit,

@@ -1,5 +1,7 @@
 using HotChocolate.Resolvers;
+using Taskmony.GraphQL.Comments;
 using Taskmony.GraphQL.DataLoaders;
+using Taskmony.GraphQL.Notifications;
 using Taskmony.GraphQL.Users;
 using Taskmony.Models;
 using Taskmony.Models.Comments;
@@ -25,20 +27,20 @@ public class IdeaType : ObjectType<Idea>
         descriptor.Field(i => i.Generation).Type<EnumType<Generation>>();
 
         descriptor.Field(i => i.CreatedBy)
-            .Type<ObjectType<User>>()
+            .Type<UserType>()
             .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!));
 
         descriptor.Field(i => i.Direction)
             .ResolveWith<Resolvers>(r => r.GetDirection(default!, default!));
 
         descriptor.Field(i => i.Comments)
-            .Type<ListType<NonNullType<ObjectType<Comment>>>>()
+            .Type<ListType<NonNullType<CommentType>>>()
             .Argument("offset", a => a.Type<IntType>())
             .Argument("limit", a => a.Type<IntType>())
             .ResolveWith<Resolvers>(r => r.GetComments(default!, default!, default!, default, default));
 
         descriptor.Field(i => i.Notifications)
-            .Type<ListType<NonNullType<ObjectType<Notification>>>>()
+            .Type<ListType<NonNullType<NotificationType>>>()
             .Argument("start", a => a.Type<StringType>())
             .Argument("end", a => a.Type<StringType>())
             .ResolveWith<Resolvers>(r => r.GetNotifications(default!, default!, default!, default!, default, default));
@@ -47,7 +49,9 @@ public class IdeaType : ObjectType<Idea>
         descriptor
             .Field("subscribers")
             .Type<ListType<NonNullType<UserType>>>()
-            .ResolveWith<Resolvers>(r => r.GetSubscribers(default!, default!, default!, default!));
+            .Argument("offset", a => a.Type<IntType>())
+            .Argument("limit", a => a.Type<IntType>())
+            .ResolveWith<Resolvers>(r => r.GetSubscribers(default!, default!, default!, default!, default, default));
     }
 
     private class Resolvers
@@ -71,7 +75,7 @@ public class IdeaType : ObjectType<Idea>
             [Service] IServiceProvider serviceProvider, int? offset, int? limit)
         {
             return await context.GroupDataLoader<Guid, Comment>(
-                async (ids, ct) =>
+                async (ids, _) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
 
@@ -84,15 +88,15 @@ public class IdeaType : ObjectType<Idea>
         }
 
         public async Task<IEnumerable<User>?> GetSubscribers([Parent] Idea idea, IResolverContext context,
-            [Service] IServiceProvider serviceProvider, UserByIdDataLoader userById)
+            [Service] IServiceProvider serviceProvider, UserByIdDataLoader userById, int? offset, int? limit)
         {
             var subscriberIds = await context.GroupDataLoader<Guid, Guid>(
-                async (ideaIds, ct) =>
+                async (ideaIds, _) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
 
                     return await scope.ServiceProvider.GetRequiredService<ISubscriptionService>()
-                        .GetIdeaSubscriberIdsAsync(ideaIds.ToArray());
+                        .GetIdeaSubscriberIdsAsync(ideaIds.ToArray(), offset, limit);
                 }, "SubscriberIdByIdeaId"
             ).LoadAsync(idea.Id);
 
@@ -107,7 +111,7 @@ public class IdeaType : ObjectType<Idea>
             DateTime? endUtc = end is null ? null : timeConverter.StringToDateTimeUtc(end);
 
             return await context.GroupDataLoader<Guid, Notification>(
-                async (notifiableIds, ct) =>
+                async (notifiableIds, _) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
 

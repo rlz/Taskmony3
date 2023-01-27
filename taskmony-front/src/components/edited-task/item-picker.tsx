@@ -14,10 +14,11 @@ type Props = {
 export const ItemPicker = ({ title, options, option, hasBorder, onChange, width }: Props) => {
   return (
     <div className={"flex justify-between pl-2"}>
-      <p className={"font-semibold text-sm text-blue-500"}>{title}:</p>
+      <p className={"font-semibold text-sm text-blue-500 pt-0.5"}>{title}:</p>
       <select
         name="options"
         id="options"
+        defaultValue={option}
         className={"font-semibold text-sm text-blue-500 focus:outline-none "+width}
         onChange={(e)=>onChange(e.target.value)}
       >

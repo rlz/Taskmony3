@@ -13,49 +13,22 @@ import { AddBtn } from "./add-btn/add-btn";
 import { EditedIdea } from "./edited/edited-idea";
 import { useState } from "react";
 
-export const Idea = (props) => {
-  const [edited,setEdited] = useState(false);
-  const open = () => {
-    if(edited) return;
-    setEdited(true);
-  }
-  const save = () => {
-    if(!edited) return;
-    setEdited(false);
-  }
-  return (
-  <div onClick={open}>
-  {edited ? <EditedIdea {...props} save={save}/> : <UneditedIdea {...props}/>}
-  </div>
-  )
-}
-
-type IdeaProps = {
+type Props = {
   label: string;
-  followed?: boolean;
   comments?: number;
-  createdBy?: string;
   direction?:string;
-  last?: boolean;
 };
 
-export const UneditedIdea = ({
+export const ArchivedItem = ({
   label,
-  followed,
   comments,
-  createdBy,
-  direction,
-  last
-}: IdeaProps) => {
+  direction
+}: Props) => {
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           <span className={"font-semibold text-sm"}>{label}</span>
-        </div>
-        <div className="relative z-30 flex gap-2">
-        {(typeof followed !== 'undefined') && (<img className="w-4" src={followed?followBlue:followGray}></img>)}    
-        <img src={last?postponeGray:postponeBlue} className="w-4"></img>
         </div>
  </div>
       <div
@@ -63,9 +36,6 @@ export const UneditedIdea = ({
         "gap flex justify-start pb-2 w-full ml-1"
       }
     >       
-       {createdBy && <Details
-        icon={createdByI} label={`by ${createdBy}`} hasBorder
-      />}
       {<Details
         icon={commentsI} label={comments ? comments.toString() : "0"} hasBorder
       />}
@@ -93,18 +63,3 @@ export const Details = ({
           {hasBorder && <img src={divider}></img>}
         </div>
       )};
-
-
-type BtnProps = {
-        label: string;
-        onClick: Function;
-      };
-      
-export const MoveBtn = ({ label, onClick }: BtnProps) => {
-        return (
-          <div className={"gap-4 flex justify-center bg-blue-500 rounded"} onClick={()=>onClick()}>
-            <img src={arrowDown}></img>
-            <span className={"text-white"}>{label}</span>
-          </div>
-        );
-      };

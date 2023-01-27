@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ArchivedItem } from "../../components/archived-item";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { FilterItem } from "../../components/filter/filter-item";
 import { Idea } from "../../components/idea";
@@ -9,8 +10,8 @@ export const ArchivedDirections = () => {
     return (
       <div className="flex w-full">
         <div className="w-3/4  m-3 ml-0">
-          <Idea label={"direction #2"}  />
-          <Idea label={"direction #3"}  />
+          <ArchivedItem label={"direction #2"}  />
+          <ArchivedItem label={"direction #3"}  />
         </div>
         <Filter />
       </div>

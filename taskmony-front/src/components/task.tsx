@@ -8,7 +8,7 @@ import createdByI from "../images/by.svg";
 // import recurrentI from "../images/recurrent.svg";
 import recurrentI from "../images/arrows-rotate.svg";
 import { useState } from "react";
-import { EditedTask } from "./edited-task/edited-task";
+import { EditedTask } from "./edited/edited-task";
 
 type TaskProps = {
   label: string;

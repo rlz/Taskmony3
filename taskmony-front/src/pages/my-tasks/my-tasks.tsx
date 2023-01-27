@@ -5,7 +5,7 @@ import arrowUp from "../../images/arrow-up.svg";
 import arrowDown from "../../images/arrow-down.svg";
 import { Task } from "../../components/task";
 import { FilterDivider } from "../../components/filter/filter-divider";
-import { EditedTask } from "../../components/edited-task/edited-task";
+import { EditedTask } from "../../components/edited/edited-task";
 
 function MyTasks() {
   const [newTask,setNewTask] = useState(false);
@@ -23,7 +23,7 @@ function MyTasks() {
           createdBy="Ann Smith"
           direction="Taskmony"
         />
-        <Task label={"task #1"} checked direction="Taskmony"/>
+        <Task label={"task #1"} direction="Taskmony"/>
         <Task label={"task #1"} followed direction="Taskmony"/>
         <Task label={"task #1"} followed direction="Taskmony"/>
       </div>

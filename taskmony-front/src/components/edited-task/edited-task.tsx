@@ -14,6 +14,7 @@ import deleteI from "../../images/delete.svg";
 import add from "../../images/add-light.svg";
 import { SaveBtn } from "./save-btn";
 import { DatePicker } from "./date-picker";
+import { NumberPicker } from "./number-picker";
 
 type TaskProps = {
   label?: string;
@@ -34,15 +35,17 @@ export const EditedTask = ({
   recurrent,
   createdBy,
   direction,
-  save
+  save,
 }: TaskProps) => {
   const [labelV, setLabelV] = useState(label);
-  console.log((typeof checked === "undefined") || !checked)
+  console.log(typeof checked === "undefined" || !checked);
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
-          <img src={((typeof checked === "undefined") || !checked) ? no : yes}></img>
+          <img
+            src={typeof checked === "undefined" || !checked ? no : yes}
+          ></img>
           <input
             className={"font-semibold text-sm focus:outline-none underline"}
             placeholder={"task name"}
@@ -100,64 +103,96 @@ const Description = () => {
 };
 
 const Details = ({ recurrent }) => {
+  const [mode, setMode] = useState("daily");
+  const [isReccurent, setIsRecurrent] = useState("no");
+
+  const customPicker = (
+    <NumberPicker title={"every"} min={2} max={10} after={"days"} hasBorder />
+  );
+
+  const weeklyPicker = (
+    <ItemPicker
+      title={"every"}
+      option={"Thursday"}
+      options={[
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ]}
+      onChange={() => {}}
+      hasBorder
+    />
+  );
+
+  const monthlyPicker = (
+    <NumberPicker
+      title={"on"}
+      min={1}
+      max={31}
+      after={"day of the month"}
+      hasBorder
+    />
+  );
+
   return (
     <div className={"gap flex justify-start pb-2 w-full ml-1"}>
       <ItemPicker
         title={"assignee"}
         option={"none"}
         options={["none", "Ann Smith", "Alexander Ivanov"]}
+        onChange={() => {}}
         hasBorder
+        width="w-24"
       />
       <ItemPicker
         title={"direction"}
         option={"none"}
         options={["none", "Taskmony"]}
+        onChange={() => {}}
         hasBorder
+        width="w-24"
       />
-      <DatePicker
-        title={"start date"}
-        date={Date.now()}
-        hasBorder
-      />
+      <DatePicker title={"start date"} date={Date.now()} hasBorder />
       <ItemPicker
         title={"repeated"}
-        option={recurrent ? "yes" : "no"}
         options={["yes", "no"]}
+        option={isReccurent}
+        onChange={setIsRecurrent}
         hasBorder
       />
-      {recurrent && (
+      {isReccurent === "yes" && (
         <>
           <ItemPicker
-            title={"repeat mode"}
-            option={"weekly"}
-            options={["daily", "weekly", "monthly"]}
+            title={"mode"}
+            option={mode}
+            onChange={setMode}
+            options={["daily", "weekly", "monthly","custom"]}
             hasBorder
           />
-          <ItemPicker
-            title={"every"}
-            option={"Thursday"}
-            options={[
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday",
-              "Sunday",
-            ]}
-            hasBorder
-          />
-          <ItemPicker
-            title={"until"}
-            option={"forever"}
-            options={["forever"]}
-            hasBorder
+          {mode === "monthly"
+            ? monthlyPicker
+            : mode === "weekly"
+            ? weeklyPicker
+            : mode === "custom"
+            ? customPicker : null }
+          {/* <DatePicker
+        title={"until"}
+        date={Date.now()}
+      /> */}
+          <NumberPicker
+            title={""}
+            min={2}
+            max={99}
+            after={"times"}
           />
         </>
       )}
     </div>
-  );
-};
+  )};
 
 const Comments = ({ comments }) => {
   const text = `Facit igitur Lucius noster prudenter, qui audire de summo bono potissimum velit;
@@ -166,12 +201,12 @@ const Comments = ({ comments }) => {
   const [commentInput, setCommentInput] = useState(false);
   return (
     <>
-      {comments && (
+      {comments ? (
         <>
           <Comment text={text} author={"Ann Smith"} time={"12:30 1.01.22"} />
           <Comment text={text} author={"Ann Smith"} time={"12:30 1.01.22"} />
         </>
-      )}
+      ) : null}
       {commentInput && <CommentInput />}
       <div className="flex justify-center p-1">
         <AddBtn

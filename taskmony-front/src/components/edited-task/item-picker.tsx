@@ -8,15 +8,18 @@ type Props = {
   options: Array<string>;
   option: string;
   hasBorder: boolean;
+  onChange: Function;
+  width?: string;
 };
-export const ItemPicker = ({ title, options, option, hasBorder }: Props) => {
+export const ItemPicker = ({ title, options, option, hasBorder, onChange, width }: Props) => {
   return (
     <div className={"flex justify-between pl-2"}>
       <p className={"font-semibold text-sm text-blue-500"}>{title}:</p>
       <select
         name="options"
         id="options"
-        className={"font-semibold text-sm text-blue-500 focus:outline-none"}
+        className={"font-semibold text-sm text-blue-500 focus:outline-none "+width}
+        onChange={(e)=>onChange(e.target.value)}
       >
         {options.map((o) => (
           <option value={o} className={"font-semibold text-sm text-blue-500"}>

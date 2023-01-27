@@ -8,9 +8,8 @@ import { AddUserModal } from "../../components/add-user-modal/add-user-modal";
 
 export const About = () => {
 
-  const text = `Facit igitur Lucius noster prudenter, qui audire de summo bono potissimum velit;
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Haeret in salebra. Invidiosum nomen est, infame, suspectum.
-    An hoc usque quaque, aliter in vita?`;
+  const text = `Facit igitur Lucius noster prudenter, qui audire de summo bono potissimum velit; Lorem ipsum dolor sit amet, consectetur adipiscing elit. Haeret in salebra. Invidiosum nomen est, infame, suspectum. 
+An hoc usque quaque, aliter in vita?`;
     const [isOpen, setIsOpen] = useState<boolean>(true);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   return (
@@ -57,12 +56,7 @@ export const User = ({label}:UserPropsT) => {
   export const AboutElement = ({text}:AboutPropsT) => {
     return (
         <div className="w-full bg-white rounded-lg drop-shadow-sm">
-        <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
-          <div className="flex  gap-2">
-            <span className={"text-sm"}>{text}</span>
-            <img src={edit} className="cursor-pointer"></img>
-          </div>
-        </div>
+            <textarea className={"text-sm w-full focus:outline-none p-2 pr-4 pl-4 resize-none"} defaultValue={text}/>
         </div>
     );
   };

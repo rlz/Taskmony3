@@ -12,7 +12,7 @@ public interface IDirectionService
     
     Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds, int? offset, int? limit);
     
-    Task<bool> AnyMemberWithId(Guid directionId, Guid memberId);
+    Task<bool> AnyMemberWithIdAsync(Guid directionId, Guid memberId);
 
     Task<Direction> AddDirection(Direction direction);
 

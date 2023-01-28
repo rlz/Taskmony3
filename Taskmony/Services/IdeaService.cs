@@ -48,7 +48,7 @@ public class IdeaService : IIdeaService
     public async Task<Idea> AddIdeaAsync(Idea idea)
     {
         if (idea.DirectionId is not null &&
-            !await _directionService.AnyMemberWithId(idea.DirectionId.Value, idea.CreatedById))
+            !await _directionService.AnyMemberWithIdAsync(idea.DirectionId.Value, idea.CreatedById))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
@@ -103,7 +103,7 @@ public class IdeaService : IIdeaService
         }
 
         if (directionId is not null &&
-            !await _directionService.AnyMemberWithId(directionId.Value, currentUserId))
+            !await _directionService.AnyMemberWithIdAsync(directionId.Value, currentUserId))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
@@ -173,7 +173,7 @@ public class IdeaService : IIdeaService
         //belong to a direction where the current user is a member
         if (idea is null ||
             idea.CreatedById != currentUserId && idea.DirectionId == null ||
-            idea.DirectionId != null && !await _directionService.AnyMemberWithId(idea.DirectionId.Value, currentUserId))
+            idea.DirectionId != null && !await _directionService.AnyMemberWithIdAsync(idea.DirectionId.Value, currentUserId))
         {
             throw new DomainException(IdeaErrors.NotFound);
         }

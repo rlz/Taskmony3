@@ -7,14 +7,14 @@ public static class TaskErrors
 
     public static ErrorDetails DirectionIsMissing =>
         new("Direction must be specified", "DIRECTION_IS_MISSING");
-
+    
+    public static ErrorDetails AssignPrivateTask =>
+        new("Cannot assign task with no direction", "ASSIGN_INVALID_TASK");
+    
     public static ErrorDetails NotFound => new("Task not found", "TASK_NOT_FOUND");
 
     public static ErrorDetails AlreadyDeleted =>
         new("Task is already deleted", "TASK_ALREADY_DELETED");
-
-    public static ErrorDetails DeleteFutureTask =>
-        new("Cannot delete task that has not started yet", "DELETE_FUTURE_TASK");
 
     public static ErrorDetails CompleteFutureTask =>
         new("Cannot complete task that has not started yet", "COMPLETE_FUTURE_TASK");

@@ -1,4 +1,6 @@
 using HotChocolate.AspNetCore.Authorization;
+using Taskmony.Errors;
+using Taskmony.Exceptions;
 using Taskmony.Models.Enums;
 using Taskmony.Services;
 using Task = Taskmony.Models.Task;
@@ -27,7 +29,7 @@ public class TaskMutations
     }
 
     [Authorize]
-    public async Task<Guid[]?> TasksGenerate([Service] ITaskService taskService, [Service] ITimeConverter timeConverter,
+    public async Task<IEnumerable<Guid>?> TasksGenerate([Service] ITaskService taskService, [Service] ITimeConverter timeConverter,
         [GlobalState] Guid currentUserId, string description, string? details, Guid? assigneeId, Guid? directionId, string? startAt,
         RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions)
     {
@@ -48,79 +50,50 @@ public class TaskMutations
     }
 
     [Authorize]
-    public async Task<Guid?> TaskSetDescription([Service] ITaskService taskService,
-        [GlobalState] Guid currentUserId, Guid taskId, string description)
+    public async Task<IEnumerable<Guid>?> TaskSetDescription([Service] ITaskService taskService,
+        [GlobalState] Guid currentUserId, Guid? taskId, Guid? groupId, string description)
     {
-        if (await taskService.SetTaskDescriptionAsync(taskId, description, currentUserId))
-        {
-            return taskId;
-        }
-
-        return null;
+        return await taskService.SetTaskDescriptionAsync(taskId, groupId, description, currentUserId);
     }
 
     [Authorize]
-    public async Task<Guid?> TaskSetDetails([Service] ITaskService taskService,
-    [GlobalState] Guid currentUserId, Guid taskId, string? details)
+    public async Task<IEnumerable<Guid>?> TaskSetDetails([Service] ITaskService taskService,
+    [GlobalState] Guid currentUserId, Guid? taskId, Guid? groupId, string? details)
     {
-        if (await taskService.SetTaskDetailsAsync(taskId, details, currentUserId))
-        {
-            return taskId;
-        }
-
-        return null;
+        return await taskService.SetTaskDetailsAsync(taskId, groupId, details, currentUserId);
     }
 
     [Authorize]
-    public async Task<Guid?> TaskSetDirection([Service] ITaskService taskService,
-        [GlobalState] Guid currentUserId, Guid taskId, Guid? directionId)
+    public async Task<IEnumerable<Guid>?> TaskSetDirection([Service] ITaskService taskService,
+        [GlobalState] Guid currentUserId, Guid? taskId, Guid? groupId, Guid? directionId)
     {
-        if (await taskService.SetTaskDirectionAsync(taskId, directionId, currentUserId))
-        {
-            return taskId;
-        }
-
-        return null;
+        return await taskService.SetTaskDirectionAsync(taskId, groupId, directionId, currentUserId);
     }
 
     [Authorize]
-    public async Task<Guid?> TaskSetDeletedAt([Service] ITaskService taskService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, string? deletedAt)
+    public async Task<IEnumerable<Guid>?> TaskSetDeletedAt([Service] ITaskService taskService,
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId,
+        Guid? taskId, Guid? groupId, string? deletedAt)
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
 
-        if (await taskService.SetTaskDeletedAtAsync(taskId, deletedAtUtc, currentUserId))
-        {
-            return taskId;
-        }
-
-        return null;
+        return await taskService.SetTaskDeletedAtAsync(taskId, groupId, deletedAtUtc, currentUserId);
     }
 
     [Authorize]
-    public async Task<Guid?> TaskSetAssignee([Service] ITaskService taskService,
-        [GlobalState] Guid currentUserId, Guid taskId, Guid? assigneeId)
+    public async Task<IEnumerable<Guid>?> TaskSetAssignee([Service] ITaskService taskService,
+        [GlobalState] Guid currentUserId, Guid? taskId, Guid? groupId, Guid? assigneeId)
     {
-        if (await taskService.SetTaskAssigneeAsync(taskId, assigneeId, currentUserId))
-        {
-            return taskId;
-        }
-
-        return null;
+        return await taskService.SetTaskAssigneeAsync(taskId, groupId, assigneeId, currentUserId);
     }
 
     [Authorize]
-    public async Task<Guid?> TaskSetStartAt([Service] ITaskService taskService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, string startAt)
+    public async Task<IEnumerable<Guid>?> TaskSetStartAt([Service] ITaskService taskService,
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid? taskId, Guid? groupId, string startAt)
     {
         var startAtUtc = timeConverter.StringToDateTimeUtc(startAt);
 
-        if (await taskService.SetTaskStartAtAsync(taskId, startAtUtc, currentUserId))
-        {
-            return taskId;
-        }
-
-        return null;
+        return await taskService.SetTaskStartAtAsync(taskId, groupId, startAtUtc, currentUserId);
     }
 
     [Authorize]
@@ -129,18 +102,6 @@ public class TaskMutations
     {
         DateTime? completedAtUtc = completedAt is null ? null : timeConverter.StringToDateTimeUtc(completedAt);
 
-        if (await taskService.SetTaskCompletedAtAsync(taskId, completedAtUtc, currentUserId))
-        {
-            return taskId;
-        }
-
-        return null;
-    }
-
-    [Authorize]
-    public async Task<Guid[]?> TaskRecurringDeleteAll([Service] ITaskService taskService,
-        [GlobalState] Guid currentUserId, Guid groupId)
-    {
-        return await taskService.SetRecurringTaskDeletedAtAsync(groupId, DateTime.UtcNow, currentUserId);
+        return await taskService.SetTaskCompletedAtAsync(taskId, completedAtUtc, currentUserId);
     }
 }

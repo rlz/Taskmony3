@@ -78,16 +78,23 @@ public sealed class TaskRepository : ITaskRepository, IDisposable, IAsyncDisposa
         return await _context.Tasks.FindAsync(id);
     }
 
-    public async Task<IEnumerable<Models.Task>> GetNotCompletedTasksByGroupIdAsync(Guid id)
+    public async Task<IEnumerable<Models.Task>> GetNotCompletedTasksAsync(Guid id)
     {
         return await _context.Tasks.Where(t => t.GroupId == id && t.CompletedAt == null).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Models.Task>> GetActiveTasksAsync(Guid groupId)
+    {
+        return await _context.Tasks
+            .Where(t => t.GroupId == groupId && t.CompletedAt == null && t.DeletedAt == null)
+            .ToListAsync();
     }
 
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
     }
-    
+
     public void Dispose()
     {
         _context.Dispose();

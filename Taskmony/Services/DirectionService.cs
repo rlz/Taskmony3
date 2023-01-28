@@ -16,7 +16,7 @@ public class DirectionService : IDirectionService
         _userService = userService;
     }
 
-    public async Task<bool> AnyMemberWithId(Guid directionId, Guid memberId)
+    public async Task<bool> AnyMemberWithIdAsync(Guid directionId, Guid memberId)
     {
         return await _directionRepository.AnyMemberWithIdAsync(directionId, memberId);
     }

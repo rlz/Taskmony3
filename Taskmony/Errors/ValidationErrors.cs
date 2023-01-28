@@ -32,4 +32,7 @@ public static class ValidationErrors
     
     public static ErrorDetails InvalidRepeatMode => 
         new("Repeat mode is invalid", "INVALID_REPEAT_MODE");
+
+    public static ErrorDetails TaskIdOrGroupIdIsRequired => 
+        new("Either task id or group id must be specified", "TASK_ID_OR_GROUP_ID_IS_REQUIRED");
 }

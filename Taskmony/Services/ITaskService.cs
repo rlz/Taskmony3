@@ -20,23 +20,21 @@ public interface ITaskService
 
     Task<Models.Task> GetTaskOrThrowAsync(Guid id, Guid currentUserId);
 
-    Task<Models.Task> AddTaskAsync(Models.Task task);
+    Task<Models.Task?> AddTaskAsync(Models.Task task);
 
-    Task<Guid[]> AddRecurringTaskAsync(Models.Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions);
+    Task<IEnumerable<Guid>> AddRecurringTaskAsync(Models.Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions);
 
-    Task<bool> SetTaskDescriptionAsync(Guid id, string description, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetTaskDescriptionAsync(Guid? taskId, Guid? groupId, string description, Guid currentUserId);
 
-    Task<bool> SetTaskDetailsAsync(Guid id, string? details, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetTaskDetailsAsync(Guid? taskId, Guid? groupId, string? details, Guid currentUserId);
 
-    Task<bool> SetTaskDirectionAsync(Guid id, Guid? directionId, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetTaskDirectionAsync(Guid? taskId, Guid? groupId, Guid? directionId, Guid currentUserId);
 
-    Task<bool> SetTaskAssigneeAsync(Guid id, Guid? assigneeId, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetTaskAssigneeAsync(Guid? taskId, Guid? groupId, Guid? assigneeId, Guid currentUserId);
 
-    Task<bool> SetTaskStartAtAsync(Guid id, DateTime startAtUtc, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetTaskStartAtAsync(Guid? taskId, Guid? groupId, DateTime startAtUtc, Guid currentUserId);
 
-    Task<bool> SetTaskDeletedAtAsync(Guid id, DateTime? deletedAtUtc, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetTaskDeletedAtAsync(Guid? taskId, Guid? groupId, DateTime? deletedAtUtc, Guid currentUserId);
 
-    Task<Guid[]> SetRecurringTaskDeletedAtAsync(Guid groupId, DateTime? deletedAtUtc, Guid currentUserId);
-
-    Task<bool> SetTaskCompletedAtAsync(Guid id, DateTime? completedAtUtc, Guid currentUserId);
+    Task<Guid?> SetTaskCompletedAtAsync(Guid taskId, DateTime? completedAtUtc, Guid currentUserId);
 }

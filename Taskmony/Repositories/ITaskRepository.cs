@@ -18,7 +18,14 @@ public interface ITaskRepository
 
     Task<Models.Task?> GetTaskByIdAsync(Guid id);
 
-    Task<IEnumerable<Models.Task>> GetNotCompletedTasksByGroupIdAsync(Guid id);
+    Task<IEnumerable<Models.Task>> GetNotCompletedTasksAsync(Guid groupId);
+
+    /// <summary>
+    /// Gets not completed and not deleted tasks by group id
+    /// </summary>
+    /// <param name="groupId">group id of the recurring task</param>
+    /// <returns>active tasks from the group</returns>
+    Task<IEnumerable<Models.Task>> GetActiveTasksAsync(Guid groupId);
 
     Task AddTaskAsync(Models.Task task);
 

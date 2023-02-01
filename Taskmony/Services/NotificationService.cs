@@ -1,3 +1,5 @@
+using Taskmony.Errors;
+using Taskmony.Exceptions;
 using Taskmony.Models.Notifications;
 using Taskmony.Repositories;
 
@@ -15,6 +17,11 @@ public class NotificationService : INotificationService
     public async Task<IEnumerable<Notification>> GetNotificationsByNotifiableIdsAsync(Guid[] ids, DateTime? start,
         DateTime? end)
     {
+        if (end < start)
+        {
+            throw new DomainException(ValidationErrors.EndBeforeStart);
+        }
+
         return await _notificationRepository.GetNotificationsAsync(ids, start, end);
     }
 }

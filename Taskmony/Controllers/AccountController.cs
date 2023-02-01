@@ -26,8 +26,11 @@ public class AccountController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult> Register([FromBody] UserRegisterRequest request)
     {
-        await _userService.AddUserAsync(request);
+        if (await _userService.AddUserAsync(request))
+        {
+            return Ok();
+        }
 
-        return Ok();
+        return BadRequest();
     }
 }

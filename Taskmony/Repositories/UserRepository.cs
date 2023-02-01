@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
 using Taskmony.Models;
+using Taskmony.ValueObjects;
 using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories;
@@ -19,19 +20,19 @@ public sealed class UserRepository : IUserRepository, IDisposable, IAsyncDisposa
         await _context.Users.AddAsync(user);
     }
 
-    public async Task<bool> AnyUserWithEmailAsync(string email)
+    public async Task<bool> AnyUserWithEmailAsync(Email email)
     {
-        return await _context.Users.AnyAsync(x => x.Email == email);
+        return await _context.Users.AnyAsync(x => x.Email!.Value == email.Value);
     }
 
-    public async Task<bool> AnyUserWithLoginAsync(string login)
+    public async Task<bool> AnyUserWithLoginAsync(Login login)
     {
-        return await _context.Users.AnyAsync(x => x.Login == login);
+        return await _context.Users.AnyAsync(x => x.Login!.Value == login.Value);
     }
 
-    public async Task<User?> GetUserByLoginAsync(string login)
+    public async Task<User?> GetUserByLoginAsync(Login login)
     {
-        return await _context.Users.FirstOrDefaultAsync(x => x.Login == login);
+        return await _context.Users.FirstOrDefaultAsync(x => x.Login!.Value == login.Value);
     }
 
     public async Task<User?> GetUserByIdAsync(Guid id)
@@ -50,12 +51,12 @@ public sealed class UserRepository : IUserRepository, IDisposable, IAsyncDisposa
 
         if (email is not null)
         {
-            query = query.Where(x => email.Contains(x.Email));
+            query = query.Where(x => email.Contains(x.Email!.Value));
         }
 
         if (login is not null)
         {
-            query = query.Where(x => login.Contains(x.Login));
+            query = query.Where(x => login.Contains(x.Login!.Value));
         }
 
         query = AddPagination(query, offset, limit);
@@ -88,7 +89,7 @@ public sealed class UserRepository : IUserRepository, IDisposable, IAsyncDisposa
     {
         return await _context.SaveChangesAsync() > 0;
     }
-    
+
     public void Dispose()
     {
         _context.Dispose();

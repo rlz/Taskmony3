@@ -17,11 +17,16 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
             .HasValueGenerator<GuidValueGenerator>();
 
         builder.Property(c => c.CreatedAt)
-            .HasDefaultValueSql("now()");
+            .HasDefaultValueSql("now()")
+            .IsRequired();
+        
+        builder.OwnsOne(c => c.Text, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Comment.Text))
+                .IsRequired();
+        }).Navigation(i => i.Text).IsRequired();
 
         builder.Ignore(c => c.ActionItemType);
-
-        builder.Property(c => c.Text).IsRequired();
-        builder.Property(c => c.CreatedAt).IsRequired();
     }
 }

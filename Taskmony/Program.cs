@@ -6,7 +6,6 @@ using Taskmony.Errors;
 using Taskmony.GraphQL;
 using Taskmony.GraphQL.Comments;
 using Taskmony.GraphQL.Converters;
-using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Directions;
 using Taskmony.GraphQL.Errors;
 using Taskmony.GraphQL.Ideas;
@@ -102,13 +101,10 @@ builder.Services
     .AddTypeExtension<DirectionMutations>()
     .AddTypeExtension<UserMutations>()
     .AddSubscriptionType<SubscriptionMutations>()
-    .AddDataLoader<UserByIdDataLoader>()
-    .AddDataLoader<TaskByIdDataLoader>()
-    .AddDataLoader<CommentByIdDataLoader>()
-    .AddDataLoader<IdeaByIdDataLoader>()
     .BindRuntimeType<Guid, IdType>()
     .AddTypeConverter<StringToGuidConverter>()
     .AddTypeConverter<GuidToStringConverter>()
+    .AddTypeConverter<ValueObjectToStringConverter>()
     .AddTypeConverter<DateTimeToStringConverter>();
 
 var app = builder.Build();

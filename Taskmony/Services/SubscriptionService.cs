@@ -2,6 +2,7 @@ using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models.Subscriptions;
 using Taskmony.Repositories;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Services;
 
@@ -21,14 +22,20 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<ILookup<Guid, Guid>> GetTaskSubscriberIdsAsync(Guid[] taskIds, int? offset, int? limit)
     {
-        var subscriptions = await _subscriptionRepository.GetTaskSubscriptionsAsync(taskIds, offset, limit);
+        int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
+        int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
+
+        var subscriptions = await _subscriptionRepository.GetTaskSubscriptionsAsync(taskIds, offsetValue, limitValue);
 
         return subscriptions.ToLookup(s => s.TaskId, s => s.UserId);
     }
 
     public async Task<ILookup<Guid, Guid>> GetIdeaSubscriberIdsAsync(Guid[] ideaIds, int? offset, int? limit)
     {
-        var subscriptions = await _subscriptionRepository.GetIdeaSubscriptionsAsync(ideaIds, offset, limit);
+        int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
+        int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
+
+        var subscriptions = await _subscriptionRepository.GetIdeaSubscriptionsAsync(ideaIds, offsetValue, limitValue);
 
         return subscriptions.ToLookup(s => s.IdeaId, s => s.UserId);
     }

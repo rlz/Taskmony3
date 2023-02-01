@@ -13,15 +13,33 @@ public class IdeaConfiguration : IEntityTypeConfiguration<Idea>
 
         builder.Property(i => i.Id)
             .HasValueGenerator<GuidValueGenerator>();
-
+        
         builder.Property(i => i.CreatedAt)
-            .HasDefaultValueSql("now()");
+            .HasDefaultValueSql("now()")
+            .IsRequired();
+
+        builder.OwnsOne(i => i.Description, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Idea.Description))
+                .IsRequired();
+        }).Navigation(i => i.Description).IsRequired();
+        
+        builder.OwnsOne(i => i.DeletedAt, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Idea.DeletedAt));
+        });
+        
+        builder.OwnsOne(i => i.ReviewedAt, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Idea.ReviewedAt));
+        });
+        
+        builder.Property(i => i.Generation).IsRequired();
 
         builder.Ignore(i => i.ActionItemType);
         builder.Ignore(i => i.Notifications);
-
-        builder.Property(i => i.Description).IsRequired();
-        builder.Property(i => i.CreatedAt).IsRequired();
-        builder.Property(i => i.Generation).IsRequired();
     }
 }

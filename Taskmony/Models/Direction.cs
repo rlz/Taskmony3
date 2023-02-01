@@ -1,4 +1,5 @@
 using Taskmony.Models.Notifications;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Models;
 
@@ -6,7 +7,7 @@ public class Direction
 {
     public Guid Id { get; set; }
 
-    public string? Name { get; set; }
+    public DirectionName? Name { get; set; }
 
     public string? Details { get; set; }
 
@@ -16,7 +17,7 @@ public class Direction
 
     public DateTime? CreatedAt { get; set; }
 
-    public DateTime? DeletedAt { get; set; }
+    public DeletedAt? DeletedAt { get; set; }
 
     public ICollection<User>? Members { get; set; }
 

@@ -2,6 +2,7 @@ using Taskmony.Models.Comments;
 using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
 using Taskmony.Models.Subscriptions;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Models;
 
@@ -11,7 +12,7 @@ public class Task : IActionItem
 
     public ActionItemType ActionItemType => ActionItemType.Task;
 
-    public string? Description { get; set; }
+    public Description? Description { get; set; }
 
     public string? Details { get; set; }
 
@@ -21,11 +22,11 @@ public class Task : IActionItem
 
     public DateTime? CreatedAt { get; set; }
 
-    public DateTime? StartAt { get; set; }
+    public StartAt? StartAt { get; set; }
 
-    public DateTime? CompletedAt { get; set; }
+    public CompletedAt? CompletedAt { get; set; }
 
-    public DateTime? DeletedAt { get; set; }
+    public DeletedAt? DeletedAt { get; set; }
 
     public Direction? Direction { get; set; }
 

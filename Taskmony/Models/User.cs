@@ -2,6 +2,7 @@ using Taskmony.Models.Comments;
 using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
 using Taskmony.Models.Subscriptions;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Models;
 
@@ -11,13 +12,13 @@ public class User : IActionItem
 
     public ActionItemType ActionItemType => ActionItemType.User;
 
-    public string? Login { get; set; }
+    public Login? Login { get; set; }
 
     public string? Password { get; set; }
 
-    public string? DisplayName { get; set; }
+    public DisplayName? DisplayName { get; set; }
 
-    public string? Email { get; set; }
+    public Email? Email { get; set; }
 
     public DateTime? NotificationReadTime { get; set; }
 

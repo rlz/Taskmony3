@@ -24,17 +24,29 @@ public interface ITaskService
 
     Task<IEnumerable<Guid>> AddRecurringTaskAsync(Models.Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions);
 
-    Task<IEnumerable<Guid>> SetTaskDescriptionAsync(Guid? taskId, Guid? groupId, string description, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetRecurringTaskDescriptionAsync(Guid groupId, string description, Guid currentUserId);
 
-    Task<IEnumerable<Guid>> SetTaskDetailsAsync(Guid? taskId, Guid? groupId, string? details, Guid currentUserId);
+    Task<Guid?> SetTaskDescriptionAsync(Guid taskId, string description, Guid currentUserId);
 
-    Task<IEnumerable<Guid>> SetTaskDirectionAsync(Guid? taskId, Guid? groupId, Guid? directionId, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetRecurringTaskDetailsAsync(Guid groupId, string? details, Guid currentUserId);
 
-    Task<IEnumerable<Guid>> SetTaskAssigneeAsync(Guid? taskId, Guid? groupId, Guid? assigneeId, Guid currentUserId);
+    Task<Guid?> SetTaskDetailsAsync(Guid taskId, string? details, Guid currentUserId);
 
-    Task<IEnumerable<Guid>> SetTaskStartAtAsync(Guid? taskId, Guid? groupId, DateTime startAtUtc, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetRecurringTaskDirectionAsync(Guid groupId, Guid? directionId, Guid currentUserId);
 
-    Task<IEnumerable<Guid>> SetTaskDeletedAtAsync(Guid? taskId, Guid? groupId, DateTime? deletedAtUtc, Guid currentUserId);
+    Task<Guid?> SetTaskDirectionAsync(Guid taskId, Guid? directionId, Guid currentUserId);
+
+    Task<IEnumerable<Guid>> SetRecurringTaskAssigneeAsync(Guid groupId, Guid? assigneeId, Guid currentUserId);
+
+    Task<Guid?> SetTaskAssigneeAsync(Guid taskId, Guid? assigneeId, Guid currentUserId);
+
+    Task<IEnumerable<Guid>> SetRecurringTaskStartAtAsync(Guid groupId, DateTime startAtUtc, Guid currentUserId);
+
+    Task<Guid?> SetTaskStartAtAsync(Guid taskId, DateTime startAtUtc, Guid currentUserId);
+
+    Task<IEnumerable<Guid>> SetRecurringTaskDeletedAtAsync(Guid groupId, DateTime? deletedAtUtc, Guid currentUserId);
+
+    Task<Guid?> SetTaskDeletedAtAsync(Guid taskId, DateTime? deletedAtUtc, Guid currentUserId);
 
     Task<Guid?> SetTaskCompletedAtAsync(Guid taskId, DateTime? completedAtUtc, Guid currentUserId);
 }

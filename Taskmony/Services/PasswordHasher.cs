@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Services;
 
@@ -16,7 +17,7 @@ public class PasswordHasher : IPasswordHasher, IDisposable
         _rng = RandomNumberGenerator.Create();
     }
 
-    public string HashPassword(string password)
+    public string HashPassword(Password password)
     {
         if (password is null)
         {
@@ -26,7 +27,7 @@ public class PasswordHasher : IPasswordHasher, IDisposable
         var salt = new byte[SaltSize];
         _rng.GetBytes(salt);
 
-        var subkey = KeyDerivation.Pbkdf2(password, salt, Prf, IterCount, NumOfBytesRequested);
+        var subkey = KeyDerivation.Pbkdf2(password.Value, salt, Prf, IterCount, NumOfBytesRequested);
 
         // Add the salt in front of the hash
         var hashBytes = new byte[salt.Length + subkey.Length];

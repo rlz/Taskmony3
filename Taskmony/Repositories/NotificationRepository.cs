@@ -22,7 +22,7 @@ public sealed class NotificationRepository : INotificationRepository, IDisposabl
         if (start is not null && end is not null)
         {
             return (await groupedByNotifiable
-                    .Select(g => g.Where(n => n.ModifiedAt >= start && n.ModifiedAt <= end))
+                    .Select(g => g.Where(n => n.ModifiedAt!.Value >= start && n.ModifiedAt.Value <= end))
                     .ToListAsync())
                 .SelectMany(g => g);
         }
@@ -30,7 +30,7 @@ public sealed class NotificationRepository : INotificationRepository, IDisposabl
         if (start is not null)
         {
             return (await groupedByNotifiable
-                    .Select(g => g.Where(n => n.ModifiedAt >= start))
+                    .Select(g => g.Where(n => n.ModifiedAt!.Value >= start))
                     .ToListAsync())
                 .SelectMany(g => g);
         }
@@ -38,7 +38,7 @@ public sealed class NotificationRepository : INotificationRepository, IDisposabl
         if (end is not null)
         {
             return (await groupedByNotifiable
-                    .Select(g => g.Where(n => n.ModifiedAt <= end))
+                    .Select(g => g.Where(n => n.ModifiedAt!.Value <= end))
                     .ToListAsync())
                 .SelectMany(g => g);
         }
@@ -50,7 +50,7 @@ public sealed class NotificationRepository : INotificationRepository, IDisposabl
     {
         return await _context.SaveChangesAsync() > 0;
     }
-    
+
     public void Dispose()
     {
         _context.Dispose();

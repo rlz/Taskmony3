@@ -32,6 +32,14 @@ public sealed class DirectionRepository : IDirectionRepository, IDisposable, IAs
         return await query.ToListAsync();
     }
 
+    public async Task<IEnumerable<Guid>> GetUserDirectionIds(Guid userId)
+    {
+        return await _context.Directions
+            .Where(d => d.CreatedById == userId || d.Members!.Any(m => m.Id == userId))
+            .Select(d => d.Id)
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Direction>> GetDirectionByIdsAsync(Guid[] ids)
     {
         return await _context.Directions

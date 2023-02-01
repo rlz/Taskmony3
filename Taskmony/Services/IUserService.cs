@@ -1,6 +1,5 @@
 using Taskmony.DTOs;
 using Taskmony.Models;
-using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Services;
 
@@ -8,7 +7,7 @@ public interface IUserService
 {
     Task<UserAuthResponse> AuthenticateUserAsync(UserAuthRequest request);
 
-    Task AddUserAsync(UserRegisterRequest request);
+    Task<bool> AddUserAsync(UserRegisterRequest request);
 
     /// <summary>
     /// Gets users filtered by the given parameters

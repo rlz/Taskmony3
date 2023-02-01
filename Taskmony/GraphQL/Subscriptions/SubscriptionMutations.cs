@@ -17,7 +17,7 @@ public class SubscriptionMutations
 
         return null;
     }
-    
+
     [Authorize]
     public async Task<Guid?> IdeaSubscribe([Service] ISubscriptionService subscriptionService,
         [GlobalState] Guid currentUserId, Guid ideaId)
@@ -29,7 +29,7 @@ public class SubscriptionMutations
 
         return null;
     }
-    
+
     [Authorize]
     public async Task<Guid?> TaskUnsubscribe([Service] ISubscriptionService subscriptionService,
         [GlobalState] Guid currentUserId, Guid taskId)

@@ -1,5 +1,6 @@
 using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Models.Comments;
 
@@ -9,7 +10,7 @@ public abstract class Comment : IActionItem
 
     public ActionItemType ActionItemType => ActionItemType.Comment;
 
-    public string? Text { get; set; }
+    public CommentText? Text { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 

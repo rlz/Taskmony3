@@ -1,4 +1,5 @@
 using Taskmony.Models;
+using Taskmony.ValueObjects;
 using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories;
@@ -7,11 +8,11 @@ public interface IUserRepository
 {
     Task AddUserAsync(User user);
 
-    Task<bool> AnyUserWithLoginAsync(string login);
+    Task<bool> AnyUserWithLoginAsync(Login login);
 
-    Task<bool> AnyUserWithEmailAsync(string email);
+    Task<bool> AnyUserWithEmailAsync(Email email);
 
-    Task<User?> GetUserByLoginAsync(string login);
+    Task<User?> GetUserByLoginAsync(Login login);
 
     Task<User?> GetUserByIdAsync(Guid id);
 

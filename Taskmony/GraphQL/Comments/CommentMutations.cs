@@ -1,6 +1,7 @@
 using HotChocolate.AspNetCore.Authorization;
 using Taskmony.Models.Comments;
 using Taskmony.Services;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.GraphQL.Comments;
 
@@ -8,13 +9,13 @@ namespace Taskmony.GraphQL.Comments;
 public class CommentMutations
 {
     [Authorize]
-    public async Task<Comment?> TaskAddComment([Service] ICommentService commentService, 
+    public async Task<Comment?> TaskAddComment([Service] ICommentService commentService,
         [GlobalState] Guid currentUserId, Guid taskId, string text)
     {
         var comment = new TaskComment
         {
             CreatedById = currentUserId,
-            Text = text,
+            Text = CommentText.From(text),
             TaskId = taskId
         };
 
@@ -22,13 +23,13 @@ public class CommentMutations
     }
 
     [Authorize]
-    public async Task<Comment?> IdeaAddComment([Service] ICommentService commentService, 
+    public async Task<Comment?> IdeaAddComment([Service] ICommentService commentService,
         [GlobalState] Guid currentUserId, Guid ideaId, string text)
     {
         var comment = new IdeaComment
         {
             CreatedById = currentUserId,
-            Text = text,
+            Text = CommentText.From(text),
             IdeaId = ideaId
         };
 

@@ -18,12 +18,12 @@ public class ErrorFilter : IErrorFilter
     {
         _logger.LogError(error.Exception, "An exception occurred: {Message}", error.Exception?.Message);
 
-        if (error.Exception is DomainException ex)
+        if (error.Exception is DomainException domainException)
         {
             return ErrorBuilder
                 .New()
-                .SetCode(ex.Error.Code)
-                .SetMessage(ex.Error.Message)
+                .SetCode(domainException.Error.Code)
+                .SetMessage(domainException.Error.Message)
                 .SetPath(error.Path)
                 .Build();
         }

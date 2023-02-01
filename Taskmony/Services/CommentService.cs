@@ -2,6 +2,7 @@ using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models.Comments;
 using Taskmony.Repositories;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Services;
 
@@ -18,19 +19,20 @@ public class CommentService : ICommentService
         _ideaService = ideaService;
     }
 
-    public async Task<Comment?> GetCommentById(Guid id)
-    {
-        return await _commentRepository.GetCommentById(id);
-    }
-
     public async Task<IEnumerable<Comment>> GetCommentsByTaskIds(Guid[] ids, int? offset, int? limit)
     {
-        return await _commentRepository.GetCommentsByTaskIdsAsync(ids, offset, limit);
+        int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
+        int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
+
+        return await _commentRepository.GetCommentsByTaskIdsAsync(ids, offsetValue, limitValue);
     }
 
     public async Task<IEnumerable<Comment>> GetCommentsByIdeaIds(Guid[] ids, int? offset, int? limit)
     {
-        return await _commentRepository.GetCommentsByIdeaIdsAsync(ids, offset, limit);
+        int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
+        int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
+
+        return await _commentRepository.GetCommentsByIdeaIdsAsync(ids, offsetValue, limitValue);
     }
 
     public async Task<IEnumerable<Comment>> GetCommentsByIdsAsync(Guid[] ids)
@@ -62,14 +64,11 @@ public class CommentService : ICommentService
 
     public async Task<bool> SetCommentText(Guid commentId, string text, Guid currentUserId)
     {
+        var commentText = CommentText.From(text);
+
         var comment = await GetCommentOrThrow(commentId, currentUserId);
 
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            throw new DomainException(ValidationErrors.InvalidCommentText);
-        }
-
-        comment.Text = text;
+        comment.Text = commentText;
 
         return await _commentRepository.SaveChangesAsync();
     }
@@ -83,13 +82,13 @@ public class CommentService : ICommentService
             throw new DomainException(CommentErrors.NotFound);
         }
 
-        if (comment is IdeaComment)
+        if (comment is IdeaComment ideaComment)
         {
-            await _ideaService.GetIdeaOrThrowAsync(((IdeaComment) comment).IdeaId, currentUserId);
+            await _ideaService.GetIdeaOrThrowAsync(ideaComment.IdeaId, currentUserId);
         }
-        else if (comment is TaskComment)
+        else if (comment is TaskComment taskComment)
         {
-            await _taskService.GetTaskOrThrowAsync(((TaskComment) comment).TaskId, currentUserId);
+            await _taskService.GetTaskOrThrowAsync(taskComment.TaskId, currentUserId);
         }
 
         return comment;

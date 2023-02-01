@@ -8,5 +8,5 @@ public abstract class Subscription
 
     public Guid UserId { get; set; }
 
-    public DateTime? SubscribedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
 }

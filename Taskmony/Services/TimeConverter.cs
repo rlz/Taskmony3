@@ -1,4 +1,6 @@
 using System.Globalization;
+using Taskmony.Errors;
+using Taskmony.Exceptions;
 
 namespace Taskmony.Services;
 
@@ -8,7 +10,12 @@ public class TimeConverter : ITimeConverter
 
     public DateTime StringToDateTimeUtc(string rfc3339)
     {
-        return DateTime.Parse(rfc3339, CultureInfo.InvariantCulture).ToUniversalTime();
+        if (!DateTime.TryParse(rfc3339, CultureInfo.InvariantCulture, out var dateTime))
+        {
+            throw new DomainException(ValidationErrors.InvalidDateTimeFormat);
+        }
+
+        return dateTime.ToUniversalTime();
     }
 
     public string DateTimeToString(DateTime dateTime)

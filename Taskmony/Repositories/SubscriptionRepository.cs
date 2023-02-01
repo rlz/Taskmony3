@@ -25,7 +25,7 @@ public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposabl
         if (offset is not null && limit is not null)
         {
             return (await groupedByTask
-                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Skip(offset.Value).Take(limit.Value))
+                    .Select(g => g.OrderBy(s => s.CreatedAt).ThenBy(s => s.Id).Skip(offset.Value).Take(limit.Value))
                     .ToListAsync())
                 .SelectMany(g => g);
         }
@@ -33,7 +33,7 @@ public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposabl
         if (offset is not null)
         {
             return (await groupedByTask
-                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Skip(offset.Value))
+                    .Select(g => g.OrderBy(s => s.CreatedAt).ThenBy(s => s.Id).Skip(offset.Value))
                     .ToListAsync())
                 .SelectMany(g => g);
         }
@@ -41,7 +41,7 @@ public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposabl
         if (limit is not null)
         {
             return (await groupedByTask
-                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Take(limit.Value))
+                    .Select(g => g.OrderBy(s => s.CreatedAt).ThenBy(s => s.Id).Take(limit.Value))
                     .ToListAsync())
                 .SelectMany(g => g);
         }
@@ -61,7 +61,7 @@ public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposabl
         if (offset is not null && limit is not null)
         {
             return (await groupedByTask
-                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Skip(offset.Value).Take(limit.Value))
+                    .Select(g => g.OrderBy(s => s.CreatedAt).ThenBy(s => s.Id).Skip(offset.Value).Take(limit.Value))
                     .ToListAsync())
                 .SelectMany(g => g);
         }
@@ -69,7 +69,7 @@ public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposabl
         if (offset is not null)
         {
             return (await groupedByTask
-                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Skip(offset.Value))
+                    .Select(g => g.OrderBy(s => s.CreatedAt).ThenBy(s => s.Id).Skip(offset.Value))
                     .ToListAsync())
                 .SelectMany(g => g);
         }
@@ -77,7 +77,7 @@ public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposabl
         if (limit is not null)
         {
             return (await groupedByTask
-                    .Select(g => g.OrderBy(s => s.SubscribedAt).ThenBy(s => s.Id).Take(limit.Value))
+                    .Select(g => g.OrderBy(s => s.CreatedAt).ThenBy(s => s.Id).Take(limit.Value))
                     .ToListAsync())
                 .SelectMany(g => g);
         }

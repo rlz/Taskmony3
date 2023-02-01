@@ -1,11 +1,10 @@
-using System.Text.RegularExpressions;
 using Taskmony.Auth;
 using Taskmony.DTOs;
 using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models;
 using Taskmony.Repositories;
-using Task = System.Threading.Tasks.Task;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Services;
 
@@ -22,55 +21,57 @@ public class UserService : IUserService
         _jwtProvider = jwtProvider;
     }
 
-    public async Task AddUserAsync(UserRegisterRequest request)
+    public async Task<bool> AddUserAsync(UserRegisterRequest request)
     {
-        ValidateCredentials(request.Login, request.Password, request.Email);
+        var user = new User
+        {
+            Login = Login.From(request.Login),
+            Email = Email.From(request.Email),
+            DisplayName = DisplayName.From(request.DisplayName),
+        };
 
-        if (await _userRepository.AnyUserWithLoginAsync(request.Login))
+        var password = Password.From(request.Password);
+
+        if (await _userRepository.AnyUserWithLoginAsync(user.Login))
         {
             throw new DomainException(UserErrors.LoginIsAlreadyInUse);
         }
 
-        if (await _userRepository.AnyUserWithEmailAsync(request.Email))
+        if (await _userRepository.AnyUserWithEmailAsync(user.Email))
         {
             throw new DomainException(UserErrors.EmailIsAlreadyInUse);
         }
 
-        await _userRepository.AddUserAsync(new User
-        {
-            Login = request.Login,
-            Password = _passwordHasher.HashPassword(request.Password),
-            Email = request.Email,
-            DisplayName = request.DisplayName
-        });
+        user.Password = _passwordHasher.HashPassword(password);
 
-        await _userRepository.SaveChangesAsync();
+        await _userRepository.AddUserAsync(user);
+
+        return await _userRepository.SaveChangesAsync();
     }
 
     public async Task<UserAuthResponse> AuthenticateUserAsync(UserAuthRequest request)
     {
-        ValidateCredentials(request.Login, request.Password);
+        var login = Login.From(request.Login);
+        var password = Password.From(request.Password);
 
-        var user = await _userRepository.GetUserByLoginAsync(request.Login);
+        var user = await _userRepository.GetUserByLoginAsync(login);
 
-        if (user is null)
-        {
-            throw new DomainException(UserErrors.WrongLoginOrPassword);
-        }
-
-        if (!_passwordHasher.VerifyPassword(request.Password, user.Password!))
+        if (user is null || !_passwordHasher.VerifyPassword(request.Password, password.Value))
         {
             throw new DomainException(UserErrors.WrongLoginOrPassword);
         }
 
         var token = _jwtProvider.GenerateToken(user);
 
-        return new UserAuthResponse(user.Id, user.DisplayName!, token);
+        return new UserAuthResponse(user.Id, user.DisplayName!.Value, token);
     }
 
     public async Task<IEnumerable<User>> GetUsersAsync(Guid[]? id, string[]? email, string[]? login,
         int? offset, int? limit, Guid currentUserId)
     {
+        int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
+        int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
+
         if (id is null && email is null && login is null)
         {
             id = new[] { currentUserId };
@@ -86,56 +87,56 @@ public class UserService : IUserService
             .Select(l => l.Trim())
             .ToArray();
 
-        var users = await _userRepository.GetUsersAsync(id, email, login, offset, limit);
+        var users = await _userRepository.GetUsersAsync(id, email, login, offsetValue, limitValue);
 
         return users.Select(x => new User
         {
             Id = x.Id,
             Email = x.Id == currentUserId ? x.Email : null,
             Login = x.Login,
-            DisplayName = x.DisplayName
+            DisplayName = x.DisplayName,
+            NotificationReadTime = x.Id == currentUserId ? x.NotificationReadTime : null,
         });
     }
 
     public async Task<bool> SetEmailAsync(Guid id, string email, Guid currentUserId)
     {
+        var emailValue = Email.From(email);
         var user = await GetUserOrThrowAsync(id);
 
-        ValidateEmail(email);
-
-        user.Email = email;
+        user.Email = emailValue;
 
         return await _userRepository.SaveChangesAsync();
     }
 
     public async Task<bool> SetLoginAsync(Guid id, string login, Guid currentUserId)
     {
+        var loginValue = Login.From(login);
         var user = await GetUserOrThrowAsync(id);
 
-        ValidateLogin(login);
-
-        user.Login = login;
+        user.Login = loginValue;
 
         return await _userRepository.SaveChangesAsync();
     }
 
     public async Task<bool> SetDisplayNameAsync(Guid id, string displayName, Guid currentUserId)
     {
+        var displayNameValue = DisplayName.From(displayName);
         var user = await GetUserOrThrowAsync(id);
 
-        user.DisplayName = displayName;
+        user.DisplayName = displayNameValue;
 
         return await _userRepository.SaveChangesAsync();
     }
 
     public async Task<bool> SetNotificationReadTimeAsync(Guid id, DateTime notificationReadTime, Guid currentUserId)
     {
-        var user = await GetUserOrThrowAsync(id);
-
         if (notificationReadTime > DateTime.UtcNow)
         {
             throw new DomainException(ValidationErrors.InvalidNotificationReadTime);
         }
+
+        var user = await GetUserOrThrowAsync(id);
 
         user.NotificationReadTime = notificationReadTime;
 
@@ -144,11 +145,10 @@ public class UserService : IUserService
 
     public async Task<bool> SetPasswordAsync(Guid id, string password, Guid currentUserId)
     {
+        var passwordValue = Password.From(password);
         var user = await GetUserOrThrowAsync(id);
 
-        ValidatePassword(password);
-
-        user.Password = _passwordHasher.HashPassword(password);
+        user.Password = _passwordHasher.HashPassword(passwordValue);
 
         return await _userRepository.SaveChangesAsync();
     }
@@ -163,46 +163,5 @@ public class UserService : IUserService
         }
 
         return user;
-    }
-
-    public void ValidateLogin(string login)
-    {
-        if (login is null || login.Length < 4 || !login.All(c => char.IsLetterOrDigit(c)))
-        {
-            throw new DomainException(UserErrors.InvalidLoginFormat);
-        }
-    }
-
-    public void ValidatePassword(string password)
-    {
-        //8+ characters, at least one uppercase letter, one lowercase letter and one number
-        if (password is null || !Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,128}$"))
-        {
-            throw new DomainException(UserErrors.InvalidPasswordFormat);
-        }
-    }
-
-    public void ValidateEmail(string email)
-    {
-        try
-        {
-            _ = new System.Net.Mail.MailAddress(email);
-        }
-        catch
-        {
-            throw new DomainException(UserErrors.InvalidEmailFormat);
-        }
-    }
-
-    public void ValidateCredentials(string login, string password)
-    {
-        ValidateLogin(login);
-        ValidatePassword(password);
-    }
-
-    private void ValidateCredentials(string login, string password, string email)
-    {
-        ValidateCredentials(login, password);
-        ValidateEmail(email);
     }
 }

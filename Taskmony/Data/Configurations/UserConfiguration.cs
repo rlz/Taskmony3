@@ -37,13 +37,30 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .UsingEntity<Membership>();
 
         builder.Property(u => u.Password)
-            .IsRequired()
-            .HasColumnName("PasswordHash");
+            .HasColumnName("PasswordHash")
+            .IsRequired();
+
+        builder.OwnsOne(u => u.Login, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(User.Login))
+                .IsRequired();
+        }).Navigation(u => u.Login).IsRequired();
+
+        builder.OwnsOne(u => u.DisplayName, b =>
+        {
+            b.Property(d => d.Value)
+                .HasColumnName(nameof(User.DisplayName))
+                .IsRequired();
+        }).Navigation(u => u.DisplayName).IsRequired();
+
+        builder.OwnsOne(u => u.Email, b =>
+        {
+            b.Property(e => e.Value)
+                .HasColumnName(nameof(User.Email))
+                .IsRequired();
+        }).Navigation(u => u.Email).IsRequired();
 
         builder.Ignore(u => u.ActionItemType);
-
-        builder.Property(u => u.Login).IsRequired();
-        builder.Property(u => u.DisplayName).IsRequired();
-        builder.Property(u => u.Email).IsRequired();
     }
 }

@@ -2,6 +2,7 @@ using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models.Enums;
 using Taskmony.Repositories;
+using Taskmony.ValueObjects;
 using Task = Taskmony.Models.Task;
 
 namespace Taskmony.Services;
@@ -20,12 +21,14 @@ public class TaskService : ITaskService
     public async Task<IEnumerable<Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId, int? offset,
         int? limit, Guid currentUserId)
     {
+        int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
+        int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
         List<Task> tasks;
 
         //If directionId is [null] return tasks created by the current user with direction id = null
         if (directionId is not null && directionId.Length == 1 && directionId.Contains(null))
         {
-            tasks = (await _taskRepository.GetTasksAsync(id, directionId, offset, limit, currentUserId)).ToList();
+            tasks = (await _taskRepository.GetTasksAsync(id, directionId, offsetValue, limitValue, currentUserId)).ToList();
         }
         else
         {
@@ -40,7 +43,7 @@ public class TaskService : ITaskService
                 ? authorizedDirectionIds.ToArray()
                 : directionId.Intersect(authorizedDirectionIds).ToArray();
 
-            tasks = (await _taskRepository.GetTasksAsync(id, directionId, offset, limit, currentUserId)).ToList();
+            tasks = (await _taskRepository.GetTasksAsync(id, directionId, offsetValue, limitValue, currentUserId)).ToList();
         }
 
         tasks.ForEach(t1 =>
@@ -56,43 +59,23 @@ public class TaskService : ITaskService
 
     public async Task<Task?> AddTaskAsync(Task task)
     {
-        ValidateTaskDescription(task.Description);
-
         if (task.DirectionId is not null &&
             !await _directionService.AnyMemberWithIdAsync(task.DirectionId.Value, task.CreatedById))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
 
-        if (task.AssigneeId is not null)
-        {
-            if (task.DirectionId is null)
-            {
-                throw new DomainException(TaskErrors.DirectionIsMissing);
-            }
-
-            if (!await _directionService.AnyMemberWithIdAsync(task.DirectionId.Value, task.AssigneeId.Value))
-            {
-                throw new DomainException(TaskErrors.InvalidAssignee);
-            }
-        }
+        await ValidateAssignee(task);
 
         await _taskRepository.AddTaskAsync(task);
 
-        if (await _taskRepository.SaveChangesAsync())
-        {
-            return task;
-        }
-
-        return null;
+        return await _taskRepository.SaveChangesAsync() ? task : null;
     }
 
     public async Task<IEnumerable<Guid>> AddRecurringTaskAsync(Task task, RepeatMode repeatMode, int? repeatEvery,
         int numberOfRepetitions)
     {
-        ValidateTaskDescription(task.Description);
-
-        if (task is {RepeatMode: RepeatMode.Custom, RepeatEvery: null})
+        if (task is { RepeatMode: RepeatMode.Custom, RepeatEvery: null })
         {
             throw new DomainException(TaskErrors.RepeatEveryIsMissing);
         }
@@ -110,7 +93,7 @@ public class TaskService : ITaskService
         var tasks = new List<Task>();
 
         task.GroupId = groupId;
-        task.StartAt ??= DateTime.UtcNow;
+        task.StartAt ??= StartAt.From(DateTime.UtcNow);
 
         tasks.Add(task);
 
@@ -126,7 +109,7 @@ public class TaskService : ITaskService
                 GroupId = groupId,
                 RepeatMode = repeatMode,
                 RepeatEvery = repeatEvery,
-                StartAt = GetNextDateTime(task.StartAt!.Value, repeatMode, repeatEvery)
+                StartAt = StartAt.From(GetNextDateTime(task.StartAt!.Value, repeatMode, repeatEvery))
             };
 
             tasks.Add(task);
@@ -135,7 +118,7 @@ public class TaskService : ITaskService
         return tasks;
     }
 
-    private DateTime GetNextDateTime(DateTime prev, RepeatMode repeatMode, int? repeatEvery)
+    private static DateTime GetNextDateTime(DateTime prev, RepeatMode repeatMode, int? repeatEvery)
     {
         return repeatMode switch
         {
@@ -148,193 +131,183 @@ public class TaskService : ITaskService
         };
     }
 
-    public async Task<IEnumerable<Guid>> SetTaskDescriptionAsync(Guid? taskId, Guid? groupId,
-        string description, Guid currentUserId)
+    public async Task<IEnumerable<Guid>> SetRecurringTaskDescriptionAsync(Guid groupId, string description,
+        Guid currentUserId)
     {
-        if (taskId is null && groupId is null)
-        {
-            throw new DomainException(ValidationErrors.TaskIdOrGroupIdIsRequired);
-        }
+        var newDescription = Description.From(description);
 
-        ValidateTaskDescription(description);
+        var tasks = await GetActiveTasksOrThrowAsync(groupId, currentUserId);
 
-        if (groupId is not null)
-        {
-            var tasks = await GetActiveTasksOrThrowAsync(groupId.Value, currentUserId);
+        ValidateTasksToUpdate(tasks);
 
-            ValidateTasksToUpdate(tasks);
+        tasks.ForEach(t => t.Description = newDescription);
 
-            tasks.ForEach(t => t.Description = description);
+        return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
+    }
 
-            return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
-        }
+    public async Task<Guid?> SetTaskDescriptionAsync(Guid taskId, string description, Guid currentUserId)
+    {
+        var newDescription = Description.From(description);
 
-        var task = await GetTaskOrThrowAsync(taskId!.Value, currentUserId);
+        var task = await GetTaskOrThrowAsync(taskId, currentUserId);
 
         ValidateTaskToUpdate(task);
 
-        task.Description = description;
+        task.Description = newDescription;
 
-        return await _taskRepository.SaveChangesAsync() ? new[] {taskId.Value} : Array.Empty<Guid>();
+        return await _taskRepository.SaveChangesAsync() ? taskId : null;
     }
 
-    public async Task<IEnumerable<Guid>> SetTaskDetailsAsync(Guid? taskId, Guid? groupId, string? details,
-        Guid currentUserId)
+    public async Task<IEnumerable<Guid>> SetRecurringTaskDetailsAsync(Guid groupId, string? details, Guid currentUserId)
     {
-        if (taskId is null && groupId is null)
-        {
-            throw new DomainException(ValidationErrors.TaskIdOrGroupIdIsRequired);
-        }
+        var tasks = await GetActiveTasksOrThrowAsync(groupId, currentUserId);
 
-        if (groupId is not null)
-        {
-            var tasks = await GetActiveTasksOrThrowAsync(groupId.Value, currentUserId);
+        ValidateTasksToUpdate(tasks);
 
-            ValidateTasksToUpdate(tasks);
+        tasks.ForEach(t => t.Details = details);
 
-            tasks.ForEach(t => t.Details = details);
+        return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
+    }
 
-            return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
-        }
-
-        var task = await GetTaskOrThrowAsync(taskId!.Value, currentUserId);
+    public async Task<Guid?> SetTaskDetailsAsync(Guid taskId, string? details, Guid currentUserId)
+    {
+        var task = await GetTaskOrThrowAsync(taskId, currentUserId);
 
         ValidateTaskToUpdate(task);
 
         task.Details = details;
 
-        return await _taskRepository.SaveChangesAsync() ? new[] {taskId.Value} : Array.Empty<Guid>();
+        return await _taskRepository.SaveChangesAsync() ? taskId : null;
     }
 
-    public async Task<IEnumerable<Guid>> SetTaskDirectionAsync(Guid? taskId, Guid? groupId, Guid? directionId,
+    public async Task<IEnumerable<Guid>> SetRecurringTaskDirectionAsync(Guid groupId, Guid? directionId,
         Guid currentUserId)
     {
-        if (taskId is null && groupId is null)
-        {
-            throw new DomainException(ValidationErrors.TaskIdOrGroupIdIsRequired);
-        }
-
         if (directionId is not null &&
             !await _directionService.AnyMemberWithIdAsync(directionId.Value, currentUserId))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
 
-        if (groupId is not null)
+        var tasks = await GetActiveTasksOrThrowAsync(groupId, currentUserId);
+
+        ValidateTasksToUpdate(tasks);
+
+        tasks.ForEach(t => t.DirectionId = directionId);
+
+        return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
+    }
+
+    public async Task<Guid?> SetTaskDirectionAsync(Guid taskId, Guid? directionId, Guid currentUserId)
+    {
+        if (directionId is not null &&
+            !await _directionService.AnyMemberWithIdAsync(directionId.Value, currentUserId))
         {
-            var tasks = await GetActiveTasksOrThrowAsync(groupId.Value, currentUserId);
-
-            ValidateTasksToUpdate(tasks);
-
-            tasks.ForEach(t => t.DirectionId = directionId);
-
-            return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
+            throw new DomainException(DirectionErrors.NotFound);
         }
 
-        var task = await GetTaskOrThrowAsync(taskId!.Value, currentUserId);
+        var task = await GetTaskOrThrowAsync(taskId, currentUserId);
 
         ValidateTaskToUpdate(task);
 
         task.DirectionId = directionId;
 
-        return await _taskRepository.SaveChangesAsync() ? new[] {taskId.Value} : Array.Empty<Guid>();
+        return await _taskRepository.SaveChangesAsync() ? taskId : null;
     }
 
-    public async Task<IEnumerable<Guid>> SetTaskAssigneeAsync(Guid? taskId, Guid? groupId, Guid? assigneeId,
+    public async Task<IEnumerable<Guid>> SetRecurringTaskAssigneeAsync(Guid groupId, Guid? assigneeId,
         Guid currentUserId)
     {
-        if (taskId is null && groupId is null)
-        {
-            throw new DomainException(ValidationErrors.TaskIdOrGroupIdIsRequired);
-        }
+        var tasks = await GetActiveTasksOrThrowAsync(groupId, currentUserId);
 
-        if (groupId is not null)
-        {
-            var tasks = await GetActiveTasksOrThrowAsync(groupId.Value, currentUserId);
+        ValidateTasksToUpdate(tasks);
 
-            ValidateTasksToUpdate(tasks);
-            await ValidateAssignee(tasks.First(), assigneeId);
+        tasks.ForEach(t => t.AssigneeId = assigneeId);
 
-            tasks.ForEach(t => t.AssigneeId = assigneeId);
+        await ValidateAssignee(tasks.First());
 
-            return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
-        }
+        return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
+    }
 
-        var task = await GetTaskOrThrowAsync(taskId!.Value, currentUserId);
+    public async Task<Guid?> SetTaskAssigneeAsync(Guid taskId, Guid? assigneeId, Guid currentUserId)
+    {
+        var task = await GetTaskOrThrowAsync(taskId, currentUserId);
 
         ValidateTaskToUpdate(task);
-        await ValidateAssignee(task, assigneeId);
 
         task.AssigneeId = assigneeId;
 
-        return await _taskRepository.SaveChangesAsync() ? new[] {taskId.Value} : Array.Empty<Guid>();
+        await ValidateAssignee(task);
+
+        return await _taskRepository.SaveChangesAsync() ? taskId : null;
     }
 
-    public async Task<IEnumerable<Guid>> SetTaskStartAtAsync(Guid? taskId, Guid? groupId, DateTime startAtUtc,
+    public async Task<IEnumerable<Guid>> SetRecurringTaskStartAtAsync(Guid groupId, DateTime startAtUtc,
         Guid currentUserId)
     {
-        if (taskId is null && groupId is null)
-        {
-            throw new DomainException(ValidationErrors.TaskIdOrGroupIdIsRequired);
-        }
+        var startAt = StartAt.From(startAtUtc);
 
-        if (groupId is not null)
-        {
-            var tasks = await GetActiveTasksOrThrowAsync(groupId.Value, currentUserId);
+        var tasks = await GetActiveTasksOrThrowAsync(groupId, currentUserId);
 
-            ValidateTasksToUpdate(tasks);
+        ValidateTasksToUpdate(tasks);
 
-            tasks.ForEach(t => t.StartAt = startAtUtc);
+        tasks.ForEach(t => t.StartAt = startAt);
 
-            return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
-        }
+        return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
+    }
 
-        var task = await GetTaskOrThrowAsync(taskId!.Value, currentUserId);
+    public async Task<Guid?> SetTaskStartAtAsync(Guid taskId, DateTime startAtUtc, Guid currentUserId)
+    {
+        var startAt = StartAt.From(startAtUtc);
+
+        var task = await GetTaskOrThrowAsync(taskId, currentUserId);
 
         ValidateTaskToUpdate(task);
 
-        task.StartAt = startAtUtc;
+        task.StartAt = startAt;
 
-        return await _taskRepository.SaveChangesAsync() ? new[] {taskId.Value} : Array.Empty<Guid>();
+        return await _taskRepository.SaveChangesAsync() ? taskId : null;
     }
 
-    public async Task<IEnumerable<Guid>> SetTaskDeletedAtAsync(Guid? taskId, Guid? groupId, DateTime? deletedAtUtc,
+    public async Task<IEnumerable<Guid>> SetRecurringTaskDeletedAtAsync(Guid groupId, DateTime? deletedAtUtc,
         Guid currentUserId)
     {
-        if (taskId is null && groupId is null)
+        var deletedAt = deletedAtUtc is not null ? DeletedAt.From(deletedAtUtc.Value) : null;
+
+        var tasks = deletedAtUtc is not null
+            ? await GetActiveTasksOrThrowAsync(groupId, currentUserId)
+            : await GetNotCompletedTasksOrThrowAsync(groupId, currentUserId);
+
+        if (deletedAtUtc is not null && tasks.All(t => t.DeletedAt is not null))
         {
-            throw new DomainException(ValidationErrors.TaskIdOrGroupIdIsRequired);
+            throw new DomainException(TaskErrors.AlreadyDeleted);
         }
 
-        ValidateDeletedAt(deletedAtUtc);
+        tasks.ForEach(t => t.DeletedAt = deletedAt);
 
-        if (groupId is not null)
-        {
-            var tasks = deletedAtUtc is not null
-                ? await GetActiveTasksOrThrowAsync(groupId.Value, currentUserId)
-                : await GetNotCompletedTasksOrThrowAsync(groupId.Value, currentUserId);
+        return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
+    }
 
-            tasks.ForEach(t => t.DeletedAt = deletedAtUtc);
+    public async Task<Guid?> SetTaskDeletedAtAsync(Guid taskId, DateTime? deletedAtUtc, Guid currentUserId)
+    {
+        var deletedAt = deletedAtUtc is not null ? DeletedAt.From(deletedAtUtc.Value) : null;
 
-            return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
-        }
-
-        var task = await GetTaskOrThrowAsync(taskId!.Value, currentUserId);
+        var task = await GetTaskOrThrowAsync(taskId, currentUserId);
 
         if (deletedAtUtc is not null && task.DeletedAt is not null)
         {
             throw new DomainException(TaskErrors.AlreadyDeleted);
         }
 
-        ValidateDeletedAt(deletedAtUtc);
+        task.DeletedAt = deletedAt;
 
-        task.DeletedAt = deletedAtUtc;
-
-        return await _taskRepository.SaveChangesAsync() ? new[] {taskId.Value} : Array.Empty<Guid>();
+        return await _taskRepository.SaveChangesAsync() ? taskId : null;
     }
 
     public async Task<Guid?> SetTaskCompletedAtAsync(Guid id, DateTime? completedAtUtc, Guid currentUserId)
     {
+        var completedAt = completedAtUtc is not null ? CompletedAt.From(completedAtUtc.Value) : null;
+
         var task = await GetTaskOrThrowAsync(id, currentUserId);
 
         if (completedAtUtc is not null && task.DeletedAt is not null)
@@ -342,7 +315,7 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.CompleteDeletedTask);
         }
 
-        if (completedAtUtc is not null && task.StartAt > completedAtUtc)
+        if (completedAtUtc is not null && task.StartAt!.Value > completedAtUtc)
         {
             throw new DomainException(TaskErrors.CompleteFutureTask);
         }
@@ -352,12 +325,7 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.AlreadyCompleted);
         }
 
-        if (completedAtUtc is not null && completedAtUtc > DateTime.UtcNow)
-        {
-            throw new DomainException(ValidationErrors.InvalidCompletedAt);
-        }
-
-        task.CompletedAt = completedAtUtc;
+        task.CompletedAt = completedAt;
 
         return await _taskRepository.SaveChangesAsync() ? id : null;
     }
@@ -410,17 +378,9 @@ public class TaskService : ITaskService
                !await _directionService.AnyMemberWithIdAsync(task.DirectionId.Value, currentUserId);
     }
 
-    private void ValidateTaskDescription(string? description)
-    {
-        if (string.IsNullOrWhiteSpace(description))
-        {
-            throw new DomainException(ValidationErrors.InvalidDescription);
-        }
-    }
-
     private void ValidateTaskToUpdate(Task task)
     {
-        ValidateTasksToUpdate(new List<Task> {task});
+        ValidateTasksToUpdate(new List<Task> { task });
     }
 
     private void ValidateTasksToUpdate(List<Task> tasks)
@@ -431,23 +391,15 @@ public class TaskService : ITaskService
         }
     }
 
-    private void ValidateDeletedAt(DateTime? deletedAtUtc)
+    private async System.Threading.Tasks.Task ValidateAssignee(Task task)
     {
-        if (deletedAtUtc is not null && deletedAtUtc > DateTime.UtcNow)
-        {
-            throw new DomainException(ValidationErrors.InvalidDeletedAt);
-        }
-    }
-
-    private async System.Threading.Tasks.Task ValidateAssignee(Task task, Guid? assigneeId)
-    {
-        if (task.DirectionId is null)
+        if (task.AssigneeId is not null && task.DirectionId is null)
         {
             throw new DomainException(TaskErrors.AssignPrivateTask);
         }
 
-        if (assigneeId is not null &&
-            !await _directionService.AnyMemberWithIdAsync(task.DirectionId.Value, assigneeId.Value))
+        if (task.AssigneeId is not null && task.DirectionId is not null &&
+            !await _directionService.AnyMemberWithIdAsync(task.DirectionId.Value, task.AssigneeId.Value))
         {
             throw new DomainException(DirectionErrors.MemberNotFound);
         }

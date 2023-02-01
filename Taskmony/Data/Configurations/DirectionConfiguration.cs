@@ -11,21 +11,32 @@ public class DirectionConfiguration : IEntityTypeConfiguration<Direction>
     {
         builder.HasKey(d => d.Id);
 
+        builder.HasMany(d => d.Tasks)
+            .WithOne(t => t.Direction);
+
+        builder.HasMany(d => d.Ideas)
+            .WithOne(i => i.Direction);
+        
         builder.Property(d => d.Id)
             .HasValueGenerator<GuidValueGenerator>();
 
         builder.Property(d => d.CreatedAt)
             .IsRequired()
             .HasDefaultValueSql("now()");
-
-        builder.HasMany(d => d.Tasks)
-            .WithOne(t => t.Direction);
-
-        builder.HasMany(d => d.Ideas)
-            .WithOne(i => i.Direction);
+        
+        builder.OwnsOne(d => d.DeletedAt, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Direction.DeletedAt));
+        });
+        
+        builder.OwnsOne(d => d.Name, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Direction.Name))
+                .IsRequired();
+        }).Navigation(d => d.Name).IsRequired();
 
         builder.Ignore(d => d.Notifications);
-
-        builder.Property(d => d.Name).IsRequired();
     }
 }

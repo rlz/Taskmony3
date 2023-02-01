@@ -2,6 +2,7 @@ using HotChocolate.AspNetCore.Authorization;
 using Taskmony.Models;
 using Taskmony.Models.Enums;
 using Taskmony.Services;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.GraphQL.Ideas;
 
@@ -15,7 +16,7 @@ public class IdeaMutations
         var idea = new Idea
         {
             CreatedById = currentUserId,
-            Description = description,
+            Description = Description.From(description),
             Details = details,
             DirectionId = directionId,
             Generation = generation

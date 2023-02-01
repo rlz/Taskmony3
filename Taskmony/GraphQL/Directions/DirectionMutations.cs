@@ -1,6 +1,7 @@
 using HotChocolate.AspNetCore.Authorization;
 using Taskmony.Models;
 using Taskmony.Services;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.GraphQL.Directions;
 
@@ -14,7 +15,7 @@ public class DirectionMutations
         var direction = new Direction
         {
             CreatedById = currentUserId,
-            Name = name,
+            Name = DirectionName.From(name),
             Details = details
         };
 

@@ -1,12 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
+using Task = Taskmony.Models.Task;
 
 namespace Taskmony.Data.Configurations;
 
-public class TaskConfiguration : IEntityTypeConfiguration<Models.Task>
+public class TaskConfiguration : IEntityTypeConfiguration<Task>
 {
-    public void Configure(EntityTypeBuilder<Models.Task> builder)
+    public void Configure(EntityTypeBuilder<Task> builder)
     {
         builder.HasKey(t => t.Id);
 
@@ -14,17 +15,38 @@ public class TaskConfiguration : IEntityTypeConfiguration<Models.Task>
             .HasValueGenerator<GuidValueGenerator>();
 
         builder.Property(t => t.CreatedAt)
-            .IsRequired()
-            .HasDefaultValueSql("now()");
+            .HasDefaultValueSql("now()")
+            .IsRequired();
 
-        builder.Property(t => t.StartAt)
-            .IsRequired()
-            .HasDefaultValueSql("now()");
+        builder.OwnsOne(t => t.StartAt, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Task.StartAt))
+                .HasDefaultValueSql("now()")
+                .IsRequired();
+        }).Navigation(t => t.StartAt).IsRequired();
+
+        builder.OwnsOne(t => t.Description, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Task.Description))
+                .IsRequired();
+        }).Navigation(t => t.Description).IsRequired();
+
+        builder.OwnsOne(t => t.DeletedAt, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Task.DeletedAt));
+        });
+
+        builder.OwnsOne(t => t.CompletedAt, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Task.CompletedAt));
+        });
 
         builder.Ignore(t => t.ActionItemType);
         builder.Ignore(t => t.NumberOfRepetitions);
         builder.Ignore(t => t.Notifications);
-
-        builder.Property(t => t.Description).IsRequired();
     }
 }

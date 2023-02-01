@@ -13,17 +13,18 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
 
         builder.HasKey(s => s.Id);
 
-        builder.Property(s => s.SubscribedAt)
-            .HasDefaultValueSql("now()");
-
-        builder.Property(s => s.Id)
-            .HasValueGenerator<GuidValueGenerator>();
-
         builder.HasOne(s => s.User)
             .WithMany(u => u.Subscriptions)
             .HasForeignKey(s => s.UserId)
             .IsRequired();
 
-        builder.Property(s => s.SubscribedAt).IsRequired();
+        builder.Property(s => s.CreatedAt)
+            .HasDefaultValueSql("now()")
+            .IsRequired();
+
+        builder.Property(s => s.Id)
+            .HasValueGenerator<GuidValueGenerator>();
+
+        builder.Property(s => s.CreatedAt).IsRequired();
     }
 }

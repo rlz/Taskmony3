@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {SideMenu} from "../side-menu/side-menu";
 import {
   BrowserRouter,
@@ -20,6 +20,8 @@ import { AddDirectionModal } from "../add-direction-modal/add-direction-modal";
 import { ForgotPassword } from "../../pages/auth/forgot-password";
 import { Register } from "../../pages/auth/register";
 import { ResetPassword } from "../../pages/auth/reset-password";
+import { getTasks } from "../../services/actions/tasksAPI";
+import { useAppDispatch } from "../../utils/hooks";
 
 function App() {
   return (
@@ -48,6 +50,11 @@ function App() {
 
 function Home() {
   const [openNotif, setOpenNotif] = useState(false);
+  const dispatch = useAppDispatch();
+  useEffect(()=>{
+    dispatch(getTasks());
+  },[])
+  
   return (
     <div className="flex h-full bg-slate-50">
       {!openNotif && <NotificationsBtn onClick={()=>{setOpenNotif(true);console.log(openNotif);}}/>}

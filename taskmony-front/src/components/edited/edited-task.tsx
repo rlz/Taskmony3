@@ -17,6 +17,8 @@ import { DatePicker } from "./date-picker";
 import { NumberPicker } from "./number-picker";
 import followBlue from "../../images/followed.svg";
 import followGray from "../../images/follow.svg";
+import { useAppDispatch, useAppSelector } from "../../utils/hooks";
+import { CHANGE_TASK_DESCRIPTION } from "../../services/actions/tasksAPI";
 
 type TaskProps = {
   label?: string;
@@ -39,8 +41,10 @@ export const EditedTask = ({
   direction,
   save,
 }: TaskProps) => {
-  const [labelV, setLabelV] = useState(label);
-  console.log(typeof checked === "undefined" || !checked);
+  const task = useAppSelector(
+    (store) => store.editedTask
+  );
+  const dispatch = useAppDispatch()
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
@@ -51,8 +55,8 @@ export const EditedTask = ({
           <input
             className={"font-semibold text-sm focus:outline-none underline"}
             placeholder={"task name"}
-            value={labelV}
-            onChange={(e) => setLabelV(e.target.value)}
+            value={task.description}
+            onChange={(e)=>dispatch({type:CHANGE_TASK_DESCRIPTION,payload:e.target.value})}
           />
         </div>
         {typeof followed !== "undefined" && (

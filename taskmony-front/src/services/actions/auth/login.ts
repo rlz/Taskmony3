@@ -22,13 +22,11 @@ export function login(login : string, password : string) {
         password: password,
       }),
     })
-      .then(checkResponse)
+      .then(res => res.json())
       .then((res) => {
+        console.log(res);
         if (res) {
-          setCookie("accessToken", res.accessToken.split("Bearer ")[1], {
-            expires: 20 * 60,
-          });
-          setCookie("refreshToken", res.refreshToken);
+          setCookie("accessToken", res.accessToken);
           dispatch({
             type: LOGIN_SUCCESS,
           });

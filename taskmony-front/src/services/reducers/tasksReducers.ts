@@ -8,6 +8,7 @@ import {
   GET_TASKS_FAILED,
   GET_TASKS_REQUEST,
   GET_TASKS_SUCCESS,
+  RESET_TASK,
 } from "../actions/tasksAPI";
 
 type TTasksState = {
@@ -98,7 +99,7 @@ export const taskInitialState = {
 export const editTaskReducer = (
   state: TTask = taskInitialState,
   action:
-    { type: typeof CHANGE_TASK_DESCRIPTION | typeof CHANGE_TASK_DETAILS; payload: any }
+    { type: typeof CHANGE_TASK_DESCRIPTION | typeof CHANGE_TASK_DETAILS | typeof RESET_TASK; payload: any }
 ) => {
   switch (action.type) {
     case CHANGE_TASK_DESCRIPTION: {
@@ -107,6 +108,9 @@ export const editTaskReducer = (
         description: action.payload,
       };
     }
+    case RESET_TASK: {
+      return taskInitialState;
+  }
       case CHANGE_TASK_DETAILS: {
         return {
           ...state,

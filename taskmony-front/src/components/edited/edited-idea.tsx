@@ -47,9 +47,6 @@ export const EditedIdea = ({
     <div className="w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
-          <img
-            src={typeof checked === "undefined" || !checked ? no : yes}
-          ></img>
           <input
             className={"font-semibold text-sm focus:outline-none underline"}
             placeholder={"task name"}

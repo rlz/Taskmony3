@@ -15,6 +15,8 @@ import add from "../../images/add-light.svg";
 import { SaveBtn } from "./save-btn";
 import { DatePicker } from "./date-picker";
 import { NumberPicker } from "./number-picker";
+import followBlue from "../../images/followed.svg";
+import followGray from "../../images/follow.svg";
 
 type TaskProps = {
   label?: string;
@@ -53,7 +55,9 @@ export const EditedTask = ({
             onChange={(e) => setLabelV(e.target.value)}
           />
         </div>
-        {followed && <img src={follow}></img>}
+        {typeof followed !== "undefined" && (
+          <img className="w-4" src={followed ? followBlue : followGray}></img>
+        )}
       </div>
       <Description />
       <Details recurrent={recurrent} />

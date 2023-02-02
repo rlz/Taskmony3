@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddBtn } from "../../components/add-btn/add-btn";
 import { FilterItem } from "../../components/filter/filter-item";
 import arrowUp from "../../images/arrow-up.svg";
@@ -12,11 +12,17 @@ import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 function MyTasks() {
   const [newTask, setNewTask] = useState(false);
   const task = useAppSelector((store) => store.editedTask);
+  const tasksToShow = useAppSelector((store) => store.tasks.items);
+  useEffect(() => {
+    console.log(tasksToShow);
+  }, [tasksToShow]);
   const dispatch = useAppDispatch();
   const addANewTask = () => {
     dispatch(addTask(task));
   };
-
+  const tasks = tasksToShow.map((task) => 
+    <Task label={task.description} direction={task.direction} />
+  );
   return (
     <div className="flex w-full">
       <div className="w-3/4  m-3">
@@ -32,16 +38,17 @@ function MyTasks() {
             }}
           />
         )}
-        <Task
-          label={"task #1"}
-          comments={1}
-          recurrent="every Thursday"
-          createdBy="Ann Smith"
-          direction="Taskmony"
-        />
-        <Task label={"task #1"} direction="Taskmony" />
-        <Task label={"task #1"} followed direction="Taskmony" />
-        <Task label={"task #1"} followed direction="Taskmony" />
+        {tasks}
+        {/* // <Task
+        //   label={"task #1"}
+        //   comments={1}
+        //   recurrent="every Thursday"
+        //   createdBy="Ann Smith"
+        //   direction="Taskmony"
+        // />
+        // <Task label={"task #1"} direction="Taskmony" />
+        // <Task label={"task #1"} followed direction="Taskmony" />
+        // <Task label={"task #1"} followed direction="Taskmony" /> */}
       </div>
       <Filter />
     </div>

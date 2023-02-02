@@ -24,12 +24,16 @@ export function getTasks() {
   method: 'POST',
   headers: {
     "Content-Type": "application/json",
-    "Authorization": getCookie("accessToken"),
+    "Authorization": "Bearer "+getCookie("accessToken"),
   },
 
   body: JSON.stringify({
     query: `{tasks{
+      id
       description
+      startAt
+      direction {name }
+      repeatMode
     }}`
   })
 })
@@ -39,7 +43,7 @@ export function getTasks() {
         if (res) {
           dispatch({
             type: GET_TASKS_SUCCESS,
-            items: res.data,
+            items: res.data.tasks,
           });
         } else {
           dispatch({
@@ -63,7 +67,8 @@ export function addTask(task) {
   method: 'POST',
 
   headers: {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Authorization": "Bearer "+getCookie("accessToken"),
   },
   // mutation {
   //   taskAdd(description:"123", startAt:"1.12.12") {
@@ -72,10 +77,11 @@ export function addTask(task) {
   // }
   body: JSON.stringify({
     query: `mutation {
-      taskAdd(description:"123", startAt:"1.12.12") {
+      taskAdd(description:"${task.description}", startAt:"1.12.12") {
         description
       }
-    }`
+    }
+    `
   })
 })
       .then(checkResponse)

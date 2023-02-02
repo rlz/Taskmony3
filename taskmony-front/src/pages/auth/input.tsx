@@ -13,7 +13,7 @@ export const Input = ({ label, type, onChange, value } : InputPropsT) => {
         placeholder={label}
         onChange={(e)=>onChange(e)}
         value={value}
-        className="border w-full border-gray-300 rounded mt-2 pl-1 pr-2"
+        className="border w-full border-gray-300 rounded pl-2 pr-2 p-2 mt-2 mb-2"
       />
       </>
     );

@@ -36,7 +36,7 @@ const Input = ({ label } : InputPropsT) => {
       <input
         type="text"
         defaultValue={label}
-        className="border w-full border-gray-300 rounded mt-2 pl-1 pr-2"
+        className="border w-full border-gray-300 rounded pl-2 pr-2 p-2 mt-2"
       />
       <div className="border w-full border-gray-200 rounded">
       {searchValues.map(name=>(
@@ -49,6 +49,6 @@ const Input = ({ label } : InputPropsT) => {
   
 const SearchItem = ({ label } : InputPropsT) => {
     return(
-<div className="border w-full border-gray-200 bg-slate-100 pl-1 pr-2 cursor-pointer hover:font-semibold">{label}</div>
+<div className="border w-full border-gray-200 bg-slate-100 pl-1 pr-2 p-1 cursor-pointer hover:font-semibold">{label}</div>
     );
 }

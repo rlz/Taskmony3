@@ -29,7 +29,7 @@ export const Input = ({ label } : InputPropsT) => {
     <input
       type="text"
       defaultValue={label}
-      className="border w-full border-gray-300 rounded mt-2 mb-1 pl-1 pr-2"
+      className="border w-full border-gray-300 rounded mt-2 mb-1 pl-1 pr-2 p-1"
     />
   );
 };

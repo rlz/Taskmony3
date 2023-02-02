@@ -19,6 +19,7 @@ import followBlue from "../../images/followed.svg";
 import followGray from "../../images/follow.svg";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { CHANGE_TASK_DESCRIPTION } from "../../services/actions/tasksAPI";
+import { WeekPicker } from "./week-picker";
 
 type TaskProps = {
   label?: string;
@@ -111,39 +112,15 @@ const Description = () => {
 };
 
 const Details = ({ recurrent }) => {
-  const [mode, setMode] = useState("daily");
   const [isReccurent, setIsRecurrent] = useState("no");
+
+  const defaultUntilDate = () => {
+    const date = new Date(Date.now());
+    return date.setFullYear(date.getFullYear() + 1)
+  }
 
   const customPicker = (
     <NumberPicker title={"every"} min={2} max={10} after={"days"} hasBorder />
-  );
-
-  const weeklyPicker = (
-    <ItemPicker
-      title={"every"}
-      option={"Thursday"}
-      options={[
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-      ]}
-      onChange={() => {}}
-      hasBorder
-    />
-  );
-
-  const monthlyPicker = (
-    <NumberPicker
-      title={"on"}
-      min={1}
-      max={31}
-      after={"day of the month"}
-      hasBorder
-    />
   );
 
   return (
@@ -167,38 +144,27 @@ const Details = ({ recurrent }) => {
       <DatePicker title={"start date"} date={Date.now()} hasBorder />
       <ItemPicker
         title={"repeated"}
-        options={["yes", "no"]}
-        option={isReccurent}
+        options={["no", "daily","custom"]}
+        option={recurrent}
         onChange={setIsRecurrent}
         hasBorder
       />
-      {isReccurent === "yes" && (
+      {isReccurent !== "no" && 
+          <DatePicker title={"until"} date={defaultUntilDate()} hasBorder />
+      }
+      {isReccurent === "custom" && 
         <>
-          <ItemPicker
-            title={"mode"}
-            option={mode}
-            onChange={setMode}
-            options={["daily", "weekly", "monthly","custom"]}
-            hasBorder
-          />
-          {mode === "monthly"
-            ? monthlyPicker
-            : mode === "weekly"
-            ? weeklyPicker
-            : mode === "custom"
-            ? customPicker : null }
-          {/* <DatePicker
-        title={"until"}
-        date={Date.now()}
-      /> */}
-          <NumberPicker
-            title={""}
-            min={2}
-            max={99}
-            after={"times"}
-          />
+                <NumberPicker
+        title={"every"}
+        min={1}
+        max={99}
+        after={"week(s)"}
+        hasBorder
+      />
+      <WeekPicker/>
         </>
-      )}
+
+    }
     </div>
   )};
 

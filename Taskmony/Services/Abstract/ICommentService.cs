@@ -1,6 +1,6 @@
 using Taskmony.Models.Comments;
 
-namespace Taskmony.Services;
+namespace Taskmony.Services.Abstract;
 
 public interface ICommentService
 {

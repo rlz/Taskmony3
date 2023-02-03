@@ -1,7 +1,8 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models.Notifications;
-using Taskmony.Repositories;
+using Taskmony.Repositories.Abstract;
+using Taskmony.Services.Abstract;
 
 namespace Taskmony.Services;
 

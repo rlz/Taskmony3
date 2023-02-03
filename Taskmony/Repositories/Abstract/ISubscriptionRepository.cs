@@ -1,6 +1,6 @@
 using Taskmony.Models.Subscriptions;
 
-namespace Taskmony.Repositories;
+namespace Taskmony.Repositories.Abstract;
 
 public interface ISubscriptionRepository
 {

@@ -57,11 +57,8 @@ public static class ValidationErrors
     public static ErrorDetails InvalidDateTimeFormat =>
         new("Invalid date time format", "INVALID_DATE_TIME_FORMAT");
 
-    public static ErrorDetails InvalidRepearUntil =>
+    public static ErrorDetails InvalidRepeatUntil =>
         new("Repeat until must not be in the past", "INVALID_REPEAT_UNTIL");
-
-    public static ErrorDetails InvalidStartAt =>
-        new("Start at must not be in the past", "INVALID_START_AT");
 
     public static ErrorDetails RepeatUntilIsRequired =>
         new("Repeat until must be specified", "REPEAT_UNTIL_IS_REQUIRED");
@@ -72,6 +69,9 @@ public static class ValidationErrors
     public static ErrorDetails RepeatModeIsRequired =>
         new("Repeat mode must be specified", "REPEAT_MODE_IS_REQUIRED");
 
-    public static ErrorDetails WeekDaysAreMising =>
-        new("Week days must be specified if repeat mode is weekly", "WEEK_DAYS_ARE_MISSING");
+    public static ErrorDetails WeekDaysAreRequired =>
+        new("Week days must be specified if repeat mode is weekly", "WEEK_DAYS_ARE_REQUIRED");
+
+    public static ErrorDetails StartAtIsRequired =>
+        new("Start at must be specified", "START_AT_IS_REQUIRED");
 }

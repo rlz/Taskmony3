@@ -1,7 +1,7 @@
 using Taskmony.Models;
 using Taskmony.Models.Enums;
 
-namespace Taskmony.Services;
+namespace Taskmony.Services.Abstract;
 
 public interface IIdeaService
 {

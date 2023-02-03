@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Utilities;
-using Taskmony.Services;
+using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
 using ValueOf;
 
@@ -34,7 +34,7 @@ public class ValueObjectToStringConverter : IChangeTypeProvider
                     ValueOf<string, Email> email => email.ToString(),
                     ValueOf<string, Login> login => login.ToString(),
                     ValueOf<DateTime, ReviewedAt> reviewedAt => _timeConverter.DateTimeToString(reviewedAt.Value),
-                    ValueOf<DateTime, RepeatUntil> repeatsUntil => _timeConverter.DateTimeToString(repeatsUntil.Value),
+                    ValueOf<DateTime, RepeatUntil> repeatUntil => _timeConverter.DateTimeToString(repeatUntil.Value),
                     _ => input
                 };
             };

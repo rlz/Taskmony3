@@ -1,6 +1,6 @@
 using Taskmony.Models.Notifications;
 
-namespace Taskmony.Repositories;
+namespace Taskmony.Repositories.Abstract;
 
 public interface INotificationRepository
 {

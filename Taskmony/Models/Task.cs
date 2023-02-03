@@ -40,9 +40,9 @@ public class Task : IActionItem
 
     public WeekDay? WeekDays { get; set; }
 
-    public int? RepeatsEvery { get; set; }
+    public int? RepeatEvery { get; set; }
 
-    public RepeatUntil? RepeatsUntil { get; set; }
+    public RepeatUntil? RepeatUntil { get; set; }
     
     public Guid? GroupId { get; set; }
 

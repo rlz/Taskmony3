@@ -10,7 +10,7 @@ public class RepeatUntil : ValueOf<DateTime, RepeatUntil>
     {
         if (Value < DateTime.UtcNow)
         {
-            throw new DomainException(ValidationErrors.InvalidRepearUntil);
+            throw new DomainException(ValidationErrors.InvalidRepeatUntil);
         }
     }
 }

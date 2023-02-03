@@ -2,7 +2,7 @@ using Taskmony.Models;
 using Taskmony.ValueObjects;
 using Task = System.Threading.Tasks.Task;
 
-namespace Taskmony.Repositories;
+namespace Taskmony.Repositories.Abstract;
 
 public interface IUserRepository
 {

@@ -1,7 +1,8 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models.Comments;
-using Taskmony.Repositories;
+using Taskmony.Repositories.Abstract;
+using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
 
 namespace Taskmony.Services;

@@ -1,6 +1,6 @@
 using Taskmony.ValueObjects;
 
-namespace Taskmony.Services;
+namespace Taskmony.Services.Abstract;
 
 public interface IPasswordHasher
 {

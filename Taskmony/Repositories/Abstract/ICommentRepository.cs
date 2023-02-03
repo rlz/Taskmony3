@@ -1,6 +1,6 @@
 using Taskmony.Models.Comments;
 
-namespace Taskmony.Repositories;
+namespace Taskmony.Repositories.Abstract;
 
 public interface ICommentRepository
 {

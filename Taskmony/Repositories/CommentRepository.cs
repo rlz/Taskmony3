@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
 using Taskmony.Models.Comments;
+using Taskmony.Repositories.Abstract;
 
 namespace Taskmony.Repositories;
 

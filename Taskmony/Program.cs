@@ -14,7 +14,9 @@ using Taskmony.GraphQL.Subscriptions;
 using Taskmony.GraphQL.Tasks;
 using Taskmony.GraphQL.Users;
 using Taskmony.Repositories;
+using Taskmony.Repositories.Abstract;
 using Taskmony.Services;
+using Taskmony.Services.Abstract;
 
 var builder = WebApplication.CreateBuilder(args);
 

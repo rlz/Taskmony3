@@ -2,7 +2,7 @@ using HotChocolate.AspNetCore.Authorization;
 using HotChocolate.Resolvers;
 using Taskmony.Errors;
 using Taskmony.Models.Enums;
-using Taskmony.Services;
+using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
 using Task = Taskmony.Models.Task;
 
@@ -47,9 +47,9 @@ public class TaskMutations
             DirectionId = directionId,
             StartAt = timeConverter.StringToDateTimeUtc(startAt),
             RepeatMode = repeatMode,
-            RepeatsEvery = repeatEvery,
+            RepeatEvery = repeatEvery,
             WeekDays = weekDays?.Aggregate((current, weekDay) => current | weekDay),
-            RepeatsUntil = RepeatUntil.From(repeatUntilUtc)
+            RepeatUntil = RepeatUntil.From(repeatUntilUtc)
         };
 
         return await taskService.AddRecurringTaskAsync(task, repeatMode, repeatEvery, task.WeekDays, repeatUntilUtc);
@@ -71,12 +71,14 @@ public class TaskMutations
             return await taskService.SetRecurringTaskDescriptionAsync(groupId.Value, description, currentUserId);
         }
 
-        throw new GraphQLException(ErrorBuilder
+        context.ReportError(ErrorBuilder
             .New()
             .SetMessage(ValidationErrors.TaskIdOrGroupIdIsRequired.Message)
             .SetCode(ValidationErrors.TaskIdOrGroupIdIsRequired.Code)
             .SetPath(context.Path)
             .Build());
+
+        return null;
     }
 
     [Authorize]
@@ -95,12 +97,14 @@ public class TaskMutations
             return await taskService.SetRecurringTaskDetailsAsync(groupId.Value, details, currentUserId);
         }
 
-        throw new GraphQLException(ErrorBuilder
+        context.ReportError(ErrorBuilder
             .New()
             .SetMessage(ValidationErrors.TaskIdOrGroupIdIsRequired.Message)
             .SetCode(ValidationErrors.TaskIdOrGroupIdIsRequired.Code)
             .SetPath(context.Path)
             .Build());
+
+        return null;
     }
 
     [Authorize]
@@ -118,13 +122,15 @@ public class TaskMutations
         {
             return await taskService.SetRecurringTaskDirectionAsync(groupId.Value, directionId, currentUserId);
         }
-
-        throw new GraphQLException(ErrorBuilder
+        
+        context.ReportError(ErrorBuilder
             .New()
             .SetMessage(ValidationErrors.TaskIdOrGroupIdIsRequired.Message)
             .SetCode(ValidationErrors.TaskIdOrGroupIdIsRequired.Code)
             .SetPath(context.Path)
             .Build());
+
+        return null;
     }
 
     [Authorize]
@@ -146,12 +152,14 @@ public class TaskMutations
             return await taskService.SetRecurringTaskDeletedAtAsync(groupId.Value, deletedAtUtc, currentUserId);
         }
 
-        throw new GraphQLException(ErrorBuilder
+        context.ReportError(ErrorBuilder
             .New()
             .SetMessage(ValidationErrors.TaskIdOrGroupIdIsRequired.Message)
             .SetCode(ValidationErrors.TaskIdOrGroupIdIsRequired.Code)
             .SetPath(context.Path)
             .Build());
+
+        return null;
     }
 
     [Authorize]
@@ -170,12 +178,14 @@ public class TaskMutations
             return await taskService.SetRecurringTaskAssigneeAsync(groupId.Value, assigneeId, currentUserId);
         }
 
-        throw new GraphQLException(ErrorBuilder
+        context.ReportError(ErrorBuilder
             .New()
             .SetMessage(ValidationErrors.TaskIdOrGroupIdIsRequired.Message)
             .SetCode(ValidationErrors.TaskIdOrGroupIdIsRequired.Code)
             .SetPath(context.Path)
             .Build());
+
+        return null;
     }
 
     [Authorize]
@@ -198,12 +208,14 @@ public class TaskMutations
             return await taskService.SetRecurringTaskStartAtAsync(groupId.Value, startAtUtc, currentUserId);
         }
 
-        throw new GraphQLException(ErrorBuilder
+        context.ReportError(ErrorBuilder
             .New()
             .SetMessage(ValidationErrors.TaskIdOrGroupIdIsRequired.Message)
             .SetCode(ValidationErrors.TaskIdOrGroupIdIsRequired.Code)
             .SetPath(context.Path)
             .Build());
+
+        return null;
     }
 
     [Authorize]
@@ -218,39 +230,41 @@ public class TaskMutations
     [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetRepeatMode([Service] ITaskService taskService,
         IResolverContext context, [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId,
-        Guid? taskId, Guid? groupId, RepeatMode? repeatMode, WeekDay[]? weekDays, string? repeatUntil, int? repeatEvery)
+        Guid? taskId, Guid? groupId, RepeatMode? repeatMode, WeekDay[]? weekDays, string? startAt, 
+        string? repeatUntil, int? repeatEvery)
     {
         DateTime? repeatUntilUtc = repeatUntil == null ? null : timeConverter.StringToDateTimeUtc(repeatUntil);
+        DateTime? startAtUtc = startAt == null ? null : timeConverter.StringToDateTimeUtc(startAt);
         var weekDayFlags = weekDays?.Aggregate((current, weekDay) => current | weekDay);
 
         if (taskId is not null)
         {
             return await taskService.SetTaskRepeatModeAsync(taskId.Value, repeatMode, weekDayFlags, repeatUntilUtc,
-                repeatEvery, currentUserId) is null
-                ? null
-                : new[] { taskId.Value };
+                startAtUtc, repeatEvery, currentUserId);
         }
 
         if (groupId is not null)
         {
             return await taskService.SetRecurringTaskRepeatModeAsync(groupId.Value, repeatMode, weekDayFlags,
-                repeatUntilUtc, repeatEvery, currentUserId);
+                startAtUtc, repeatUntilUtc, repeatEvery, currentUserId);
         }
-
-        throw new GraphQLException(ErrorBuilder
+        
+        context.ReportError(ErrorBuilder
             .New()
             .SetMessage(ValidationErrors.TaskIdOrGroupIdIsRequired.Message)
             .SetCode(ValidationErrors.TaskIdOrGroupIdIsRequired.Code)
             .SetPath(context.Path)
             .Build());
+
+        return null;
     }
 
     [Authorize]
-    public async Task<IEnumerable<Guid>?> TaskSetRepeatsUntil([Service] ITaskService taskService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid groupId, string repeatsUntil)
+    public async Task<IEnumerable<Guid>?> TaskSetRepeatUntil([Service] ITaskService taskService,
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid groupId, string repeatUntil)
     {
-        var repeatUntilUtc = timeConverter.StringToDateTimeUtc(repeatsUntil);
+        var repeatUntilUtc = timeConverter.StringToDateTimeUtc(repeatUntil);
 
-        return await taskService.SetRecurringTaskRepeatsUntilAsync(groupId, repeatUntilUtc, currentUserId);
+        return await taskService.SetRecurringTaskRepeatUntilAsync(groupId, repeatUntilUtc, currentUserId);
     }
 }

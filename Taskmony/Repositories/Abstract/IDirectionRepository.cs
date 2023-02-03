@@ -1,7 +1,7 @@
 using Taskmony.Models;
 using Task = System.Threading.Tasks.Task;
 
-namespace Taskmony.Repositories;
+namespace Taskmony.Repositories.Abstract;
 
 public interface IDirectionRepository
 {

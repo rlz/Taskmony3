@@ -1,7 +1,7 @@
 using Taskmony.DTOs;
 using Taskmony.Models;
 
-namespace Taskmony.Services;
+namespace Taskmony.Services.Abstract;
 
 public interface IUserService
 {

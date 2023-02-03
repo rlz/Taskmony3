@@ -41,10 +41,10 @@ public class TaskConfiguration : IEntityTypeConfiguration<Task>
                 .HasColumnName(nameof(Task.CompletedAt));
         });
 
-        builder.OwnsOne(t => t.RepeatsUntil, b =>
+        builder.OwnsOne(t => t.RepeatUntil, b =>
         {
             b.Property(l => l.Value)
-                .HasColumnName(nameof(Task.RepeatsUntil));
+                .HasColumnName(nameof(Task.RepeatUntil));
         });
 
         builder.Ignore(t => t.ActionItemType);

@@ -1,4 +1,4 @@
-namespace Taskmony.Repositories;
+namespace Taskmony.Repositories.Abstract;
 
 public interface ITaskRepository
 {

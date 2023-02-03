@@ -1,5 +1,5 @@
 using HotChocolate.AspNetCore.Authorization;
-using Taskmony.Services;
+using Taskmony.Services.Abstract;
 
 namespace Taskmony.GraphQL.Subscriptions;
 

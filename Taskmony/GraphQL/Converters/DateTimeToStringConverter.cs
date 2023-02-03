@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Utilities;
-using Taskmony.Services;
+using Taskmony.Services.Abstract;
 
 namespace Taskmony.GraphQL.Converters;
 

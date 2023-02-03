@@ -1,6 +1,6 @@
 using Taskmony.Models.Enums;
 
-namespace Taskmony.Services;
+namespace Taskmony.Services.Abstract;
 
 public interface ITaskService
 {
@@ -51,11 +51,11 @@ public interface ITaskService
 
     Task<Guid?> SetTaskCompletedAtAsync(Guid taskId, DateTime? completedAtUtc, Guid currentUserId);
 
-    Task<IEnumerable<Guid>> SetRecurringTaskRepeatModeAsync(Guid grouId, RepeatMode? repeatMode, 
-        WeekDay? weekDays, DateTime? repeatUntil, int? repeatEvery, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetRecurringTaskRepeatModeAsync(Guid groupId, RepeatMode? repeatMode, 
+        WeekDay? weekDays, DateTime? startAt, DateTime? repeatUntil, int? repeatEvery, Guid currentUserId);
 
     Task<IEnumerable<Guid>> SetTaskRepeatModeAsync(Guid taskId, RepeatMode? repeatMode, WeekDay? weekDays, 
-        DateTime? repeatUntil, int? repeatEvery, Guid currentUserId);
+        DateTime? startAt, DateTime? repeatUntil, int? repeatEvery, Guid currentUserId);
 
-    Task<IEnumerable<Guid>> SetRecurringTaskRepeatsUntilAsync(Guid groupId, DateTime repeatsUntil, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetRecurringTaskRepeatUntilAsync(Guid groupId, DateTime repeatUntil, Guid currentUserId);
 }

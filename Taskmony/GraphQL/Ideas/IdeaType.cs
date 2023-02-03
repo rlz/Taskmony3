@@ -7,7 +7,7 @@ using Taskmony.Models;
 using Taskmony.Models.Comments;
 using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
-using Taskmony.Services;
+using Taskmony.Services.Abstract;
 
 namespace Taskmony.GraphQL.Ideas;
 

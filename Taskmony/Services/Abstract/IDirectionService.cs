@@ -1,6 +1,6 @@
 using Taskmony.Models;
 
-namespace Taskmony.Services;
+namespace Taskmony.Services.Abstract;
 
 public interface IDirectionService
 {

@@ -3,7 +3,8 @@ using Taskmony.DTOs;
 using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models;
-using Taskmony.Repositories;
+using Taskmony.Repositories.Abstract;
+using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
 
 namespace Taskmony.Services;
@@ -56,7 +57,7 @@ public class UserService : IUserService
 
         var user = await _userRepository.GetUserByLoginAsync(login);
 
-        if (user is null || !_passwordHasher.VerifyPassword(request.Password, user.Password!))
+        if (user is null || !_passwordHasher.VerifyPassword(password.Value, user.Password!))
         {
             throw new DomainException(UserErrors.WrongLoginOrPassword);
         }

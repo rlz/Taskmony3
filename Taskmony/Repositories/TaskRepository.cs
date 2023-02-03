@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
+using Taskmony.Repositories.Abstract;
 
 namespace Taskmony.Repositories;
 

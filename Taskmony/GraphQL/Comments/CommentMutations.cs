@@ -1,6 +1,7 @@
 using HotChocolate.AspNetCore.Authorization;
 using Taskmony.Models.Comments;
 using Taskmony.Services;
+using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
 
 namespace Taskmony.GraphQL.Comments;

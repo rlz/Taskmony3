@@ -7,7 +7,7 @@ using Taskmony.Models;
 using Taskmony.Models.Comments;
 using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
-using Taskmony.Services;
+using Taskmony.Services.Abstract;
 using Task = Taskmony.Models.Task;
 
 namespace Taskmony.GraphQL.Tasks;
@@ -27,7 +27,7 @@ public class TaskType : ObjectType<Task>
         descriptor.Field(t => t.CreatedAt).Type<StringType>();
         descriptor.Field(t => t.DeletedAt).Type<StringType>();
         descriptor.Field(t => t.StartAt).Type<StringType>();
-        descriptor.Field(t => t.RepeatsUntil).Type<StringType>();
+        descriptor.Field(t => t.RepeatUntil).Type<StringType>();
         descriptor.Field(t => t.GroupId).Type<IdType>();
 
         descriptor.Field(t => t.WeekDays)

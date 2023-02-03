@@ -2,6 +2,7 @@ using HotChocolate.AspNetCore.Authorization;
 using Taskmony.Models;
 using Taskmony.Models.Enums;
 using Taskmony.Services;
+using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
 
 namespace Taskmony.GraphQL.Ideas;

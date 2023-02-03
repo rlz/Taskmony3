@@ -4,7 +4,7 @@ using Taskmony.GraphQL.Notifications;
 using Taskmony.GraphQL.Users;
 using Taskmony.Models;
 using Taskmony.Models.Notifications;
-using Taskmony.Services;
+using Taskmony.Services.Abstract;
 
 namespace Taskmony.GraphQL.Directions;
 

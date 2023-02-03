@@ -15,6 +15,7 @@ import { ShortMenuItem } from "./short-menu-item";
 import { AddBtn2 } from "../add-btn/add-btn2";
 import { ProfileMenuModal } from "../profile-menu-modal/profile-menu-modal";
 import { AddDirectionModal } from "../add-direction-modal/add-direction-modal";
+import { useAppSelector } from "../../utils/hooks";
 
 export const SideMenu = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -135,7 +136,17 @@ type DirectionsMenuPropsT = {
 
 const DirectionsMenu = ({ openDirection }: DirectionsMenuPropsT) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
-
+  const directions = useAppSelector((store) => store.directions.items);
+  const directionsList = directions.map(dir=>
+    <li>
+    <MenuItem
+      to={`directions/${dir.id}`}
+      name={dir.name}
+      icon={direction}
+      isActive={false}
+    />
+  </li>
+    )
   return (
     <div>
       <div className={"gap-4 flex m-4 justify-between"}>
@@ -150,30 +161,7 @@ const DirectionsMenu = ({ openDirection }: DirectionsMenuPropsT) => {
       {isOpen && (
         <nav>
           <ul>
-            <li>
-              <MenuItem
-                to={"directions/1"}
-                name={"Project #1"}
-                icon={direction}
-                isActive={false}
-              />
-            </li>
-            <li>
-              <MenuItem
-                to={"directions/2"}
-                name={"Project #1"}
-                icon={direction}
-                isActive={false}
-              />
-            </li>
-            <li>
-              <MenuItem
-                to={"directions/3"}
-                name={"Project #1"}
-                icon={direction}
-                isActive={false}
-              />
-            </li>
+{directionsList}
           </ul>
         </nav>
       )}

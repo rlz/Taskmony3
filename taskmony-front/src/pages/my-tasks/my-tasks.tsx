@@ -21,7 +21,7 @@ function MyTasks() {
     dispatch(addTask(task));
   };
   const tasks = tasksToShow.map((task) => 
-    <Task label={task.description} direction={task.direction} />
+    <Task task={task} />
   );
   return (
     <div className="flex w-full">

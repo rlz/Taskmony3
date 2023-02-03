@@ -3,6 +3,7 @@ import { checkResponse } from "../../utils/APIUtils";
 import { getCookie } from "../../utils/cookies";
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
+import { tasksAllQuery } from "../../utils/queries";
 export const GET_TASKS_REQUEST = "GET_TASKS_REQUEST";
 export const GET_TASKS_SUCCESS = "GET_TASKS_SUCCESS";
 export const GET_TASKS_FAILED = "GET_TASKS_FAILED";
@@ -10,11 +11,24 @@ export const ADD_TASK_REQUEST = "ADD_TASK_REQUEST";
 export const ADD_TASK_SUCCESS = "ADD_TASK_SUCCESS";
 export const ADD_TASK_FAILED = "ADD_TASK_FAILED";
 
+export const CHANGE_OPEN_TASK = "CHANGE_OPEN_TASK";
 export const CHANGE_TASK_DESCRIPTION = "CHANGE_TASK_DESCRIPTION";
 export const CHANGE_TASK_DETAILS = "CHANGE_TASK_DETAILS";
 export const RESET_TASK = "RESET_TASK";
+export const CHANGE_TASKS = "CHANGE_TASKS";
+
 
 const URL = BASE_URL + "/graphql";
+
+export function openTask(id) {
+  const tasks = useAppSelector(
+    (store) => store.tasks.items
+  );
+  const task = tasks.filter(task=>task.id==id)[0];
+  return function (dispatch : Dispatch) {
+    dispatch({ type: GET_TASKS_REQUEST, task: task });
+  }
+}
 
 export function getTasks() {
   return function (dispatch : Dispatch) {
@@ -28,13 +42,7 @@ export function getTasks() {
   },
 
   body: JSON.stringify({
-    query: `{tasks{
-      id
-      description
-      startAt
-      direction {name }
-      repeatMode
-    }}`
+    query: tasksAllQuery   
   })
 })
       .then(checkResponse)
@@ -78,7 +86,21 @@ export function addTask(task) {
   body: JSON.stringify({
     query: `mutation {
       taskAdd(description:"${task.description}", startAt:"1.12.12") {
+        id
         description
+        completedAt
+        subscribers 
+        {
+            id
+        }
+        details
+        startAt
+        direction 
+        { name 
+          id
+         }
+        repeatMode
+        createdBy { displayName }
       }
     }
     `
@@ -88,7 +110,8 @@ export function addTask(task) {
       .then((res) => {
         if (res) {
           dispatch({
-            type: ADD_TASK_SUCCESS
+            type: ADD_TASK_SUCCESS,
+            task: res.data.taskAdd
           });
         } else {
           dispatch({

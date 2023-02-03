@@ -67,7 +67,7 @@ export const EditedTask = ({
       <Description />
       <Details recurrent={recurrent} />
       <Comments comments={comments} />
-      <SaveBtn label={"save"} onClick={save} />
+      <SaveBtn label={"save"} onClick={()=>save(task)} />
     </div>
   );
 };
@@ -113,6 +113,7 @@ const Description = () => {
 
 const Details = ({ recurrent }) => {
   const [isReccurent, setIsRecurrent] = useState("no");
+  const [direction, setDirection] = useState("none");
 
   const defaultUntilDate = () => {
     const date = new Date(Date.now());
@@ -125,18 +126,18 @@ const Details = ({ recurrent }) => {
 
   return (
     <div className={"gap flex justify-start pb-2 w-full ml-1"}>
-      <ItemPicker
-        title={"assignee"}
+       <ItemPicker
+        title={"direction"}
         option={"none"}
-        options={["none", "Ann Smith", "Alexander Ivanov"]}
+        options={["none", "Taskmony"]}
         onChange={() => {}}
         hasBorder
         width="w-24"
       />
       <ItemPicker
-        title={"direction"}
+        title={"assignee"}
         option={"none"}
-        options={["none", "Taskmony"]}
+        options={["none", "Ann Smith", "Alexander Ivanov"]}
         onChange={() => {}}
         hasBorder
         width="w-24"

@@ -38,8 +38,8 @@ export const Login = () => {
         <div className="w-1/3 m-auto pb-20">
           <h1 className="font-bold text-3xl">Sign in</h1>
           <Input
-            label={"email"}
-            type={"email"}
+            label={"login"}
+            type={"text"}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />

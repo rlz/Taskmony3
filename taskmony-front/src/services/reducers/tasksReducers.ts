@@ -1,8 +1,12 @@
+import { iteratorSymbol } from "immer/dist/internal";
+import { isTemplateSpan } from "typescript";
 import { TTask } from "../../utils/types";
 import {
   ADD_TASK_FAILED,
   ADD_TASK_REQUEST,
   ADD_TASK_SUCCESS,
+  CHANGE_OPEN_TASK,
+  CHANGE_TASKS,
   CHANGE_TASK_DESCRIPTION,
   CHANGE_TASK_DETAILS,
   GET_TASKS_FAILED,
@@ -30,6 +34,8 @@ export const tasksReducer = (
   state: TTasksState = tasksInitialState,
   action:
     | { type: typeof GET_TASKS_SUCCESS; items: Array<any> }
+    | { type: typeof ADD_TASK_SUCCESS; task: any }
+    | { type: typeof CHANGE_TASKS; task: any }
     | {
         type:
           | typeof GET_TASKS_REQUEST
@@ -57,8 +63,15 @@ export const tasksReducer = (
     case GET_TASKS_FAILED: {
       return {
         ...state,
-        get_tasks_items: [],
+        items: [],
         get_tasks_loading: false,
+        error: true,
+      };
+    }
+    case CHANGE_TASKS: {
+      return {
+        ...state,
+        items: state.items.map(item=>item.id==action.task.id? action.task : item),
         error: true,
       };
     }
@@ -71,6 +84,7 @@ export const tasksReducer = (
     case ADD_TASK_SUCCESS: {
       return {
         ...state,
+        items: [...state.items,action.task],
         add_task_loading: false,
         add_task_error: false,
       };
@@ -94,12 +108,21 @@ export const taskInitialState = {
   assigneeId: "",
   directionId: "",
   startAt: "",
+  id: ""
 };
 
 export const editTaskReducer = (
   state: TTask = taskInitialState,
-  action:
-    { type: typeof CHANGE_TASK_DESCRIPTION | typeof CHANGE_TASK_DETAILS | typeof RESET_TASK; payload: any }
+  action: {
+    type:
+      | typeof CHANGE_TASK_DESCRIPTION
+      | typeof CHANGE_TASK_DETAILS
+      | typeof RESET_TASK;
+    payload: any;
+  } | {
+    type: typeof CHANGE_OPEN_TASK,
+    task: any
+  }
 ) => {
   switch (action.type) {
     case CHANGE_TASK_DESCRIPTION: {
@@ -110,14 +133,18 @@ export const editTaskReducer = (
     }
     case RESET_TASK: {
       return taskInitialState;
-  }
-      case CHANGE_TASK_DETAILS: {
-        return {
-          ...state,
-          details: action.payload,
-        };
+    }
+    case CHANGE_OPEN_TASK: {
+      return action.task;
+    }
+    case CHANGE_TASK_DETAILS: {
+      return {
+        ...state,
+        details: action.payload,
+      };
     }
     default: {
       return state;
     }
-}};
+  }
+};

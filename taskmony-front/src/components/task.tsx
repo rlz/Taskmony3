@@ -9,6 +9,8 @@ import createdByI from "../images/by.svg";
 import recurrentI from "../images/arrows-rotate.svg";
 import { useState } from "react";
 import { EditedTask } from "./edited/edited-task";
+import { useAppDispatch } from "../utils/hooks";
+import { CHANGE_OPEN_TASK, CHANGE_TASKS, openTask, RESET_TASK } from "../services/actions/tasksAPI";
 
 type TaskProps = {
   label: string;
@@ -20,19 +22,27 @@ type TaskProps = {
   direction?: string;
 };
 
-export const Task = (props) => {
+export const Task = ({task}) => {
+  const dispatch = useAppDispatch();
   const [edited,setEdited] = useState(false);
   const open = () => {
+    console.log("opening");
     if(edited) return;
     setEdited(true);
+    dispatch({type:CHANGE_OPEN_TASK,task:task});
   }
-  const save = () => {
+  const save = (task) => {
     if(!edited) return;
+    dispatch({type:CHANGE_TASKS,task:task});
+    dispatch({type:RESET_TASK})
     setEdited(false);
   }
   return (
   <div onClick={open}>
-  {edited ? <EditedTask {...props} save={save}/> : <TaskUnedited {...props}/>}
+  {edited ? <EditedTask save={save}/> : <TaskUnedited 
+  label={task.description}
+  checked={!!task.completedAt}
+  direction={task.direction}/>}
   </div>
   )
 }

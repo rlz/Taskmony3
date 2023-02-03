@@ -11,7 +11,7 @@ type Props = {
 export const DatePicker = ({ title, date, hasBorder }: Props) => {
   return (
     <div className={"flex justify-between pl-2"}>
-      <p className={"font-semibold text-sm text-blue-500"}>{title}:</p>
+      <p className={"font-semibold text-sm text-blue-500 whitespace-nowrap"}>{title}:</p>
       <input type="date" className="font-semibold text-sm text-blue-500 focus:outline-none w-28" defaultValue={new Date(date).toISOString().substring(0, 10)}/>
       {hasBorder && <img src={divider}></img>}
     </div>

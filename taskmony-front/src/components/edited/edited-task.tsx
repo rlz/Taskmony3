@@ -157,7 +157,7 @@ const Details = ({ recurrent }) => {
                 <NumberPicker
         title={"every"}
         min={1}
-        max={99}
+        max={9}
         after={"week(s)"}
         hasBorder
       />

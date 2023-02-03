@@ -15,3 +15,13 @@ export const tasksAllQuery = `{tasks{
     repeatMode
     createdBy { displayName }
   }}`
+
+  export const directionsAllQuery = `{directions{
+    id
+    name
+    members
+    {
+    displayName
+    id
+    }
+  }}`

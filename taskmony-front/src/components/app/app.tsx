@@ -22,6 +22,7 @@ import { Register } from "../../pages/auth/register";
 import { ResetPassword } from "../../pages/auth/reset-password";
 import { getTasks } from "../../services/actions/tasksAPI";
 import { useAppDispatch } from "../../utils/hooks";
+import { getDirections } from "../../services/actions/directionsAPI";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function Home() {
   const dispatch = useAppDispatch();
   useEffect(()=>{
     dispatch(getTasks());
+    dispatch(getDirections());
   },[])
   
   return (

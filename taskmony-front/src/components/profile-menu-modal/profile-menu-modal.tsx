@@ -14,8 +14,8 @@ export const ProfileMenuModal = ({ close }: ModalPropsT) => {
       ></img>
       <Input label={"John Doe"} />
       <Input label={"johnd@gmail.com"} />
-      <Btn label={"change password"} onClick={() => {}} />
-      <Btn label={"sign out"} onClick={() => {}} />
+      <Btn label={"Change password"} onClick={() => {}} />
+      <Btn label={"Sign out"} onClick={() => {}} />
     </div>
   );
 };
@@ -42,7 +42,7 @@ type BtnPropsT = {
 export const Btn = ({ onClick, label } : BtnPropsT) => {
   return (
     <div
-      className={"p-1 w-fit mt-2 mb-2 bg-blue-500 rounded-md"}
+      className={"p-1 w-fit mt-2 mb-2 pl-2 pr-2 bg-blue-500 rounded-md"}
       onClick={() => onClick()}
     >
       <span className={"text-white"}>{label}</span>

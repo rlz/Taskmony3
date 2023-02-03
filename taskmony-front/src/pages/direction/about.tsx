@@ -67,8 +67,8 @@ export const User = ({label}:UserPropsT) => {
 
   export const LeaveBtn = ({onClick}:LeaveBtnPropsT) => {
     return (
-        <div className={"p-1 w-fit mt-4 mb-2 bg-blue-400 rounded-lg"} onClick={()=>onClick()}>
-        <span className={"text-white"}>leave direction</span>
+        <div className={"p-1 w-fit mt-4 mb-2 pl-2 pr-2 bg-blue-400 rounded-lg"} onClick={()=>onClick()}>
+        <span className={"text-white"}>Leave direction</span>
       </div>
     );
   };

@@ -6,7 +6,7 @@ import arrowDown from "../../images/arrow-down.svg";
 import { Task } from "../../components/task";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { EditedTask } from "../../components/edited/edited-task";
-import { addTask } from "../../services/actions/tasksAPI";
+import { addTask, RESET_TASK } from "../../services/actions/tasksAPI";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 
 function MyTasks() {
@@ -19,6 +19,7 @@ function MyTasks() {
   const dispatch = useAppDispatch();
   const addANewTask = () => {
     dispatch(addTask(task));
+    dispatch({type:RESET_TASK})
   };
   const tasks = tasksToShow.map((task) => 
     <Task task={task} />

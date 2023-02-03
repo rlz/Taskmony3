@@ -14,8 +14,7 @@ type TUser = {
   change_user_info_loading: boolean;
   change_user_info_error: boolean;
   change_user_info_success: boolean;
-  email: string;
-  name: string;
+  user: any;
 };
 
 export const initialState = {
@@ -25,8 +24,7 @@ export const initialState = {
   change_user_info_loading: false,
   change_user_info_error: false,
   change_user_info_success: false,
-  email: "",
-  name: "",
+  user: null
 };
 export const userInfoReducer = (
   state: TUser = initialState,
@@ -40,7 +38,7 @@ export const userInfoReducer = (
       }
     | {
         type: typeof USER_INFO_SUCCESS | typeof CHANGE_USER_INFO_SUCCESS;
-        userInfo: { name: string; email: string };
+        userInfo: any;
       }
 ) => {
   switch (action.type) {
@@ -57,8 +55,7 @@ export const userInfoReducer = (
         ...state,
         user_info_loading: false,
         user_info_success: true,
-        email: action.userInfo.email,
-        name: action.userInfo.name,
+        user: action.userInfo,
       };
     }
     case USER_INFO_FAILED: {

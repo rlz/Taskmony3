@@ -3,8 +3,9 @@ import { BASE_URL } from "../../utils/data";
 import { getCookie } from "../../utils/cookies";
 import { refreshToken } from "./auth/refreshToken";
 import { AnyAction, Dispatch } from "redux";
+import { userAllQuery } from "../../utils/queries";
 
-const URL = BASE_URL + "/auth/user";
+const URL = BASE_URL + "/graphql";
 
 export const USER_INFO_REQUEST = "USER_INFO_REQUEST";
 export const USER_INFO_SUCCESS = "USER_INFO_SUCCESS";
@@ -14,11 +15,18 @@ export function getUserInfo() {
   return function (dispatch :any) {
     dispatch({ type: USER_INFO_REQUEST });
     fetch(URL, {
-      method: "GET",
+      method: 'POST',
       headers: {
         "Content-Type": "application/json",
-        Authorization: getCookie("accessToken"),
+        "Authorization": "Bearer "+getCookie("accessToken"),
       },
+    
+      body: JSON.stringify({
+        query: `{users{
+          displayName
+          email
+        }}`   
+      })
     })
       .then((data) => {
         if (data.status == 401 || data.status == 403) {
@@ -31,7 +39,7 @@ export function getUserInfo() {
         if (res) {
           dispatch({
             type: USER_INFO_SUCCESS,
-            userInfo: res.user,
+            userInfo: res?.data?.users[0],
           });
         } else {
           dispatch({

@@ -114,6 +114,7 @@ const Description = () => {
 const Details = ({ recurrent }) => {
   const [isReccurent, setIsRecurrent] = useState("no");
   const [direction, setDirection] = useState("none");
+  const directions = useAppSelector((store) => store.directions.items);
 
   const defaultUntilDate = () => {
     const date = new Date(Date.now());
@@ -129,10 +130,9 @@ const Details = ({ recurrent }) => {
        <ItemPicker
         title={"direction"}
         option={"none"}
-        options={["none", "Taskmony"]}
+        options={["none",...directions.map(dir=>dir.name)]}
         onChange={() => {}}
         hasBorder
-        width="w-24"
       />
       <ItemPicker
         title={"assignee"}

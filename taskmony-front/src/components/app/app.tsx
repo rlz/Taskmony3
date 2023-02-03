@@ -23,6 +23,7 @@ import { ResetPassword } from "../../pages/auth/reset-password";
 import { getTasks } from "../../services/actions/tasksAPI";
 import { useAppDispatch } from "../../utils/hooks";
 import { getDirections } from "../../services/actions/directionsAPI";
+import { getUserInfo } from "../../services/actions/userInfo";
 
 function App() {
   return (
@@ -55,6 +56,8 @@ function Home() {
   useEffect(()=>{
     dispatch(getTasks());
     dispatch(getDirections());
+    dispatch(getUserInfo());
+    
   },[])
   
   return (

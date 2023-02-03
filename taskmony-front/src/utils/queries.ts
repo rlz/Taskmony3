@@ -25,3 +25,8 @@ export const tasksAllQuery = `{tasks{
     id
     }
   }}`
+
+  export const userAllQuery = `{users{
+    displayName
+    email
+  }}`

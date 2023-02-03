@@ -18,13 +18,9 @@ public class TaskConfiguration : IEntityTypeConfiguration<Task>
             .HasDefaultValueSql("now()")
             .IsRequired();
 
-        builder.OwnsOne(t => t.StartAt, b =>
-        {
-            b.Property(l => l.Value)
-                .HasColumnName(nameof(Task.StartAt))
-                .HasDefaultValueSql("now()")
-                .IsRequired();
-        }).Navigation(t => t.StartAt).IsRequired();
+        builder.Property(t => t.StartAt)
+            .HasDefaultValueSql("now()")
+            .IsRequired();
 
         builder.OwnsOne(t => t.Description, b =>
         {
@@ -45,8 +41,13 @@ public class TaskConfiguration : IEntityTypeConfiguration<Task>
                 .HasColumnName(nameof(Task.CompletedAt));
         });
 
+        builder.OwnsOne(t => t.RepeatsUntil, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Task.RepeatsUntil));
+        });
+
         builder.Ignore(t => t.ActionItemType);
-        builder.Ignore(t => t.NumberOfRepetitions);
         builder.Ignore(t => t.Notifications);
     }
 }

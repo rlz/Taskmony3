@@ -2,7 +2,7 @@ namespace Taskmony.Services;
 
 public interface ITimeConverter
 {
-    DateTime StringToDateTimeUtc(string rfc3339);
+    DateTime StringToDateTimeUtc(string dateTimeUtc);
 
     string DateTimeToString(DateTime dateTime);
 }

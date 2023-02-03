@@ -14,5 +14,7 @@ public interface ICommentService
 
     Task<Comment> AddComment(IdeaComment comment);
 
-    Task<bool> SetCommentText(Guid commentId, string text, Guid currentUserId);
+    Task<bool> SetCommentText(Guid id, string text, Guid currentUserId);
+
+    Task<bool> SetCommentDeletedAt(Guid id, DateTime? deletedAt, Guid currentUserId);
 }

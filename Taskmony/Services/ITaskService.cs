@@ -16,13 +16,14 @@ public interface ITaskService
     Task<IEnumerable<Models.Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId,
         int? offset, int? limit, Guid currentUserId);
 
-    Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(Guid[] ids);
+    Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids);
 
     Task<Models.Task> GetTaskOrThrowAsync(Guid id, Guid currentUserId);
 
     Task<Models.Task?> AddTaskAsync(Models.Task task);
 
-    Task<IEnumerable<Guid>> AddRecurringTaskAsync(Models.Task task, RepeatMode repeatMode, int? repeatEvery, int numberOfRepetitions);
+    Task<IEnumerable<Guid>> AddRecurringTaskAsync(Models.Task task, RepeatMode repeatMode,
+        int repeatEvery, WeekDay? weekDays, DateTime repeatUntil);
 
     Task<IEnumerable<Guid>> SetRecurringTaskDescriptionAsync(Guid groupId, string description, Guid currentUserId);
 
@@ -49,4 +50,12 @@ public interface ITaskService
     Task<Guid?> SetTaskDeletedAtAsync(Guid taskId, DateTime? deletedAtUtc, Guid currentUserId);
 
     Task<Guid?> SetTaskCompletedAtAsync(Guid taskId, DateTime? completedAtUtc, Guid currentUserId);
+
+    Task<IEnumerable<Guid>> SetRecurringTaskRepeatModeAsync(Guid grouId, RepeatMode? repeatMode, 
+        WeekDay? weekDays, DateTime? repeatUntil, int? repeatEvery, Guid currentUserId);
+
+    Task<IEnumerable<Guid>> SetTaskRepeatModeAsync(Guid taskId, RepeatMode? repeatMode, WeekDay? weekDays, 
+        DateTime? repeatUntil, int? repeatEvery, Guid currentUserId);
+
+    Task<IEnumerable<Guid>> SetRecurringTaskRepeatsUntilAsync(Guid groupId, DateTime repeatsUntil, Guid currentUserId);
 }

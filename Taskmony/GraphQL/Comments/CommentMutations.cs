@@ -47,4 +47,18 @@ public class CommentMutations
 
         return null;
     }
+
+    [Authorize]
+    public async Task<Guid?> CommentSetDeletedAt([Service] ICommentService commentService,
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid commentId, string? deletedAt)
+    {
+        DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
+
+        if (await commentService.SetCommentDeletedAt(commentId, deletedAtUtc, currentUserId))
+        {
+            return commentId;
+        }
+
+        return null;
+    }
 }

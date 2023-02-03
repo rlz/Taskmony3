@@ -56,7 +56,7 @@ public class UserService : IUserService
 
         var user = await _userRepository.GetUserByLoginAsync(login);
 
-        if (user is null || !_passwordHasher.VerifyPassword(request.Password, password.Value))
+        if (user is null || !_passwordHasher.VerifyPassword(request.Password, user.Password!))
         {
             throw new DomainException(UserErrors.WrongLoginOrPassword);
         }

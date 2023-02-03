@@ -25,7 +25,13 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
             b.Property(l => l.Value)
                 .HasColumnName(nameof(Comment.Text))
                 .IsRequired();
-        }).Navigation(i => i.Text).IsRequired();
+        }).Navigation(c => c.Text).IsRequired();
+
+        builder.OwnsOne(c => c.DeletedAt, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Comment.DeletedAt));
+        });
 
         builder.Ignore(c => c.ActionItemType);
     }

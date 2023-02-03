@@ -5,6 +5,7 @@ using Taskmony.GraphQL.Notifications;
 using Taskmony.GraphQL.Users;
 using Taskmony.Models;
 using Taskmony.Models.Comments;
+using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
 using Taskmony.Services;
 using Task = Taskmony.Models.Task;
@@ -26,7 +27,12 @@ public class TaskType : ObjectType<Task>
         descriptor.Field(t => t.CreatedAt).Type<StringType>();
         descriptor.Field(t => t.DeletedAt).Type<StringType>();
         descriptor.Field(t => t.StartAt).Type<StringType>();
+        descriptor.Field(t => t.RepeatsUntil).Type<StringType>();
         descriptor.Field(t => t.GroupId).Type<IdType>();
+
+        descriptor.Field(t => t.WeekDays)
+            .Type<ListType<NonNullType<EnumType<WeekDay>>>>()
+            .ResolveWith<Resolvers>(r => r.GetWeekDays(default!));
 
         descriptor.Field(t => t.Direction)
             .ResolveWith<Resolvers>(r => r.GetDirection(default!, default!));
@@ -137,6 +143,19 @@ public class TaskType : ObjectType<Task>
                     return notifications.ToLookup(n => n.NotifiableId);
                 }, "NotificationByTaskId"
             ).LoadAsync(task.Id);
+        }
+
+        public IEnumerable<WeekDay>? GetWeekDays([Parent] Task task)
+        {
+            if (task.WeekDays is null)
+            {
+                return null;
+            }
+
+            return Enum.GetValues(typeof(WeekDay))
+                .Cast<WeekDay>()
+                .Where(f => (f & task.WeekDays.Value) == f)
+                .ToList();
         }
     }
 }

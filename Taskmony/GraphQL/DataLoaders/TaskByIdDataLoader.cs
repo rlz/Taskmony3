@@ -20,7 +20,7 @@ public class TaskByIdDataLoader : BatchDataLoader<Guid, Task>
 
         var taskService = scope.ServiceProvider.GetRequiredService<ITaskService>();
 
-        var tasks = await taskService.GetTasksByIdsAsync(ids.ToArray());
+        var tasks = await taskService.GetTasksByIdsAsync(ids);
 
         return tasks.ToDictionary(t => t.Id);
     }

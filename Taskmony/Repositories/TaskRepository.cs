@@ -58,7 +58,7 @@ public sealed class TaskRepository : ITaskRepository, IDisposable, IAsyncDisposa
         return query;
     }
 
-    public async Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(Guid[] ids)
+    public async Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids)
     {
         return await _context.Tasks.Where(t => ids.Contains(t.Id)).ToListAsync();
     }
@@ -68,7 +68,7 @@ public sealed class TaskRepository : ITaskRepository, IDisposable, IAsyncDisposa
         await _context.Tasks.AddAsync(task);
     }
 
-    public async Task AddTasksAsync(IReadOnlyCollection<Models.Task> tasks)
+    public async Task AddTasksAsync(IEnumerable<Models.Task> tasks)
     {
         await _context.Tasks.AddRangeAsync(tasks);
     }
@@ -88,6 +88,11 @@ public sealed class TaskRepository : ITaskRepository, IDisposable, IAsyncDisposa
         return await _context.Tasks
             .Where(t => t.GroupId == groupId && t.CompletedAt == null && t.DeletedAt == null)
             .ToListAsync();
+    }
+
+    public void DeleteTasks(IEnumerable<Models.Task> tasks)
+    {
+        _context.Tasks.RemoveRange(tasks);
     }
 
     public async Task<bool> SaveChangesAsync()

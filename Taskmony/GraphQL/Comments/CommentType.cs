@@ -18,6 +18,7 @@ public class CommentType : ObjectType<Comment>
 
         descriptor.Field(c => c.Text).Type<StringType>();
         descriptor.Field(c => c.CreatedAt).Type<StringType>();
+        descriptor.Field(c => c.DeletedAt).Type<StringType>();
     }
 
     private class Resolvers

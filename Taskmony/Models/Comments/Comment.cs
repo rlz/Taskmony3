@@ -14,6 +14,8 @@ public abstract class Comment : IActionItem
 
     public DateTime? CreatedAt { get; set; }
 
+    public DeletedAt? DeletedAt { get; set; }
+
     public Guid CreatedById { get; set; }
 
     public User? CreatedBy { get; set; }

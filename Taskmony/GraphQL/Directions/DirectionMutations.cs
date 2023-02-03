@@ -69,4 +69,18 @@ public class DirectionMutations
 
         return null;
     }
+
+    [Authorize]
+    public async Task<Guid?> DirectionSetDeletedAt([Service] IDirectionService directionService,
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid directionId, string? deletedAt)
+    {
+        DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
+
+        if (await directionService.SetDirectionDeletedAt(directionId, deletedAtUtc, currentUserId))
+        {
+            return directionId;
+        }
+
+        return null;
+    }
 }

@@ -49,7 +49,7 @@ public class PasswordHasher : IPasswordHasher, IDisposable
         {
             throw new ArgumentNullException(nameof(hash));
         }
-
+        
         var decodedHash = Convert.FromBase64String(hash);
 
         return decodedHash.Length != 0 && VerifyPassword(password, decodedHash);

@@ -73,6 +73,22 @@ public class CommentService : ICommentService
         return await _commentRepository.SaveChangesAsync();
     }
 
+    public async Task<bool> SetCommentDeletedAt(Guid commentId, DateTime? deletedAt, Guid currentUserId)
+    {
+        DeletedAt? commentDeletedAt = deletedAt is null ? null : DeletedAt.From(deletedAt.Value);
+
+        var comment = await GetCommentOrThrow(commentId, currentUserId);
+
+        if (deletedAt is not null && comment.DeletedAt is not null)
+        {
+            throw new DomainException(CommentErrors.AlreadyDeleted);
+        }
+
+        comment.DeletedAt = commentDeletedAt;
+
+        return await _commentRepository.SaveChangesAsync();
+    }
+
     private async Task<Comment> GetCommentOrThrow(Guid id, Guid currentUserId)
     {
         var comment = await _commentRepository.GetCommentById(id);

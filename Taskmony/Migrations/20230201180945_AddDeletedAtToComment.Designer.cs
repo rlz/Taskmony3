@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Taskmony.Data;
@@ -11,9 +12,11 @@ using Taskmony.Data;
 namespace Taskmony.Migrations
 {
     [DbContext(typeof(TaskmonyDbContext))]
-    partial class TaskmonyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230201180945_AddDeletedAtToComment")]
+    partial class AddDeletedAtToComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,19 +224,10 @@ namespace Taskmony.Migrations
                     b.Property<Guid?>("GroupId")
                         .HasColumnType("uuid");
 
-                    b.Property<byte?>("RepeatMode")
-                        .HasColumnType("smallint");
-
-                    b.Property<int?>("RepeatsEvery")
+                    b.Property<int?>("RepeatEvery")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("StartAt")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<byte?>("WeekDays")
+                    b.Property<byte?>("RepeatMode")
                         .HasColumnType("smallint");
 
                     b.HasKey("Id");
@@ -603,14 +597,16 @@ namespace Taskmony.Migrations
                                 .HasForeignKey("TaskId");
                         });
 
-                    b.OwnsOne("Taskmony.ValueObjects.RepeatUntil", "RepeatsUntil", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.StartAt", "StartAt", b1 =>
                         {
                             b1.Property<Guid>("TaskId")
                                 .HasColumnType("uuid");
 
                             b1.Property<DateTime>("Value")
+                                .ValueGeneratedOnAdd()
                                 .HasColumnType("timestamp with time zone")
-                                .HasColumnName("RepeatsUntil");
+                                .HasColumnName("StartAt")
+                                .HasDefaultValueSql("now()");
 
                             b1.HasKey("TaskId");
 
@@ -633,7 +629,8 @@ namespace Taskmony.Migrations
 
                     b.Navigation("Direction");
 
-                    b.Navigation("RepeatsUntil");
+                    b.Navigation("StartAt")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Taskmony.Models.User", b =>

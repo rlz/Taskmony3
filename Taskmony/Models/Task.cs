@@ -22,7 +22,7 @@ public class Task : IActionItem
 
     public DateTime? CreatedAt { get; set; }
 
-    public StartAt? StartAt { get; set; }
+    public DateTime? StartAt { get; set; }
 
     public CompletedAt? CompletedAt { get; set; }
 
@@ -38,10 +38,12 @@ public class Task : IActionItem
 
     public RepeatMode? RepeatMode { get; set; }
 
-    public int? RepeatEvery { get; set; }
-    
-    public int? NumberOfRepetitions { get; set; }
+    public WeekDay? WeekDays { get; set; }
 
+    public int? RepeatsEvery { get; set; }
+
+    public RepeatUntil? RepeatsUntil { get; set; }
+    
     public Guid? GroupId { get; set; }
 
     public ICollection<TaskComment>? Comments { get; set; }

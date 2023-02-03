@@ -4,13 +4,13 @@ using ValueOf;
 
 namespace Taskmony.ValueObjects;
 
-public class StartAt : ValueOf<DateTime, StartAt>
+public class RepeatUntil : ValueOf<DateTime, RepeatUntil>
 {
     protected override void Validate()
     {
-        if (Value > DateTime.UtcNow)
+        if (Value < DateTime.UtcNow)
         {
-            throw new DomainException(ValidationErrors.InvalidCompletedAt);
+            throw new DomainException(ValidationErrors.InvalidRepearUntil);
         }
     }
 }

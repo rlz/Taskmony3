@@ -25,9 +25,6 @@ public static class TaskErrors
     public static ErrorDetails AlreadyCompleted =>
         new("Task is already completed", "TASK_ALREADY_COMPLETED");
 
-    public static ErrorDetails RepeatEveryIsMissing => 
-        new("Repeat every must be specified if repeat mode is custom", "REPEAT_EVERY_IS_MISSING");
-
     public static ErrorDetails UpdateCompletedOrDeletedTask =>
         new("Cannot change completed or deleted task", "UPDATE_COMPLETED_OR_DELETED_TASK");
     

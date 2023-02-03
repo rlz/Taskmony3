@@ -14,7 +14,7 @@ public interface ITaskRepository
     Task<IEnumerable<Models.Task>> GetTasksAsync(Guid[]? id, Guid?[] directionId,
         int? offset, int? limit, Guid userId);
 
-    Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(Guid[] ids);
+    Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids);
 
     Task<Models.Task?> GetTaskByIdAsync(Guid id);
 
@@ -29,7 +29,9 @@ public interface ITaskRepository
 
     Task AddTaskAsync(Models.Task task);
 
-    Task AddTasksAsync(IReadOnlyCollection<Models.Task> tasks);
+    Task AddTasksAsync(IEnumerable<Models.Task> tasks);
+
+    void DeleteTasks(IEnumerable<Models.Task> tasks);
 
     Task<bool> SaveChangesAsync();
 }

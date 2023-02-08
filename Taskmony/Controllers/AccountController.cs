@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Taskmony.DTOs;
 using Taskmony.Services;
+using Taskmony.Services.Abstract;
 
 namespace Taskmony.Controllers;
 
@@ -18,7 +19,7 @@ public class AccountController : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult> Login([FromBody] UserAuthRequest request)
     {
-        var response = await _userService.AuthenticateAsync(request);
+        var response = await _userService.AuthenticateUserAsync(request);
 
         return Ok(response);
     }
@@ -26,8 +27,11 @@ public class AccountController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult> Register([FromBody] UserRegisterRequest request)
     {
-        await _userService.AddAsync(request);
+        if (await _userService.AddUserAsync(request))
+        {
+            return Ok();
+        }
 
-        return Ok();
+        return BadRequest();
     }
 }

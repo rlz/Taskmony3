@@ -1,5 +1,5 @@
-using Taskmony.Exceptions;
 using Taskmony.Errors;
+using Taskmony.Exceptions;
 
 namespace Taskmony.GraphQL.Errors;
 
@@ -18,23 +18,25 @@ public class ErrorFilter : IErrorFilter
     {
         _logger.LogError(error.Exception, "An exception occurred: {Message}", error.Exception?.Message);
 
-        if (error.Exception is DomainException ex)
+        if (error.Exception is DomainException domainException)
         {
             return ErrorBuilder
                 .New()
-                .SetCode(ex.Error.Code)
-                .SetMessage(ex.Error.Message)
+                .SetCode(domainException.Error.Code)
+                .SetMessage(domainException.Error.Message)
+                .SetPath(error.Path)
                 .Build();
         }
 
-        if (_environment.IsDevelopment())
+        if (error.Exception is null || _environment.IsDevelopment())
+        {
             return error;
+        }
 
         return ErrorBuilder
             .New()
             .SetCode(GeneralErrors.InternalServerError.Code)
             .SetMessage(GeneralErrors.InternalServerError.Message)
-            .SetPath(error.Path)
             .Build();
     }
 }

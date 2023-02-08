@@ -1,29 +1,27 @@
-using System.ComponentModel.DataAnnotations;
 using Taskmony.Models.Comments;
+using Taskmony.Models.Enums;
+using Taskmony.Models.Notifications;
 using Taskmony.Models.Subscriptions;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Models;
 
-public class User
+public class User : IActionItem
 {
-    [Key]
     public Guid Id { get; set; }
 
-    [Required]
-    public string? Login { get; set; }
+    public ActionItemType ActionItemType => ActionItemType.User;
 
-    [Required]
+    public Login? Login { get; set; }
+
     public string? Password { get; set; }
 
-    [Required]
-    public string? DisplayName { get; set; }
+    public DisplayName? DisplayName { get; set; }
 
-    [Required]
-    public string? Email { get; set; }
+    public Email? Email { get; set; }
 
     public DateTime? NotificationReadTime { get; set; }
 
-    [Required]
     public DateTime? CreatedAt { get; set; }
 
     /// <summary>
@@ -39,7 +37,7 @@ public class User
     public ICollection<Idea>? Ideas { get; set; }
 
     /// <summary>
-    /// Directions in which the user is a member (including own directions?)
+    /// Directions in which the user is a member
     /// </summary>
     public ICollection<Direction>? Directions { get; set; }
 

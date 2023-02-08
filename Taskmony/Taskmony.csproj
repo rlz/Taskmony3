@@ -7,17 +7,22 @@
       <UserSecretsId>88a66009-e035-4978-9dbb-6ec6b32e2ad5</UserSecretsId>
   </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'Swagger' " />
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'Banana cake pop' " />
     <ItemGroup>
-      <PackageReference Include="HotChocolate.AspNetCore" Version="12.15.2" />
-      <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="12.15.2" />
-      <PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.15.2" />
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
+      <PackageReference Include="HotChocolate.AspNetCore" Version="12.16.0" />
+      <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="12.16.0" />
+      <PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.16.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.2" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+      <PackageReference Include="ValueOf" Version="2.0.31" />
     </ItemGroup>
-
+    
 </Project>

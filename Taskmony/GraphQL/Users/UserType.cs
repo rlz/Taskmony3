@@ -10,6 +10,11 @@ public class UserType : ObjectType<User>
         descriptor.Field(u => u.CreatedAt).Ignore();
         descriptor.Field(u => u.OwnDirections).Ignore();
         descriptor.Field(u => u.Subscriptions).Ignore();
+        descriptor.Field(u => u.Tasks).Ignore();
+        descriptor.Field(u => u.Ideas).Ignore();
+        descriptor.Field(u => u.Directions).Ignore();
+        descriptor.Field(u => u.ActionItemType).Ignore();
+        descriptor.Field(u => u.Comments).Ignore();
 
         descriptor.Field(u => u.Login).Type<StringType>();
         descriptor.Field(u => u.CreatedAt).Type<StringType>();

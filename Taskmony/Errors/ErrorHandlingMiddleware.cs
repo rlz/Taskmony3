@@ -33,18 +33,9 @@ public class ErrorHandlingMiddleware
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/problem+json";
+        context.Response.StatusCode = GetHttpStatusCode(exception);
 
-        context.Response.StatusCode = exception switch
-        {
-            DomainException domainException => domainException.Error.Status,
-            _ => (int)HttpStatusCode.InternalServerError
-        };
-
-        IReadOnlyCollection<ErrorDetails> errors = exception switch
-        {
-            DomainException domainException => new[] { domainException.Error },
-            _ => new[] { GeneralErrors.InternalServerError }
-        };
+        var errors = GetErrors(exception);
 
         var serializerOptions = new JsonSerializerOptions
         {
@@ -54,5 +45,25 @@ public class ErrorHandlingMiddleware
         var response = JsonSerializer.Serialize(new ErrorResponse(errors), serializerOptions);
 
         await context.Response.WriteAsync(response);
+    }
+
+    private static IReadOnlyCollection<ErrorDetails> GetErrors(Exception exception)
+    {
+        return exception switch
+        {
+            DomainException domainException => new[] { domainException.Error },
+            _ => new[] { GeneralErrors.InternalServerError }
+        };
+    }
+
+    private static int GetHttpStatusCode(Exception exception)
+    {
+        return exception switch
+        {
+            DomainException domainException => domainException.Error.Code == UserErrors.WrongLoginOrPassword.Code
+                ? (int)HttpStatusCode.NotFound
+                : (int)HttpStatusCode.BadRequest,
+            _ => (int)HttpStatusCode.InternalServerError
+        };
     }
 }

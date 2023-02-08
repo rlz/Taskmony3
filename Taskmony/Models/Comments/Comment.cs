@@ -1,21 +1,22 @@
-using System.ComponentModel.DataAnnotations;
+using Taskmony.Models.Enums;
+using Taskmony.Models.Notifications;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Models.Comments;
 
-public abstract class Comment
+public abstract class Comment : IActionItem
 {
-    [Key]
     public Guid Id { get; set; }
 
-    [Required]
-    public string? Text { get; set; }
+    public ActionItemType ActionItemType => ActionItemType.Comment;
 
-    [Required]
+    public CommentText? Text { get; set; }
+
     public DateTime? CreatedAt { get; set; }
 
-    [Required]
-    public Guid? CreatedById { get; set; }
+    public DeletedAt? DeletedAt { get; set; }
 
-    [Required]
+    public Guid CreatedById { get; set; }
+
     public User? CreatedBy { get; set; }
 }

@@ -17,25 +17,10 @@ namespace Taskmony.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0")
+                .HasAnnotation("ProductVersion", "7.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("DirectionUser", b =>
-                {
-                    b.Property<Guid>("DirectionsId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("MembersId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("DirectionsId", "MembersId");
-
-                    b.HasIndex("MembersId");
-
-                    b.ToTable("DirectionUser");
-                });
 
             modelBuilder.Entity("Taskmony.Models.Comments.Comment", b =>
                 {
@@ -49,13 +34,8 @@ namespace Taskmony.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<Guid?>("CreatedById")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -78,18 +58,10 @@ namespace Taskmony.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<Guid?>("CreatedById")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Details")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -111,16 +83,8 @@ namespace Taskmony.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<Guid?>("CreatedById")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("Details")
                         .HasColumnType("text");
@@ -131,9 +95,6 @@ namespace Taskmony.Migrations
                     b.Property<byte>("Generation")
                         .HasColumnType("smallint");
 
-                    b.Property<DateTime?>("ReviewedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
@@ -143,7 +104,27 @@ namespace Taskmony.Migrations
                     b.ToTable("Ideas");
                 });
 
-            modelBuilder.Entity("Taskmony.Models.Notification", b =>
+            modelBuilder.Entity("Taskmony.Models.Membership", b =>
+                {
+                    b.Property<Guid>("DirectionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.HasKey("DirectionId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Memberships");
+                });
+
+            modelBuilder.Entity("Taskmony.Models.Notifications.Notification", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -158,8 +139,7 @@ namespace Taskmony.Migrations
                     b.Property<byte>("ActionType")
                         .HasColumnType("smallint");
 
-                    b.Property<Guid?>("ActorId")
-                        .IsRequired()
+                    b.Property<Guid>("ActorId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Field")
@@ -174,8 +154,7 @@ namespace Taskmony.Migrations
                     b.Property<string>("NewValue")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("NotifiableId")
-                        .IsRequired()
+                    b.Property<Guid>("NotifiableId")
                         .HasColumnType("uuid");
 
                     b.Property<byte>("NotifiableType")
@@ -197,14 +176,13 @@ namespace Taskmony.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("SubscribedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<Guid?>("UserId")
-                        .IsRequired()
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -225,25 +203,14 @@ namespace Taskmony.Migrations
                     b.Property<Guid?>("AssigneeId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<DateTime?>("CreatedAt")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<Guid?>("CreatedById")
-                        .IsRequired()
+                    b.Property<Guid>("CreatedById")
                         .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("Details")
                         .HasColumnType("text");
@@ -262,7 +229,12 @@ namespace Taskmony.Migrations
 
                     b.Property<DateTime?>("StartAt")
                         .IsRequired()
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<byte?>("WeekDays")
+                        .HasColumnType("smallint");
 
                     b.HasKey("Id");
 
@@ -286,18 +258,6 @@ namespace Taskmony.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<DateTime?>("NotificationReadTime")
                         .HasColumnType("timestamp with time zone");
@@ -360,21 +320,6 @@ namespace Taskmony.Migrations
                     b.ToTable("TaskSubscriptions");
                 });
 
-            modelBuilder.Entity("DirectionUser", b =>
-                {
-                    b.HasOne("Taskmony.Models.Direction", null)
-                        .WithMany()
-                        .HasForeignKey("DirectionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Taskmony.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("MembersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Taskmony.Models.Comments.Comment", b =>
                 {
                     b.HasOne("Taskmony.Models.User", "CreatedBy")
@@ -383,7 +328,47 @@ namespace Taskmony.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
+                        {
+                            b1.Property<Guid>("CommentId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("Value")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("DeletedAt");
+
+                            b1.HasKey("CommentId");
+
+                            b1.ToTable("Comments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CommentId");
+                        });
+
+                    b.OwnsOne("Taskmony.ValueObjects.CommentText", "Text", b1 =>
+                        {
+                            b1.Property<Guid>("CommentId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Text");
+
+                            b1.HasKey("CommentId");
+
+                            b1.ToTable("Comments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CommentId");
+                        });
+
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedAt");
+
+                    b.Navigation("Text")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Taskmony.Models.Direction", b =>
@@ -394,7 +379,47 @@ namespace Taskmony.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
+                        {
+                            b1.Property<Guid>("DirectionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("Value")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("DeletedAt");
+
+                            b1.HasKey("DirectionId");
+
+                            b1.ToTable("Directions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("DirectionId");
+                        });
+
+                    b.OwnsOne("Taskmony.ValueObjects.DirectionName", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("DirectionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Name");
+
+                            b1.HasKey("DirectionId");
+
+                            b1.ToTable("Directions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("DirectionId");
+                        });
+
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("DeletedAt");
+
+                    b.Navigation("Name")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Taskmony.Models.Idea", b =>
@@ -409,12 +434,86 @@ namespace Taskmony.Migrations
                         .WithMany("Ideas")
                         .HasForeignKey("DirectionId");
 
+                    b.OwnsOne("Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
+                        {
+                            b1.Property<Guid>("IdeaId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("Value")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("DeletedAt");
+
+                            b1.HasKey("IdeaId");
+
+                            b1.ToTable("Ideas");
+
+                            b1.WithOwner()
+                                .HasForeignKey("IdeaId");
+                        });
+
+                    b.OwnsOne("Taskmony.ValueObjects.Description", "Description", b1 =>
+                        {
+                            b1.Property<Guid>("IdeaId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Description");
+
+                            b1.HasKey("IdeaId");
+
+                            b1.ToTable("Ideas");
+
+                            b1.WithOwner()
+                                .HasForeignKey("IdeaId");
+                        });
+
+                    b.OwnsOne("Taskmony.ValueObjects.ReviewedAt", "ReviewedAt", b1 =>
+                        {
+                            b1.Property<Guid>("IdeaId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("Value")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("ReviewedAt");
+
+                            b1.HasKey("IdeaId");
+
+                            b1.ToTable("Ideas");
+
+                            b1.WithOwner()
+                                .HasForeignKey("IdeaId");
+                        });
+
                     b.Navigation("CreatedBy");
 
+                    b.Navigation("DeletedAt");
+
+                    b.Navigation("Description")
+                        .IsRequired();
+
                     b.Navigation("Direction");
+
+                    b.Navigation("ReviewedAt");
                 });
 
-            modelBuilder.Entity("Taskmony.Models.Notification", b =>
+            modelBuilder.Entity("Taskmony.Models.Membership", b =>
+                {
+                    b.HasOne("Taskmony.Models.Direction", null)
+                        .WithMany()
+                        .HasForeignKey("DirectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Taskmony.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Taskmony.Models.Notifications.Notification", b =>
                 {
                     b.HasOne("Taskmony.Models.User", "Actor")
                         .WithMany()
@@ -452,11 +551,155 @@ namespace Taskmony.Migrations
                         .WithMany("Tasks")
                         .HasForeignKey("DirectionId");
 
+                    b.OwnsOne("Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
+                        {
+                            b1.Property<Guid>("TaskId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("Value")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("DeletedAt");
+
+                            b1.HasKey("TaskId");
+
+                            b1.ToTable("Tasks");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TaskId");
+                        });
+
+                    b.OwnsOne("Taskmony.ValueObjects.Description", "Description", b1 =>
+                        {
+                            b1.Property<Guid>("TaskId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Description");
+
+                            b1.HasKey("TaskId");
+
+                            b1.ToTable("Tasks");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TaskId");
+                        });
+
+                    b.OwnsOne("Taskmony.ValueObjects.CompletedAt", "CompletedAt", b1 =>
+                        {
+                            b1.Property<Guid>("TaskId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("Value")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("CompletedAt");
+
+                            b1.HasKey("TaskId");
+
+                            b1.ToTable("Tasks");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TaskId");
+                        });
+
+                    b.OwnsOne("Taskmony.ValueObjects.RepeatUntil", "RepeatUntil", b1 =>
+                        {
+                            b1.Property<Guid>("TaskId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("Value")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("RepeatUntil");
+
+                            b1.HasKey("TaskId");
+
+                            b1.ToTable("Tasks");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TaskId");
+                        });
+
                     b.Navigation("Assignee");
+
+                    b.Navigation("CompletedAt");
 
                     b.Navigation("CreatedBy");
 
+                    b.Navigation("DeletedAt");
+
+                    b.Navigation("Description")
+                        .IsRequired();
+
                     b.Navigation("Direction");
+
+                    b.Navigation("RepeatUntil");
+                });
+
+            modelBuilder.Entity("Taskmony.Models.User", b =>
+                {
+                    b.OwnsOne("Taskmony.ValueObjects.DisplayName", "DisplayName", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("DisplayName");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.OwnsOne("Taskmony.ValueObjects.Email", "Email", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Email");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.OwnsOne("Taskmony.ValueObjects.Login", "Login", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("Login");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("DisplayName")
+                        .IsRequired();
+
+                    b.Navigation("Email")
+                        .IsRequired();
+
+                    b.Navigation("Login")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Taskmony.Models.Comments.IdeaComment", b =>

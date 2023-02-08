@@ -1,24 +1,55 @@
 using HotChocolate.AspNetCore.Authorization;
+using HotChocolate.Resolvers;
+using Taskmony.Errors;
 using Taskmony.Models;
-using Taskmony.Services;
+using Taskmony.Services.Abstract;
 
 namespace Taskmony.GraphQL;
 
 public class Query
 {
     [Authorize]
-    public IQueryable<User> GetUsers([Service] IUserService userService,
-        [Service] IUserIdentifierProvider userIdentifierProvider,
+    public async Task<IEnumerable<User>?> GetUsers([Service] IUserService userService,
+        [GlobalState] Guid currentUserId, IResolverContext resolverContext,
         Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
     {
-        var users = userService.Get(id, email, login, offset, limit, userIdentifierProvider.UserId);
-
-        return users.Select(x => new User
+        if (id is not null && id.Any(x => x == Guid.Empty))
         {
-            Id = x.Id,
-            Email = x.Id == userIdentifierProvider.UserId ? x.Email : null,
-            Login = x.Login,
-            DisplayName = x.DisplayName
-        });
+            for (var i = 0; i < id.Length; i++)
+            {
+                if (id[i] == Guid.Empty)
+                {
+                    resolverContext.ReportError(
+                        ErrorBuilder.New()
+                            .SetMessage(ValidationErrors.InvalidId.Message)
+                            .SetCode(ValidationErrors.InvalidId.Code)
+                            .SetPath(resolverContext.Path.Append(i))
+                            .Build());
+                }
+            }
+        }
+
+        return await userService.GetUsersAsync(id, email, login, offset, limit, currentUserId);
+    }
+
+    [Authorize]
+    public async Task<IEnumerable<Models.Task>?> GetTasks([Service] ITaskService taskService,
+        [GlobalState] Guid currentUserId, Guid[]? id, Guid?[]? directionId, int? offset, int? limit)
+    {
+        return await taskService.GetTasksAsync(id, directionId, offset, limit, currentUserId);
+    }
+
+    [Authorize]
+    public async Task<IEnumerable<Idea>?> GetIdeas([Service] IIdeaService ideaService,
+    [GlobalState] Guid currentUserId, Guid[]? id, Guid?[]? directionId, int? offset, int? limit)
+    {
+        return await ideaService.GetIdeasAsync(id, directionId, offset, limit, currentUserId);
+    }
+
+    [Authorize]
+    public async Task<IEnumerable<Direction>?> GetDirections([Service] IDirectionService directionService,
+        [GlobalState] Guid currentUserId, Guid[]? id, int? offset, int? limit)
+    {
+        return await directionService.GetDirectionsAsync(id, offset, limit, currentUserId);
     }
 }

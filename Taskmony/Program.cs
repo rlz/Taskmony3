@@ -5,14 +5,18 @@ using Taskmony.Data;
 using Taskmony.Errors;
 using Taskmony.GraphQL;
 using Taskmony.GraphQL.Comments;
+using Taskmony.GraphQL.Converters;
 using Taskmony.GraphQL.Directions;
 using Taskmony.GraphQL.Errors;
 using Taskmony.GraphQL.Ideas;
 using Taskmony.GraphQL.Notifications;
+using Taskmony.GraphQL.Subscriptions;
 using Taskmony.GraphQL.Tasks;
 using Taskmony.GraphQL.Users;
 using Taskmony.Repositories;
+using Taskmony.Repositories.Abstract;
 using Taskmony.Services;
+using Taskmony.Services.Abstract;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,10 +56,24 @@ builder.Services.Configure<JwtOptions>(
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ITaskRepository, TaskRepository>();
+builder.Services.AddTransient<ICommentRepository, CommentRepository>();
+builder.Services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
+builder.Services.AddTransient<IIdeaRepository, IdeaRepository>();
+builder.Services.AddTransient<IDirectionRepository, DirectionRepository>();
+
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
-builder.Services.AddScoped<IUserIdentifierProvider, UserIdentifierProvider>();
+builder.Services.AddTransient<ITimeConverter, TimeConverter>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ITaskService, TaskService>();
+builder.Services.AddTransient<ICommentService, CommentService>();
+builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
+builder.Services.AddTransient<INotificationService, NotificationService>();
+builder.Services.AddTransient<IIdeaService, IdeaService>();
+builder.Services.AddTransient<IDirectionService, DirectionService>();
+builder.Services.AddTransient<IUserIdentifierProvider, UserIdentifierProvider>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -66,13 +84,11 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services
     .AddGraphQLServer()
-    .AddErrorFilter(provider =>
-    {
-        return new ErrorFilter(
-            provider.GetRequiredService<ILogger<ErrorFilter>>(),
-            builder.Environment);
-    })
+    .AddErrorFilter(provider => new ErrorFilter(
+        provider.GetRequiredService<ILogger<ErrorFilter>>(),
+        builder.Environment))
     .AddAuthorization()
+    .AddHttpRequestInterceptor<HttpRequestInterceptor>()
     .AddQueryType<Query>()
     .AddType<TaskType>()
     .AddType<IdeaType>()
@@ -80,15 +96,26 @@ builder.Services
     .AddType<DirectionType>()
     .AddType<CommentType>()
     .AddType<NotificationType>()
-    .BindRuntimeType<Guid, IdType>();
+    .AddMutationType()
+    .AddTypeExtension<TaskMutations>()
+    .AddTypeExtension<IdeaMutations>()
+    .AddTypeExtension<CommentMutations>()
+    .AddTypeExtension<DirectionMutations>()
+    .AddTypeExtension<UserMutations>()
+    .AddSubscriptionType<SubscriptionMutations>()
+    .BindRuntimeType<Guid, IdType>()
+    .AddTypeConverter<StringToGuidConverter>()
+    .AddTypeConverter<GuidToStringConverter>()
+    .AddTypeConverter<ValueObjectToStringConverter>()
+    .AddTypeConverter<DateTimeToStringConverter>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
@@ -97,7 +124,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => endpoints.MapGraphQL());
+app.MapGraphQL();
 
 app.MapControllers();
 

@@ -2,7 +2,6 @@ type Query {
   tasks(
     id: [ID!]
     directionId: [ID]
-    withNotificationsAfter: String
     offset: Int
     limit: Int
   ): [Task!]
@@ -10,7 +9,6 @@ type Query {
   ideas(
     id: [ID!]
     directionId: [ID]
-    withNotificationsAfter: String
     offset: Int
     limit: Int
   ): [Idea!]
@@ -24,8 +22,7 @@ type Query {
   ): [User!]
 
   directions(
-    id: [ID!]
-    withNotificationsAfter: String
+    id: [ID!] 
     offset: Int
     limit: Int
   ): [Direction!]
@@ -47,10 +44,7 @@ type Mutation {
     generation: Generation!
   ): Idea
 
-  directionAdd(
-    name: String!
-    details: String
-  ): Direction
+  directionAdd(name: String!, details: String): Direction
 
   tasksGenerate(
     description: String!
@@ -59,21 +53,30 @@ type Mutation {
     directionId: ID
     startAt: String!
     repeatMode: RepeatMode!
-    repeatEvery: Int
-    numberOfRepetitions: Int!
+    repeatEvery: Int!
+    weekDays: [WeekDay!]
+    repeatUntil: String!
   ): [ID!]
 
   taskAddComment(taskId: ID!, text: String!): Comment
   ideaAddComment(ideaId: ID!, text: String!): Comment 
 
-  taskSetDescription(taskId: ID!, description: String!): ID
-  taskSetDetails(taskId: ID!, details: String): ID
-  taskSetDirection(taskId: ID!, directionId: ID): ID
-  taskSetDeletedAt(taskId: ID!, deletedAt: String): ID
-  taskSetAssignee(taskId: ID!, assigneeId: ID): ID
-  taskSetStartAt(taskId: ID!, startAt: String): ID
+  taskSetDescription(taskId: ID, groupId: ID, description: String!): [ID!]
+  taskSetDetails(taskId: ID, groupId: ID, details: String): [ID!]
+  taskSetDirection(taskId: ID, groupId: ID, directionId: ID): [ID!]
+  taskSetDeletedAt(taskId: ID, groupId: ID, deletedAt: String, all: Boolean): [ID!]
+  taskSetAssignee(taskId: ID, groupId: ID, assigneeId: ID): [ID!]
+  taskSetStartAt(taskId: ID, groupId: ID, startAt: String!): [ID!]
   taskSetCompletedAt(taskId: ID!, completedAt: String): ID
-  taskRecurringDeleteAll(groupId: ID!): [ID!]
+  taskSetRepeatUntil(groupId: ID!, repeatUntil: String!): [ID!]
+  taskSetRepeatMode(
+    taskId: ID
+    groupId: ID
+    repeatMode: RepeatMode
+    repeatEvery: Int
+    weekDays: [WeekDay!] 
+    repeatUntil: String
+  ): [ID!]
 
   ideaSetDescription(ideaId: ID!, description: String!): ID
   ideaSetDetails(entityId: ID!, details: String): ID
@@ -83,11 +86,13 @@ type Mutation {
   ideaSetReviewedAt(ideaId: ID!, reviewedAt: String): ID
 
   commentSetText(commentId: ID!, text: String!): ID
+  commentSetDeletedAt(commentId: ID!, deletedAt: String): ID
 
   directionSetName(directionId: ID!, name: String!): ID
   directionSetDetails(directionId: ID!, details: String): ID
   directionAddMember(directionId: ID!, userId: ID!): ID
   directionRemoveMember(directionId: ID!, userId: ID!): ID
+  directionSetDeletedAt(directionId: ID!, deletedAt: String): ID
 
   userSetNotificationReadTime(notificationReadTime: String!): ID
   userSetLogin(login: String!): ID
@@ -107,7 +112,16 @@ enum RepeatMode {
   WEEK
   MONTH
   YEAR
-  CUSTOM
+}
+
+enum WeekDay {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
 }
 
 type Task {
@@ -121,19 +135,14 @@ type Task {
   direction: Direction
   createdAt: String
   deletedAt: String
-  comments(
-    offset: Int
-    limit: Int
-  ): [Comment!]
-  subscribers: [User!]
   repeatMode: RepeatMode
+  weekDays: [WeekDay!]
   repeatEvery: Int
-  numberOfRepetitions: Int
+  repeatUntil: String
   groupId: ID
-  notifications(
-    start: String
-    end: String
-  ): [Notification!]
+  comments(offset: Int, limit: Int): [Comment!]
+  subscribers(offset: Int, limit: Int): [User!]
+  notifications(start: String, end: String): [Notification!]
 }
 
 enum Generation {
@@ -152,15 +161,9 @@ type Idea {
   createdAt: String
   deletedAt: String
   reviewedAt: String
-  comments(
-    offset: Int
-    limit: Int
-  ): [Comment!]
-  subscribers: [User!]
-  notifications(
-    start: String
-    end: String
-  ): [Notification!]
+  comments(offset: Int, limit: Int): [Comment!]
+  subscribers(offset: Int, limit: Int): [User!]
+  notifications(start: String, end: String): [Notification!]
 }
 
 type User {
@@ -170,15 +173,13 @@ type User {
   displayName: String
   email: String
   notificationReadTime: String
-  tasks: [Task!]
-  ideas: [Idea!]
-  directions: [Direction!]
 }
 
 type Comment {
   id: ID!
   createdBy: User
   createdAt: String
+  deletedAt: String
   text: String
 }
 
@@ -189,13 +190,8 @@ type Direction {
   createdBy: User
   createdAt: String
   deletedAt: String
-  members: [User!]
-  tasks: [Task!]
-  ideas: [Idea!]
-  notifications(
-    start: String
-    end: String
-  ): [Notification!]
+  members(offset: Int, limit: Int): [User!]
+  notifications(start: String, end: String): [Notification!]
 }
 
 enum ActionType {

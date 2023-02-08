@@ -10,8 +10,7 @@ public class Query
 {
     [Authorize]
     public async Task<IEnumerable<User>?> GetUsers([Service] IUserService userService,
-        [GlobalState] Guid currentUserId,
-        IResolverContext resolverContext,
+        [GlobalState] Guid currentUserId, IResolverContext resolverContext,
         Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
     {
         if (id is not null && id.Any(x => x == Guid.Empty))

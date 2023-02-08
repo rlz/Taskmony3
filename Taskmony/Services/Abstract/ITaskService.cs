@@ -45,17 +45,17 @@ public interface ITaskService
 
     Task<Guid?> SetTaskStartAtAsync(Guid taskId, DateTime startAtUtc, Guid currentUserId);
 
-    Task<IEnumerable<Guid>> SetRecurringTaskDeletedAtAsync(Guid groupId, DateTime? deletedAtUtc, Guid currentUserId);
+    Task<IEnumerable<Guid>> SetRecurringTaskDeletedAtAsync(Guid groupId, DateTime? deletedAtUtc, Guid currentUserId, bool all);
 
     Task<Guid?> SetTaskDeletedAtAsync(Guid taskId, DateTime? deletedAtUtc, Guid currentUserId);
 
     Task<Guid?> SetTaskCompletedAtAsync(Guid taskId, DateTime? completedAtUtc, Guid currentUserId);
 
     Task<IEnumerable<Guid>> SetRecurringTaskRepeatModeAsync(Guid groupId, RepeatMode? repeatMode, 
-        WeekDay? weekDays, DateTime? startAt, DateTime? repeatUntil, int? repeatEvery, Guid currentUserId);
+        WeekDay? weekDays, DateTime? repeatUntil, int? repeatEvery, Guid currentUserId);
 
     Task<IEnumerable<Guid>> SetTaskRepeatModeAsync(Guid taskId, RepeatMode? repeatMode, WeekDay? weekDays, 
-        DateTime? startAt, DateTime? repeatUntil, int? repeatEvery, Guid currentUserId);
+        DateTime? repeatUntil, int? repeatEvery, Guid currentUserId);
 
     Task<IEnumerable<Guid>> SetRecurringTaskRepeatUntilAsync(Guid groupId, DateTime repeatUntil, Guid currentUserId);
 }

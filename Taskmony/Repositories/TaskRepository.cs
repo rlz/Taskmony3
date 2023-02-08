@@ -91,6 +91,11 @@ public sealed class TaskRepository : ITaskRepository, IDisposable, IAsyncDisposa
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Models.Task>> GetTasksByGroupIdAsync(Guid groupId)
+    {
+        return await _context.Tasks.Where(t => t.GroupId == groupId).ToListAsync();
+    }
+
     public void DeleteTasks(IEnumerable<Models.Task> tasks)
     {
         _context.Tasks.RemoveRange(tasks);

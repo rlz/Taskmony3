@@ -10,4 +10,7 @@ public static class DirectionErrors
 
     public static ErrorDetails AlreadyDeleted =>
         new("Direction already deleted", "DIRECTION_ALREADY_DELETED");
+
+    public static ErrorDetails UserIsAlreadyMember =>
+        new("User is already a member of the direction", "USER_IS_ALREADY_MEMBER");
 }

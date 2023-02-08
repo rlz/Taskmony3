@@ -31,10 +31,9 @@ public class TaskMutations
 
     [Authorize]
     public async Task<IEnumerable<Guid>?> TasksGenerate([Service] ITaskService taskService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, string description, string? details,
-        Guid? assigneeId, Guid? directionId, string startAt, RepeatMode repeatMode, int repeatEvery,
-        WeekDay[]? weekDays,
-        string repeatUntil)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, string description,
+        string? details, Guid? assigneeId, Guid? directionId, string startAt, RepeatMode repeatMode,
+        int repeatEvery, WeekDay[]? weekDays, string repeatUntil)
     {
         var repeatUntilUtc = timeConverter.StringToDateTimeUtc(repeatUntil);
 
@@ -122,7 +121,7 @@ public class TaskMutations
         {
             return await taskService.SetRecurringTaskDirectionAsync(groupId.Value, directionId, currentUserId);
         }
-        
+
         context.ReportError(ErrorBuilder
             .New()
             .SetMessage(ValidationErrors.TaskIdOrGroupIdIsRequired.Message)
@@ -136,7 +135,7 @@ public class TaskMutations
     [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetDeletedAt([Service] ITaskService taskService,
         IResolverContext context, [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId,
-        Guid? taskId, Guid? groupId, string? deletedAt)
+        Guid? taskId, Guid? groupId, string? deletedAt, bool? all)
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
 
@@ -149,7 +148,7 @@ public class TaskMutations
 
         if (groupId is not null)
         {
-            return await taskService.SetRecurringTaskDeletedAtAsync(groupId.Value, deletedAtUtc, currentUserId);
+            return await taskService.SetRecurringTaskDeletedAtAsync(groupId.Value, deletedAtUtc, currentUserId, all ?? false);
         }
 
         context.ReportError(ErrorBuilder
@@ -230,25 +229,23 @@ public class TaskMutations
     [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetRepeatMode([Service] ITaskService taskService,
         IResolverContext context, [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId,
-        Guid? taskId, Guid? groupId, RepeatMode? repeatMode, WeekDay[]? weekDays, string? startAt, 
-        string? repeatUntil, int? repeatEvery)
+        Guid? taskId, Guid? groupId, RepeatMode? repeatMode, WeekDay[]? weekDays, string? repeatUntil, int? repeatEvery)
     {
         DateTime? repeatUntilUtc = repeatUntil == null ? null : timeConverter.StringToDateTimeUtc(repeatUntil);
-        DateTime? startAtUtc = startAt == null ? null : timeConverter.StringToDateTimeUtc(startAt);
         var weekDayFlags = weekDays?.Aggregate((current, weekDay) => current | weekDay);
 
         if (taskId is not null)
         {
             return await taskService.SetTaskRepeatModeAsync(taskId.Value, repeatMode, weekDayFlags, repeatUntilUtc,
-                startAtUtc, repeatEvery, currentUserId);
+                repeatEvery, currentUserId);
         }
 
         if (groupId is not null)
         {
             return await taskService.SetRecurringTaskRepeatModeAsync(groupId.Value, repeatMode, weekDayFlags,
-                startAtUtc, repeatUntilUtc, repeatEvery, currentUserId);
+                repeatUntilUtc, repeatEvery, currentUserId);
         }
-        
+
         context.ReportError(ErrorBuilder
             .New()
             .SetMessage(ValidationErrors.TaskIdOrGroupIdIsRequired.Message)

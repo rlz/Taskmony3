@@ -366,13 +366,13 @@ public class TaskService : ITaskService
     }
 
     public async Task<IEnumerable<Guid>> SetRecurringTaskDeletedAtAsync(Guid groupId, DateTime? deletedAtUtc,
-        Guid currentUserId)
+        Guid currentUserId, bool all)
     {
         var deletedAt = deletedAtUtc is not null ? DeletedAt.From(deletedAtUtc.Value) : null;
 
-        var tasks = deletedAtUtc is not null
-            ? await GetActiveTasksOrThrowAsync(groupId, currentUserId)
-            : await GetNotCompletedTasksOrThrowAsync(groupId, currentUserId);
+        var tasks = all 
+            ? await GetTasksOrThrowAsync(groupId, currentUserId) 
+            : await GetActiveTasksOrThrowAsync(groupId, currentUserId);
 
         if (deletedAtUtc is not null && tasks.All(t => t.DeletedAt is not null))
         {
@@ -427,7 +427,7 @@ public class TaskService : ITaskService
     }
 
     public async Task<IEnumerable<Guid>> SetRecurringTaskRepeatModeAsync(Guid groupId, RepeatMode? repeatMode,
-        WeekDay? weekDays, DateTime? startAt, DateTime? repeatUntil, int? repeatEvery, Guid currentUserId)
+        WeekDay? weekDays, DateTime? repeatUntil, int? repeatEvery, Guid currentUserId)
     {
         List<Task> tasks;
 
@@ -442,7 +442,7 @@ public class TaskService : ITaskService
             return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
         }
 
-        ValidateRepeatMode(repeatMode, weekDays,  startAt, repeatUntil, repeatEvery);
+        ValidateRepeatMode(repeatMode, weekDays, repeatUntil, repeatEvery);
 
         var repeatUntilValue = RepeatUntil.From(repeatUntil!.Value).Value;
         tasks = await GetActiveTasksOrThrowAsync(groupId, currentUserId);
@@ -474,10 +474,10 @@ public class TaskService : ITaskService
         return await AddRecurringTaskAsync(task, repeatMode.Value, repeatEvery!.Value, task.WeekDays, repeatUntil.Value);
     }
 
-    public async Task<IEnumerable<Guid>> SetTaskRepeatModeAsync(Guid taskId, RepeatMode? repeatMode, WeekDay? weekDays,
-        DateTime? startAt, DateTime? repeatUntil, int? repeatEvery, Guid currentUserId)
+    public async Task<IEnumerable<Guid>> SetTaskRepeatModeAsync(Guid taskId, RepeatMode? repeatMode, WeekDay? weekDays, 
+        DateTime? repeatUntil, int? repeatEvery, Guid currentUserId)
     {
-        ValidateRepeatMode(repeatMode, weekDays, startAt, repeatUntil, repeatEvery);
+        ValidateRepeatMode(repeatMode, weekDays, repeatUntil, repeatEvery);
 
         var task = await GetTaskOrThrowAsync(taskId, currentUserId);
 
@@ -545,6 +545,19 @@ public class TaskService : ITaskService
         return tasks;
     }
 
+    private async Task<List<Task>> GetTasksOrThrowAsync(Guid groupId, Guid currentUserId)
+    {
+        var tasks = (await _taskRepository.GetTasksByGroupIdAsync(groupId)).ToList();
+        var task = tasks.FirstOrDefault();
+
+        if (await IsNotNullAndUserHasAccess(task, currentUserId))
+        {
+            throw new DomainException(TaskErrors.NotFound);
+        }
+
+        return tasks;
+    }
+
     private async Task<List<Task>> GetActiveTasksOrThrowAsync(Guid groupId, Guid currentUserId)
     {
         var tasks = (await _taskRepository.GetActiveTasksAsync(groupId)).ToList();
@@ -580,8 +593,7 @@ public class TaskService : ITaskService
                !await _directionService.AnyMemberWithIdAsync(task.DirectionId.Value, currentUserId);
     }
 
-    private void ValidateRepeatMode(RepeatMode? repeatMode, WeekDay? weekDays, DateTime? startAt, 
-        DateTime? repeatUntil, int? repeatEvery)
+    private void ValidateRepeatMode(RepeatMode? repeatMode, WeekDay? weekDays, DateTime? repeatUntil, int? repeatEvery)
     {
         if (repeatMode is null)
         {
@@ -601,11 +613,6 @@ public class TaskService : ITaskService
         if (repeatUntil is null)
         {
             throw new DomainException(ValidationErrors.RepeatUntilIsRequired);
-        }
-        
-        if (startAt is null)
-        {
-            throw new DomainException(ValidationErrors.StartAtIsRequired);
         }
     }
 

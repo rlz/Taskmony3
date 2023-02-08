@@ -73,6 +73,11 @@ public class DirectionService : IDirectionService
 
         var user = await _userService.GetUserOrThrowAsync(memberId);
 
+        if (await _directionRepository.AnyMemberWithIdAsync(directionId, memberId))
+        {
+            throw new DomainException(DirectionErrors.UserIsAlreadyMember);
+        }
+
         _directionRepository.AddMember(new Membership
         {
             DirectionId = direction.Id,

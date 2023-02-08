@@ -27,6 +27,8 @@ public interface ITaskRepository
     /// <returns>active tasks from the group</returns>
     Task<IEnumerable<Models.Task>> GetActiveTasksAsync(Guid groupId);
 
+    Task<IEnumerable<Models.Task>> GetTasksByGroupIdAsync(Guid groupId);
+
     Task AddTaskAsync(Models.Task task);
 
     Task AddTasksAsync(IEnumerable<Models.Task> tasks);

@@ -5,6 +5,9 @@ import {
   ADD_DIRECTION_FAILED,
   ADD_DIRECTION_REQUEST,
   ADD_DIRECTION_SUCCESS,
+  CHANGE_DIRECTION_DETAILS_FAILED,
+  CHANGE_DIRECTION_DETAILS_REQUEST,
+  CHANGE_DIRECTION_DETAILS_SUCCESS,
   GET_DIRECTIONS_FAILED,
   GET_DIRECTIONS_REQUEST,
   GET_DIRECTIONS_SUCCESS,
@@ -17,6 +20,9 @@ type TDirectionsState = {
   add_direction_loading: boolean;
   add_direction_success: boolean;
   add_direction_error: boolean;
+  change_details_loading: boolean;
+  change_details_success: boolean;
+  change_details_error: boolean;
 };
 
 export const directionsInitialState = {
@@ -26,19 +32,25 @@ export const directionsInitialState = {
   add_direction_loading: false,
   add_direction_success: false,
   add_direction_error: false,
+  change_details_loading: false,
+  change_details_success: false,
+  change_details_error: false,
 };
 export const directionsReducer = (
   state: TDirectionsState = directionsInitialState,
   action:
     | { type: typeof GET_DIRECTIONS_SUCCESS; items: Array<any> }
     | { type: typeof ADD_DIRECTION_SUCCESS; direction: any }
+    | { type: typeof CHANGE_DIRECTION_DETAILS_SUCCESS; directionId: string, details: string }
     | {
         type:
           | typeof GET_DIRECTIONS_REQUEST
           | typeof GET_DIRECTIONS_FAILED
           | typeof ADD_DIRECTION_REQUEST
           | typeof ADD_DIRECTION_FAILED
-          | typeof ADD_DIRECTION_SUCCESS;
+          | typeof ADD_DIRECTION_SUCCESS
+          | typeof CHANGE_DIRECTION_DETAILS_REQUEST
+          | typeof CHANGE_DIRECTION_DETAILS_FAILED
       }
 ) => {
   switch (action.type) {
@@ -92,6 +104,28 @@ export const directionsReducer = (
         add_direction_error: true,
         error: true,
       };
+    }
+      case CHANGE_DIRECTION_DETAILS_REQUEST: {
+        return {
+          ...state,
+          change_details_loading: true,
+        };
+      }
+      case CHANGE_DIRECTION_DETAILS_SUCCESS: {
+        return {
+          ...state,
+          items: state.items.map(item=>item.id==action.directionId? {...item,details:action.details} : item),
+          change_details_loading: false,
+          change_details_success: true,
+        };
+      }
+      case CHANGE_DIRECTION_DETAILS_FAILED: {
+        return {
+          ...state,
+          change_details_loading: false,
+          change_details_error: true,
+          error: true,
+        };
     }
     default: {
       return state;

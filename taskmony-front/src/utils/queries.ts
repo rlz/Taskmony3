@@ -33,6 +33,7 @@ export const tasksAllQuery = `{tasks{
   export const directionsAllQuery = `{directions{
     id
     name
+    details
     members
     {
     displayName

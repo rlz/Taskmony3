@@ -12,8 +12,9 @@ export const ADD_DIRECTION_SUCCESS = "ADD_DIRECTION_SUCCESS";
 export const ADD_DIRECTION_FAILED = "ADD_DIRECTION_FAILED";
 
 export const CHANGE_OPEN_DIRECTION = "CHANGE_OPEN_DIRECTION";
-export const CHANGE_DIRECTION_DESCRIPTION = "CHANGE_DIRECTION_DESCRIPTION";
-export const CHANGE_DIRECTION_DETAILS = "CHANGE_DIRECTION_DETAILS";
+export const CHANGE_DIRECTION_DETAILS_REQUEST = "CHANGE_DIRECTION_DETAILS_REQUEST";
+export const CHANGE_DIRECTION_DETAILS_SUCCESS = "CHANGE_DIRECTION_DETAILS_SUCCESS";
+export const CHANGE_DIRECTION_DETAILS_FAILED = "CHANGE_DIRECTION_DETAILS_FAILED";
 export const RESET_DIRECTION = "RESET_DIRECTION";
 export const CHANGE_DIRECTIONS = "CHANGE_DIRECTIONS";
 
@@ -104,6 +105,46 @@ export function addDirection(name) {
       .catch((error) => {
         dispatch({
           type: ADD_DIRECTION_FAILED,
+        });
+      });
+  };
+}
+
+export function changeDetails(details,directionId) {
+  return function (dispatch : Dispatch) {
+    dispatch({ type: CHANGE_DIRECTION_DETAILS_REQUEST });
+    console.log("adding");
+    fetch(URL, {
+  method: 'POST',
+
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer "+getCookie("accessToken"),
+  },
+  body: JSON.stringify({
+    query: `mutation {
+      directionSetDetails(details:"${details}",directionId:"${directionId}")
+    }
+    `
+  })
+})
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_DIRECTION_DETAILS_SUCCESS,
+            directionId:directionId,
+            details: details
+          });
+        } else {
+          dispatch({
+            type: CHANGE_DIRECTION_DETAILS_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_DIRECTION_DETAILS_FAILED,
         });
       });
   };

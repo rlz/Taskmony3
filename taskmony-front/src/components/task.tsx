@@ -42,7 +42,8 @@ export const Task = ({task}) => {
   {edited ? <EditedTask save={save}/> : <TaskUnedited 
   label={task.description}
   checked={!!task.completedAt}
-  direction={task.direction}/>}
+  direction={task.direction}
+  comments={task.comments.length}/>}
   </div>
   )
 }

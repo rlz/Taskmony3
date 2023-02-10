@@ -5,4 +5,13 @@ export type TTask = {
   directionId: string;
   startAt: string;
   id: string;
+  comments: Array<TComment>; 
 };
+
+export type TComment = {
+  text: string;
+  createdAt: string;
+  createdBy: { displayName: string } 
+ } 
+
+

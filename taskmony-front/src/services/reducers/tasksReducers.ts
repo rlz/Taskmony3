@@ -1,6 +1,7 @@
 import { iteratorSymbol } from "immer/dist/internal";
 import { isTemplateSpan } from "typescript";
 import { TTask } from "../../utils/types";
+import { SEND_COMMENT_SUCCESS } from "../actions/comments";
 import {
   ADD_TASK_FAILED,
   ADD_TASK_REQUEST,
@@ -122,6 +123,8 @@ export const editTaskReducer = (
   } | {
     type: typeof CHANGE_OPEN_TASK,
     task: any
+  } | {
+    type: typeof SEND_COMMENT_SUCCESS; comment: any
   }
 ) => {
   switch (action.type) {
@@ -141,6 +144,12 @@ export const editTaskReducer = (
       return {
         ...state,
         details: action.payload,
+      };
+    }
+    case SEND_COMMENT_SUCCESS: {
+      return {
+        ...state,
+        comments: [...state.comments,action.comment],
       };
     }
     default: {

@@ -2,6 +2,12 @@ export const tasksAllQuery = `{tasks{
     id
     description
     completedAt
+    deletedAt
+    assignee
+    {
+      displayName
+      id
+    }
     subscribers 
     {
         id
@@ -14,6 +20,14 @@ export const tasksAllQuery = `{tasks{
      }
     repeatMode
     createdBy { displayName }
+    comments {
+     text
+     createdAt
+     createdBy { displayName } 
+    }
+    repeatMode
+    repeatUntil
+    weekDays
   }}`
 
   export const directionsAllQuery = `{directions{
@@ -26,7 +40,7 @@ export const tasksAllQuery = `{tasks{
     }
   }}`
 
-  export const userAllQuery = `{users{
+  export const userAllQuery = `{users(){
     displayName
     email
   }}`

@@ -20,6 +20,7 @@ import followGray from "../../images/follow.svg";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { CHANGE_TASK_DESCRIPTION } from "../../services/actions/tasksAPI";
 import { WeekPicker } from "./week-picker";
+import { sendTaskComment } from "../../services/actions/comments";
 
 type TaskProps = {
   label?: string;
@@ -66,7 +67,7 @@ export const EditedTask = ({
       </div>
       <Description />
       <Details recurrent={recurrent} />
-      <Comments comments={comments} />
+      <Comments comments={task.comments} taskId={task.id}/>
       <SaveBtn label={"save"} onClick={()=>save(task)} />
     </div>
   );
@@ -169,25 +170,33 @@ const Details = ({ recurrent }) => {
     </div>
   )};
 
-const Comments = ({ comments }) => {
-  const text = `Facit igitur Lucius noster prudenter, qui audire de summo bono potissimum velit;
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Haeret in salebra. Invidiosum nomen est, infame, suspectum.
-  An hoc usque quaque, aliter in vita?`;
-  const [commentInput, setCommentInput] = useState(false);
+const Comments = () => {
+  const taskId = useAppSelector(
+    (store) => store.editedTask.id
+  );
+  const dispatch = useAppDispatch();
+  const comments = useAppSelector(
+    (store) => store.editedTask.comments
+  );
+  const [showInput, setShowInput] = useState<boolean>(false);
+  const [commentInput, setCommentInput] = useState<string>("");
+  const sendComment = () => {
+    dispatch(sendTaskComment(taskId,commentInput));
+    setShowInput(false);
+    setCommentInput("");
+  }
+
   return (
     <>
-      {comments ? (
-        <>
-          <Comment text={text} author={"Ann Smith"} time={"12:30 1.01.22"} />
-          <Comment text={text} author={"Ann Smith"} time={"12:30 1.01.22"} />
-        </>
-      ) : null}
-      {commentInput && <CommentInput />}
+      {comments.map(comment =>
+                <Comment text={comment.text} author={comment.createdBy.displayName} time={comment.createdAt} />
+      )}
+      {showInput && <CommentInput commentValue={commentInput} changeComment={setCommentInput}/>}
       <div className="flex justify-center p-1">
         <AddBtn
           label={commentInput ? "send comment" : "add a new comment"}
           icon={commentInput ? undefined : add}
-          onClick={() => setCommentInput(!commentInput)}
+          onClick={showInput ? sendComment : () => setShowInput(true)}
         />
       </div>
     </>

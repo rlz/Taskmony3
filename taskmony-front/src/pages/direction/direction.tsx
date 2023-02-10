@@ -13,9 +13,9 @@ function Direction() {
   const direction = directions.filter(dir=>dir.id == directionId)[0];
   const renderSwitch = (type?: string) => {
     switch(type){
-      case "about": return <About/>;
-      case "tasks": return <Tasks/>;
-      case "ideas": return <Ideas/>;
+      case "about": return <About directionId={directionId}/>;
+      case "tasks": return <Tasks directionId={directionId}/>;
+      case "ideas": return <Ideas directionId={directionId}/>;
   }}
 
   return (

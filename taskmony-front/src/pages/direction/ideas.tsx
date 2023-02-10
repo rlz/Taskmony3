@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { AddBtn } from "../../components/add-btn/add-btn";
+import { FilterByCreator } from "../../components/filter/by-creator";
+import { FilterByIdeaCategory } from "../../components/filter/by-idea-category";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { FilterItem } from "../../components/filter/filter-item";
 
 import { Idea } from "../../components/idea";
 
-function Ideas() {
+function Ideas({directionId}) {
   return (
     <div className="flex w-full">
       <div className="w-3/4 m-3 ml-0">
@@ -20,39 +22,19 @@ function Ideas() {
         <Idea label={"idea #2"} direction="Taskmony" followed={false}/>
         <Idea label={"idea #3"} followed direction="Taskmony" last/>
       </div>
-      <Filter />
+      <Filter directionId={directionId}/>
     </div>
   );
 }
 
-function Filter() {
-  const [isOpen1, setIsOpen1] = useState<boolean>(true);
-  const [isOpen2, setIsOpen2] = useState<boolean>(true);
+function Filter({directionId}) {
   return (
     <div className="w-1/5 mt-4">
-      <FilterDivider
-        isOpen={isOpen1}
-        setIsOpen={setIsOpen1}
-        title="filter by category"
-      />
-      {isOpen1 && (
-        <>
-          <FilterItem label="hot" checked radio/>
-          <FilterItem label="later" checked={false} radio/>
-          <FilterItem label="too good to delete" checked={false} radio/>
-        </>
-      )}
+      <FilterByIdeaCategory/>
       <hr/>
       <FilterItem label="show followed" checked />
       <hr/>
-      <FilterDivider isOpen={isOpen2} setIsOpen={setIsOpen2} title="filter by creator" />
-      {isOpen2 && (
-        <>
-          <FilterItem label="all" checked />
-          <FilterItem label="me" checked/>
-          <FilterItem label="user #1" checked />
-        </>
-      )}
+      <FilterByCreator id={directionId} />
     </div>
   );
 }

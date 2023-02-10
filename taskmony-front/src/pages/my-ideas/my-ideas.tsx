@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { AddBtn } from "../../components/add-btn/add-btn";
+import { FilterByDirection } from "../../components/filter/by-direction";
+import { FilterByIdeaCategory } from "../../components/filter/by-idea-category";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { FilterItem } from "../../components/filter/filter-item";
 
@@ -18,7 +20,7 @@ function MyIdeas() {
           direction="Taskmony"
         />
         <Idea label={"idea #2"} direction="Taskmony" />
-        <Idea label={"idea #3"} followed direction="Taskmony" last/>
+        <Idea label={"idea #3"} followed direction="Taskmony" last />
       </div>
       <Filter />
     </div>
@@ -26,37 +28,13 @@ function MyIdeas() {
 }
 
 function Filter() {
-  const [isOpen1, setIsOpen1] = useState<boolean>(true);
-  const [isOpen2, setIsOpen2] = useState<boolean>(true);
   return (
     <div className="w-1/5 mt-12">
-      <FilterDivider
-        isOpen={isOpen1}
-        setIsOpen={setIsOpen1}
-        title="filter by category"
-      />
-      {isOpen1 && (
-        <>
-          <FilterItem label="hot" checked radio/>
-          <FilterItem label="later" checked={false} radio/>
-          <FilterItem label="too good to delete" checked={false} radio/>
-        </>
-      )}
-      <hr/>
+      <FilterByIdeaCategory />
+      <hr />
       <FilterItem label="show followed" checked />
-      <hr/>
-      <FilterDivider
-        isOpen={isOpen2}
-        setIsOpen={setIsOpen2}
-        title="filter by direction"
-      />
-      {isOpen2 && (
-        <>
-          <FilterItem label="Project #1" checked />
-          <FilterItem label="Project #1" checked />
-          <FilterItem label="Project #1" checked />
-        </>
-      )}
+      <hr />
+      <FilterByDirection />
     </div>
   );
 }

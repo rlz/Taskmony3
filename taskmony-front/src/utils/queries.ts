@@ -38,6 +38,7 @@ export const tasksAllQuery = `{tasks{
     displayName
     id
     }
+    deletedAt
   }}`
 
   export const userAllQuery = `{users(){

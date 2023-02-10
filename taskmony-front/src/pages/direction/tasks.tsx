@@ -8,8 +8,9 @@ import { FilterDivider } from "../../components/filter/filter-divider";
 import { EditedTask } from "../../components/edited/edited-task";
 import { addTask } from "../../services/actions/tasksAPI";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
+import { FilterByCreator } from "../../components/filter/by-creator";
 
-function Tasks() {
+function Tasks({directionId}) {
   const [newTask, setNewTask] = useState(false);
   const task = useAppSelector((store) => store.editedTask);
   const tasksToShow = useAppSelector((store) => store.tasks.items);
@@ -38,23 +39,13 @@ function Tasks() {
           />
         )}
         {tasks}
-        {/* // <Task
-        //   label={"task #1"}
-        //   comments={1}
-        //   recurrent="every Thursday"
-        //   createdBy="Ann Smith"
-        //   direction="Taskmony"
-        // />
-        // <Task label={"task #1"} direction="Taskmony" />
-        // <Task label={"task #1"} followed direction="Taskmony" />
-        // <Task label={"task #1"} followed direction="Taskmony" /> */}
       </div>
-      <Filter />
+      <Filter directionId={directionId}/>
     </div>
   );
 }
 
-function Filter() {
+function Filter({directionId}) {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   return (
     <div className="w-1/5 mt-4">
@@ -63,14 +54,7 @@ function Filter() {
       <FilterItem label="show assigned by me" checked />
       <FilterItem label="show followed" checked />
       <hr/>
-      <FilterDivider isOpen={isOpen} setIsOpen={setIsOpen} title="filter by creator" />
-      {isOpen && (
-        <>
-          <FilterItem label="all" checked />
-          <FilterItem label="me" checked/>
-          <FilterItem label="user #1" checked />
-        </>
-      )}
+      <FilterByCreator id={directionId}/>
     </div>
   );
 }

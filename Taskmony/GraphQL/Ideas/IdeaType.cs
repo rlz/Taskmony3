@@ -43,7 +43,7 @@ public class IdeaType : ObjectType<Idea>
             .Type<ListType<NonNullType<NotificationType>>>()
             .Argument("start", a => a.Type<StringType>())
             .Argument("end", a => a.Type<StringType>())
-            .ResolveWith<Resolvers>(r => r.GetNotifications(default!, default!, default!, default!, default, default));
+            .ResolveWith<Resolvers>(r => r.GetNotifications(default!, default!, default!, default!, default!, default, default));
 
         //Extension
         descriptor
@@ -104,8 +104,8 @@ public class IdeaType : ObjectType<Idea>
         }
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Idea idea, IResolverContext context,
-            [Service] IServiceProvider serviceProvider, [Service] ITimeConverter timeConverter, string? start,
-            string? end)
+            [GlobalState] Guid currentUserId, [Service] IServiceProvider serviceProvider, 
+            [Service] ITimeConverter timeConverter, string? start, string? end)
         {
             DateTime? startUtc = start is null ? null : timeConverter.StringToDateTimeUtc(start);
             DateTime? endUtc = end is null ? null : timeConverter.StringToDateTimeUtc(end);
@@ -116,7 +116,7 @@ public class IdeaType : ObjectType<Idea>
                     await using var scope = serviceProvider.CreateAsyncScope();
 
                     var notifications = await scope.ServiceProvider.GetRequiredService<INotificationService>()
-                        .GetNotificationsByNotifiableIdsAsync(notifiableIds.ToArray(), startUtc, endUtc);
+                        .GetNotificationsByNotifiableIdsAsync(NotifiableType.Idea, notifiableIds.ToArray(), startUtc, endUtc, currentUserId);
 
                     return notifications.ToLookup(n => n.NotifiableId);
                 }, "NotificationByIdeaId"

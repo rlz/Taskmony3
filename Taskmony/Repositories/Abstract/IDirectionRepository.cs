@@ -17,6 +17,8 @@ public interface IDirectionRepository
 
     Task<bool> AnyMemberWithIdAsync(Guid directionId, Guid memberId);
 
+    Task<IEnumerable<Guid>> GetIdsOfUsersWithCommonDirection(Guid user, IEnumerable<Guid> users);
+
     Task AddDirectionAsync(Direction direction);
 
     void AddMember(Membership membership);

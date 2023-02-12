@@ -12,11 +12,16 @@ public class TaskService : ITaskService
 {
     private readonly ITaskRepository _taskRepository;
     private readonly IDirectionService _directionService;
+    private readonly INotificationService _notificationService;
+    private readonly ITimeConverter _timeConverter;
 
-    public TaskService(ITaskRepository taskRepository, IDirectionService directionService)
+    public TaskService(ITaskRepository taskRepository, IDirectionService directionService,
+        INotificationService notificationService, ITimeConverter timeConverter)
     {
         _taskRepository = taskRepository;
         _directionService = directionService;
+        _notificationService = notificationService;
+        _timeConverter = timeConverter;
     }
 
     public async Task<IEnumerable<Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId, int? offset,
@@ -69,7 +74,17 @@ public class TaskService : ITaskService
 
         await _taskRepository.AddTaskAsync(task);
 
-        return await _taskRepository.SaveChangesAsync() ? task : null;
+        if (!await _taskRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        if (task.AssigneeId is not null)
+        {
+            await _notificationService.NotifyTaskAssignedAsync(task.Id, task.CreatedById, task.AssigneeId.Value);
+        }
+
+        return task;
     }
 
     public async Task<IEnumerable<Guid>> AddRecurringTaskAsync(Task task, RepeatMode repeatMode, int repeatEvery,
@@ -81,24 +96,25 @@ public class TaskService : ITaskService
         }
 
         var repeatUntilValue = RepeatUntil.From(repeatUntil);
-        var tasks = GenerateTasks(task, repeatMode, repeatEvery, weekDays, repeatUntilValue);
+        var tasks = new List<Task>();
+        task.GroupId ??= Guid.NewGuid();
+        task.CreatedAt ??= DateTime.UtcNow;
+
+        tasks.Add(task);
+        tasks.AddRange(GenerateNextTasks(task, repeatMode, repeatEvery, weekDays, repeatUntilValue));
 
         await _taskRepository.AddTasksAsync(tasks);
 
         return await _taskRepository.SaveChangesAsync() ? tasks.Select(t => t.Id) : Array.Empty<Guid>();
     }
 
-    private List<Task> GenerateTasks(Task task, RepeatMode repeatMode, int repeatEvery, WeekDay? weekDays,
+    private List<Task> GenerateNextTasks(Task task, RepeatMode repeatMode, int repeatEvery, WeekDay? weekDays,
         RepeatUntil repeatUntil)
     {
         var tasks = new List<Task>();
 
-        task.GroupId ??= Guid.NewGuid();
-        task.CreatedAt ??= DateTime.UtcNow;
-
         if (weekDays is null || repeatMode != RepeatMode.Week)
         {
-            tasks.Add(task);
             tasks.AddRange(GenerateNextTasks(task, repeatUntil, repeatMode, repeatEvery));
             return tasks;
         }
@@ -116,23 +132,26 @@ public class TaskService : ITaskService
                     startAt = startAt.AddDays(7 * (repeatEvery - 1));
                 }
 
-                task = new Task
+                if (startAt <= repeatUntil.Value)
                 {
-                    Description = Description.From(task.Description!.Value),
-                    Details = task.Details,
-                    DirectionId = task.DirectionId,
-                    StartAt = startAt,
-                    RepeatMode = repeatMode,
-                    RepeatEvery = repeatEvery,
-                    WeekDays = weekDays,
-                    RepeatUntil = RepeatUntil.From(repeatUntil.Value),
-                    CreatedById = task.CreatedById,
-                    CreatedAt = task.CreatedAt,
-                    GroupId = task.GroupId
-                };
+                    task = new Task
+                    {
+                        Description = Description.From(task.Description!.Value),
+                        Details = task.Details,
+                        DirectionId = task.DirectionId,
+                        StartAt = startAt,
+                        RepeatMode = repeatMode,
+                        RepeatEvery = repeatEvery,
+                        WeekDays = weekDays,
+                        RepeatUntil = RepeatUntil.From(repeatUntil.Value),
+                        CreatedById = task.CreatedById,
+                        CreatedAt = task.CreatedAt,
+                        GroupId = task.GroupId
+                    };
 
-                tasks.Add(task);
-                tasks.AddRange(GenerateNextTasks(task, repeatUntil, repeatMode, repeatEvery));
+                    tasks.Add(task);
+                    tasks.AddRange(GenerateNextTasks(task, repeatUntil, repeatMode, repeatEvery));
+                }
             }
         }
 
@@ -292,6 +311,11 @@ public class TaskService : ITaskService
 
         ValidateTasksToUpdate(tasks);
 
+        if (tasks.Count == 0)
+        {
+            return Array.Empty<Guid>();
+        }
+
         tasks.ForEach(t => t.AssigneeId = assigneeId);
 
         await ValidateAssignee(tasks.First());
@@ -309,7 +333,17 @@ public class TaskService : ITaskService
 
         await ValidateAssignee(task);
 
-        return await _taskRepository.SaveChangesAsync() ? taskId : null;
+        if (!await _taskRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        if (assigneeId is not null)
+        {
+            await _notificationService.NotifyTaskAssignedAsync(taskId, currentUserId, assigneeId.Value);
+        }
+
+        return taskId;
     }
 
     public async Task<IEnumerable<Guid>> SetRecurringTaskStartAtAsync(Guid groupId, DateTime startAtUtc,
@@ -334,7 +368,7 @@ public class TaskService : ITaskService
 
             return await _taskRepository.SaveChangesAsync() ? tasksToDelete.Select(t => t.Id) : Array.Empty<Guid>();
         }
-        
+
         var task = new Task
         {
             GroupId = tasks.First().GroupId,
@@ -360,9 +394,12 @@ public class TaskService : ITaskService
 
         ValidateTaskToUpdate(task);
 
+        var oldValue = task.StartAt is null ? null : _timeConverter.DateTimeToString(task.StartAt.Value);
+        var newValue = _timeConverter.DateTimeToString(startAtUtc);
+
         task.StartAt = startAtUtc;
 
-        return await _taskRepository.SaveChangesAsync() ? taskId : null;
+        return await UpdateTaskAndNotify(task, nameof(Task.StartAt), oldValue, newValue, currentUserId);
     }
 
     public async Task<IEnumerable<Guid>> SetRecurringTaskDeletedAtAsync(Guid groupId, DateTime? deletedAtUtc,
@@ -370,8 +407,8 @@ public class TaskService : ITaskService
     {
         var deletedAt = deletedAtUtc is not null ? DeletedAt.From(deletedAtUtc.Value) : null;
 
-        var tasks = all 
-            ? await GetTasksOrThrowAsync(groupId, currentUserId) 
+        var tasks = all
+            ? await GetTasksOrThrowAsync(groupId, currentUserId)
             : await GetActiveTasksOrThrowAsync(groupId, currentUserId);
 
         if (deletedAtUtc is not null && tasks.All(t => t.DeletedAt is not null))
@@ -395,16 +432,19 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.AlreadyDeleted);
         }
 
+        var oldValue = task.DeletedAt is null ? null : _timeConverter.DateTimeToString(task.DeletedAt.Value);
+        var newValue = deletedAt is null ? null : _timeConverter.DateTimeToString(deletedAt.Value);
+
         task.DeletedAt = deletedAt;
 
-        return await _taskRepository.SaveChangesAsync() ? taskId : null;
+        return await UpdateTaskAndNotify(task, nameof(Task.DeletedAt), oldValue, newValue, currentUserId);
     }
 
-    public async Task<Guid?> SetTaskCompletedAtAsync(Guid id, DateTime? completedAtUtc, Guid currentUserId)
+    public async Task<Guid?> SetTaskCompletedAtAsync(Guid taskId, DateTime? completedAtUtc, Guid currentUserId)
     {
         var completedAt = completedAtUtc is not null ? CompletedAt.From(completedAtUtc.Value) : null;
 
-        var task = await GetTaskOrThrowAsync(id, currentUserId);
+        var task = await GetTaskOrThrowAsync(taskId, currentUserId);
 
         if (completedAtUtc is not null && task.DeletedAt is not null)
         {
@@ -421,9 +461,12 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.AlreadyCompleted);
         }
 
+        var oldValue = task.CompletedAt is null ? null : _timeConverter.DateTimeToString(task.CompletedAt.Value);
+        var newValue = completedAt is null ? null : _timeConverter.DateTimeToString(completedAt.Value);
+
         task.CompletedAt = completedAt;
 
-        return await _taskRepository.SaveChangesAsync() ? id : null;
+        return await UpdateTaskAndNotify(task, nameof(Task.CompletedAt), oldValue, newValue, currentUserId);
     }
 
     public async Task<IEnumerable<Guid>> SetRecurringTaskRepeatModeAsync(Guid groupId, RepeatMode? repeatMode,
@@ -459,6 +502,7 @@ public class TaskService : ITaskService
         var task = new Task
         {
             GroupId = tasks.First().GroupId,
+            CreatedAt = tasks.First().CreatedAt,
             CreatedById = tasks.First().CreatedById,
             Description = Description.From(tasks.First().Description!.Value),
             Details = tasks.First().Details,
@@ -471,10 +515,11 @@ public class TaskService : ITaskService
             RepeatUntil = RepeatUntil.From(repeatUntilValue)
         };
 
-        return await AddRecurringTaskAsync(task, repeatMode.Value, repeatEvery!.Value, task.WeekDays, repeatUntil.Value);
+        return await AddRecurringTaskAsync(task, repeatMode.Value, repeatEvery!.Value, task.WeekDays,
+            repeatUntil.Value);
     }
 
-    public async Task<IEnumerable<Guid>> SetTaskRepeatModeAsync(Guid taskId, RepeatMode? repeatMode, WeekDay? weekDays, 
+    public async Task<IEnumerable<Guid>> SetTaskRepeatModeAsync(Guid taskId, RepeatMode? repeatMode, WeekDay? weekDays,
         DateTime? repeatUntil, int? repeatEvery, Guid currentUserId)
     {
         ValidateRepeatMode(repeatMode, weekDays, repeatUntil, repeatEvery);
@@ -483,15 +528,37 @@ public class TaskService : ITaskService
 
         ValidateTaskToUpdate(task);
 
+        var oldValue = task.RepeatMode is null ? null : task.RepeatMode.ToString();
+        var newValue = repeatMode is null ? null : repeatMode.ToString();
+
+        _taskRepository.DeleteTasks(new List<Task> { task });
+
         task.RepeatMode = repeatMode;
         task.RepeatEvery = repeatEvery;
         task.WeekDays = weekDays;
         task.RepeatUntil = RepeatUntil.From(repeatUntil!.Value);
+        task.GroupId = Guid.NewGuid();
 
-        return await AddRecurringTaskAsync(task, repeatMode!.Value, repeatEvery!.Value, weekDays, repeatUntil.Value);
+        if (!await _taskRepository.SaveChangesAsync())
+        {
+            return Array.Empty<Guid>();
+        }
+
+        var tasks = GenerateNextTasks(task, repeatMode!.Value, repeatEvery!.Value, weekDays, RepeatUntil.From(repeatUntil.Value));
+
+        await _taskRepository.AddTasksAsync(tasks);
+        await _taskRepository.SaveChangesAsync();
+        
+        await _notificationService.NotifyTaskUpdatedAsync(task.Id, currentUserId, nameof(Task.RepeatMode), oldValue, newValue);
+
+        var updatedTasks = new List<Task> { task };
+        updatedTasks.AddRange(tasks);
+
+        return updatedTasks.Select(t => t.Id);
     }
 
-    public async Task<IEnumerable<Guid>> SetRecurringTaskRepeatUntilAsync(Guid groupId, DateTime repeatUntil, Guid currentUserId)
+    public async Task<IEnumerable<Guid>> SetRecurringTaskRepeatUntilAsync(Guid groupId, DateTime repeatUntil,
+        Guid currentUserId)
     {
         var tasks = await GetActiveTasksOrThrowAsync(groupId, currentUserId);
 
@@ -516,6 +583,7 @@ public class TaskService : ITaskService
         var task = new Task
         {
             GroupId = tasks.First().GroupId,
+            CreatedAt = tasks.First().CreatedAt,
             CreatedById = tasks.First().CreatedById,
             Description = Description.From(tasks.First().Description!.Value),
             Details = tasks.First().Details,
@@ -530,6 +598,19 @@ public class TaskService : ITaskService
 
         return await AddRecurringTaskAsync(task, tasks.First().RepeatMode!.Value, tasks.First().RepeatEvery!.Value,
             tasks.First().WeekDays, repeatUntil);
+    }
+
+    private async Task<Guid?> UpdateTaskAndNotify(Task task, string field, string? oldValue, string? newValue,
+        Guid currentUserId)
+    {
+        if (!await _taskRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        await _notificationService.NotifyTaskUpdatedAsync(task.Id, currentUserId, field, oldValue, newValue);
+
+        return task.Id;
     }
 
     private async Task<List<Task>> GetNotCompletedTasksOrThrowAsync(Guid groupId, Guid currentUserId)

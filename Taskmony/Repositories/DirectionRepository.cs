@@ -113,6 +113,17 @@ public sealed class DirectionRepository : IDirectionRepository, IDisposable, IAs
         return await _context.Memberships.AnyAsync(m => m.DirectionId == directionId && m.UserId == memberId);
     }
 
+    public async Task<IEnumerable<Guid>> GetIdsOfUsersWithCommonDirection(Guid user, IEnumerable<Guid> users)
+    {
+        var query = from m1 in _context.Memberships
+                    join m2 in _context.Memberships
+                    on m1.DirectionId equals m2.DirectionId
+                    where m1.UserId == user && users.Contains(m2.UserId)
+                    select m2.UserId;
+
+        return await query.ToListAsync();
+    }
+
     public async Task AddDirectionAsync(Direction direction)
     {
         await _context.Directions.AddAsync(direction);

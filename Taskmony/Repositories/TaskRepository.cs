@@ -87,7 +87,7 @@ public sealed class TaskRepository : ITaskRepository, IDisposable, IAsyncDisposa
     public async Task<IEnumerable<Models.Task>> GetActiveTasksAsync(Guid groupId)
     {
         return await _context.Tasks
-            .Where(t => t.GroupId == groupId && t.CompletedAt == null && t.DeletedAt == null)
+            .Where(t => t.GroupId == groupId && t.CompletedAt == null && t.DeletedAt == null && t.StartAt >= DateTime.UtcNow.Date)
             .ToListAsync();
     }
 

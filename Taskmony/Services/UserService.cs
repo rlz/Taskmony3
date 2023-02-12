@@ -12,12 +12,15 @@ namespace Taskmony.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IDirectionRepository _directionRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtProvider _jwtProvider;
 
-    public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher, IJwtProvider jwtProvider)
+    public UserService(IUserRepository userRepository, IDirectionRepository directionRepository,
+        IPasswordHasher passwordHasher, IJwtProvider jwtProvider)
     {
         _userRepository = userRepository;
+        _directionRepository = directionRepository;
         _passwordHasher = passwordHasher;
         _jwtProvider = jwtProvider;
     }
@@ -88,16 +91,22 @@ public class UserService : IUserService
             .Select(l => l.Trim())
             .ToArray();
 
-        var users = await _userRepository.GetUsersAsync(id, email, login, offsetValue, limitValue);
+        var users = (await _userRepository.GetUsersAsync(id, email, login, offsetValue, limitValue)).ToList();
+        var idsOfUsersThatCanBeSeen = await GetIdsOfUsersThatCanBeSeen(currentUserId, users.Select(u => u.Id));
 
         return users.Select(x => new User
         {
             Id = x.Id,
-            Email = x.Id == currentUserId ? x.Email : null,
+            Email = idsOfUsersThatCanBeSeen.Contains(x.Id) ? x.Email : null,
             Login = x.Login,
             DisplayName = x.DisplayName,
             NotificationReadTime = x.Id == currentUserId ? x.NotificationReadTime : null,
         });
+    }
+
+    private async Task<IEnumerable<Guid>> GetIdsOfUsersThatCanBeSeen(Guid seerId, IEnumerable<Guid> seenIds)
+    {
+        return await _directionRepository.GetIdsOfUsersWithCommonDirection(seerId, seenIds);
     }
 
     public async Task<bool> SetEmailAsync(Guid id, string email, Guid currentUserId)

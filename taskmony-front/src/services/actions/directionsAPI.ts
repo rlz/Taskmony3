@@ -19,6 +19,11 @@ export const REMOVE_USER_REQUEST = "REMOVE_USER_REQUEST";
 export const REMOVE_USER_SUCCESS = "REMOVE_USER_SUCCESS";
 export const REMOVE_USER_FAILED = "REMOVE_USER_FAILED";
 
+export const REMOVE_DIRECTION = "REMOVE_DIRECTION";
+export const DELETE_DIRECTION_REQUEST = "DELETE_DIRECTION_REQUEST";
+export const DELETE_DIRECTION_SUCCESS = "DELETE_DIRECTION_SUCCESS";
+export const DELETE_DIRECTION_FAILED = "DELETE_DIRECTION_FAILED";
+
 export const CHANGE_OPEN_DIRECTION = "CHANGE_OPEN_DIRECTION";
 export const CHANGE_DIRECTION_DETAILS_REQUEST = "CHANGE_DIRECTION_DETAILS_REQUEST";
 export const CHANGE_DIRECTION_DETAILS_SUCCESS = "CHANGE_DIRECTION_DETAILS_SUCCESS";
@@ -113,6 +118,46 @@ export function addDirection(name) {
       .catch((error) => {
         dispatch({
           type: ADD_DIRECTION_FAILED,
+        });
+      });
+  };
+}
+export function deleteDirection(directionId) {
+  const deletedDate = (new Date).toISOString();
+  return function (dispatch : Dispatch) {
+    dispatch({ type: DELETE_DIRECTION_REQUEST });
+    console.log("deleting direction");
+    fetch(URL, {
+  method: 'POST',
+
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer "+getCookie("accessToken"),
+  },
+  body: JSON.stringify({
+    query: `mutation {
+      directionSetDeletedAt(directionId:"${directionId}",deletedAt:"${deletedDate}")
+    }
+    `
+  })
+})
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: DELETE_DIRECTION_SUCCESS,
+            directionId:directionId,
+            deletedAt: deletedDate,
+          });
+        } else {
+          dispatch({
+            type: DELETE_DIRECTION_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: DELETE_DIRECTION_FAILED,
         });
       });
   };

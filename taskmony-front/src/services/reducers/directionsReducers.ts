@@ -11,9 +11,13 @@ import {
   CHANGE_DIRECTION_DETAILS_FAILED,
   CHANGE_DIRECTION_DETAILS_REQUEST,
   CHANGE_DIRECTION_DETAILS_SUCCESS,
+  DELETE_DIRECTION_FAILED,
+  DELETE_DIRECTION_REQUEST,
+  DELETE_DIRECTION_SUCCESS,
   GET_DIRECTIONS_FAILED,
   GET_DIRECTIONS_REQUEST,
   GET_DIRECTIONS_SUCCESS,
+  REMOVE_DIRECTION,
   REMOVE_USER_FAILED,
   REMOVE_USER_REQUEST,
   REMOVE_USER_SUCCESS,
@@ -47,6 +51,8 @@ export const directionsReducer = (
   action:
     | { type: typeof GET_DIRECTIONS_SUCCESS; items: Array<any> }
     | { type: typeof ADD_DIRECTION_SUCCESS; direction: any }
+    | { type: typeof REMOVE_DIRECTION; directionId: string }
+    | { type: typeof DELETE_DIRECTION_SUCCESS; directionId: string, deletedAt: string }
     | { type: typeof ADD_USER_SUCCESS; directionId: any, user: {displayName: string, id: string} }
     | { type: typeof REMOVE_USER_SUCCESS; directionId: any, user: {displayName: string, id: string} }
     | { type: typeof CHANGE_DIRECTION_DETAILS_SUCCESS; directionId: string, details: string }
@@ -57,6 +63,8 @@ export const directionsReducer = (
           | typeof GET_DIRECTIONS_FAILED
           | typeof ADD_DIRECTION_REQUEST
           | typeof ADD_DIRECTION_FAILED
+          | typeof DELETE_DIRECTION_REQUEST
+          | typeof DELETE_DIRECTION_FAILED
           | typeof ADD_USER_REQUEST
           | typeof ADD_USER_FAILED
           | typeof REMOVE_USER_REQUEST
@@ -117,6 +125,12 @@ export const directionsReducer = (
         error: true,
       };
     }
+    case REMOVE_DIRECTION: {
+      return {
+        ...state,
+        items: state.items.filter(item=> item.id != action.directionId),
+      };
+    }
     case ADD_USER_REQUEST: {
       return {
         ...state,
@@ -136,6 +150,27 @@ export const directionsReducer = (
         ...state,
         add_user_loading: false,
         add_user_error: true,
+      };
+    }
+    case DELETE_DIRECTION_REQUEST: {
+      return {
+        ...state,
+        delete_direction_loading: true,
+      };
+    }
+    case DELETE_DIRECTION_SUCCESS: {
+      return {
+        ...state,
+        items: state.items.map(item=>item.id==action.directionId? {...item,deletedAt:action.deletedAt} : item),
+        delete_direction_loading: false,
+        delete_direction_success: true,
+      };
+    }
+    case DELETE_DIRECTION_FAILED: {
+      return {
+        ...state,
+        delete_direction_loading: false,
+        delete_direction_error: true,
       };
     }
     case REMOVE_USER_REQUEST: {

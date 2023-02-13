@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { AddUserModal } from "../../components/add-user-modal/add-user-modal";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { getCookie } from "../../utils/cookies";
-import { changeDetails, removeUser } from "../../services/actions/directionsAPI";
+import { changeDetails, deleteDirection, removeUser, REMOVE_DIRECTION } from "../../services/actions/directionsAPI";
 
 export const About = ({ directionId }) => {
   const dispatch = useAppDispatch();
@@ -18,14 +18,27 @@ export const About = ({ directionId }) => {
   const amIOwner = direction
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  useEffect(()=>{
-  setAbout(direction?.details)
-  },[direction])
-  const leaveDirection = () => {
 
+  useEffect(()=>{
+  setAbout(direction?.details);
+  },[direction?.details])
+
+  // useEffect(()=>{
+  //   if(direction.members.length == 0) leaveDirection();
+  //   },[direction.members])
+  
+  const leaveDirection = () => {
+  //remove yourself 
+  dispatch(removeUser(directionId,{id:myId}))
+  //remove from list
+  dispatch(REMOVE_DIRECTION,directionId)
+  //do to start page
   }
-  const deleteDirection = () => {
-    
+  const deleteThisDirection = () => {
+  //setDeletedAt  
+  dispatch(deleteDirection(directionId));
+  //remove from list
+  //do to start page
   }
 
   const saveDescription = () => dispatch(changeDetails(about,directionId));
@@ -36,7 +49,7 @@ export const About = ({ directionId }) => {
       {isModalOpen && <AddUserModal close={() => setIsModalOpen(false)} />}
       <div className="flex justify-end gap-2">
         <Btn onClick={leaveDirection} label="Leave direction" color="blue"/>
-        <Btn onClick={deleteDirection} label="Delete direction" color="red"/>
+        <Btn onClick={deleteThisDirection} label="Delete direction" color="red"/>
       </div>
       <AboutElement value={about} onChange={setAbout} saveDescription={saveDescription}/>
       <FilterDivider isOpen={isOpen} setIsOpen={setIsOpen} title="USERS:" />
@@ -106,7 +119,7 @@ type LeaveBtnPropsT = {
 const Btn = ({ onClick, label, color }) => {
   return (
     <div
-      className={`p-1 w-fit mt-4 mb-2 pl-2 pr-2 bg-${color}-400 rounded-lg`}
+      className={`p-1 w-fit mt-4 mb-2 pl-2 pr-2 bg-${color}-400 rounded-lg cursor-pointer`}
       onClick={() => onClick()}
     >
       <span className={"text-white"}>{label}</span>

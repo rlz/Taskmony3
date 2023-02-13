@@ -5,7 +5,7 @@ import { FilterItem } from "./filter-item";
 
 export const  FilterByDirection = () => {
     const [isOpen, setIsOpen] = useState<boolean>(true);
-    const directions = useAppSelector((store) => store.directions.items);
+    const directions = useAppSelector((store) => store.directions.items).filter(i=>i.deletedAt == null);
     return (
         <>
         <FilterDivider

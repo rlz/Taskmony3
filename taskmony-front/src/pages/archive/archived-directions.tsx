@@ -6,13 +6,16 @@ import { FilterDivider } from "../../components/filter/filter-divider";
 import { FilterItem } from "../../components/filter/filter-item";
 import { Idea } from "../../components/idea";
 import hrLine from "../../images/hr-line.svg";
+import { useAppSelector } from "../../utils/hooks";
 
 export const ArchivedDirections = () => {
+  const directions = useAppSelector((store) => store.directions.items).filter(i=>i.deletedAt != null);
     return (
       <div className="flex w-full">
         <div className="w-3/4  m-3 ml-0">
-          <ArchivedItem label={"direction #2"}  />
-          <ArchivedItem label={"direction #3"}  />
+          {directions.map(dir=>
+                    <ArchivedItem label={dir.name} date={dir.deletedAt}  />
+            )}
         </div>
         <Filter />
       </div>

@@ -15,13 +15,13 @@ import { useState } from "react";
 
 type Props = {
   label: string;
-  comments?: number;
+  date?: string;
   direction?:string;
 };
 
 export const ArchivedItem = ({
   label,
-  comments,
+  date,
   direction
 }: Props) => {
   return (
@@ -36,8 +36,8 @@ export const ArchivedItem = ({
         "gap flex justify-start pb-2 w-full ml-1"
       }
     >       
-      {<Details
-        icon={commentsI} label={comments ? comments.toString() : "0"} hasBorder
+      {date && <Details
+        label={(new Date(date)).toLocaleString()} hasBorder
       />}
             {<Details
         label={direction} textColor="text-yellow-500"

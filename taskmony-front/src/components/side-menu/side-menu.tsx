@@ -136,7 +136,7 @@ type DirectionsMenuPropsT = {
 
 const DirectionsMenu = ({ openDirection }: DirectionsMenuPropsT) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
-  const directions = useAppSelector((store) => store.directions.items);
+  const directions = useAppSelector((store) => store.directions.items).filter(i=>i.deletedAt == null);
   const directionsList = directions.map(dir=>
     <li>
     <MenuItem

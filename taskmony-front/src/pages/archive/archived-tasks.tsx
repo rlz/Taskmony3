@@ -6,14 +6,17 @@ import { FilterByDirection } from "../../components/filter/by-direction";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { FilterItem } from "../../components/filter/filter-item";
 import { Idea } from "../../components/idea";
+import { useAppSelector } from "../../utils/hooks";
 
 
 export const ArchivedTasks = () => {
+  const tasks = useAppSelector((store) => store.tasks.items).filter(i=>i.deletedAt != null);
     return (
       <div className="flex w-full">
         <div className="w-3/4 m-3 ml-0">
-          <ArchivedItem label={"task #2"} direction="Taskmony" />
-          <ArchivedItem label={"task #3"} direction="Taskmony" />
+        {tasks.map(task=>
+                    <ArchivedItem label={task.description} date={task.deletedAt} direction={task.direction}/>
+            )}
         </div>
         <Filter />
       </div>

@@ -115,7 +115,7 @@ const Description = () => {
 const Details = ({ recurrent }) => {
   const [isReccurent, setIsRecurrent] = useState("no");
   const [direction, setDirection] = useState("none");
-  const directions = useAppSelector((store) => store.directions.items);
+  const directions = useAppSelector((store) => store.directions.items).filter(i=>i.deletedAt == null);
 
   const defaultUntilDate = () => {
     const date = new Date(Date.now());

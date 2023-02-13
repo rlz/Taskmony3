@@ -7,8 +7,10 @@ import { FilterDivider } from "../../components/filter/filter-divider";
 import { FilterItem } from "../../components/filter/filter-item";
 import { Idea } from "../../components/idea";
 import hrLine from "../../images/hr-line.svg";
+import { useAppSelector } from "../../utils/hooks";
 
 export const ArchivedIdeas = () => {
+  // const ideas = useAppSelector((store) => store.ideas.items).filter(i=>i.deletedAt != null);
     return (
       <div className="flex w-full">
         <div className="w-3/4    m-3 ml-0">

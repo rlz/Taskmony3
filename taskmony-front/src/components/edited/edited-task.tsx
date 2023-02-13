@@ -34,14 +34,10 @@ type TaskProps = {
 };
 
 export const EditedTask = ({
-  label,
-  checked,
-  followed,
-  comments,
-  recurrent,
-  createdBy,
   direction,
   save,
+  followed,
+  recurrent
 }: TaskProps) => {
   const task = useAppSelector(
     (store) => store.editedTask
@@ -52,7 +48,7 @@ export const EditedTask = ({
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           <img
-            src={typeof checked === "undefined" || !checked ? no : yes}
+            src={task.completedAt ? yes : no}
           ></img>
           <input
             className={"font-semibold text-sm focus:outline-none underline"}
@@ -66,7 +62,7 @@ export const EditedTask = ({
         )}
       </div>
       <Description />
-      <Details recurrent={recurrent} />
+      <Details recurrent={recurrent} fromDirection={direction}/>
       <Comments comments={task.comments} taskId={task.id}/>
       <SaveBtn label={"save"} onClick={()=>save(task)} />
     </div>
@@ -112,7 +108,7 @@ const Description = () => {
   );
 };
 
-const Details = ({ recurrent }) => {
+const Details = ({ recurrent, fromDirection }) => {
   const [isReccurent, setIsRecurrent] = useState("no");
   const [direction, setDirection] = useState("none");
   const directions = useAppSelector((store) => store.directions.items).filter(i=>i.deletedAt == null);
@@ -128,13 +124,13 @@ const Details = ({ recurrent }) => {
 
   return (
     <div className={"gap flex justify-start pb-2 w-full ml-1"}>
-       <ItemPicker
+       {!fromDirection && <ItemPicker
         title={"direction"}
         option={"none"}
         options={["none",...directions.map(dir=>dir.name)]}
         onChange={() => {}}
         hasBorder
-      />
+      />}
       <ItemPicker
         title={"assignee"}
         option={"none"}
@@ -188,7 +184,7 @@ const Comments = () => {
 
   return (
     <>
-      {comments.map(comment =>
+      {comments?.map(comment =>
                 <Comment text={comment.text} author={comment.createdBy.displayName} time={comment.createdAt} />
       )}
       {showInput && <CommentInput commentValue={commentInput} changeComment={setCommentInput}/>}

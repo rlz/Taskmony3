@@ -10,19 +10,19 @@ import { addTask } from "../../services/actions/tasksAPI";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { FilterByCreator } from "../../components/filter/by-creator";
 
-function Tasks({directionId}) {
+function Tasks({directionId,directionName}) {
   const [newTask, setNewTask] = useState(false);
   const task = useAppSelector((store) => store.editedTask);
-  const tasksToShow = useAppSelector((store) => store.tasks.items);
+  const tasksToShow = useAppSelector((store) => store.tasks.items).filter(t=>t.direction?.id==directionId);
   useEffect(() => {
     console.log(tasksToShow);
   }, [tasksToShow]);
   const dispatch = useAppDispatch();
-  const addANewTask = () => {
-    dispatch(addTask(task));
+  const addANewTask = (direction) => {
+    dispatch(addTask(task,direction));
   };
   const tasks = tasksToShow.map((task) => 
-    <Task task={task} />
+    <Task task={task} direction={directionName}/>
   );
   return (
     <div className="flex w-full">
@@ -31,10 +31,11 @@ function Tasks({directionId}) {
         {newTask && (
           <EditedTask
             label={"new task"}
+            direction={directionName}
             save={() => {
               console.log("saving a new task");
               setNewTask(false);
-              addANewTask();
+              addANewTask(directionId);
             }}
           />
         )}

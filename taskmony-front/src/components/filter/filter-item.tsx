@@ -9,10 +9,19 @@ type FilterProps = {
   radio?: boolean;
 };
 
-export const FilterItem = ({ label, checked, radio }: FilterProps) => {
+export const FilterItem = ({
+  label,
+  checked,
+  radio,
+  onChange
+}: FilterProps) => {
   return (
     <div className={"gap-4 flex m-4"}>
-      <img src={radio ? (checked ? yesRadio : noRadio) : (checked ? yes : no) }></img>
+      <img
+        className={"cursor-pointer"}
+        src={radio ? (checked ? yesRadio : noRadio) : checked ? yes : no}
+        onClick={onChange}
+      ></img>
       <span className={"font-semibold text-sm"}>{label}</span>
     </div>
   );

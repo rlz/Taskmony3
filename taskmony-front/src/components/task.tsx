@@ -22,7 +22,7 @@ type TaskProps = {
   direction?: string;
 };
 
-export const Task = ({task}) => {
+export const Task = ({task,direction}) => {
   const dispatch = useAppDispatch();
   const [edited,setEdited] = useState(false);
   const open = () => {
@@ -39,11 +39,11 @@ export const Task = ({task}) => {
   }
   return (
   <div onClick={open}>
-  {edited ? <EditedTask save={save}/> : <TaskUnedited 
+  {edited ? <EditedTask save={save} direction={direction}/> : <TaskUnedited 
   label={task.description}
   checked={!!task.completedAt}
-  direction={task.direction}
-  comments={task.comments.length}/>}
+  direction={direction ? null : task.direction?.name}
+  comments={task?.comments?.length}/>}
   </div>
   )
 }

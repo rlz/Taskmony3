@@ -156,6 +156,8 @@ export const directionsReducer = (
       return {
         ...state,
         delete_direction_loading: true,
+        delete_direction_success: false,
+        delete_direction_error: false,
       };
     }
     case DELETE_DIRECTION_SUCCESS: {

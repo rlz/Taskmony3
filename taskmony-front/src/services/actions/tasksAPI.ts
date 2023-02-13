@@ -67,7 +67,7 @@ export function getTasks() {
   };
 }
 
-export function addTask(task) {
+export function addTask(task,direction) {
   return function (dispatch : Dispatch) {
     dispatch({ type: ADD_TASK_REQUEST });
     console.log("adding");
@@ -85,7 +85,7 @@ export function addTask(task) {
   // }
   body: JSON.stringify({
     query: `mutation {
-      taskAdd(description:"${task.description}", startAt:"1.12.12") {
+      taskAdd(description:"${task.description}", startAt:"1.12.12"${direction?`,directionId:"${direction}"`:task.direction?`,directionId:"${task.direction}"`:""}) {
         id
         description
         completedAt

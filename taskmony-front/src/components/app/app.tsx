@@ -41,6 +41,8 @@ function App() {
             <Route path="archive/:element" element={<Archive />} />
             <Route path="directions/:id/" element={<Navigate to="tasks" />} />
             <Route path="directions/:id/:element" element={<Direction />} />
+            <Route path="directions/:id/:element/:type" element={<Direction />} />
+            <Route path="directions/:id/archive/" element={<Navigate to="tasks" />} />
             <Route path="" element={<Navigate to="/tasks" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/tasks" replace />} />

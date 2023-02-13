@@ -4,9 +4,10 @@ import { AddBtn2 } from "../../components/add-btn/add-btn2";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { useEffect, useState } from "react";
 import { AddUserModal } from "../../components/add-user-modal/add-user-modal";
-import { useAppDispatch, useAppSelector } from "../../utils/hooks";
+import useIsFirstRender, { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { getCookie } from "../../utils/cookies";
 import { changeDetails, deleteDirection, removeUser, REMOVE_DIRECTION } from "../../services/actions/directionsAPI";
+import { useNavigate } from "react-router-dom";
 
 export const About = ({ directionId }) => {
   const dispatch = useAppDispatch();
@@ -15,23 +16,34 @@ export const About = ({ directionId }) => {
   const direction = directions.filter((d) => d.id == directionId)[0];
   const [about, setAbout] = useState("");
   const users = direction?.members;
+  const navigate = useNavigate();
+  const isFirst = useIsFirstRender();
   const amIOwner = direction
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const deleted_success = useAppSelector((store) => store.directions.delete_direction_success);
 
   useEffect(()=>{
   setAbout(direction?.details);
   },[direction?.details])
+
+  useEffect(()=>{
+    if (!isFirst & deleted_success) navigate("/");
+    },[deleted_success])
 
   // useEffect(()=>{
   //   if(direction.members.length == 0) leaveDirection();
   //   },[direction.members])
   
   const leaveDirection = () => {
+  if(direction.members.length <=1) {deleteThisDirection();return;}
   //remove yourself 
   dispatch(removeUser(directionId,{id:myId}))
   //remove from list
-  dispatch(REMOVE_DIRECTION,directionId)
+  dispatch({
+    type: REMOVE_DIRECTION,
+    directionId:directionId,
+  });
   //do to start page
   }
   const deleteThisDirection = () => {

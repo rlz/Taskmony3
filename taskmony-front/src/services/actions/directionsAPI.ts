@@ -15,6 +15,10 @@ export const ADD_USER_REQUEST = "ADD_USER_REQUEST";
 export const ADD_USER_SUCCESS = "ADD_USER_SUCCESS";
 export const ADD_USER_FAILED = "ADD_USER_FAILED";
 
+export const REMOVE_USER_REQUEST = "REMOVE_USER_REQUEST";
+export const REMOVE_USER_SUCCESS = "REMOVE_USER_SUCCESS";
+export const REMOVE_USER_FAILED = "REMOVE_USER_FAILED";
+
 export const CHANGE_OPEN_DIRECTION = "CHANGE_OPEN_DIRECTION";
 export const CHANGE_DIRECTION_DETAILS_REQUEST = "CHANGE_DIRECTION_DETAILS_REQUEST";
 export const CHANGE_DIRECTION_DETAILS_SUCCESS = "CHANGE_DIRECTION_DETAILS_SUCCESS";
@@ -148,6 +152,45 @@ export function addUser(directionId,user) {
       .catch((error) => {
         dispatch({
           type: ADD_USER_FAILED,
+        });
+      });
+  };
+}
+export function removeUser(directionId,user) {
+  return function (dispatch : Dispatch) {
+    dispatch({ type: ADD_USER_REQUEST });
+    console.log("removing user");
+    fetch(URL, {
+  method: 'POST',
+
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer "+getCookie("accessToken"),
+  },
+  body: JSON.stringify({
+    query: `mutation {
+      directionRemoveMember(directionId:"${directionId}",userId:"${user.id}")
+    }
+    `
+  })
+})
+      .then(checkResponse)
+      .then((res) => {
+        if (res && !res.errors) {
+          dispatch({
+            type: REMOVE_USER_SUCCESS,
+            directionId: directionId,
+            user: {displayName: user.displayName,id:user.id}
+          });
+        } else {
+          dispatch({
+            type: REMOVE_USER_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: REMOVE_USER_FAILED,
         });
       });
   };

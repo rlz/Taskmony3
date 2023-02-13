@@ -14,6 +14,9 @@ import {
   GET_DIRECTIONS_FAILED,
   GET_DIRECTIONS_REQUEST,
   GET_DIRECTIONS_SUCCESS,
+  REMOVE_USER_FAILED,
+  REMOVE_USER_REQUEST,
+  REMOVE_USER_SUCCESS,
 } from "../actions/directionsAPI";
 
 type TDirectionsState = {
@@ -45,6 +48,7 @@ export const directionsReducer = (
     | { type: typeof GET_DIRECTIONS_SUCCESS; items: Array<any> }
     | { type: typeof ADD_DIRECTION_SUCCESS; direction: any }
     | { type: typeof ADD_USER_SUCCESS; directionId: any, user: {displayName: string, id: string} }
+    | { type: typeof REMOVE_USER_SUCCESS; directionId: any, user: {displayName: string, id: string} }
     | { type: typeof CHANGE_DIRECTION_DETAILS_SUCCESS; directionId: string, details: string }
 
     | {
@@ -55,6 +59,8 @@ export const directionsReducer = (
           | typeof ADD_DIRECTION_FAILED
           | typeof ADD_USER_REQUEST
           | typeof ADD_USER_FAILED
+          | typeof REMOVE_USER_REQUEST
+          | typeof REMOVE_USER_FAILED
           | typeof CHANGE_DIRECTION_DETAILS_REQUEST
           | typeof CHANGE_DIRECTION_DETAILS_FAILED
       }
@@ -130,6 +136,27 @@ export const directionsReducer = (
         ...state,
         add_user_loading: false,
         add_user_error: true,
+      };
+    }
+    case REMOVE_USER_REQUEST: {
+      return {
+        ...state,
+        remove_user_loading: true,
+      };
+    }
+    case REMOVE_USER_SUCCESS: {
+      return {
+        ...state,
+        items: state.items.map(item=>item.id==action.directionId? {...item,members:item.members.filter(mem=>mem.id!=action.user.id)} : item),
+        remove_user_loading: false,
+        add_user_success: true,
+      };
+    }
+    case REMOVE_USER_FAILED: {
+      return {
+        ...state,
+        remove_user_loading: false,
+        remove_user_error: true,
       };
     }
       case CHANGE_DIRECTION_DETAILS_REQUEST: {

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { AddUserModal } from "../../components/add-user-modal/add-user-modal";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { getCookie } from "../../utils/cookies";
-import { changeDetails } from "../../services/actions/directionsAPI";
+import { changeDetails, removeUser } from "../../services/actions/directionsAPI";
 
 export const About = ({ directionId }) => {
   const dispatch = useAppDispatch();
@@ -29,6 +29,8 @@ export const About = ({ directionId }) => {
   }
 
   const saveDescription = () => dispatch(changeDetails(about,directionId));
+  const removeThisUser = (user) => dispatch(removeUser(directionId,user))
+  
   return (
     <div>
       {isModalOpen && <AddUserModal close={() => setIsModalOpen(false)} />}
@@ -41,7 +43,8 @@ export const About = ({ directionId }) => {
       {isOpen && (
         <>
           {users?.map((user) => (
-            <User label={user.displayName} />
+            myId == user.id? null :
+            <User label={user.displayName} onClick={()=>removeThisUser(user)} />
           ))}
         </>
       )}
@@ -60,9 +63,9 @@ type UserPropsT = {
   label: string;
 };
 
-export const User = ({ label }: UserPropsT) => {
+export const User = ({ label, onClick }: UserPropsT) => {
   return (
-    <div className="w-full bg-white rounded-lg drop-shadow-sm">
+    <div className="w-full bg-white rounded-lg drop-shadow-sm" onClick={onClick}>
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           <img src={deleteI} className="cursor-pointer"></img>

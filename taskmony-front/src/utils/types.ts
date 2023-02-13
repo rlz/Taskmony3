@@ -7,6 +7,13 @@ export type TTask = {
   id: string;
   comments: Array<TComment>; 
 };
+export type TDirection = {
+  name: string;
+  details: string;
+  deletedAt: string;
+  members: Array<{displayName: string, id: string}>;
+  id: string;
+};
 
 export type TComment = {
   text: string;

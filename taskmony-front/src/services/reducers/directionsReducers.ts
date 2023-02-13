@@ -1,10 +1,13 @@
 import { iteratorSymbol } from "immer/dist/internal";
 import { isTemplateSpan } from "typescript";
-import { TTask } from "../../utils/types";
+import { TDirection, TTask } from "../../utils/types";
 import {
   ADD_DIRECTION_FAILED,
   ADD_DIRECTION_REQUEST,
   ADD_DIRECTION_SUCCESS,
+  ADD_USER_FAILED,
+  ADD_USER_REQUEST,
+  ADD_USER_SUCCESS,
   CHANGE_DIRECTION_DETAILS_FAILED,
   CHANGE_DIRECTION_DETAILS_REQUEST,
   CHANGE_DIRECTION_DETAILS_SUCCESS,
@@ -14,7 +17,7 @@ import {
 } from "../actions/directionsAPI";
 
 type TDirectionsState = {
-  items: Array<TTask>;
+  items: Array<TDirection>;
   get_directions_loading: boolean;
   get_directions_error: boolean;
   add_direction_loading: boolean;
@@ -41,14 +44,17 @@ export const directionsReducer = (
   action:
     | { type: typeof GET_DIRECTIONS_SUCCESS; items: Array<any> }
     | { type: typeof ADD_DIRECTION_SUCCESS; direction: any }
+    | { type: typeof ADD_USER_SUCCESS; directionId: any, user: {displayName: string, id: string} }
     | { type: typeof CHANGE_DIRECTION_DETAILS_SUCCESS; directionId: string, details: string }
+
     | {
         type:
           | typeof GET_DIRECTIONS_REQUEST
           | typeof GET_DIRECTIONS_FAILED
           | typeof ADD_DIRECTION_REQUEST
           | typeof ADD_DIRECTION_FAILED
-          | typeof ADD_DIRECTION_SUCCESS
+          | typeof ADD_USER_REQUEST
+          | typeof ADD_USER_FAILED
           | typeof CHANGE_DIRECTION_DETAILS_REQUEST
           | typeof CHANGE_DIRECTION_DETAILS_FAILED
       }
@@ -103,6 +109,27 @@ export const directionsReducer = (
         add_direction_loading: false,
         add_direction_error: true,
         error: true,
+      };
+    }
+    case ADD_USER_REQUEST: {
+      return {
+        ...state,
+        add_user_loading: true,
+      };
+    }
+    case ADD_USER_SUCCESS: {
+      return {
+        ...state,
+        items: state.items.map(item=>item.id==action.directionId? {...item,members:[...item.members,action.user]} : item),
+        add_user_loading: false,
+        add_user_success: true,
+      };
+    }
+    case ADD_USER_FAILED: {
+      return {
+        ...state,
+        add_user_loading: false,
+        add_user_error: true,
       };
     }
       case CHANGE_DIRECTION_DETAILS_REQUEST: {

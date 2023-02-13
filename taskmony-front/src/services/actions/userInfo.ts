@@ -11,6 +11,10 @@ export const USER_INFO_REQUEST = "USER_INFO_REQUEST";
 export const USER_INFO_SUCCESS = "USER_INFO_SUCCESS";
 export const USER_INFO_FAILED = "USER_INFO_FAILED";
 
+export const USERS_REQUEST = "USERS_REQUEST";
+export const USERS_SUCCESS = "USERS_SUCCESS";
+export const USERS_FAILED = "USERS_FAILED";
+
 export function getUserInfo() {
   return function (dispatch :any) {
     dispatch({ type: USER_INFO_REQUEST });
@@ -55,6 +59,48 @@ export function getUserInfo() {
       });
   };
 }
+
+export function getUser(login) {
+  return function (dispatch :any) {
+    dispatch({ type: USERS_REQUEST });
+    console.log("getting user")
+    fetch(URL, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer "+getCookie("accessToken"),
+      },
+    
+      body: JSON.stringify({
+        query: `{users(login:"${login}"){
+          displayName
+          id
+        }}`   
+      })
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          console.log(res);
+          dispatch({
+            type: USERS_SUCCESS,
+            users: res?.data?.users,
+          });
+        } else {
+          dispatch({
+            type: USERS_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch({
+          type: USERS_FAILED,
+        });
+      });
+  };
+}
+
 
 export const CHANGE_USER_INFO_REQUEST = "CHANGE_USER_INFO_REQUEST";
 export const CHANGE_USER_INFO_SUCCESS = "CHANGE_USER_INFO_SUCCESS";

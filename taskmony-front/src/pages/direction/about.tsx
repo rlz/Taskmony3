@@ -15,18 +15,26 @@ export const About = ({ directionId }) => {
   const direction = directions.filter((d) => d.id == directionId)[0];
   const [about, setAbout] = useState("");
   const users = direction?.members;
+  const amIOwner = direction
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   useEffect(()=>{
   setAbout(direction?.details)
   },[direction])
+  const leaveDirection = () => {
+
+  }
+  const deleteDirection = () => {
+    
+  }
 
   const saveDescription = () => dispatch(changeDetails(about,directionId));
   return (
     <div>
       {isModalOpen && <AddUserModal close={() => setIsModalOpen(false)} />}
-      <div className="flex justify-end">
-        <LeaveBtn onClick={() => {}} />
+      <div className="flex justify-end gap-2">
+        <Btn onClick={leaveDirection} label="Leave direction" color="blue"/>
+        <Btn onClick={deleteDirection} label="Delete direction" color="red"/>
       </div>
       <AboutElement value={about} onChange={setAbout} saveDescription={saveDescription}/>
       <FilterDivider isOpen={isOpen} setIsOpen={setIsOpen} title="USERS:" />
@@ -80,6 +88,9 @@ export const AboutElement = ({ value, onChange, saveDescription }) => {
           if(e.key !== 'Enter') return;
           saveDescription(value)
         }}
+        onBlur={(e)=> {
+          saveDescription(value)
+        }}
       />
     </div>
   );
@@ -89,13 +100,13 @@ type LeaveBtnPropsT = {
   onClick: Function;
 };
 
-export const LeaveBtn = ({ onClick }: LeaveBtnPropsT) => {
+const Btn = ({ onClick, label, color }) => {
   return (
     <div
-      className={"p-1 w-fit mt-4 mb-2 pl-2 pr-2 bg-blue-400 rounded-lg"}
+      className={`p-1 w-fit mt-4 mb-2 pl-2 pr-2 bg-${color}-400 rounded-lg`}
       onClick={() => onClick()}
     >
-      <span className={"text-white"}>Leave direction</span>
+      <span className={"text-white"}>{label}</span>
     </div>
   );
 };

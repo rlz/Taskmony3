@@ -5,6 +5,9 @@ import {
   CHANGE_USER_INFO_REQUEST,
   CHANGE_USER_INFO_SUCCESS,
   CHANGE_USER_INFO_FAILED,
+  USERS_SUCCESS,
+  USERS_REQUEST,
+  USERS_FAILED,
 } from "../actions/userInfo";
 
 type TUser = {
@@ -15,6 +18,7 @@ type TUser = {
   change_user_info_error: boolean;
   change_user_info_success: boolean;
   user: any;
+  users: Array<any>,
 };
 
 export const initialState = {
@@ -24,7 +28,8 @@ export const initialState = {
   change_user_info_loading: false,
   change_user_info_error: false,
   change_user_info_success: false,
-  user: null
+  user: null,
+  users: [],
 };
 export const userInfoReducer = (
   state: TUser = initialState,
@@ -33,12 +38,18 @@ export const userInfoReducer = (
         type:
           | typeof USER_INFO_REQUEST
           | typeof USER_INFO_FAILED
+          | typeof USERS_REQUEST
+          | typeof USERS_FAILED
           | typeof CHANGE_USER_INFO_REQUEST
           | typeof CHANGE_USER_INFO_FAILED;
       }
     | {
         type: typeof USER_INFO_SUCCESS | typeof CHANGE_USER_INFO_SUCCESS;
         userInfo: any;
+      }
+    | {
+        type: typeof USERS_SUCCESS;
+        users: any;
       }
 ) => {
   switch (action.type) {
@@ -87,6 +98,30 @@ export const userInfoReducer = (
         ...state,
         change_user_info_loading: false,
         change_user_info_error: true,
+      };
+    }
+    case USERS_REQUEST: {
+      return {
+        ...state,
+        users: [],
+        users_loading: true,
+        users_success: false,
+        users_error: false,
+      };
+    }
+    case USERS_SUCCESS: {
+      return {
+        ...state,
+        users_loading: false,
+        users_success: true,
+        users: action.users,
+      };
+    }
+    case USERS_FAILED: {
+      return {
+        ...state,
+        users_loading: false,
+        users_error: true,
       };
     }
     default: {

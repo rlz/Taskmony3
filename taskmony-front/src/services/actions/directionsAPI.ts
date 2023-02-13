@@ -11,6 +11,10 @@ export const ADD_DIRECTION_REQUEST = "ADD_DIRECTION_REQUEST";
 export const ADD_DIRECTION_SUCCESS = "ADD_DIRECTION_SUCCESS";
 export const ADD_DIRECTION_FAILED = "ADD_DIRECTION_FAILED";
 
+export const ADD_USER_REQUEST = "ADD_USER_REQUEST";
+export const ADD_USER_SUCCESS = "ADD_USER_SUCCESS";
+export const ADD_USER_FAILED = "ADD_USER_FAILED";
+
 export const CHANGE_OPEN_DIRECTION = "CHANGE_OPEN_DIRECTION";
 export const CHANGE_DIRECTION_DETAILS_REQUEST = "CHANGE_DIRECTION_DETAILS_REQUEST";
 export const CHANGE_DIRECTION_DETAILS_SUCCESS = "CHANGE_DIRECTION_DETAILS_SUCCESS";
@@ -105,6 +109,45 @@ export function addDirection(name) {
       .catch((error) => {
         dispatch({
           type: ADD_DIRECTION_FAILED,
+        });
+      });
+  };
+}
+export function addUser(directionId,user) {
+  return function (dispatch : Dispatch) {
+    dispatch({ type: ADD_USER_REQUEST });
+    console.log("adding user");
+    fetch(URL, {
+  method: 'POST',
+
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer "+getCookie("accessToken"),
+  },
+  body: JSON.stringify({
+    query: `mutation {
+      directionAddMember(directionId:"${directionId}",userId:"${user.id}")
+    }
+    `
+  })
+})
+      .then(checkResponse)
+      .then((res) => {
+        if (res && !res.errors) {
+          dispatch({
+            type: ADD_USER_SUCCESS,
+            directionId: directionId,
+            user: {displayName: user.displayName,id:user.id}
+          });
+        } else {
+          dispatch({
+            type: ADD_USER_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: ADD_USER_FAILED,
         });
       });
   };

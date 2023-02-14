@@ -55,7 +55,8 @@ export function getTasks() {
   },
 
   body: JSON.stringify({
-    query: tasksAllQuery   
+    query: 
+    `{tasks{${tasksAllQuery}}}`  
   })
 })
       .then(checkResponse)
@@ -93,22 +94,12 @@ export function addTask(task,direction) {
   },
   body: JSON.stringify({
     query: `mutation {
-      taskAdd(description:"${task.description}"${task.startAt?`, startAt:"${task.startAt}"`:""}${direction?`,directionId:"${direction}"`:task.direction?`,directionId:"${task.direction?.id}"`:""}) {
-        id
-        description
-        completedAt
-        subscribers 
-        {
-            id
-        }
-        details
-        startAt
-        direction 
-        { name 
-          id
-         }
-        repeatMode
-        createdBy { displayName }
+      taskAdd(description:"${task.description}", startAt:"${task.startAt}"
+      ${direction?`,directionId:"${direction}"`:task.direction?`,directionId:"${task.direction?.id}"`:""}
+      ${task.assignee?.id?`,assigneeId:"${task.assignee?.id}"`:""}
+      
+      ) {
+        ${tasksAllQuery}
       }
     }
     `

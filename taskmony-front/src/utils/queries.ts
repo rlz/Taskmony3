@@ -1,5 +1,5 @@
-export const tasksAllQuery = `{tasks{
-    id
+export const tasksAllQuery = 
+    `id
     description
     completedAt
     deletedAt
@@ -27,8 +27,8 @@ export const tasksAllQuery = `{tasks{
     }
     repeatMode
     repeatUntil
-    weekDays
-  }}`
+    weekDays`
+  
 
   export const directionsAllQuery = `{directions{
     id

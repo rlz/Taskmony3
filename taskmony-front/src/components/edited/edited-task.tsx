@@ -147,14 +147,18 @@ const Details = ({ recurrent, fromDirection }) => {
         }}
         hasBorder
       />}
-      <ItemPicker
+      {task.direction && <ItemPicker
         title={"assignee"}
-        options={["none", "Ann Smith", "Alexander Ivanov"]}
-        option={task.assignee}
-        onChange={(value)=>dispatch({type:CHANGE_TASK_ASSIGNEE,payload:value})}
+        options={["none", ...directions.filter(d=>d.id==task.direction.id)[0].members.map(m=>m.displayName)]}
+        option={task.assignee?.displayName}
+        onChange={(index) => {
+          console.log(index);
+          const payload = index==0?null:task.direction.members[index-1]
+          dispatch({type:CHANGE_TASK_ASSIGNEE,payload:payload})
+        }}
         hasBorder
         width="w-24"
-      />
+      />}
       <DatePicker title={"start date"} date={task.startAt? new Date(task.startAt) : new Date()}
        hasBorder onChange={(value)=>dispatch({type:CHANGE_TASK_START_DATE,payload:value})}/>
       <ItemPicker

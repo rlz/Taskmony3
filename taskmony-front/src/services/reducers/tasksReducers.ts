@@ -222,7 +222,7 @@ export const editTaskReducer = (
     case CHANGE_TASK_ASSIGNEE: {
       return {
         ...state,
-        assignee: {id:action.payload},
+        assignee: action.payload,
       };
     }
     case CHANGE_TASK_DIRECTION: {

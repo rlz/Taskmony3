@@ -20,7 +20,7 @@ export const ItemPicker = ({ title, options, option, hasBorder, onChange, width 
         id="options"
         defaultValue={option}
         className={"font-semibold text-sm text-blue-500 focus:outline-none "+width}
-        onChange={(e)=>onChange(e.target.value)}
+        onChange={(e)=>onChange(e.target.selectedIndex)}
       >
         {options.map((o) => (
           <option value={o} className={"font-semibold text-sm text-blue-500"}>

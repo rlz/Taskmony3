@@ -18,7 +18,7 @@ import { NumberPicker } from "./number-picker";
 import followBlue from "../../images/followed.svg";
 import followGray from "../../images/follow.svg";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
-import { CHANGE_TASK_ASSIGNEE, CHANGE_TASK_DESCRIPTION, CHANGE_TASK_START_DATE } from "../../services/actions/tasksAPI";
+import { CHANGE_TASK_ASSIGNEE, CHANGE_TASK_DESCRIPTION, CHANGE_TASK_DIRECTION, CHANGE_TASK_START_DATE } from "../../services/actions/tasksAPI";
 import { WeekPicker } from "./week-picker";
 import { sendTaskComment } from "../../services/actions/comments";
 
@@ -138,9 +138,13 @@ const Details = ({ recurrent, fromDirection }) => {
     <div className={"gap flex justify-start pb-2 w-full ml-1"}>
        {!fromDirection && <ItemPicker
         title={"direction"}
-        option={"none"}
+        option={task.direction?.name?task.direction?.name:"none"}
         options={["none",...directions.map(dir=>dir.name)]}
-        onChange={() => {}}
+        onChange={(index) => {
+          console.log(index);
+          const payload = index==0?null:directions[index-1]
+          dispatch({type:CHANGE_TASK_DIRECTION,payload:payload})
+        }}
         hasBorder
       />}
       <ItemPicker

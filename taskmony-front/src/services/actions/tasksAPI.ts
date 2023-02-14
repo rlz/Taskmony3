@@ -23,6 +23,7 @@ export const CHANGE_TASK_FOLLOWED_FAILED = "CHANGE_TASK_FOLLOWED_FAILED";
 
 export const CHANGE_OPEN_TASK = "CHANGE_OPEN_TASK";
 export const CHANGE_TASK_DESCRIPTION = "CHANGE_TASK_DESCRIPTION";
+export const CHANGE_TASK_DIRECTION = "CHANGE_TASK_DIRECTION";
 export const CHANGE_TASK_DETAILS = "CHANGE_TASK_DETAILS";
 export const CHANGE_TASK_ASSIGNEE = "CHANGE_TASK_ASSIGNEE";
 export const CHANGE_TASK_START_DATE = "CHANGE_TASK_START_DATE";
@@ -92,7 +93,7 @@ export function addTask(task,direction) {
   },
   body: JSON.stringify({
     query: `mutation {
-      taskAdd(description:"${task.description}", startAt:"${task.startAt}"${direction?`,directionId:"${direction}"`:task.direction?`,directionId:"${task.direction}"`:""}) {
+      taskAdd(description:"${task.description}"${task.startAt?`, startAt:"${task.startAt}"`:""}${direction?`,directionId:"${direction}"`:task.direction?`,directionId:"${task.direction?.id}"`:""}) {
         id
         description
         completedAt

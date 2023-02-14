@@ -1,5 +1,6 @@
 import { iteratorSymbol } from "immer/dist/internal";
 import { isTemplateSpan } from "typescript";
+import { nowDate } from "../../utils/APIUtils";
 import { TTask } from "../../utils/types";
 import { SEND_COMMENT_SUCCESS } from "../actions/comments";
 import {
@@ -12,6 +13,7 @@ import {
   CHANGE_TASK_ASSIGNEE,
   CHANGE_TASK_DESCRIPTION,
   CHANGE_TASK_DETAILS,
+  CHANGE_TASK_DIRECTION,
   CHANGE_TASK_FOLLOWED_SUCCESS,
   CHANGE_TASK_START_DATE,
   DELETE_TASK_SUCCESS,
@@ -160,7 +162,7 @@ export const taskInitialState = {
   details: "",
   assigneeId: "",
   directionId: "",
-  startAt: "",
+  startAt: nowDate(),
   id: "",
 };
 
@@ -174,6 +176,7 @@ export const editTaskReducer = (
           | typeof RESET_TASK
           | typeof CHANGE_TASK_START_DATE
           | typeof CHANGE_TASK_ASSIGNEE
+          | typeof CHANGE_TASK_DIRECTION
           
         payload: any;
       }
@@ -220,6 +223,12 @@ export const editTaskReducer = (
       return {
         ...state,
         assignee: {id:action.payload},
+      };
+    }
+    case CHANGE_TASK_DIRECTION: {
+      return {
+        ...state,
+        direction: action.payload,
       };
     }
     case CHANGE_COMPLETE_TASK_DATE_SUCCESS: {

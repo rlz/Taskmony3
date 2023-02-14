@@ -9,9 +9,11 @@ import {
   CHANGE_COMPLETE_TASK_DATE_SUCCESS,
   CHANGE_OPEN_TASK,
   CHANGE_TASKS,
+  CHANGE_TASK_ASSIGNEE,
   CHANGE_TASK_DESCRIPTION,
   CHANGE_TASK_DETAILS,
   CHANGE_TASK_FOLLOWED_SUCCESS,
+  CHANGE_TASK_START_DATE,
   DELETE_TASK_SUCCESS,
   GET_TASKS_FAILED,
   GET_TASKS_REQUEST,
@@ -59,7 +61,7 @@ export const tasksReducer = (
           | typeof GET_TASKS_FAILED
           | typeof ADD_TASK_REQUEST
           | typeof ADD_TASK_FAILED
-          | typeof ADD_TASK_SUCCESS;
+          | typeof ADD_TASK_SUCCESS
       }
       
 ) => {
@@ -169,7 +171,10 @@ export const editTaskReducer = (
         type:
           | typeof CHANGE_TASK_DESCRIPTION
           | typeof CHANGE_TASK_DETAILS
-          | typeof RESET_TASK;
+          | typeof RESET_TASK
+          | typeof CHANGE_TASK_START_DATE
+          | typeof CHANGE_TASK_ASSIGNEE
+          
         payload: any;
       }
     | {
@@ -203,6 +208,18 @@ export const editTaskReducer = (
       return {
         ...state,
         details: action.payload,
+      };
+    }
+    case CHANGE_TASK_START_DATE: {
+      return {
+        ...state,
+        startAt: action.payload,
+      };
+    }
+    case CHANGE_TASK_ASSIGNEE: {
+      return {
+        ...state,
+        assignee: {id:action.payload},
       };
     }
     case CHANGE_COMPLETE_TASK_DATE_SUCCESS: {

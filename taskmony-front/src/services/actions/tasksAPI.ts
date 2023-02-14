@@ -24,6 +24,8 @@ export const CHANGE_TASK_FOLLOWED_FAILED = "CHANGE_TASK_FOLLOWED_FAILED";
 export const CHANGE_OPEN_TASK = "CHANGE_OPEN_TASK";
 export const CHANGE_TASK_DESCRIPTION = "CHANGE_TASK_DESCRIPTION";
 export const CHANGE_TASK_DETAILS = "CHANGE_TASK_DETAILS";
+export const CHANGE_TASK_ASSIGNEE = "CHANGE_TASK_ASSIGNEE";
+export const CHANGE_TASK_START_DATE = "CHANGE_TASK_START_DATE";
 export const RESET_TASK = "RESET_TASK";
 export const CHANGE_TASKS = "CHANGE_TASKS";
 
@@ -88,14 +90,9 @@ export function addTask(task,direction) {
     "Content-Type": "application/json",
     "Authorization": "Bearer "+getCookie("accessToken"),
   },
-  // mutation {
-  //   taskAdd(description:"123", startAt:"1.12.12") {
-  //     description
-  //   }
-  // }
   body: JSON.stringify({
     query: `mutation {
-      taskAdd(description:"${task.description}", startAt:"1.12.12"${direction?`,directionId:"${direction}"`:task.direction?`,directionId:"${task.direction}"`:""}) {
+      taskAdd(description:"${task.description}", startAt:"${task.startAt}"${direction?`,directionId:"${direction}"`:task.direction?`,directionId:"${task.direction}"`:""}) {
         id
         description
         completedAt

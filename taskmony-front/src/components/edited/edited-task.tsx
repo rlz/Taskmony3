@@ -18,7 +18,7 @@ import { NumberPicker } from "./number-picker";
 import followBlue from "../../images/followed.svg";
 import followGray from "../../images/follow.svg";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
-import { CHANGE_TASK_DESCRIPTION } from "../../services/actions/tasksAPI";
+import { CHANGE_TASK_ASSIGNEE, CHANGE_TASK_DESCRIPTION, CHANGE_TASK_START_DATE } from "../../services/actions/tasksAPI";
 import { WeekPicker } from "./week-picker";
 import { sendTaskComment } from "../../services/actions/comments";
 
@@ -117,6 +117,10 @@ const Description = () => {
 };
 
 const Details = ({ recurrent, fromDirection }) => {
+  const dispatch = useAppDispatch();
+  const task = useAppSelector(
+    (store) => store.editedTask
+  );
   const [isReccurent, setIsRecurrent] = useState("no");
   const [direction, setDirection] = useState("none");
   const directions = useAppSelector((store) => store.directions.items).filter(i=>i.deletedAt == null);
@@ -141,13 +145,14 @@ const Details = ({ recurrent, fromDirection }) => {
       />}
       <ItemPicker
         title={"assignee"}
-        option={"none"}
         options={["none", "Ann Smith", "Alexander Ivanov"]}
-        onChange={() => {}}
+        option={task.assignee}
+        onChange={(value)=>dispatch({type:CHANGE_TASK_ASSIGNEE,payload:value})}
         hasBorder
         width="w-24"
       />
-      <DatePicker title={"start date"} date={Date.now()} hasBorder />
+      <DatePicker title={"start date"} date={task.startAt? new Date(task.startAt) : new Date()}
+       hasBorder onChange={(value)=>dispatch({type:CHANGE_TASK_START_DATE,payload:value})}/>
       <ItemPicker
         title={"repeated"}
         options={["no", "daily","custom"]}

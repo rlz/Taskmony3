@@ -14,6 +14,9 @@ export const ADD_TASK_FAILED = "ADD_TASK_FAILED";
 export const CHANGE_COMPLETE_TASK_DATE_REQUEST = "CHANGE_COMPLETE_TASK_DATE_REQUEST";
 export const CHANGE_COMPLETE_TASK_DATE_SUCCESS = "CHANGE_COMPLETE_TASK_DATE_SUCCESS";
 export const CHANGE_COMPLETE_TASK_DATE_FAILED = "CHANGE_COMPLETE_TASK_DATE_FAILED";
+export const CHANGE_TASK_FOLLOWED_REQUEST = "CHANGE_TASK_FOLLOWED_REQUEST";
+export const CHANGE_TASK_FOLLOWED_SUCCESS = "CHANGE_TASK_FOLLOWED_SUCCESS";
+export const CHANGE_TASK_FOLLOWED_FAILED = "CHANGE_TASK_FOLLOWED_FAILED";
 
 export const CHANGE_OPEN_TASK = "CHANGE_OPEN_TASK";
 export const CHANGE_TASK_DESCRIPTION = "CHANGE_TASK_DESCRIPTION";
@@ -166,6 +169,47 @@ export function changeCompleteTaskDate(taskId,date) {
       .catch((error) => {
         dispatch({
           type: CHANGE_COMPLETE_TASK_DATE_FAILED,
+        });
+      });
+  };
+}
+
+export function changeTaskFollowed(taskId,markFollowed) {
+  return function (dispatch : Dispatch) {
+    dispatch({ type: CHANGE_TASK_FOLLOWED_REQUEST });
+    console.log("change followed");
+    fetch(URL, {
+  method: 'POST',
+
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer "+getCookie("accessToken"),
+  },
+  body: JSON.stringify({
+    query: `mutation {
+      ${markFollowed?"taskSubscribe":"taskUnsubscribe"}(taskId:"${taskId}") 
+    }
+    `
+  })
+})
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_TASK_FOLLOWED_SUCCESS,
+            taskId:taskId,
+            followed:markFollowed,
+            userId: getCookie("id")
+          });
+        } else {
+          dispatch({
+            type: CHANGE_TASK_FOLLOWED_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_TASK_FOLLOWED_FAILED,
         });
       });
   };

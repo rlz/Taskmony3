@@ -10,7 +10,8 @@ import recurrentI from "../images/arrows-rotate.svg";
 import { useState } from "react";
 import { EditedTask } from "./edited/edited-task";
 import { useAppDispatch } from "../utils/hooks";
-import { changeCompleteTaskDate, CHANGE_OPEN_TASK, CHANGE_TASKS, openTask, RESET_TASK } from "../services/actions/tasksAPI";
+import { changeCompleteTaskDate, changeTaskFollowed, CHANGE_OPEN_TASK, CHANGE_TASKS, openTask, RESET_TASK } from "../services/actions/tasksAPI";
+import { getCookie } from "../utils/cookies";
 
 type TaskProps = {
   label: string;
@@ -23,6 +24,7 @@ type TaskProps = {
 };
 
 export const Task = ({task,direction}) => {
+  const myId = getCookie("id");
   const dispatch = useAppDispatch();
   const [edited,setEdited] = useState(false);
   const open = () => {
@@ -41,10 +43,18 @@ export const Task = ({task,direction}) => {
     const now = (new Date()).setSeconds(0);
     return (new Date(now)).toISOString();
   }
+  const isFollowed = () => {
+   if(task.subscribers.some(s=>s.id==myId)) return true;
+   return false;
+  }
   const changeCheck = (markComplete) => {
     console.log("marking",markComplete);
     if (markComplete) dispatch(changeCompleteTaskDate(task.id,nowDate()))
     else dispatch(changeCompleteTaskDate(task.id,null))
+  }
+  const changeFollowed = (markFollowed) => {
+    console.log("following",markFollowed);
+    dispatch(changeTaskFollowed(task.id,markFollowed))
   }
  
   return (
@@ -53,6 +63,8 @@ export const Task = ({task,direction}) => {
   label={task.description}
   checked={!!task.completedAt}
   changeCheck={changeCheck}
+  changeFollowed={changeFollowed}
+  followed={direction || isFollowed()?isFollowed():undefined}
   direction={direction ? null : task.direction?.name}
   comments={task?.comments?.length}/>}
   </div>
@@ -67,7 +79,8 @@ export const TaskUnedited = ({
   recurrent,
   createdBy,
   direction,
-  changeCheck
+  changeCheck,
+  changeFollowed
 }: TaskProps) => {
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
@@ -77,7 +90,7 @@ export const TaskUnedited = ({
           <span className={"font-semibold text-sm"}>{label}</span>
         </div>
         {typeof followed !== "undefined" && (
-          <img className="w-4" src={followed ? followBlue : followGray}></img>
+          <img className="w-4" src={followed ? followBlue : followGray} onClick={(e)=>{e.stopPropagation();changeFollowed(!followed)}}></img>
         )}
       </div>
       <div className={"gap flex justify-start pb-2 w-full ml-1"}>

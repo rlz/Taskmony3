@@ -11,6 +11,7 @@ import {
   CHANGE_TASKS,
   CHANGE_TASK_DESCRIPTION,
   CHANGE_TASK_DETAILS,
+  CHANGE_TASK_FOLLOWED_SUCCESS,
   GET_TASKS_FAILED,
   GET_TASKS_REQUEST,
   GET_TASKS_SUCCESS,
@@ -38,8 +39,18 @@ export const tasksReducer = (
     | { type: typeof GET_TASKS_SUCCESS; items: Array<any> }
     | { type: typeof ADD_TASK_SUCCESS; task: any }
     | { type: typeof CHANGE_TASKS; task: any }
-    | { type: typeof CHANGE_COMPLETE_TASK_DATE_SUCCESS; taskId: string, date: string }
-    
+    | {
+        type: typeof CHANGE_COMPLETE_TASK_DATE_SUCCESS;
+        taskId: string;
+        date: string;
+      }
+      | {
+        type: typeof CHANGE_TASK_FOLLOWED_SUCCESS;
+        taskId: string;
+        followed: boolean;
+        userId: string;
+      }
+      
     | {
         type:
           | typeof GET_TASKS_REQUEST
@@ -75,15 +86,37 @@ export const tasksReducer = (
     case CHANGE_TASKS: {
       return {
         ...state,
-        items: state.items.map(item=>item.id==action.task.id? action.task : item),
+        items: state.items.map((item) =>
+          item.id == action.task.id ? action.task : item
+        ),
       };
     }
     case CHANGE_COMPLETE_TASK_DATE_SUCCESS: {
       return {
         ...state,
-        items: state.items.map(item=>item.id==action.taskId? {...item,completedAt:action.date} : item),
-      };  
+        items: state.items.map((item) =>
+          item.id == action.taskId
+            ? { ...item, completedAt: action.date }
+            : item
+        ),
+      };
     }
+    case CHANGE_TASK_FOLLOWED_SUCCESS: {
+      return {
+        ...state,
+        items: state.items.map((item) =>
+          item.id == action.taskId
+            ? {
+                ...item,
+                subscribers: action.followed
+                  ? [...item.subscribers, {id:action.userId}]
+                  : item.subscribers.filter((s) => s.id != action.userId),
+              }
+            : item
+        ),
+      };
+    }
+
     case ADD_TASK_REQUEST: {
       return {
         ...state,
@@ -93,7 +126,7 @@ export const tasksReducer = (
     case ADD_TASK_SUCCESS: {
       return {
         ...state,
-        items: [action.task,...state.items],
+        items: [action.task, ...state.items],
         add_task_loading: false,
         add_task_error: false,
       };
@@ -117,24 +150,32 @@ export const taskInitialState = {
   assigneeId: "",
   directionId: "",
   startAt: "",
-  id: ""
+  id: "",
 };
 
 export const editTaskReducer = (
   state: TTask = taskInitialState,
-  action: {
-    type:
-      | typeof CHANGE_TASK_DESCRIPTION
-      | typeof CHANGE_TASK_DETAILS
-      | typeof RESET_TASK;
-    payload: any;
-  } | {
-    type: typeof CHANGE_OPEN_TASK,
-    task: any
-  } | {
-    type: typeof SEND_COMMENT_SUCCESS; comment: any
-  }
-  | { type: typeof CHANGE_COMPLETE_TASK_DATE_SUCCESS; taskId: string, date: string }
+  action:
+    | {
+        type:
+          | typeof CHANGE_TASK_DESCRIPTION
+          | typeof CHANGE_TASK_DETAILS
+          | typeof RESET_TASK;
+        payload: any;
+      }
+    | {
+        type: typeof CHANGE_OPEN_TASK;
+        task: any;
+      }
+    | {
+        type: typeof SEND_COMMENT_SUCCESS;
+        comment: any;
+      }
+    | {
+        type: typeof CHANGE_COMPLETE_TASK_DATE_SUCCESS;
+        taskId: string;
+        date: string;
+      }
 ) => {
   switch (action.type) {
     case CHANGE_TASK_DESCRIPTION: {
@@ -156,13 +197,14 @@ export const editTaskReducer = (
       };
     }
     case CHANGE_COMPLETE_TASK_DATE_SUCCESS: {
-      if(action.taskId == state.id) return {...state,completedAt:action.date};
+      if (action.taskId == state.id)
+        return { ...state, completedAt: action.date };
       return state;
-        };   
+    }
     case SEND_COMMENT_SUCCESS: {
       return {
         ...state,
-        comments: [...state.comments,action.comment],
+        comments: [...state.comments, action.comment],
       };
     }
     default: {

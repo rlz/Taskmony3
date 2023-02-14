@@ -31,13 +31,15 @@ type TaskProps = {
   createdBy?: string;
   direction?: string;
   save: Function;
+  changeCheck: Function;
 };
 
 export const EditedTask = ({
   direction,
   save,
   followed,
-  recurrent
+  recurrent,
+  changeCheck
 }: TaskProps) => {
   const task = useAppSelector(
     (store) => store.editedTask
@@ -49,6 +51,7 @@ export const EditedTask = ({
         <div className="flex  gap-2">
           <img
             src={task.completedAt ? yes : no}
+            onClick={(e)=>{e.stopPropagation();changeCheck(!task.completedAt)}}
           ></img>
           <input
             className={"font-semibold text-sm focus:outline-none underline"}

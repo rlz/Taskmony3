@@ -6,6 +6,7 @@ import {
   ADD_TASK_FAILED,
   ADD_TASK_REQUEST,
   ADD_TASK_SUCCESS,
+  CHANGE_COMPLETE_TASK_DATE_SUCCESS,
   CHANGE_OPEN_TASK,
   CHANGE_TASKS,
   CHANGE_TASK_DESCRIPTION,
@@ -37,6 +38,8 @@ export const tasksReducer = (
     | { type: typeof GET_TASKS_SUCCESS; items: Array<any> }
     | { type: typeof ADD_TASK_SUCCESS; task: any }
     | { type: typeof CHANGE_TASKS; task: any }
+    | { type: typeof CHANGE_COMPLETE_TASK_DATE_SUCCESS; taskId: string, date: string }
+    
     | {
         type:
           | typeof GET_TASKS_REQUEST
@@ -58,7 +61,7 @@ export const tasksReducer = (
         ...state,
         get_tasks_loading: false,
         get_tasks_error: false,
-        items: action.items,
+        items: action.items.reverse(),
       };
     }
     case GET_TASKS_FAILED: {
@@ -73,8 +76,13 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map(item=>item.id==action.task.id? action.task : item),
-        error: true,
       };
+    }
+    case CHANGE_COMPLETE_TASK_DATE_SUCCESS: {
+      return {
+        ...state,
+        items: state.items.map(item=>item.id==action.taskId? {...item,completedAt:action.date} : item),
+      };  
     }
     case ADD_TASK_REQUEST: {
       return {
@@ -85,7 +93,7 @@ export const tasksReducer = (
     case ADD_TASK_SUCCESS: {
       return {
         ...state,
-        items: [...state.items,action.task],
+        items: [action.task,...state.items],
         add_task_loading: false,
         add_task_error: false,
       };
@@ -126,6 +134,7 @@ export const editTaskReducer = (
   } | {
     type: typeof SEND_COMMENT_SUCCESS; comment: any
   }
+  | { type: typeof CHANGE_COMPLETE_TASK_DATE_SUCCESS; taskId: string, date: string }
 ) => {
   switch (action.type) {
     case CHANGE_TASK_DESCRIPTION: {
@@ -146,6 +155,10 @@ export const editTaskReducer = (
         details: action.payload,
       };
     }
+    case CHANGE_COMPLETE_TASK_DATE_SUCCESS: {
+      if(action.taskId == state.id) return {...state,completedAt:action.date};
+      return state;
+        };   
     case SEND_COMMENT_SUCCESS: {
       return {
         ...state,

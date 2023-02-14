@@ -64,7 +64,7 @@ export const About = ({ directionId }) => {
         <Btn onClick={deleteThisDirection} label="Delete direction" color="red"/>
       </div>
       <AboutElement value={about} onChange={setAbout} saveDescription={saveDescription}/>
-      <FilterDivider isOpen={isOpen} setIsOpen={setIsOpen} title="USERS:" />
+      {users?.length > 1 && <FilterDivider isOpen={isOpen} setIsOpen={setIsOpen} title="USERS:" />}
       {isOpen && (
         <>
           {users?.map((user) => (

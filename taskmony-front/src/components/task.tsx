@@ -10,7 +10,7 @@ import recurrentI from "../images/arrows-rotate.svg";
 import { useState } from "react";
 import { EditedTask } from "./edited/edited-task";
 import { useAppDispatch } from "../utils/hooks";
-import { CHANGE_OPEN_TASK, CHANGE_TASKS, openTask, RESET_TASK } from "../services/actions/tasksAPI";
+import { changeCompleteTaskDate, CHANGE_OPEN_TASK, CHANGE_TASKS, openTask, RESET_TASK } from "../services/actions/tasksAPI";
 
 type TaskProps = {
   label: string;
@@ -37,11 +37,22 @@ export const Task = ({task,direction}) => {
     dispatch({type:RESET_TASK})
     setEdited(false);
   }
+  const nowDate = () => {
+    const now = (new Date()).setSeconds(0);
+    return (new Date(now)).toISOString();
+  }
+  const changeCheck = (markComplete) => {
+    console.log("marking",markComplete);
+    if (markComplete) dispatch(changeCompleteTaskDate(task.id,nowDate()))
+    else dispatch(changeCompleteTaskDate(task.id,null))
+  }
+ 
   return (
   <div onClick={open}>
-  {edited ? <EditedTask save={save} direction={direction}/> : <TaskUnedited 
+  {edited ? <EditedTask save={save} direction={direction} changeCheck={changeCheck}/> : <TaskUnedited 
   label={task.description}
   checked={!!task.completedAt}
+  changeCheck={changeCheck}
   direction={direction ? null : task.direction?.name}
   comments={task?.comments?.length}/>}
   </div>
@@ -56,12 +67,13 @@ export const TaskUnedited = ({
   recurrent,
   createdBy,
   direction,
+  changeCheck
 }: TaskProps) => {
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
-          <img src={checked ? yes : no}></img>
+          <img src={checked ? yes : no} onClick={(e)=>{e.stopPropagation();changeCheck(!checked)}}></img>
           <span className={"font-semibold text-sm"}>{label}</span>
         </div>
         {typeof followed !== "undefined" && (

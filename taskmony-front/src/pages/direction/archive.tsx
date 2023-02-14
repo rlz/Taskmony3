@@ -23,7 +23,7 @@ export const Archive = ({ directionId }) => {
           <ArchivedItem
             label={task.description}
             date={task.deletedAt}
-            direction={task.direction}
+            direction={task.direction?.name}
           />
         ))}
       </div>

@@ -12,7 +12,7 @@ import { ItemPicker } from "./item-picker";
 import { useState } from "react";
 import deleteI from "../../images/delete.svg";
 import add from "../../images/add-light.svg";
-import { SaveBtn } from "./save-btn";
+import { BigBtn } from "./big-btn";
 import { DatePicker } from "./date-picker";
 import { NumberPicker } from "./number-picker";
 import postponeBlue from "../../images/circle-down-blue.svg";
@@ -62,7 +62,7 @@ export const EditedIdea = ({
       <Description />
       <Details />
       <Comments comments={comments} />
-      <SaveBtn label={"save"} onClick={save} />
+      <BigBtn label={"save"} onClick={save} color={"blue"}/>
     </div>
   );
 };

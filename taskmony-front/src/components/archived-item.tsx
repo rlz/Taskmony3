@@ -39,7 +39,7 @@ export const ArchivedItem = ({
       {date && <Details
         label={(new Date(date)).toLocaleString()} hasBorder
       />}
-            {<Details
+            {direction && <Details
         label={direction} textColor="text-yellow-500"
       />}
     </div> 

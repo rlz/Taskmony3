@@ -12,7 +12,7 @@ import { ItemPicker } from "./item-picker";
 import { useState } from "react";
 import deleteI from "../../images/delete.svg";
 import add from "../../images/add-light.svg";
-import { SaveBtn } from "./save-btn";
+import { BigBtn } from "./big-btn";
 import { DatePicker } from "./date-picker";
 import { NumberPicker } from "./number-picker";
 import followBlue from "../../images/followed.svg";
@@ -32,11 +32,13 @@ type TaskProps = {
   direction?: string;
   save: Function;
   changeCheck: Function;
+  deleteTask: Function;
 };
 
 export const EditedTask = ({
   direction,
   save,
+  deleteTask,
   followed,
   recurrent,
   changeCheck
@@ -66,8 +68,11 @@ export const EditedTask = ({
       </div>
       <Description />
       <Details recurrent={recurrent} fromDirection={direction}/>
-      <Comments comments={task.comments} taskId={task.id}/>
-      <SaveBtn label={"save"} onClick={()=>save(task)} />
+      {task.id && <Comments comments={task.comments} taskId={task.id}/>}
+      <div className={"w-full flex justify-end"} >
+      {task.id && <BigBtn label={"delete"} onClick={()=>deleteTask(task)} color="red"/>}
+      <BigBtn label={"save"} onClick={()=>save(task)} color="blue"/>
+      </div>
     </div>
   );
 };

@@ -12,6 +12,7 @@ import {
   CHANGE_TASK_DESCRIPTION,
   CHANGE_TASK_DETAILS,
   CHANGE_TASK_FOLLOWED_SUCCESS,
+  DELETE_TASK_SUCCESS,
   GET_TASKS_FAILED,
   GET_TASKS_REQUEST,
   GET_TASKS_SUCCESS,
@@ -37,6 +38,7 @@ export const tasksReducer = (
   state: TTasksState = tasksInitialState,
   action:
     | { type: typeof GET_TASKS_SUCCESS; items: Array<any> }
+    | { type: typeof DELETE_TASK_SUCCESS; taskId: string }
     | { type: typeof ADD_TASK_SUCCESS; task: any }
     | { type: typeof CHANGE_TASKS; task: any }
     | {
@@ -59,6 +61,7 @@ export const tasksReducer = (
           | typeof ADD_TASK_FAILED
           | typeof ADD_TASK_SUCCESS;
       }
+      
 ) => {
   switch (action.type) {
     case GET_TASKS_REQUEST: {
@@ -136,6 +139,12 @@ export const tasksReducer = (
         ...state,
         add_task_loading: false,
         error: true,
+      };
+    }
+    case DELETE_TASK_SUCCESS: {
+      return {
+        ...state,
+        items: state.items.filter(i=>i.id != action.taskId),
       };
     }
     default: {

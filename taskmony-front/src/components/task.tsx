@@ -10,8 +10,9 @@ import recurrentI from "../images/arrows-rotate.svg";
 import { useState } from "react";
 import { EditedTask } from "./edited/edited-task";
 import { useAppDispatch } from "../utils/hooks";
-import { changeCompleteTaskDate, changeTaskFollowed, CHANGE_OPEN_TASK, CHANGE_TASKS, openTask, RESET_TASK } from "../services/actions/tasksAPI";
+import { changeCompleteTaskDate, changeTaskFollowed, CHANGE_OPEN_TASK, CHANGE_TASKS, deleteTask, openTask, RESET_TASK } from "../services/actions/tasksAPI";
 import { getCookie } from "../utils/cookies";
+import { nowDate } from "../utils/APIUtils";
 
 type TaskProps = {
   label: string;
@@ -39,10 +40,13 @@ export const Task = ({task,direction}) => {
     dispatch({type:RESET_TASK})
     setEdited(false);
   }
-  const nowDate = () => {
-    const now = (new Date()).setSeconds(0);
-    return (new Date(now)).toISOString();
+  const deleteThisTask = (task) => {
+  console.log(task)
+  dispatch(deleteTask(task.id));
+  dispatch({type:RESET_TASK})
+  setEdited(false);
   }
+
   const isFollowed = () => {
    if(task.subscribers.some(s=>s.id==myId)) return true;
    return false;
@@ -59,7 +63,7 @@ export const Task = ({task,direction}) => {
  
   return (
   <div onClick={open}>
-  {edited ? <EditedTask save={save} direction={direction} changeCheck={changeCheck}/> : <TaskUnedited 
+  {edited ? <EditedTask save={save} deleteTask={deleteThisTask} direction={direction} changeCheck={changeCheck}/> : <TaskUnedited 
   label={task.description}
   checked={!!task.completedAt}
   changeCheck={changeCheck}

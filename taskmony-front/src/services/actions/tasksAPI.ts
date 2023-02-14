@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { checkResponse } from "../../utils/APIUtils";
+import { checkResponse, nowDate } from "../../utils/APIUtils";
 import { getCookie } from "../../utils/cookies";
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
@@ -10,6 +10,9 @@ export const GET_TASKS_FAILED = "GET_TASKS_FAILED";
 export const ADD_TASK_REQUEST = "ADD_TASK_REQUEST";
 export const ADD_TASK_SUCCESS = "ADD_TASK_SUCCESS";
 export const ADD_TASK_FAILED = "ADD_TASK_FAILED";
+export const DELETE_TASK_REQUEST = "DELETE_TASK_REQUEST";
+export const DELETE_TASK_SUCCESS = "DELETE_TASK_SUCCESS";
+export const DELETE_TASK_FAILED = "DELETE_TASK_FAILED";
 
 export const CHANGE_COMPLETE_TASK_DATE_REQUEST = "CHANGE_COMPLETE_TASK_DATE_REQUEST";
 export const CHANGE_COMPLETE_TASK_DATE_SUCCESS = "CHANGE_COMPLETE_TASK_DATE_SUCCESS";
@@ -210,6 +213,44 @@ export function changeTaskFollowed(taskId,markFollowed) {
       .catch((error) => {
         dispatch({
           type: CHANGE_TASK_FOLLOWED_FAILED,
+        });
+      });
+  };
+}
+export function deleteTask(taskId) {
+  return function (dispatch : Dispatch) {
+    dispatch({ type: DELETE_TASK_REQUEST });
+    console.log("delete task");
+    fetch(URL, {
+  method: 'POST',
+
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer "+getCookie("accessToken"),
+  },
+  body: JSON.stringify({
+    query: `mutation {
+      taskSetDeletedAt(taskId:"${taskId}",deletedAt:"${nowDate()}") 
+    }
+    `
+  })
+})
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: DELETE_TASK_SUCCESS,
+            taskId:taskId,
+          });
+        } else {
+          dispatch({
+            type: DELETE_TASK_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: DELETE_TASK_FAILED,
         });
       });
   };

@@ -15,7 +15,7 @@ export const ArchivedTasks = () => {
       <div className="flex w-full">
         <div className="w-3/4 m-3 ml-0">
         {tasks.map(task=>
-                    <ArchivedItem label={task.description} date={task.deletedAt} direction={task.direction}/>
+                    <ArchivedItem label={task.description} date={task.deletedAt} direction={task.direction?.name}/>
             )}
         </div>
         <Filter />

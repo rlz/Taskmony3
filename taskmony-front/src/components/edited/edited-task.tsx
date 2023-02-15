@@ -176,13 +176,19 @@ const Details = ({ recurrent, fromDirection }) => {
         option={repeatModeTranslator(task.repeatMode)}
         onChange={(index) => {
           dispatch({type:CHANGE_TASK_REPEAT_MODE,payload:repeatModeTranslator(repeatOptions[index])});
-          dispatch({type:CHANGE_TASK_REPEAT_EVERY,payload:1})
-          dispatch({type:CHANGE_TASK_REPEAT_UNTIL,payload:defaultUntilDate()})
+          //when mode is weekly or daily
+          if(repeatOptions[index]=="daily" || repeatOptions[index]=="custom")
+          {dispatch({type:CHANGE_TASK_REPEAT_EVERY,payload:1})
+          dispatch({type:CHANGE_TASK_REPEAT_UNTIL,payload:new Date(defaultUntilDate()).toISOString().substring(0, 10)})
+        }
+         //when mode is weekly
+         if(repeatOptions[index]=="custom") dispatch({type:CHANGE_TASK_REPEAT_WEEK_DAYS,payload:["MONDAY"]})
         }}
         hasBorder
       />
       {task.repeatMode && 
           <DatePicker title={"until"} 
+          min={new Date(task.startAt)}
           date={task.repeatUntil? new Date(task.repeatUntil) : defaultUntilDate()}
        hasBorder onChange={(value)=>dispatch({type:CHANGE_TASK_REPEAT_UNTIL,payload:value})}/>
       }

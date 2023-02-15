@@ -9,13 +9,13 @@ type Props = {
 };
 export const WeekPicker = ({ hasBorder, width, value, onChange }: Props) => {
   const [days, setDays] = useState([
-    { name: "M", value: "MONDAY", isPicked: false },
-    { name: "T", value: "TUESDAY", isPicked: false },
-    { name: "W", value: "WEDNESDAY", isPicked: false },
-    { name: "T", value: "THURSDAY", isPicked: false },
-    { name: "F", value: "FRIDAY", isPicked: false },
-    { name: "S", value: "SATURDAY", isPicked: false },
-    { name: "S", value: "SUNDAY", isPicked: false },
+    { name: "M", value: "MONDAY" },
+    { name: "T", value: "TUESDAY" },
+    { name: "W", value: "WEDNESDAY" },
+    { name: "T", value: "THURSDAY" },
+    { name: "F", value: "FRIDAY" },
+    { name: "S", value: "SATURDAY" },
+    { name: "S", value: "SUNDAY" },
   ]);
   console.log(value,!value)
   return (
@@ -30,6 +30,7 @@ export const WeekPicker = ({ hasBorder, width, value, onChange }: Props) => {
             onClick={() => {
               if (!value) onChange([day.value])
               else {
+                if(value.includes(day.value) && value?.length == 1) return;
                 if(value.includes(day.value))
                 onChange(value.filter((e) => e !== day.value));
                 else onChange([...value, day.value]);

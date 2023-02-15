@@ -9,11 +9,17 @@ import { EditedTask } from "../../components/edited/edited-task";
 import { addRepeatedTasks, addTask, RESET_TASK } from "../../services/actions/tasksAPI";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { FilterByDirection } from "../../components/filter/by-direction";
+import { useSearchParams } from "react-router-dom";
 
 function MyTasks() {
   const [newTask, setNewTask] = useState(false);
+  let [searchParams, setSearchParams] = useSearchParams();
+  const chosenDirection = searchParams.get("direction");
   const task = useAppSelector((store) => store.editedTask);
-  const tasksToShow = useAppSelector((store) => store.tasks.items);
+  let tasksToShow = useAppSelector((store) => store.tasks.items).filter(i=>i.deletedAt == null)
+  if(chosenDirection!="")
+  tasksToShow = tasksToShow.filter(i=>i.direction?.name == chosenDirection || chosenDirection == "none" && !i.direction);;
+   
   useEffect(() => {
     console.log(tasksToShow);
   }, [tasksToShow]);
@@ -28,7 +34,7 @@ function MyTasks() {
   );
   return (
     <div className="flex w-full">
-      <div className="w-3/4  m-3">
+      <div className="w-3/4  p-3 flex flex-col overflow-hidden h-screen">
         <h1 className="font-bold text-3xl">My Tasks</h1>
         <AddBtn label={"add a new task"} onClick={() => setNewTask(true)} />
         {newTask && (
@@ -41,17 +47,9 @@ function MyTasks() {
             }}
           />
         )}
+        <div className="overflow-x-hidden">
         {tasks}
-        {/* // <Task
-        //   label={"task #1"}
-        //   comments={1}
-        //   recurrent="every Thursday"
-        //   createdBy="Ann Smith"
-        //   direction="Taskmony"
-        // />
-        // <Task label={"task #1"} direction="Taskmony" />
-        // <Task label={"task #1"} followed direction="Taskmony" />
-        // <Task label={"task #1"} followed direction="Taskmony" /> */}
+        </div>
       </div>
       <Filter />
     </div>

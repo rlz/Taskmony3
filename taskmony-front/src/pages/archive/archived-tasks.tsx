@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { ArchivedItem } from "../../components/archived-item";
 import { FilterByDate } from "../../components/filter/by-date";
 import { FilterByDirection } from "../../components/filter/by-direction";
@@ -10,7 +10,11 @@ import { useAppSelector } from "../../utils/hooks";
 
 
 export const ArchivedTasks = () => {
-  const tasks = useAppSelector((store) => store.tasks.items).filter(i=>i.deletedAt != null);
+  let [searchParams, setSearchParams] = useSearchParams();
+  const chosenDirection = searchParams.get("direction");
+  let tasks = useAppSelector((store) => store.tasks.items).filter(i=>i.deletedAt != null);
+  if(chosenDirection!="")
+  tasks = tasks.filter(i=>i.direction?.name == chosenDirection || chosenDirection == "none" && !i.direction);;
     return (
       <div className="flex w-full">
         <div className="w-3/4 m-3 ml-0">

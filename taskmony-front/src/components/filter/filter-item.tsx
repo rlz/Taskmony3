@@ -20,7 +20,7 @@ export const FilterItem = ({
       <img
         className={"cursor-pointer"}
         src={radio ? (checked ? yesRadio : noRadio) : checked ? yes : no}
-        onClick={onChange}
+        onClick={()=>onChange(!checked,label)}
       ></img>
       <span className={"font-semibold text-sm"}>{label}</span>
     </div>

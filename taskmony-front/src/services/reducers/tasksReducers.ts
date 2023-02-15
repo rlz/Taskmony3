@@ -15,6 +15,10 @@ import {
   CHANGE_TASK_DETAILS,
   CHANGE_TASK_DIRECTION,
   CHANGE_TASK_FOLLOWED_SUCCESS,
+  CHANGE_TASK_REPEAT_EVERY,
+  CHANGE_TASK_REPEAT_MODE,
+  CHANGE_TASK_REPEAT_UNTIL,
+  CHANGE_TASK_REPEAT_WEEK_DAYS,
   CHANGE_TASK_START_DATE,
   DELETE_TASK_SUCCESS,
   GET_TASKS_FAILED,
@@ -177,7 +181,10 @@ export const editTaskReducer = (
           | typeof CHANGE_TASK_START_DATE
           | typeof CHANGE_TASK_ASSIGNEE
           | typeof CHANGE_TASK_DIRECTION
-          
+          | typeof CHANGE_TASK_REPEAT_MODE    
+          | typeof CHANGE_TASK_REPEAT_EVERY 
+          | typeof CHANGE_TASK_REPEAT_UNTIL 
+          | typeof CHANGE_TASK_REPEAT_WEEK_DAYS       
         payload: any;
       }
     | {
@@ -231,11 +238,24 @@ export const editTaskReducer = (
         direction: action.payload,
       };
     }
+    case CHANGE_TASK_REPEAT_MODE: {
+        return { ...state, repeatMode: action.payload };
+    }
+    case CHANGE_TASK_REPEAT_EVERY: {
+      return { ...state, repeatEvery: action.payload };
+  }
+  case CHANGE_TASK_REPEAT_UNTIL: {
+    return { ...state, repeatUntil: action.payload };
+}
+case CHANGE_TASK_REPEAT_WEEK_DAYS: {
+  return { ...state, weekDays: action.payload };
+}
     case CHANGE_COMPLETE_TASK_DATE_SUCCESS: {
       if (action.taskId == state.id)
         return { ...state, completedAt: action.date };
       return state;
     }
+
     case SEND_COMMENT_SUCCESS: {
       return {
         ...state,

@@ -18,7 +18,7 @@ import { NumberPicker } from "./number-picker";
 import followBlue from "../../images/followed.svg";
 import followGray from "../../images/follow.svg";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
-import { CHANGE_TASK_ASSIGNEE, CHANGE_TASK_DESCRIPTION, CHANGE_TASK_DIRECTION, CHANGE_TASK_START_DATE } from "../../services/actions/tasksAPI";
+import { CHANGE_TASK_ASSIGNEE, CHANGE_TASK_DESCRIPTION, CHANGE_TASK_DIRECTION, CHANGE_TASK_REPEAT_EVERY, CHANGE_TASK_REPEAT_MODE, CHANGE_TASK_REPEAT_UNTIL, CHANGE_TASK_REPEAT_WEEK_DAYS, CHANGE_TASK_START_DATE } from "../../services/actions/tasksAPI";
 import { WeekPicker } from "./week-picker";
 import { sendTaskComment } from "../../services/actions/comments";
 
@@ -121,10 +121,19 @@ const Details = ({ recurrent, fromDirection }) => {
   const task = useAppSelector(
     (store) => store.editedTask
   );
-  const [isReccurent, setIsRecurrent] = useState("no");
-  const [direction, setDirection] = useState("none");
+  const repeatOptions = ["no","daily","custom"];
   const directions = useAppSelector((store) => store.directions.items).filter(i=>i.deletedAt == null);
 
+  const repeatModeTranslator = (mode) => {
+    switch(mode){
+      case "no": return null;
+      case "daily": return "DAY";
+      case "custom": return "WEEK";
+      case null: return "no";
+      case "DAY": return "daily";
+      case "WEEK": return "custom";
+    }
+  }
   const defaultUntilDate = () => {
     const date = new Date(Date.now());
     return date.setFullYear(date.getFullYear() + 1)
@@ -163,24 +172,37 @@ const Details = ({ recurrent, fromDirection }) => {
        hasBorder onChange={(value)=>dispatch({type:CHANGE_TASK_START_DATE,payload:value})}/>
       <ItemPicker
         title={"repeated"}
-        options={["no", "daily","custom"]}
-        option={recurrent}
-        onChange={setIsRecurrent}
+        options={repeatOptions}
+        option={repeatModeTranslator(task.repeatMode)}
+        onChange={(index) => {
+          dispatch({type:CHANGE_TASK_REPEAT_MODE,payload:repeatModeTranslator(repeatOptions[index])});
+          dispatch({type:CHANGE_TASK_REPEAT_EVERY,payload:1})
+          dispatch({type:CHANGE_TASK_REPEAT_UNTIL,payload:defaultUntilDate()})
+        }}
         hasBorder
       />
-      {isReccurent !== "no" && 
-          <DatePicker title={"until"} date={defaultUntilDate()} hasBorder />
+      {task.repeatMode && 
+          <DatePicker title={"until"} 
+          date={task.repeatUntil? new Date(task.repeatUntil) : defaultUntilDate()}
+       hasBorder onChange={(value)=>dispatch({type:CHANGE_TASK_REPEAT_UNTIL,payload:value})}/>
       }
-      {isReccurent === "custom" && 
+      {task.repeatMode === "WEEK" && 
         <>
                 <NumberPicker
         title={"every"}
         min={1}
         max={9}
         after={"week(s)"}
+        value={task.repeatEvery}
+        onChange={(value) => {
+          console.log(value);
+          dispatch({type:CHANGE_TASK_REPEAT_EVERY,payload:value})
+        }}
         hasBorder
       />
-      <WeekPicker/>
+      <WeekPicker
+              value={task.weekDays}
+              onChange={(value)=>dispatch({type:CHANGE_TASK_REPEAT_WEEK_DAYS,payload:value})}/>
         </>
 
     }

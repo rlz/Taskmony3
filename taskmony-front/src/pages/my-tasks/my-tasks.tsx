@@ -6,7 +6,7 @@ import arrowDown from "../../images/arrow-down.svg";
 import { Task } from "../../components/task";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { EditedTask } from "../../components/edited/edited-task";
-import { addTask, RESET_TASK } from "../../services/actions/tasksAPI";
+import { addRepeatedTasks, addTask, RESET_TASK } from "../../services/actions/tasksAPI";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { FilterByDirection } from "../../components/filter/by-direction";
 
@@ -19,7 +19,8 @@ function MyTasks() {
   }, [tasksToShow]);
   const dispatch = useAppDispatch();
   const addANewTask = () => {
-    dispatch(addTask(task));
+    if(task.repeatMode) dispatch(addRepeatedTasks(task,null));
+    else dispatch(addTask(task,null));
     dispatch({type:RESET_TASK})
   };
   const tasks = tasksToShow.map((task) => 

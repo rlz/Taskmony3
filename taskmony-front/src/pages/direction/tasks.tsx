@@ -7,8 +7,10 @@ import { Task } from "../../components/task";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { EditedTask } from "../../components/edited/edited-task";
 import {
+  addRepeatedTasks,
   addTask,
   CHANGE_TASK_DIRECTION,
+  RESET_TASK,
 } from "../../services/actions/tasksAPI";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { FilterByCreator } from "../../components/filter/by-creator";
@@ -25,7 +27,9 @@ function Tasks({ directionId, directionName }) {
   }, [tasksToShow]);
   const dispatch = useAppDispatch();
   const addANewTask = (direction) => {
-    dispatch(addTask(task, direction));
+    if(task.repeatMode) dispatch(addRepeatedTasks(task, direction));
+    else dispatch(addTask(task, direction));
+    dispatch({type:RESET_TASK})
   };
   const tasks = tasksToShow.map((task) => (
     <Task task={task} direction={directionName} />

@@ -7,17 +7,17 @@ type Props = {
   hasBorder?: boolean;
   width?: string;
 };
-export const WeekPicker = ({ hasBorder, width }: Props) => {
+export const WeekPicker = ({ hasBorder, width, value, onChange }: Props) => {
   const [days, setDays] = useState([
-    { name: "M", isPicked: false },
-    { name: "T", isPicked: false },
-    { name: "W", isPicked: false },
-    { name: "T", isPicked: false },
-    { name: "F", isPicked: false },
-    { name: "S", isPicked: false },
-    { name: "S", isPicked: false },
+    { name: "M", value: "MONDAY", isPicked: false },
+    { name: "T", value: "TUESDAY", isPicked: false },
+    { name: "W", value: "WEDNESDAY", isPicked: false },
+    { name: "T", value: "THURSDAY", isPicked: false },
+    { name: "F", value: "FRIDAY", isPicked: false },
+    { name: "S", value: "SATURDAY", isPicked: false },
+    { name: "S", value: "SUNDAY", isPicked: false },
   ]);
-
+  console.log(value,!value)
   return (
     <div className={"flex justify-between pl-2"}>
       <p className={"font-semibold text-sm text-blue-500 pt-0.5"}>repeat on:</p>
@@ -25,17 +25,15 @@ export const WeekPicker = ({ hasBorder, width }: Props) => {
         return (
           <span
             className={`font-semibold text-sm text-blue-500 p-0.5 ml-0.5 cursor-pointer ${
-              day.isPicked ? "underline" : ""
+              (value && value.includes(day.value)) ? "underline" : ""
             }`}
             onClick={() => {
-              const newDays = days.map((day2, index2) => {
-                if (index2 == index) {
-                  return { ...day2, isPicked: !day2.isPicked };
-                } else {
-                  return day2;
-                }
-              });
-              setDays(newDays);
+              if (!value) onChange([day.value])
+              else {
+                if(value.includes(day.value))
+                onChange(value.filter((e) => e !== day.value));
+                else onChange([...value, day.value]);
+              }
             }}
           >
             {day.name}

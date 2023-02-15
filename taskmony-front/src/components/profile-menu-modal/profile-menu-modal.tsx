@@ -1,10 +1,13 @@
 import deleteI from "../../images/delete.svg";
+import { useAppSelector } from "../../utils/hooks";
 
 type ModalPropsT = {
   close: Function;
 };
 
 export const ProfileMenuModal = ({ close }: ModalPropsT) => {
+  const displayName = useAppSelector(store => store.userInfo.user.displayName)
+  const email = useAppSelector(store => store.userInfo.user.email)
   return (
     <div className="w-1/4 absolute top-0 left-0 p-3 m-4 pb-2 bg-slate-50 rounded-lg drop-shadow-lg z-40">
       <img
@@ -12,8 +15,8 @@ export const ProfileMenuModal = ({ close }: ModalPropsT) => {
         className="cursor-pointer mr-0 ml-auto"
         onClick={(e) => close()}
       ></img>
-      <Input label={"John Doe"} />
-      <Input label={"johnd@gmail.com"} />
+      <Input label={displayName} />
+      <Input label={email} />
       <Btn label={"Change password"} onClick={() => {}} />
       <Btn label={"Sign out"} onClick={() => {}} />
     </div>

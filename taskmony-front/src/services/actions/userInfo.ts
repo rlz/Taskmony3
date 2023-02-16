@@ -16,21 +16,21 @@ export const USERS_SUCCESS = "USERS_SUCCESS";
 export const USERS_FAILED = "USERS_FAILED";
 
 export function getUserInfo() {
-  return function (dispatch :any) {
+  return function (dispatch: any) {
     dispatch({ type: USER_INFO_REQUEST });
     fetch(URL, {
-      method: 'POST',
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer "+getCookie("accessToken"),
+        Authorization: "Bearer " + getCookie("accessToken"),
       },
-    
+
       body: JSON.stringify({
         query: `{users{
           displayName
           email
-        }}`   
-      })
+        }}`,
+      }),
     })
       .then((data) => {
         if (data.status == 401 || data.status == 403) {
@@ -61,22 +61,22 @@ export function getUserInfo() {
 }
 
 export function getUser(login) {
-  return function (dispatch :any) {
+  return function (dispatch: any) {
     dispatch({ type: USERS_REQUEST });
-    console.log("getting user")
+    console.log("getting user");
     fetch(URL, {
-      method: 'POST',
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer "+getCookie("accessToken"),
+        Authorization: "Bearer " + getCookie("accessToken"),
       },
-    
+
       body: JSON.stringify({
         query: `{users(login:"${login}"){
           displayName
           id
-        }}`   
-      })
+        }}`,
+      }),
     })
       .then(checkResponse)
       .then((res) => {
@@ -101,12 +101,11 @@ export function getUser(login) {
   };
 }
 
-
 export const CHANGE_USER_INFO_REQUEST = "CHANGE_USER_INFO_REQUEST";
 export const CHANGE_USER_INFO_SUCCESS = "CHANGE_USER_INFO_SUCCESS";
 export const CHANGE_USER_INFO_FAILED = "CHANGE_USER_INFO_FAILED";
 
-export function changeUserInfo(name : string, email : string, password : string) {
+export function changeUserInfo(name: string, email: string, password: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_USER_INFO_REQUEST });
     let body;
@@ -122,12 +121,12 @@ export function changeUserInfo(name : string, email : string, password : string)
         password: password,
       };
     }
-    const token = getCookie("accessToken")? getCookie("accessToken") : "";
+    const token = getCookie("accessToken") ? getCookie("accessToken") : "";
     fetch(URL, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token,
+        Authorization: token,
       },
       body: JSON.stringify(body),
     })

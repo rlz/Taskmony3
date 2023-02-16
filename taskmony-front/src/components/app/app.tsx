@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {SideMenu} from "../side-menu/side-menu";
+import { SideMenu } from "../side-menu/side-menu";
 import {
   BrowserRouter,
   Routes,
@@ -12,7 +12,7 @@ import MyTasks from "../../pages/my-tasks/my-tasks";
 import MyIdeas from "../../pages/my-ideas/my-ideas";
 import Archive from "../../pages/archive/archive";
 import ErrorPage from "../../pages/error-page/error-page";
-import {Login} from "../../pages/auth/login";
+import { Login } from "../../pages/auth/login";
 import Direction from "../../pages/direction/direction";
 import { NotificationsBtn } from "../notifications/notifications-btn";
 import { NotificationsModal } from "../notifications/notifications-modal";
@@ -41,8 +41,14 @@ function App() {
             <Route path="archive/:element" element={<Archive />} />
             <Route path="directions/:id/" element={<Navigate to="tasks" />} />
             <Route path="directions/:id/:element" element={<Direction />} />
-            <Route path="directions/:id/:element/:type" element={<Direction />} />
-            <Route path="directions/:id/archive/" element={<Navigate to="tasks" />} />
+            <Route
+              path="directions/:id/:element/:type"
+              element={<Direction />}
+            />
+            <Route
+              path="directions/:id/archive/"
+              element={<Navigate to="tasks" />}
+            />
             <Route path="" element={<Navigate to="/tasks" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/tasks" replace />} />
@@ -55,21 +61,27 @@ function App() {
 function Home() {
   const [openNotif, setOpenNotif] = useState(false);
   const dispatch = useAppDispatch();
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getTasks());
     dispatch(getDirections());
     dispatch(getUserInfo());
-    
-  },[])
-  
+  }, []);
+
   return (
     <div className="flex h-full bg-slate-50">
-      {!openNotif && <NotificationsBtn onClick={()=>{setOpenNotif(true);console.log(openNotif);}}/>}
-      <SideMenu/>
+      {!openNotif && (
+        <NotificationsBtn
+          onClick={() => {
+            setOpenNotif(true);
+            console.log(openNotif);
+          }}
+        />
+      )}
+      <SideMenu />
       <div className="w-full">
-      <Outlet />
+        <Outlet />
       </div>
-      {openNotif && <NotificationsModal close={()=>setOpenNotif(false)}/>}     
+      {openNotif && <NotificationsModal close={() => setOpenNotif(false)} />}
     </div>
   );
 }

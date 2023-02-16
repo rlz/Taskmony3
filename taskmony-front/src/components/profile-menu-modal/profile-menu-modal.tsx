@@ -6,8 +6,10 @@ type ModalPropsT = {
 };
 
 export const ProfileMenuModal = ({ close }: ModalPropsT) => {
-  const displayName = useAppSelector(store => store.userInfo.user.displayName)
-  const email = useAppSelector(store => store.userInfo.user.email)
+  const displayName = useAppSelector(
+    (store) => store.userInfo.user.displayName
+  );
+  const email = useAppSelector((store) => store.userInfo.user.email);
   return (
     <div className="w-1/4 absolute top-0 left-0 p-3 m-4 pb-2 bg-slate-50 rounded-lg drop-shadow-lg z-40">
       <img
@@ -24,10 +26,10 @@ export const ProfileMenuModal = ({ close }: ModalPropsT) => {
 };
 
 type InputPropsT = {
-    label:string
-  };
+  label: string;
+};
 
-export const Input = ({ label } : InputPropsT) => {
+export const Input = ({ label }: InputPropsT) => {
   return (
     <input
       type="text"
@@ -38,11 +40,11 @@ export const Input = ({ label } : InputPropsT) => {
 };
 
 type BtnPropsT = {
-    label:string,
-    onClick: Function
-  };
+  label: string;
+  onClick: Function;
+};
 
-export const Btn = ({ onClick, label } : BtnPropsT) => {
+export const Btn = ({ onClick, label }: BtnPropsT) => {
   return (
     <div
       className={"p-1 w-fit mt-2 mb-2 pl-2 pr-2 bg-blue-500 rounded-md"}

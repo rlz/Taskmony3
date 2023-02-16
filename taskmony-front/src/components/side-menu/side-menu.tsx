@@ -136,17 +136,18 @@ type DirectionsMenuPropsT = {
 
 const DirectionsMenu = ({ openDirection }: DirectionsMenuPropsT) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
-  const directions = useAppSelector((store) => store.directions.items).filter(i=>i.deletedAt == null);
-  const directionsList = directions.map(dir=>
-    <li>
+  const directions = useAppSelector((store) => store.directions.items).filter(
+    (i) => i.deletedAt == null
+  );
+  const directionsList = directions.map((dir) => (
     <MenuItem
       to={`directions/${dir.id}`}
+      key={dir.id}
       name={dir.name}
       icon={direction}
       isActive={false}
     />
-  </li>
-    )
+  ));
   return (
     <div>
       <div className={"gap-4 flex m-4 justify-between"}>
@@ -160,9 +161,7 @@ const DirectionsMenu = ({ openDirection }: DirectionsMenuPropsT) => {
       </div>
       {isOpen && (
         <nav>
-          <ul>
-{directionsList}
-          </ul>
+          <ul>{directionsList}</ul>
         </nav>
       )}
       <AddBtn2 label={"add a new direction"} onClick={openDirection} />

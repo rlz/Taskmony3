@@ -18,7 +18,7 @@ type TUser = {
   change_user_info_error: boolean;
   change_user_info_success: boolean;
   user: any;
-  users: Array<any>,
+  users: Array<any>;
 };
 
 export const initialState = {

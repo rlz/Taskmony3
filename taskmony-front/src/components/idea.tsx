@@ -14,28 +14,32 @@ import { EditedIdea } from "./edited/edited-idea";
 import { useState } from "react";
 
 export const Idea = (props) => {
-  const [edited,setEdited] = useState(false);
+  const [edited, setEdited] = useState(false);
   const open = () => {
-    if(edited) return;
+    if (edited) return;
     setEdited(true);
-  }
+  };
   const save = () => {
-    if(!edited) return;
+    if (!edited) return;
     setEdited(false);
-  }
+  };
   return (
-  <div onClick={open}>
-  {edited ? <EditedIdea {...props} save={save}/> : <UneditedIdea {...props}/>}
-  </div>
-  )
-}
+    <div onClick={open}>
+      {edited ? (
+        <EditedIdea {...props} save={save} />
+      ) : (
+        <UneditedIdea {...props} />
+      )}
+    </div>
+  );
+};
 
 type IdeaProps = {
   label: string;
   followed?: boolean;
   comments?: number;
   createdBy?: string;
-  direction?:string;
+  direction?: string;
   last?: boolean;
 };
 
@@ -45,7 +49,7 @@ export const UneditedIdea = ({
   comments,
   createdBy,
   direction,
-  last
+  last,
 }: IdeaProps) => {
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
@@ -54,57 +58,71 @@ export const UneditedIdea = ({
           <span className={"font-semibold text-sm"}>{label}</span>
         </div>
         <div className="relative z-30 flex gap-2">
-        {(typeof followed !== 'undefined') && (<img className="w-4" src={followed?followBlue:followGray}></img>)}    
-        <img src={last?postponeGray:postponeBlue} className="w-4"></img>
+          {typeof followed !== "undefined" && (
+            <img className="w-4" src={followed ? followBlue : followGray}></img>
+          )}
+          <img src={last ? postponeGray : postponeBlue} className="w-4"></img>
         </div>
- </div>
-      <div
-      className={
-        "gap flex justify-start pb-2 w-full ml-1"
-      }
-    >       
-       {createdBy && <Details
-        icon={createdByI} label={`by ${createdBy}`} hasBorder
-      />}
-      {<Details
-        icon={commentsI} label={comments ? comments.toString() : "0"} hasBorder
-      />}
-            {<Details
-        label={direction} textColor="text-yellow-500"
-      />}
-    </div> 
+      </div>
+      <div className={"gap flex justify-start pb-2 w-full ml-1"}>
+        {createdBy && (
+          <Details icon={createdByI} label={`by ${createdBy}`} hasBorder />
+        )}
+        {
+          <Details
+            icon={commentsI}
+            label={comments ? comments.toString() : "0"}
+            hasBorder
+          />
+        }
+        {<Details label={direction} textColor="text-yellow-500" />}
+      </div>
     </div>
   );
 };
 
 type DetailsProps = {
-    icon?: string; label?: string; hasBorder?: boolean, textColor?: string
+  icon?: string;
+  label?: string;
+  hasBorder?: boolean;
+  textColor?: string;
 };
 
 export const Details = ({
-  icon, label, hasBorder, textColor
+  icon,
+  label,
+  hasBorder,
+  textColor,
 }: DetailsProps) => {
   return (
-        <div className={`flex flex-nowrap gap-1 mr-1  ${!icon ? "ml-5": "ml-1"}`}>
-          {icon &&<img src={icon}></img>}
-          <span className={"font-semibold inline whitespace-nowrap text-xs text-blue-500 mr-1 "+textColor}>
-            {label}
-          </span>
-          {hasBorder && <img src={divider}></img>}
-        </div>
-      )};
-
+    <div className={`flex flex-nowrap gap-1 mr-1  ${!icon ? "ml-5" : "ml-1"}`}>
+      {icon && <img src={icon}></img>}
+      <span
+        className={
+          "font-semibold inline whitespace-nowrap text-xs text-blue-500 mr-1 " +
+          textColor
+        }
+      >
+        {label}
+      </span>
+      {hasBorder && <img src={divider}></img>}
+    </div>
+  );
+};
 
 type BtnProps = {
-        label: string;
-        onClick: Function;
-      };
-      
+  label: string;
+  onClick: Function;
+};
+
 export const MoveBtn = ({ label, onClick }: BtnProps) => {
-        return (
-          <div className={"gap-4 flex justify-center bg-blue-500 rounded"} onClick={()=>onClick()}>
-            <img src={arrowDown}></img>
-            <span className={"text-white"}>{label}</span>
-          </div>
-        );
-      };
+  return (
+    <div
+      className={"gap-4 flex justify-center bg-blue-500 rounded"}
+      onClick={() => onClick()}
+    >
+      <img src={arrowDown}></img>
+      <span className={"text-white"}>{label}</span>
+    </div>
+  );
+};

@@ -1,5 +1,9 @@
-export function setCookie(name : string, value : string, props? : Record<string, any>) {
-  console.log("setting cookie",name,value);
+export function setCookie(
+  name: string,
+  value: string,
+  props?: Record<string, any>
+) {
+  console.log("setting cookie", name, value);
   props = props || {};
   let exp = props.expires;
   if (typeof exp == "number" && exp) {
@@ -22,7 +26,7 @@ export function setCookie(name : string, value : string, props? : Record<string,
   document.cookie = updatedCookie;
 }
 
-export function getCookie(name : string) : string {
+export function getCookie(name: string): string {
   const matches = document.cookie.match(
     new RegExp(
       "(?:^|; )" +
@@ -33,6 +37,6 @@ export function getCookie(name : string) : string {
   return matches ? decodeURIComponent(matches[1]) : "";
 }
 
-export function deleteCookie(name : string) {
+export function deleteCookie(name: string) {
   document.cookie = name + "=; path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
 }

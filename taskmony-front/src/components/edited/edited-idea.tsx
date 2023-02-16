@@ -39,7 +39,7 @@ export const EditedIdea = ({
   createdBy,
   direction,
   save,
-  last
+  last,
 }: IdeaProps) => {
   const [labelV, setLabelV] = useState(label);
   console.log(typeof checked === "undefined" || !checked);
@@ -55,14 +55,16 @@ export const EditedIdea = ({
           />
         </div>
         <div className="relative z-30 flex gap-2">
-        {(typeof followed !== 'undefined') && (<img className="w-4" src={followed?followBlue:followGray}></img>)}    
-        <img src={last?postponeGray:postponeBlue} className="w-4"></img>
+          {typeof followed !== "undefined" && (
+            <img className="w-4" src={followed ? followBlue : followGray}></img>
+          )}
+          <img src={last ? postponeGray : postponeBlue} className="w-4"></img>
         </div>
       </div>
       <Description />
       <Details />
       <Comments comments={comments} />
-      <BigBtn label={"save"} onClick={save} color={"blue"}/>
+      <BigBtn label={"save"} onClick={save} color={"blue"} />
     </div>
   );
 };
@@ -107,7 +109,6 @@ const Description = () => {
 };
 
 const Details = () => {
-
   return (
     <div className={"gap flex justify-start pb-2 w-full ml-1"}>
       <ItemPicker
@@ -120,12 +121,13 @@ const Details = () => {
       <ItemPicker
         title={"category"}
         option={"hot"}
-        options={["hot", "later","too good to delete"]}
+        options={["hot", "later", "too good to delete"]}
         onChange={() => {}}
         hasBorder
       />
     </div>
-  )};
+  );
+};
 
 const Comments = ({ comments }) => {
   const text = `Facit igitur Lucius noster prudenter, qui audire de summo bono potissimum velit;

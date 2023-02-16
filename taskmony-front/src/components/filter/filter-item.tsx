@@ -13,14 +13,14 @@ export const FilterItem = ({
   label,
   checked,
   radio,
-  onChange
+  onChange,
 }: FilterProps) => {
   return (
     <div className={"gap-4 flex m-4"}>
       <img
         className={"cursor-pointer"}
         src={radio ? (checked ? yesRadio : noRadio) : checked ? yes : no}
-        onClick={()=>onChange(!checked,label)}
+        onClick={() => onChange(!checked, label)}
       ></img>
       <span className={"font-semibold text-sm"}>{label}</span>
     </div>

@@ -28,7 +28,7 @@ export const Login = () => {
     setPasswordVisible(!passwordVisible);
   };
   const loginUser = () => {
-    console.log("login"+email+password)
+    console.log("login" + email + password);
     dispatch(login(email, password));
   };
   return (

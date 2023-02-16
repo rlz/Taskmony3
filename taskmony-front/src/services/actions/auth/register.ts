@@ -9,19 +9,19 @@ export const REGISTER_FAILED = "REGISTER_FAILED";
 
 const REGISTER_URL = BASE_URL + "/api/account/register";
 
-export function register(email : string, password : string, name : string) {
-  return function (dispatch  : Dispatch) {
+export function register(email: string, password: string, name: string) {
+  return function (dispatch: Dispatch) {
     dispatch({ type: REGISTER_REQUEST });
     fetch(REGISTER_URL, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        "email": email,
-        "password": password,
-        "displayName": name,
-        "login": name
+        email: email,
+        password: password,
+        displayName: name,
+        login: name,
       }),
     })
       .then((res) => {

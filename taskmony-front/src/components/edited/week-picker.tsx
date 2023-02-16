@@ -17,7 +17,7 @@ export const WeekPicker = ({ hasBorder, width, value, onChange }: Props) => {
     { name: "S", value: "SATURDAY" },
     { name: "S", value: "SUNDAY" },
   ]);
-  console.log(value,!value)
+  console.log(value, !value);
   return (
     <div className={"flex justify-between pl-2"}>
       <p className={"font-semibold text-sm text-blue-500 pt-0.5"}>repeat on:</p>
@@ -25,14 +25,14 @@ export const WeekPicker = ({ hasBorder, width, value, onChange }: Props) => {
         return (
           <span
             className={`font-semibold text-sm text-blue-500 p-0.5 ml-0.5 cursor-pointer ${
-              (value && value.includes(day.value)) ? "underline" : ""
+              value && value.includes(day.value) ? "underline" : ""
             }`}
             onClick={() => {
-              if (!value) onChange([day.value])
+              if (!value) onChange([day.value]);
               else {
-                if(value.includes(day.value) && value?.length == 1) return;
-                if(value.includes(day.value))
-                onChange(value.filter((e) => e !== day.value));
+                if (value.includes(day.value) && value?.length == 1) return;
+                if (value.includes(day.value))
+                  onChange(value.filter((e) => e !== day.value));
                 else onChange([...value, day.value]);
               }
             }}

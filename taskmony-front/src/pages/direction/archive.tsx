@@ -25,6 +25,7 @@ export const Archive = ({ directionId }) => {
             label={task.description}
             date={task.deletedAt}
             direction={task.direction?.name}
+            key={task.id}
           />
         ))}
       </div>
@@ -57,7 +58,7 @@ function Filter({ archiveType, directionId }) {
       <hr />
       {archiveType == "tasks" && (
         <>
-          <FilterByArchivedTaskType/>
+          <FilterByArchivedTaskType />
           <hr />
         </>
       )}

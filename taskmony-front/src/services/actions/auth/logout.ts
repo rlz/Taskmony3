@@ -10,7 +10,7 @@ export const LOGOUT_FAILED = "LOGOUT_FAILED";
 const URL = BASE_URL + "/auth/logout";
 
 export function logout() {
-  return function (dispatch  : Dispatch) {
+  return function (dispatch: Dispatch) {
     dispatch({ type: LOGOUT_REQUEST });
     fetch(URL, {
       method: "POST",

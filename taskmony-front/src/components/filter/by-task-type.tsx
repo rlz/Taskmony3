@@ -54,15 +54,15 @@ export const FilterByTaskType = () => {
 export const FilterByArchivedTaskType = () => {
   let [searchParams, setSearchParams] = useSearchParams();
   const archiveType = searchParams.get("archiveType");
-  if(!archiveType) setSearchParams({ archiveType : "deleted" });
-  console.log(archiveType)
+  if (!archiveType) setSearchParams({ archiveType: "deleted" });
+  console.log(archiveType);
   return (
     <>
       <FilterItem
         label="deleted"
         checked={archiveType == "deleted"}
         onChange={(value, label) => {
-          if (value) setSearchParams({ archiveType : "deleted" });
+          if (value) setSearchParams({ archiveType: "deleted" });
         }}
         radio
       />
@@ -70,7 +70,7 @@ export const FilterByArchivedTaskType = () => {
         label="completed"
         checked={archiveType == "completed"}
         onChange={(value, label) => {
-          if (value) setSearchParams({ archiveType : "completed" });
+          if (value) setSearchParams({ archiveType: "completed" });
         }}
         radio
       />

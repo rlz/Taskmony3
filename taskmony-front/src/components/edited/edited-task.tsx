@@ -128,7 +128,13 @@ const Description = () => {
           dispatch({ type: CHANGE_TASK_DETAILS, payload: e.target.value })
         }
         onBlur={(e) => {
-          if (taskId) dispatch(changeTaskDetails(taskId, e.target.value == ""?null:e.target.value));
+          if (taskId)
+            dispatch(
+              changeTaskDetails(
+                taskId,
+                e.target.value == "" ? null : e.target.value
+              )
+            );
         }}
         className="text-black font-light underline placeholder:text-black placeholder:font-light 
         placeholder:underline 
@@ -189,9 +195,8 @@ const Details = ({ recurrent, fromDirection }) => {
   const customPicker = (
     <NumberPicker title={"every"} min={2} max={10} after={"days"} hasBorder />
   );
-  const members = directions
-  .filter((d) => d.id == task.direction.id)[0]
-  .members;
+  const members = directions.filter((d) => d.id == task.direction?.id)[0]
+    ?.members;
 
   return (
     <div className={"gap flex justify-start pb-2 w-full ml-1"}>
@@ -212,16 +217,12 @@ const Details = ({ recurrent, fromDirection }) => {
       {task.direction && (
         <ItemPicker
           title={"assignee"}
-          options={[
-            "none",
-            ...members.map((m) => m.displayName),
-          ]}
+          options={["none", ...members.map((m) => m.displayName)]}
           option={task.assignee?.displayName}
           onChange={(index) => {
             console.log(index);
-            const payload =
-              index == 0 ? null : members[index - 1];
-              console.log(payload);
+            const payload = index == 0 ? null : members[index - 1];
+            console.log(payload);
             dispatch({ type: CHANGE_TASK_ASSIGNEE, payload: payload });
             if (task.id) dispatch(changeTaskAssignee(task.id, payload));
           }}
@@ -233,11 +234,10 @@ const Details = ({ recurrent, fromDirection }) => {
         title={"start date"}
         date={task.startAt ? new Date(task.startAt) : new Date()}
         hasBorder
-        onChange={(value) =>
-          {dispatch({ type: CHANGE_TASK_START_DATE, payload: value })
-          if(task.id)
-          dispatch(changeTaskStartAt(task.id,value))}
-        }
+        onChange={(value) => {
+          dispatch({ type: CHANGE_TASK_START_DATE, payload: value });
+          if (task.id) dispatch(changeTaskStartAt(task.id, value));
+        }}
       />
       <ItemPicker
         title={"repeated"}
@@ -267,8 +267,15 @@ const Details = ({ recurrent, fromDirection }) => {
               type: CHANGE_TASK_REPEAT_WEEK_DAYS,
               payload: ["MONDAY"],
             });
-            if(task.id)
-            dispatch(changeTaskRepeatMode(task.id,repeatModeTranslator(repeatOptions[index]),task.repeatEvery,task.weekDays))
+          if (task.id)
+            dispatch(
+              changeTaskRepeatMode(
+                task.id,
+                repeatModeTranslator(repeatOptions[index]),
+                task.repeatEvery,
+                task.weekDays
+              )
+            );
         }}
         hasBorder
       />
@@ -280,12 +287,10 @@ const Details = ({ recurrent, fromDirection }) => {
             task.repeatUntil ? new Date(task.repeatUntil) : defaultUntilDate()
           }
           hasBorder
-          onChange={(value) =>
-            {dispatch({ type: CHANGE_TASK_REPEAT_UNTIL, payload: value })
-            if(task.id)
-            dispatch(changeTaskRepeatUntil(task.id,value))
-          }
-          }
+          onChange={(value) => {
+            dispatch({ type: CHANGE_TASK_REPEAT_UNTIL, payload: value });
+            if (task.id) dispatch(changeTaskRepeatUntil(task.id, value));
+          }}
         />
       )}
       {task.repeatMode === "WEEK" && (
@@ -299,21 +304,32 @@ const Details = ({ recurrent, fromDirection }) => {
             onChange={(value) => {
               console.log(value);
               dispatch({ type: CHANGE_TASK_REPEAT_EVERY, payload: value });
-              if(task.id)
-              dispatch(changeTaskRepeatMode(task.id,task.repeatMode,value,task.weekDays))
-          
+              if (task.id)
+                dispatch(
+                  changeTaskRepeatMode(
+                    task.id,
+                    task.repeatMode,
+                    value,
+                    task.weekDays
+                  )
+                );
             }}
             hasBorder
           />
           <WeekPicker
             value={task.weekDays}
-            onChange={(value) =>
-              {dispatch({ type: CHANGE_TASK_REPEAT_WEEK_DAYS, payload: value })
-              if(task.id)
-              dispatch(changeTaskRepeatMode(task.id,task.repeatMode,task.repeatEvery,value))
-          
-            }
-            }
+            onChange={(value) => {
+              dispatch({ type: CHANGE_TASK_REPEAT_WEEK_DAYS, payload: value });
+              if (task.id)
+                dispatch(
+                  changeTaskRepeatMode(
+                    task.id,
+                    task.repeatMode,
+                    task.repeatEvery,
+                    value
+                  )
+                );
+            }}
           />
         </>
       )}

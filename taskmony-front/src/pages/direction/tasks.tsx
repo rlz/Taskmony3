@@ -14,7 +14,10 @@ import {
 } from "../../services/actions/tasksAPI";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { FilterByCreator } from "../../components/filter/by-creator";
-import { FilterByArchivedTaskType, FilterByTaskType } from "../../components/filter/by-task-type";
+import {
+  FilterByArchivedTaskType,
+  FilterByTaskType,
+} from "../../components/filter/by-task-type";
 
 function Tasks({ directionId, directionName }) {
   const [newTask, setNewTask] = useState(false);
@@ -22,18 +25,20 @@ function Tasks({ directionId, directionName }) {
   const tasksToShow = useAppSelector((store) => store.tasks.items).filter(
     (t) => t.direction?.id == directionId
   );
-  const direction = useAppSelector((store) => store.directions.items).filter(d => d.id == directionId)[0];
+  const direction = useAppSelector((store) => store.directions.items).filter(
+    (d) => d.id == directionId
+  )[0];
   useEffect(() => {
     console.log(tasksToShow);
   }, [tasksToShow]);
   const dispatch = useAppDispatch();
   const addANewTask = (direction) => {
-    if(task.repeatMode) dispatch(addRepeatedTasks(task, direction));
+    if (task.repeatMode) dispatch(addRepeatedTasks(task, direction));
     else dispatch(addTask(task, direction));
-    dispatch({type:RESET_TASK})
+    dispatch({ type: RESET_TASK });
   };
   const tasks = tasksToShow.map((task) => (
-    <Task task={task} direction={directionName} />
+    <Task task={task} direction={directionName} key={task.id} />
   ));
   return (
     <div className="flex w-full">
@@ -69,7 +74,7 @@ function Tasks({ directionId, directionName }) {
 function Filter({ directionId }) {
   return (
     <div className="w-1/5 mt-4">
-      <FilterByTaskType/>
+      <FilterByTaskType />
       <hr />
       <FilterByCreator id={directionId} />
     </div>

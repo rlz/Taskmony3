@@ -42,19 +42,27 @@ export const CHANGE_TASK_DETAILS_FAILED = "CHANGE_TASK_DETAILS_FAILED";
 export const CHANGE_TASK_ASSIGNEE_FAILED = "CHANGE_TASK_ASSIGNEE_FAILED";
 export const CHANGE_TASK_START_DATE_FAILED = "CHANGE_TASK_START_DATE_FAILED";
 export const CHANGE_TASK_REPEAT_MODE_FAILED = "CHANGE_TASK_REPEAT_MODE_FAILED";
-export const CHANGE_TASK_REPEAT_EVERY_FAILED = "CHANGE_TASK_REPEAT_EVERY_FAILED";
-export const CHANGE_TASK_REPEAT_WEEK_DAYS_FAILED = "CHANGE_TASK_WEEK_DAYS_FAILED";
-export const CHANGE_TASK_REPEAT_UNTIL_FAILED = "CHANGE_TASK_REPEAT_UNTIL_FAILED";
+export const CHANGE_TASK_REPEAT_EVERY_FAILED =
+  "CHANGE_TASK_REPEAT_EVERY_FAILED";
+export const CHANGE_TASK_REPEAT_WEEK_DAYS_FAILED =
+  "CHANGE_TASK_WEEK_DAYS_FAILED";
+export const CHANGE_TASK_REPEAT_UNTIL_FAILED =
+  "CHANGE_TASK_REPEAT_UNTIL_FAILED";
 
-export const CHANGE_TASK_DESCRIPTION_SUCCESS = "CHANGE_TASK_DESCRIPTION_SUCCESS";
+export const CHANGE_TASK_DESCRIPTION_SUCCESS =
+  "CHANGE_TASK_DESCRIPTION_SUCCESS";
 export const CHANGE_TASK_DIRECTION_SUCCESS = "CHANGE_TASK_DIRECTION_SUCCESS";
 export const CHANGE_TASK_DETAILS_SUCCESS = "CHANGE_TASK_DETAILS_SUCCESS";
 export const CHANGE_TASK_ASSIGNEE_SUCCESS = "CHANGE_TASK_ASSIGNEE_SUCCESS";
 export const CHANGE_TASK_START_DATE_SUCCESS = "CHANGE_TASK_START_DATE_SUCCESS";
-export const CHANGE_TASK_REPEAT_MODE_SUCCESS = "CHANGE_TASK_REPEAT_MODE_SUCCESS";
-export const CHANGE_TASK_REPEAT_EVERY_SUCCESS = "CHANGE_TASK_REPEAT_EVERY_SUCCESS";
-export const CHANGE_TASK_REPEAT_WEEK_DAYS_SUCCESS = "CHANGE_TASK_WEEK_DAYS_SUCCESS";
-export const CHANGE_TASK_REPEAT_UNTIL_SUCCESS = "CHANGE_TASK_REPEAT_UNTIL_SUCCESS";
+export const CHANGE_TASK_REPEAT_MODE_SUCCESS =
+  "CHANGE_TASK_REPEAT_MODE_SUCCESS";
+export const CHANGE_TASK_REPEAT_EVERY_SUCCESS =
+  "CHANGE_TASK_REPEAT_EVERY_SUCCESS";
+export const CHANGE_TASK_REPEAT_WEEK_DAYS_SUCCESS =
+  "CHANGE_TASK_WEEK_DAYS_SUCCESS";
+export const CHANGE_TASK_REPEAT_UNTIL_SUCCESS =
+  "CHANGE_TASK_REPEAT_UNTIL_SUCCESS";
 
 export const CHANGE_SAVED = "CHANGE_SAVED";
 
@@ -121,9 +129,7 @@ export function addTask(task, direction) {
       },
       body: JSON.stringify({
         query: `mutation {
-      taskAdd(description:"${
-          task.description
-        }", startAt:"${task.startAt}"
+      taskAdd(description:"${task.description}", startAt:"${task.startAt}"
       ${
         direction
           ? `,directionId:"${direction}"`
@@ -173,9 +179,7 @@ export function addRepeatedTasks(task, direction) {
       },
       body: JSON.stringify({
         query: `mutation {
-      tasksGenerate(description:"${
-          task.description
-        }", startAt:"${task.startAt}"
+      tasksGenerate(description:"${task.description}", startAt:"${task.startAt}"
       ${
         direction
           ? `,directionId:"${direction}"`
@@ -189,7 +193,9 @@ export function addRepeatedTasks(task, direction) {
           ? `, repeatMode:${task.repeatMode}, repeatEvery:${task.repeatEvery}, repeatUntil:"${task.repeatUntil}", `
           : ""
       }
-      ${task.weekDays ? `, weekDays:[${task.weekDays.join(",").split(-1)}]` : ""}
+      ${
+        task.weekDays ? `, weekDays:[${task.weekDays.join(",").split(-1)}]` : ""
+      }
       
       )
     }
@@ -199,7 +205,7 @@ export function addRepeatedTasks(task, direction) {
       .then(checkResponse)
       .then((res) => {
         if (res) {
-          console.log(res)
+          console.log(res);
           // dispatch({
           //   type: ADD_TASK_SUCCESS,
           //   task: res.data.taskAdd,
@@ -448,7 +454,12 @@ export function changeTaskAssignee(taskId, assignee) {
       });
   };
 }
-export function changeTaskRepeatMode(taskId, repeatMode,repeatEvery,weekDays) {
+export function changeTaskRepeatMode(
+  taskId,
+  repeatMode,
+  repeatEvery,
+  weekDays
+) {
   return function (dispatch: Dispatch) {
     console.log("change repeatMode");
     fetch(URL, {
@@ -460,7 +471,7 @@ export function changeTaskRepeatMode(taskId, repeatMode,repeatEvery,weekDays) {
       body: JSON.stringify({
         query: `mutation {
       taskSetRepeatMode(taskId:"${taskId}",repeatMode:"${repeatMode}",repeatEvery:"${repeatEvery}"
-      ${repeatMode == "WEEK"?`,weekDays:${weekDays}`:""}) 
+      ${repeatMode == "WEEK" ? `,weekDays:${weekDays}` : ""}) 
     `,
       }),
     })

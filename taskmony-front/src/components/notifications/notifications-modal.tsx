@@ -18,23 +18,23 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
         direction="Taskmony"
         createdBy="Ann Smith"
         time="12:30 1.12.22"
-        type='userAdded'
+        type="userAdded"
         notRead
       />
-            <NotificationItem
+      <NotificationItem
         label={"Sam Green was removed from “Taskmony”"}
         direction="Taskmony"
         createdBy="Ann Smith"
         time="12:30 1.12.22"
-        type='userDeleted'
+        type="userDeleted"
         notRead
       />
-            <NotificationItem
+      <NotificationItem
         label={"Task “Create UI for notifications” was added"}
         direction="Taskmony"
         createdBy="Ann Smith"
         time="12:30 1.12.22"
-        type='itemAdded'
+        type="itemAdded"
       />
       <NotificationItem
         label={"Idea “Create UI for notifications” was updated:"}
@@ -42,30 +42,32 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
         createdBy="Ann Smith"
         time="12:30 1.12.22"
         details={"generation: hot -> later"}
-        type='itemEdited'
-      />     
-            <NotificationItem
+        type="itemEdited"
+      />
+      <NotificationItem
         label={"New comment on task “Create UI for notifications”:"}
         direction="Taskmony"
         createdBy="Ann Smith"
         time="12:30 1.12.22"
-        details={"Do we need the date of the notification on the card? Let’s keep..." }
-        type='commentAdded'
-      />  
-                  <NotificationItem
+        details={
+          "Do we need the date of the notification on the card? Let’s keep..."
+        }
+        type="commentAdded"
+      />
+      <NotificationItem
         label={"You have a new task assigned:"}
         direction="Taskmony"
         createdBy="Ann Smith"
         time="12:30 1.12.22"
-        details={"Create UI for notifications" }
-        type='taskAssigned'
-      />    
+        details={"Create UI for notifications"}
+        type="taskAssigned"
+      />
       <NotificationItem
         label={"Idea “Create UI for notifications” was deleted"}
         direction="Taskmony"
         createdBy="Ann Smith"
         time="12:30 1.12.22"
-        type='itemDeleted'
+        type="itemDeleted"
       />
     </div>
   );

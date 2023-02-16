@@ -10,21 +10,25 @@ type ModalPropsT = {
 
 export const AddDirectionModal = ({ close }: ModalPropsT) => {
   const [name, setName] = useState<string>("");
-  const loading = useAppSelector((store) => store.directions.add_direction_loading);
+  const loading = useAppSelector(
+    (store) => store.directions.add_direction_loading
+  );
   const error = useAppSelector((store) => store.directions.add_direction_error);
-  const success = useAppSelector((store) => store.directions.add_direction_success);
+  const success = useAppSelector(
+    (store) => store.directions.add_direction_success
+  );
   const dispatch = useAppDispatch();
   const addNewDirection = () => {
     dispatch(addDirection(name));
   };
-  useEffect(()=>{
-    if(name == "") return //TODO
+  useEffect(() => {
+    if (name == "") return; //TODO
     console.log(loading, success);
-   if(!loading && success) {
-    console.log("new dir added!");
-    close();
-   }
-  },[loading,success])
+    if (!loading && success) {
+      console.log("new dir added!");
+      close();
+    }
+  }, [loading, success]);
   return (
     <>
       <div className="w-full h-full absolute top-0 left-0 opacity-50 bg-black z-20">
@@ -60,7 +64,7 @@ const Input = ({ label, value, onChange }) => {
       <input
         type="text"
         placeholder={label}
-        onChange={(e)=>onChange(e)}
+        onChange={(e) => onChange(e)}
         value={value}
         className="border w-full border-gray-300 rounded-lg pl-2 pr-2 p-2 mt-2"
       />

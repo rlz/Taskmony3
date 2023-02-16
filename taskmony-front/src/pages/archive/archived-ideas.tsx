@@ -11,23 +11,23 @@ import { useAppSelector } from "../../utils/hooks";
 
 export const ArchivedIdeas = () => {
   // const ideas = useAppSelector((store) => store.ideas.items).filter(i=>i.deletedAt != null);
-    return (
-      <div className="flex w-full">
-        <div className="w-3/4    m-3 ml-0">
-          <ArchivedItem label={"idea #2"} direction="Taskmony" />
-          <ArchivedItem label={"idea #3"} direction="Taskmony" />
-        </div>
-        <Filter />
+  return (
+    <div className="flex w-full">
+      <div className="w-3/4    m-3 ml-0">
+        <ArchivedItem label={"idea #2"} direction="Taskmony" />
+        <ArchivedItem label={"idea #3"} direction="Taskmony" />
       </div>
-    );
-  }
+      <Filter />
+    </div>
+  );
+};
 
-  function Filter() {
-    return (
-      <div className="w-1/5 mt-4">
-          <FilterByDate type="deletion"/>
-        <hr />
-        <FilterByDirection/>
-      </div>
-    );
-  }
+function Filter() {
+  return (
+    <div className="w-1/5 mt-4">
+      <FilterByDate type="deletion" />
+      <hr />
+      <FilterByDirection />
+    </div>
+  );
+}

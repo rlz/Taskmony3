@@ -52,11 +52,26 @@ export const directionsReducer = (
     | { type: typeof GET_DIRECTIONS_SUCCESS; items: Array<any> }
     | { type: typeof ADD_DIRECTION_SUCCESS; direction: any }
     | { type: typeof REMOVE_DIRECTION; directionId: string }
-    | { type: typeof DELETE_DIRECTION_SUCCESS; directionId: string, deletedAt: string }
-    | { type: typeof ADD_USER_SUCCESS; directionId: any, user: {displayName: string, id: string} }
-    | { type: typeof REMOVE_USER_SUCCESS; directionId: any, user: {displayName: string, id: string} }
-    | { type: typeof CHANGE_DIRECTION_DETAILS_SUCCESS; directionId: string, details: string }
-
+    | {
+        type: typeof DELETE_DIRECTION_SUCCESS;
+        directionId: string;
+        deletedAt: string;
+      }
+    | {
+        type: typeof ADD_USER_SUCCESS;
+        directionId: any;
+        user: { displayName: string; id: string };
+      }
+    | {
+        type: typeof REMOVE_USER_SUCCESS;
+        directionId: any;
+        user: { displayName: string; id: string };
+      }
+    | {
+        type: typeof CHANGE_DIRECTION_DETAILS_SUCCESS;
+        directionId: string;
+        details: string;
+      }
     | {
         type:
           | typeof GET_DIRECTIONS_REQUEST
@@ -70,7 +85,7 @@ export const directionsReducer = (
           | typeof REMOVE_USER_REQUEST
           | typeof REMOVE_USER_FAILED
           | typeof CHANGE_DIRECTION_DETAILS_REQUEST
-          | typeof CHANGE_DIRECTION_DETAILS_FAILED
+          | typeof CHANGE_DIRECTION_DETAILS_FAILED;
       }
 ) => {
   switch (action.type) {
@@ -112,7 +127,7 @@ export const directionsReducer = (
     case ADD_DIRECTION_SUCCESS: {
       return {
         ...state,
-        items: [...state.items,action.direction],
+        items: [...state.items, action.direction],
         add_direction_loading: false,
         add_direction_success: true,
       };
@@ -128,7 +143,7 @@ export const directionsReducer = (
     case REMOVE_DIRECTION: {
       return {
         ...state,
-        items: state.items.filter(item=> item.id != action.directionId),
+        items: state.items.filter((item) => item.id != action.directionId),
       };
     }
     case ADD_USER_REQUEST: {
@@ -140,7 +155,11 @@ export const directionsReducer = (
     case ADD_USER_SUCCESS: {
       return {
         ...state,
-        items: state.items.map(item=>item.id==action.directionId? {...item,members:[...item.members,action.user]} : item),
+        items: state.items.map((item) =>
+          item.id == action.directionId
+            ? { ...item, members: [...item.members, action.user] }
+            : item
+        ),
         add_user_loading: false,
         add_user_success: true,
       };
@@ -163,7 +182,11 @@ export const directionsReducer = (
     case DELETE_DIRECTION_SUCCESS: {
       return {
         ...state,
-        items: state.items.map(item=>item.id==action.directionId? {...item,deletedAt:action.deletedAt} : item),
+        items: state.items.map((item) =>
+          item.id == action.directionId
+            ? { ...item, deletedAt: action.deletedAt }
+            : item
+        ),
         delete_direction_loading: false,
         delete_direction_success: true,
       };
@@ -184,7 +207,14 @@ export const directionsReducer = (
     case REMOVE_USER_SUCCESS: {
       return {
         ...state,
-        items: state.items.map(item=>item.id==action.directionId? {...item,members:item.members.filter(mem=>mem.id!=action.user.id)} : item),
+        items: state.items.map((item) =>
+          item.id == action.directionId
+            ? {
+                ...item,
+                members: item.members.filter((mem) => mem.id != action.user.id),
+              }
+            : item
+        ),
         remove_user_loading: false,
         add_user_success: true,
       };
@@ -196,27 +226,31 @@ export const directionsReducer = (
         remove_user_error: true,
       };
     }
-      case CHANGE_DIRECTION_DETAILS_REQUEST: {
-        return {
-          ...state,
-          change_details_loading: true,
-        };
-      }
-      case CHANGE_DIRECTION_DETAILS_SUCCESS: {
-        return {
-          ...state,
-          items: state.items.map(item=>item.id==action.directionId? {...item,details:action.details} : item),
-          change_details_loading: false,
-          change_details_success: true,
-        };
-      }
-      case CHANGE_DIRECTION_DETAILS_FAILED: {
-        return {
-          ...state,
-          change_details_loading: false,
-          change_details_error: true,
-          error: true,
-        };
+    case CHANGE_DIRECTION_DETAILS_REQUEST: {
+      return {
+        ...state,
+        change_details_loading: true,
+      };
+    }
+    case CHANGE_DIRECTION_DETAILS_SUCCESS: {
+      return {
+        ...state,
+        items: state.items.map((item) =>
+          item.id == action.directionId
+            ? { ...item, details: action.details }
+            : item
+        ),
+        change_details_loading: false,
+        change_details_success: true,
+      };
+    }
+    case CHANGE_DIRECTION_DETAILS_FAILED: {
+      return {
+        ...state,
+        change_details_loading: false,
+        change_details_error: true,
+        error: true,
+      };
     }
     default: {
       return state;

@@ -10,7 +10,15 @@ import recurrentI from "../images/arrows-rotate.svg";
 import { useState } from "react";
 import { EditedTask } from "./edited/edited-task";
 import { useAppDispatch } from "../utils/hooks";
-import { changeCompleteTaskDate, changeTaskFollowed, CHANGE_OPEN_TASK, CHANGE_TASKS, deleteTask, openTask, RESET_TASK } from "../services/actions/tasksAPI";
+import {
+  changeCompleteTaskDate,
+  changeTaskFollowed,
+  CHANGE_OPEN_TASK,
+  CHANGE_TASKS,
+  deleteTask,
+  openTask,
+  RESET_TASK,
+} from "../services/actions/tasksAPI";
 import { getCookie } from "../utils/cookies";
 import { nowDate } from "../utils/APIUtils";
 
@@ -24,56 +32,66 @@ type TaskProps = {
   direction?: string;
 };
 
-export const Task = ({task,direction}) => {
+export const Task = ({ task, direction }) => {
   const myId = getCookie("id");
   const dispatch = useAppDispatch();
-  const [edited,setEdited] = useState(false);
+  const [edited, setEdited] = useState(false);
   const open = () => {
     console.log("opening");
-    if(edited) return;
+    if (edited) return;
     setEdited(true);
-    dispatch({type:CHANGE_OPEN_TASK,task:task});
-  }
+    dispatch({ type: CHANGE_OPEN_TASK, task: task });
+  };
   const save = (task) => {
-    if(!edited) return;
-    dispatch({type:CHANGE_TASKS,task:task});
-    dispatch({type:RESET_TASK})
+    if (!edited) return;
+    dispatch({ type: CHANGE_TASKS, task: task });
+    dispatch({ type: RESET_TASK });
     setEdited(false);
-  }
+  };
   const deleteThisTask = (task) => {
-  console.log(task)
-  dispatch(deleteTask(task.id));
-  dispatch({type:RESET_TASK})
-  setEdited(false);
-  }
+    console.log(task);
+    dispatch(deleteTask(task.id));
+    dispatch({ type: RESET_TASK });
+    setEdited(false);
+  };
 
   const isFollowed = () => {
-   if(task.subscribers.some(s=>s.id==myId)) return true;
-   return false;
-  }
+    if (task.subscribers.some((s) => s.id == myId)) return true;
+    return false;
+  };
   const changeCheck = (markComplete) => {
-    console.log("marking",markComplete);
-    if (markComplete) dispatch(changeCompleteTaskDate(task.id,nowDate()))
-    else dispatch(changeCompleteTaskDate(task.id,null))
-  }
+    console.log("marking", markComplete);
+    if (markComplete) dispatch(changeCompleteTaskDate(task.id, nowDate()));
+    else dispatch(changeCompleteTaskDate(task.id, null));
+  };
   const changeFollowed = (markFollowed) => {
-    console.log("following",markFollowed);
-    dispatch(changeTaskFollowed(task.id,markFollowed))
-  }
- 
+    console.log("following", markFollowed);
+    dispatch(changeTaskFollowed(task.id, markFollowed));
+  };
+
   return (
-  <div onClick={open}>
-  {edited ? <EditedTask save={save} deleteTask={deleteThisTask} direction={direction} changeCheck={changeCheck}/> : <TaskUnedited 
-  label={task.description}
-  checked={!!task.completedAt}
-  changeCheck={changeCheck}
-  changeFollowed={changeFollowed}
-  followed={direction || isFollowed()?isFollowed():undefined}
-  direction={direction ? null : task.direction?.name}
-  comments={task?.comments?.length}/>}
-  </div>
-  )
-}
+    <div onClick={open}>
+      {edited ? (
+        <EditedTask
+          save={save}
+          deleteTask={deleteThisTask}
+          direction={direction}
+          changeCheck={changeCheck}
+        />
+      ) : (
+        <TaskUnedited
+          label={task.description}
+          checked={!!task.completedAt}
+          changeCheck={changeCheck}
+          changeFollowed={changeFollowed}
+          followed={direction || isFollowed() ? isFollowed() : undefined}
+          direction={direction ? null : task.direction?.name}
+          comments={task?.comments?.length}
+        />
+      )}
+    </div>
+  );
+};
 
 export const TaskUnedited = ({
   label,
@@ -84,17 +102,30 @@ export const TaskUnedited = ({
   createdBy,
   direction,
   changeCheck,
-  changeFollowed
+  changeFollowed,
 }: TaskProps) => {
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
-          <img src={checked ? yes : no} onClick={(e)=>{e.stopPropagation();changeCheck(!checked)}}></img>
+          <img
+            src={checked ? yes : no}
+            onClick={(e) => {
+              e.stopPropagation();
+              changeCheck(!checked);
+            }}
+          ></img>
           <span className={"font-semibold text-sm"}>{label}</span>
         </div>
         {typeof followed !== "undefined" && (
-          <img className="w-4" src={followed ? followBlue : followGray} onClick={(e)=>{e.stopPropagation();changeFollowed(!followed)}}></img>
+          <img
+            className="w-4"
+            src={followed ? followBlue : followGray}
+            onClick={(e) => {
+              e.stopPropagation();
+              changeFollowed(!followed);
+            }}
+          ></img>
         )}
       </div>
       <div className={"gap flex justify-start pb-2 w-full ml-1"}>

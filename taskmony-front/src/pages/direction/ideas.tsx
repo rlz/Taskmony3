@@ -7,7 +7,7 @@ import { FilterItem } from "../../components/filter/filter-item";
 
 import { Idea } from "../../components/idea";
 
-function Ideas({directionId}) {
+function Ideas({ directionId }) {
   return (
     <div className="flex w-full">
       <div className="w-3/4 m-3 ml-0">
@@ -19,21 +19,21 @@ function Ideas({directionId}) {
           direction="Taskmony"
           followed={false}
         />
-        <Idea label={"idea #2"} direction="Taskmony" followed={false}/>
-        <Idea label={"idea #3"} followed direction="Taskmony" last/>
+        <Idea label={"idea #2"} direction="Taskmony" followed={false} />
+        <Idea label={"idea #3"} followed direction="Taskmony" last />
       </div>
-      <Filter directionId={directionId}/>
+      <Filter directionId={directionId} />
     </div>
   );
 }
 
-function Filter({directionId}) {
+function Filter({ directionId }) {
   return (
     <div className="w-1/5 mt-4">
-      <FilterByIdeaCategory/>
-      <hr/>
+      <FilterByIdeaCategory />
+      <hr />
       <FilterItem label="show followed" checked />
-      <hr/>
+      <hr />
       <FilterByCreator id={directionId} />
     </div>
   );

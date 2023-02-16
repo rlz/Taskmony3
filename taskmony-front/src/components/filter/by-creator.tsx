@@ -29,14 +29,13 @@ export const FilterByCreator = ({ id }) => {
             u.id == myId ? (
               <FilterItem label={"me"} checked />
             ) : (
-              <FilterItem label={u.displayName}
-              checked={creator == u.name}
-              onChange={(value, label) => {
-                if (value) setSearchParams({ creator: label });
-                else setSearchParams({ creator: "" });
-              }}
-              
-              
+              <FilterItem
+                label={u.displayName}
+                checked={creator == u.name}
+                onChange={(value, label) => {
+                  if (value) setSearchParams({ creator: label });
+                  else setSearchParams({ creator: "" });
+                }}
               />
             );
           })}

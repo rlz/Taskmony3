@@ -8,8 +8,8 @@ export const RESET_PASSWORD_FAILED = "RESET_PASSWORD_FAILED";
 
 const RESET_PASSWORD_URL = BASE_URL + "/password-reset";
 
-export function resetPassword(email : string) {
-  return function (dispatch : Dispatch) {
+export function resetPassword(email: string) {
+  return function (dispatch: Dispatch) {
     dispatch({ type: RESET_PASSWORD_REQUEST });
     fetch(RESET_PASSWORD_URL, {
       method: "POST",
@@ -46,8 +46,8 @@ export const CHANGE_PASSWORD_FAILED = "CHANGE_PASSWORD_FAILED";
 
 const CHANGE_PASSWORD_URL = BASE_URL + "/password-reset/reset";
 
-export function changePassword(token : string, password : string) {
-  return function (dispatch : Dispatch) {
+export function changePassword(token: string, password: string) {
+  return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_PASSWORD_REQUEST });
     fetch(CHANGE_PASSWORD_URL, {
       method: "POST",

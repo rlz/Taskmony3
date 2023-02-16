@@ -25,30 +25,32 @@ export const DELETE_DIRECTION_SUCCESS = "DELETE_DIRECTION_SUCCESS";
 export const DELETE_DIRECTION_FAILED = "DELETE_DIRECTION_FAILED";
 
 export const CHANGE_OPEN_DIRECTION = "CHANGE_OPEN_DIRECTION";
-export const CHANGE_DIRECTION_DETAILS_REQUEST = "CHANGE_DIRECTION_DETAILS_REQUEST";
-export const CHANGE_DIRECTION_DETAILS_SUCCESS = "CHANGE_DIRECTION_DETAILS_SUCCESS";
-export const CHANGE_DIRECTION_DETAILS_FAILED = "CHANGE_DIRECTION_DETAILS_FAILED";
+export const CHANGE_DIRECTION_DETAILS_REQUEST =
+  "CHANGE_DIRECTION_DETAILS_REQUEST";
+export const CHANGE_DIRECTION_DETAILS_SUCCESS =
+  "CHANGE_DIRECTION_DETAILS_SUCCESS";
+export const CHANGE_DIRECTION_DETAILS_FAILED =
+  "CHANGE_DIRECTION_DETAILS_FAILED";
 export const RESET_DIRECTION = "RESET_DIRECTION";
 export const CHANGE_DIRECTIONS = "CHANGE_DIRECTIONS";
-
 
 const URL = BASE_URL + "/graphql";
 
 export function getDirections() {
-  return function (dispatch : Dispatch) {
+  return function (dispatch: Dispatch) {
     console.log("getting directions");
     dispatch({ type: GET_DIRECTIONS_REQUEST });
     fetch(URL, {
-  method: 'POST',
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer "+getCookie("accessToken"),
-  },
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
 
-  body: JSON.stringify({
-    query: directionsAllQuery   
-  })
-})
+      body: JSON.stringify({
+        query: directionsAllQuery,
+      }),
+    })
       .then(checkResponse)
       .then((res) => {
         console.log(res);
@@ -72,23 +74,23 @@ export function getDirections() {
 }
 
 export function addDirection(name) {
-  return function (dispatch : Dispatch) {
+  return function (dispatch: Dispatch) {
     dispatch({ type: ADD_DIRECTION_REQUEST });
     console.log("adding");
     fetch(URL, {
-  method: 'POST',
+      method: "POST",
 
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer "+getCookie("accessToken"),
-  },
-  // mutation {
-  //   directionAdd(description:"123", startAt:"1.12.12") {
-  //     description
-  //   }
-  // }
-  body: JSON.stringify({
-    query: `mutation {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      // mutation {
+      //   directionAdd(description:"123", startAt:"1.12.12") {
+      //     description
+      //   }
+      // }
+      body: JSON.stringify({
+        query: `mutation {
       directionAdd(name:"${name}") {
         id
         name
@@ -99,15 +101,15 @@ export function addDirection(name) {
         }
       }
     }
-    `
-  })
-})
+    `,
+      }),
+    })
       .then(checkResponse)
       .then((res) => {
         if (res) {
           dispatch({
             type: ADD_DIRECTION_SUCCESS,
-            direction: res.data.directionAdd
+            direction: res.data.directionAdd,
           });
         } else {
           dispatch({
@@ -123,30 +125,30 @@ export function addDirection(name) {
   };
 }
 export function deleteDirection(directionId) {
-  const deletedDate = (new Date).toISOString();
-  return function (dispatch : Dispatch) {
+  const deletedDate = new Date().toISOString();
+  return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_DIRECTION_REQUEST });
     console.log("deleting direction");
     fetch(URL, {
-  method: 'POST',
+      method: "POST",
 
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer "+getCookie("accessToken"),
-  },
-  body: JSON.stringify({
-    query: `mutation {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
       directionSetDeletedAt(directionId:"${directionId}",deletedAt:"${deletedDate}")
     }
-    `
-  })
-})
+    `,
+      }),
+    })
       .then(checkResponse)
       .then((res) => {
         if (res) {
           dispatch({
             type: DELETE_DIRECTION_SUCCESS,
-            directionId:directionId,
+            directionId: directionId,
             deletedAt: deletedDate,
           });
         } else {
@@ -162,31 +164,31 @@ export function deleteDirection(directionId) {
       });
   };
 }
-export function addUser(directionId,user) {
-  return function (dispatch : Dispatch) {
+export function addUser(directionId, user) {
+  return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("adding user");
     fetch(URL, {
-  method: 'POST',
+      method: "POST",
 
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer "+getCookie("accessToken"),
-  },
-  body: JSON.stringify({
-    query: `mutation {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
       directionAddMember(directionId:"${directionId}",userId:"${user.id}")
     }
-    `
-  })
-})
+    `,
+      }),
+    })
       .then(checkResponse)
       .then((res) => {
         if (res && !res.errors) {
           dispatch({
             type: ADD_USER_SUCCESS,
             directionId: directionId,
-            user: {displayName: user.displayName,id:user.id}
+            user: { displayName: user.displayName, id: user.id },
           });
         } else {
           dispatch({
@@ -201,31 +203,31 @@ export function addUser(directionId,user) {
       });
   };
 }
-export function removeUser(directionId,user) {
-  return function (dispatch : Dispatch) {
+export function removeUser(directionId, user) {
+  return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("removing user");
     fetch(URL, {
-  method: 'POST',
+      method: "POST",
 
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer "+getCookie("accessToken"),
-  },
-  body: JSON.stringify({
-    query: `mutation {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
       directionRemoveMember(directionId:"${directionId}",userId:"${user.id}")
     }
-    `
-  })
-})
+    `,
+      }),
+    })
       .then(checkResponse)
       .then((res) => {
         if (res && !res.errors) {
           dispatch({
             type: REMOVE_USER_SUCCESS,
             directionId: directionId,
-            user: {displayName: user.displayName,id:user.id}
+            user: { displayName: user.displayName, id: user.id },
           });
         } else {
           dispatch({
@@ -241,31 +243,31 @@ export function removeUser(directionId,user) {
   };
 }
 
-export function changeDetails(details,directionId) {
-  return function (dispatch : Dispatch) {
+export function changeDetails(details, directionId) {
+  return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_DIRECTION_DETAILS_REQUEST });
     console.log("adding");
     fetch(URL, {
-  method: 'POST',
+      method: "POST",
 
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer "+getCookie("accessToken"),
-  },
-  body: JSON.stringify({
-    query: `mutation {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
       directionSetDetails(details:"${details}",directionId:"${directionId}")
     }
-    `
-  })
-})
+    `,
+      }),
+    })
       .then(checkResponse)
       .then((res) => {
         if (res) {
           dispatch({
             type: CHANGE_DIRECTION_DETAILS_SUCCESS,
-            directionId:directionId,
-            details: details
+            directionId: directionId,
+            details: details,
           });
         } else {
           dispatch({

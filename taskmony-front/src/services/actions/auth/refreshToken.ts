@@ -10,7 +10,7 @@ export const REFRESH_TOKEN_FAILED = "REFRESH_TOKEN_FAILED";
 const URL = BASE_URL + "/auth/token";
 
 export function refreshToken() {
-  return function (dispatch : Dispatch) {
+  return function (dispatch: Dispatch) {
     dispatch({ type: REFRESH_TOKEN_REQUEST });
     fetch(URL, {
       method: "POST",

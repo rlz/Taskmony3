@@ -1,7 +1,4 @@
-import {
-  editTaskReducer,
-  tasksReducer
-} from "./tasksReducers";
+import { editTaskReducer, tasksReducer } from "./tasksReducers";
 import { authReducer, resetPasswordReducer } from "./authReducers";
 import { userInfoReducer } from "./userInfoReducer";
 import { combineReducers } from "redux";

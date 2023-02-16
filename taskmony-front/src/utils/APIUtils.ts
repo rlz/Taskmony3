@@ -4,6 +4,6 @@ export async function checkResponse(response: Response) {
   else return false;
 }
 export const nowDate = () => {
-  const now = (new Date()).setSeconds(0);
-  return (new Date(now)).toISOString();
-}
+  const now = new Date().setSeconds(0);
+  return new Date(now).toISOString();
+};

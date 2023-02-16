@@ -9,7 +9,6 @@ import { register } from "../../services/actions/auth/register";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 
-
 export const Register = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -32,29 +31,45 @@ export const Register = () => {
     setPasswordVisible(!passwordVisible);
   };
   const registerUser = () => {
-    console.log("registering"+email+password+name)
+    console.log("registering" + email + password + name);
     dispatch(register(email, password, name));
   };
 
   return (
     <>
-    <TaskmonyTitle/>
-    <div className="w-full h-full absolute flex justify-center content-center bg-slate-50">
-    <div className="w-1/3 m-auto pb-20">
-    <h1 className="font-bold text-3xl">Sign up</h1>
-      <Input label={"name"} type={"text"} value={name} onChange={(e) => setName(e.target.value)}/>
-      <Input label={"email"} type={"email"} value={email} onChange={(e) => setEmail(e.target.value)}/>
-      <Input label={"password"} type={"password"} value={password} onChange={(e) => setPassword(e.target.value)}/>
-      <div className="mt-10">
-      <Btn label={"sign up"} onClick={registerUser} />
+      <TaskmonyTitle />
+      <div className="w-full h-full absolute flex justify-center content-center bg-slate-50">
+        <div className="w-1/3 m-auto pb-20">
+          <h1 className="font-bold text-3xl">Sign up</h1>
+          <Input
+            label={"name"}
+            type={"text"}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            label={"email"}
+            type={"email"}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            label={"password"}
+            type={"password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <div className="mt-10">
+            <Btn label={"sign up"} onClick={registerUser} />
+          </div>
+          <p>
+            Or{" "}
+            <NavLink to="/login" className="font-semibold underline">
+              sign in
+            </NavLink>
+          </p>
+        </div>
       </div>
-      <p>Or <NavLink to="/login" className="font-semibold underline">sign in</NavLink></p>
-    </div>
-    </div>
-
     </>
   );
 };
-
-
-  

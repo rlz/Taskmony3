@@ -11,19 +11,19 @@ export const SEND_COMMENT_FAILED = "SEND_COMMENT_FAILED";
 const URL = BASE_URL + "/graphql";
 
 export function sendTaskComment(taskId, text) {
-//   console.log(`sending ${taskId}${text}`);
+  //   console.log(`sending ${taskId}${text}`);
   return function (dispatch: Dispatch) {
     console.log("sending_comment");
     dispatch({ type: SEND_COMMENT_REQUEST });
     fetch(URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + getCookie("accessToken"),
-        },
-    
-        body: JSON.stringify({
-          query: `mutation {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+
+      body: JSON.stringify({
+        query: `mutation {
           taskAddComment(taskId:"${taskId}", text:"${text}") {
             text
             createdAt
@@ -31,8 +31,8 @@ export function sendTaskComment(taskId, text) {
         }
     }
         `,
-        }),
-      })
+      }),
+    })
       .then(checkResponse)
       .then((res) => {
         console.log(res);
@@ -40,7 +40,7 @@ export function sendTaskComment(taskId, text) {
           dispatch({
             type: SEND_COMMENT_SUCCESS,
             comment: res.data.taskAddComment,
-            id: taskId
+            id: taskId,
           });
         } else {
           dispatch({

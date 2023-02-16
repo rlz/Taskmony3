@@ -20,7 +20,7 @@ export const Comment = ({ text, author, time }: CommentProps) => {
   );
 };
 
-export const CommentInput = ({commentValue, changeComment}) => {
+export const CommentInput = ({ commentValue, changeComment }) => {
   return (
     <div className={`bg-slate-100 m-2 p-2 rounded-lg text-gray-800`}>
       <textarea
@@ -29,8 +29,8 @@ export const CommentInput = ({commentValue, changeComment}) => {
               focus:outline-none bg-slate-100
               w-full resize-none
       `}
-      value={commentValue}
-      onChange={(e)=>changeComment(e.target.value)}
+        value={commentValue}
+        onChange={(e) => changeComment(e.target.value)}
       />
     </div>
   );

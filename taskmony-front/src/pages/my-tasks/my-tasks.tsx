@@ -20,10 +20,6 @@ function MyTasks() {
   let tasksToShow = useAppSelector((store) => store.tasks.items).filter(i=>i.deletedAt == null)
   if(chosenDirection!="")
   tasksToShow = tasksToShow.filter(i=>i.direction?.name == chosenDirection || chosenDirection == "none" && !i.direction);;
-   
-  useEffect(() => {
-    console.log(tasksToShow);
-  }, [tasksToShow]);
   const dispatch = useAppDispatch();
   const addANewTask = () => {
     if(task.repeatMode) dispatch(addRepeatedTasks(task,null));

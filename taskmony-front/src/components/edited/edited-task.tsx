@@ -18,7 +18,24 @@ import { NumberPicker } from "./number-picker";
 import followBlue from "../../images/followed.svg";
 import followGray from "../../images/follow.svg";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
-import { CHANGE_TASK_ASSIGNEE, CHANGE_TASK_DESCRIPTION, CHANGE_TASK_DIRECTION, CHANGE_TASK_REPEAT_EVERY, CHANGE_TASK_REPEAT_MODE, CHANGE_TASK_REPEAT_UNTIL, CHANGE_TASK_REPEAT_WEEK_DAYS, CHANGE_TASK_START_DATE } from "../../services/actions/tasksAPI";
+import {
+  changeTaskAssignee,
+  changeTaskDescription,
+  changeTaskDetails,
+  changeTaskDirection,
+  changeTaskRepeatMode,
+  changeTaskRepeatUntil,
+  changeTaskStartAt,
+  CHANGE_TASK_ASSIGNEE,
+  CHANGE_TASK_DESCRIPTION,
+  CHANGE_TASK_DETAILS,
+  CHANGE_TASK_DIRECTION,
+  CHANGE_TASK_REPEAT_EVERY,
+  CHANGE_TASK_REPEAT_MODE,
+  CHANGE_TASK_REPEAT_UNTIL,
+  CHANGE_TASK_REPEAT_WEEK_DAYS,
+  CHANGE_TASK_START_DATE,
+} from "../../services/actions/tasksAPI";
 import { WeekPicker } from "./week-picker";
 import { sendTaskComment } from "../../services/actions/comments";
 
@@ -41,25 +58,35 @@ export const EditedTask = ({
   deleteTask,
   followed,
   recurrent,
-  changeCheck
+  changeCheck,
 }: TaskProps) => {
-  const task = useAppSelector(
-    (store) => store.editedTask
-  );
-  const dispatch = useAppDispatch()
+  const task = useAppSelector((store) => store.editedTask);
+  const dispatch = useAppDispatch();
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           <img
             src={task.completedAt ? yes : no}
-            onClick={(e)=>{e.stopPropagation();changeCheck(!task.completedAt)}}
+            onClick={(e) => {
+              e.stopPropagation();
+              changeCheck(!task.completedAt);
+            }}
           ></img>
           <input
             className={"font-semibold text-sm focus:outline-none underline"}
             placeholder={"task name"}
             value={task.description}
-            onChange={(e)=>dispatch({type:CHANGE_TASK_DESCRIPTION,payload:e.target.value})}
+            onChange={(e) =>
+              dispatch({
+                type: CHANGE_TASK_DESCRIPTION,
+                payload: e.target.value,
+              })
+            }
+            onBlur={(e) => {
+              if (task.id)
+                dispatch(changeTaskDescription(task.id, e.target.value));
+            }}
           />
         </div>
         {typeof followed !== "undefined" && (
@@ -67,30 +94,42 @@ export const EditedTask = ({
         )}
       </div>
       <Description />
-      <Details recurrent={recurrent} fromDirection={direction}/>
-      {task.id && <Comments comments={task.comments} taskId={task.id}/>}
-      <div className={"w-full flex justify-end"} >
-      {task.id && <BigBtn label={"delete"} onClick={()=>deleteTask(task)} color="red"/>}
-      <BigBtn label={"save"} onClick={()=>save(task)} color="blue"/>
+      <Details recurrent={recurrent} fromDirection={direction} />
+      {task.id && <Comments comments={task.comments} taskId={task.id} />}
+      <div className={"w-full flex justify-end"}>
+        {task.id && (
+          <BigBtn
+            label={"delete"}
+            onClick={() => deleteTask(task)}
+            color="red"
+          />
+        )}
+        <BigBtn label={"save"} onClick={() => save(task)} color="blue" />
       </div>
     </div>
   );
 };
 
 const Description = () => {
-  const [hasDetails, setHasDetails] = useState(false);
-  const [description, setDescription] = useState<string>("");
+  const dispatch = useAppDispatch();
+  const description = useAppSelector((store) => store.editedTask.details);
+  const taskId = useAppSelector((store) => store.editedTask.id);
   const details = (
     <div className="flex gap-2 mr-8">
       <img
         src={deleteI}
         className="cursor-pointer"
-        onClick={() => setHasDetails(false)}
+        onClick={() => dispatch({ type: CHANGE_TASK_DETAILS, payload: null })}
       ></img>
       <textarea
         placeholder={"details"}
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        onChange={(e) =>
+          dispatch({ type: CHANGE_TASK_DETAILS, payload: e.target.value })
+        }
+        onBlur={(e) => {
+          if (taskId) dispatch(changeTaskDetails(taskId, e.target.value == ""?null:e.target.value));
+        }}
         className="text-black font-light underline placeholder:text-black placeholder:font-light 
         placeholder:underline 
         focus:outline-none
@@ -103,14 +142,16 @@ const Description = () => {
 
   return (
     <div className="font-semibold text-sm text-blue-500 ml-2 mb-2">
-      {hasDetails ? (
-        details
-      ) : (
+      {description === null ? (
         <AddBtn
           label={"add details"}
           icon={add}
-          onClick={() => setHasDetails(true)}
+          onClick={() =>
+            dispatch({ type: CHANGE_TASK_DETAILS, payload: "details" })
+          }
         />
+      ) : (
+        details
       )}
     </div>
   );
@@ -118,125 +159,195 @@ const Description = () => {
 
 const Details = ({ recurrent, fromDirection }) => {
   const dispatch = useAppDispatch();
-  const task = useAppSelector(
-    (store) => store.editedTask
+  const task = useAppSelector((store) => store.editedTask);
+  const repeatOptions = ["no", "daily", "custom"];
+  const directions = useAppSelector((store) => store.directions.items).filter(
+    (i) => i.deletedAt == null
   );
-  const repeatOptions = ["no","daily","custom"];
-  const directions = useAppSelector((store) => store.directions.items).filter(i=>i.deletedAt == null);
 
   const repeatModeTranslator = (mode) => {
-    switch(mode){
-      case "no": return null;
-      case "daily": return "DAY";
-      case "custom": return "WEEK";
-      case null: return "no";
-      case "DAY": return "daily";
-      case "WEEK": return "custom";
+    switch (mode) {
+      case "no":
+        return null;
+      case "daily":
+        return "DAY";
+      case "custom":
+        return "WEEK";
+      case null:
+        return "no";
+      case "DAY":
+        return "daily";
+      case "WEEK":
+        return "custom";
     }
-  }
+  };
   const defaultUntilDate = () => {
     const date = new Date(Date.now());
-    return date.setFullYear(date.getFullYear() + 1)
-  }
+    return date.setFullYear(date.getFullYear() + 1);
+  };
 
   const customPicker = (
     <NumberPicker title={"every"} min={2} max={10} after={"days"} hasBorder />
   );
+  const members = directions
+  .filter((d) => d.id == task.direction.id)[0]
+  .members;
 
   return (
     <div className={"gap flex justify-start pb-2 w-full ml-1"}>
-       {!fromDirection && <ItemPicker
-        title={"direction"}
-        option={task.direction?.name?task.direction?.name:"none"}
-        options={["none",...directions.map(dir=>dir.name)]}
-        onChange={(index) => {
-          console.log(index);
-          const payload = index==0?null:directions[index-1]
-          dispatch({type:CHANGE_TASK_DIRECTION,payload:payload})
-        }}
+      {!fromDirection && (
+        <ItemPicker
+          title={"direction"}
+          option={task.direction?.name ? task.direction?.name : "none"}
+          options={["none", ...directions.map((dir) => dir.name)]}
+          onChange={(index) => {
+            console.log(index);
+            const payload = index == 0 ? null : directions[index - 1];
+            dispatch({ type: CHANGE_TASK_DIRECTION, payload: payload });
+            if (task.id) dispatch(changeTaskDirection(task.id, payload));
+          }}
+          hasBorder
+        />
+      )}
+      {task.direction && (
+        <ItemPicker
+          title={"assignee"}
+          options={[
+            "none",
+            ...members.map((m) => m.displayName),
+          ]}
+          option={task.assignee?.displayName}
+          onChange={(index) => {
+            console.log(index);
+            const payload =
+              index == 0 ? null : members[index - 1];
+              console.log(payload);
+            dispatch({ type: CHANGE_TASK_ASSIGNEE, payload: payload });
+            if (task.id) dispatch(changeTaskAssignee(task.id, payload));
+          }}
+          hasBorder
+          width="w-24"
+        />
+      )}
+      <DatePicker
+        title={"start date"}
+        date={task.startAt ? new Date(task.startAt) : new Date()}
         hasBorder
-      />}
-      {task.direction && <ItemPicker
-        title={"assignee"}
-        options={["none", ...directions.filter(d=>d.id==task.direction.id)[0].members.map(m=>m.displayName)]}
-        option={task.assignee?.displayName}
-        onChange={(index) => {
-          console.log(index);
-          const payload = index==0?null:task.direction.members[index-1]
-          dispatch({type:CHANGE_TASK_ASSIGNEE,payload:payload})
-        }}
-        hasBorder
-        width="w-24"
-      />}
-      <DatePicker title={"start date"} date={task.startAt? new Date(task.startAt) : new Date()}
-       hasBorder onChange={(value)=>dispatch({type:CHANGE_TASK_START_DATE,payload:value})}/>
+        onChange={(value) =>
+          {dispatch({ type: CHANGE_TASK_START_DATE, payload: value })
+          if(task.id)
+          dispatch(changeTaskStartAt(task.id,value))}
+        }
+      />
       <ItemPicker
         title={"repeated"}
         options={repeatOptions}
         option={repeatModeTranslator(task.repeatMode)}
         onChange={(index) => {
-          dispatch({type:CHANGE_TASK_REPEAT_MODE,payload:repeatModeTranslator(repeatOptions[index])});
+          dispatch({
+            type: CHANGE_TASK_REPEAT_MODE,
+            payload: repeatModeTranslator(repeatOptions[index]),
+          });
           //when mode is weekly or daily
-          if(repeatOptions[index]=="daily" || repeatOptions[index]=="custom")
-          {dispatch({type:CHANGE_TASK_REPEAT_EVERY,payload:1})
-          dispatch({type:CHANGE_TASK_REPEAT_UNTIL,payload:new Date(defaultUntilDate()).toISOString().substring(0, 10)})
-        }
-         //when mode is weekly
-         if(repeatOptions[index]=="custom") dispatch({type:CHANGE_TASK_REPEAT_WEEK_DAYS,payload:["MONDAY"]})
+          if (
+            repeatOptions[index] == "daily" ||
+            repeatOptions[index] == "custom"
+          ) {
+            dispatch({ type: CHANGE_TASK_REPEAT_EVERY, payload: 1 });
+            dispatch({
+              type: CHANGE_TASK_REPEAT_UNTIL,
+              payload: new Date(defaultUntilDate())
+                .toISOString()
+                .substring(0, 10),
+            });
+          }
+          //when mode is weekly
+          if (repeatOptions[index] == "custom")
+            dispatch({
+              type: CHANGE_TASK_REPEAT_WEEK_DAYS,
+              payload: ["MONDAY"],
+            });
+            if(task.id)
+            dispatch(changeTaskRepeatMode(task.id,repeatModeTranslator(repeatOptions[index]),task.repeatEvery,task.weekDays))
         }}
         hasBorder
       />
-      {task.repeatMode && 
-          <DatePicker title={"until"} 
+      {task.repeatMode && (
+        <DatePicker
+          title={"until"}
           min={new Date(task.startAt)}
-          date={task.repeatUntil? new Date(task.repeatUntil) : defaultUntilDate()}
-       hasBorder onChange={(value)=>dispatch({type:CHANGE_TASK_REPEAT_UNTIL,payload:value})}/>
-      }
-      {task.repeatMode === "WEEK" && 
+          date={
+            task.repeatUntil ? new Date(task.repeatUntil) : defaultUntilDate()
+          }
+          hasBorder
+          onChange={(value) =>
+            {dispatch({ type: CHANGE_TASK_REPEAT_UNTIL, payload: value })
+            if(task.id)
+            dispatch(changeTaskRepeatUntil(task.id,value))
+          }
+          }
+        />
+      )}
+      {task.repeatMode === "WEEK" && (
         <>
-                <NumberPicker
-        title={"every"}
-        min={1}
-        max={9}
-        after={"week(s)"}
-        value={task.repeatEvery}
-        onChange={(value) => {
-          console.log(value);
-          dispatch({type:CHANGE_TASK_REPEAT_EVERY,payload:value})
-        }}
-        hasBorder
-      />
-      <WeekPicker
-              value={task.weekDays}
-              onChange={(value)=>dispatch({type:CHANGE_TASK_REPEAT_WEEK_DAYS,payload:value})}/>
+          <NumberPicker
+            title={"every"}
+            min={1}
+            max={9}
+            after={"week(s)"}
+            value={task.repeatEvery}
+            onChange={(value) => {
+              console.log(value);
+              dispatch({ type: CHANGE_TASK_REPEAT_EVERY, payload: value });
+              if(task.id)
+              dispatch(changeTaskRepeatMode(task.id,task.repeatMode,value,task.weekDays))
+          
+            }}
+            hasBorder
+          />
+          <WeekPicker
+            value={task.weekDays}
+            onChange={(value) =>
+              {dispatch({ type: CHANGE_TASK_REPEAT_WEEK_DAYS, payload: value })
+              if(task.id)
+              dispatch(changeTaskRepeatMode(task.id,task.repeatMode,task.repeatEvery,value))
+          
+            }
+            }
+          />
         </>
-
-    }
+      )}
     </div>
-  )};
+  );
+};
 
 const Comments = () => {
-  const taskId = useAppSelector(
-    (store) => store.editedTask.id
-  );
+  const taskId = useAppSelector((store) => store.editedTask.id);
   const dispatch = useAppDispatch();
-  const comments = useAppSelector(
-    (store) => store.editedTask.comments
-  );
+  const comments = useAppSelector((store) => store.editedTask.comments);
   const [showInput, setShowInput] = useState<boolean>(false);
   const [commentInput, setCommentInput] = useState<string>("");
   const sendComment = () => {
-    dispatch(sendTaskComment(taskId,commentInput));
+    dispatch(sendTaskComment(taskId, commentInput));
     setShowInput(false);
     setCommentInput("");
-  }
+  };
 
   return (
     <>
-      {comments?.map(comment =>
-                <Comment text={comment.text} author={comment.createdBy.displayName} time={comment.createdAt} />
+      {comments?.map((comment) => (
+        <Comment
+          text={comment.text}
+          author={comment.createdBy.displayName}
+          time={comment.createdAt}
+        />
+      ))}
+      {showInput && (
+        <CommentInput
+          commentValue={commentInput}
+          changeComment={setCommentInput}
+        />
       )}
-      {showInput && <CommentInput commentValue={commentInput} changeComment={setCommentInput}/>}
       <div className="flex justify-center p-1">
         <AddBtn
           label={commentInput ? "send comment" : "add a new comment"}

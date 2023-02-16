@@ -25,6 +25,7 @@ export const CHANGE_TASK_FOLLOWED_SUCCESS = "CHANGE_TASK_FOLLOWED_SUCCESS";
 export const CHANGE_TASK_FOLLOWED_FAILED = "CHANGE_TASK_FOLLOWED_FAILED";
 
 export const CHANGE_OPEN_TASK = "CHANGE_OPEN_TASK";
+
 export const CHANGE_TASK_DESCRIPTION = "CHANGE_TASK_DESCRIPTION";
 export const CHANGE_TASK_DIRECTION = "CHANGE_TASK_DIRECTION";
 export const CHANGE_TASK_DETAILS = "CHANGE_TASK_DETAILS";
@@ -34,6 +35,28 @@ export const CHANGE_TASK_REPEAT_MODE = "CHANGE_TASK_REPEAT_MODE";
 export const CHANGE_TASK_REPEAT_EVERY = "CHANGE_TASK_REPEAT_EVERY";
 export const CHANGE_TASK_REPEAT_WEEK_DAYS = "CHANGE_TASK_WEEK_DAYS";
 export const CHANGE_TASK_REPEAT_UNTIL = "CHANGE_TASK_REPEAT_UNTIL";
+
+export const CHANGE_TASK_DESCRIPTION_FAILED = "CHANGE_TASK_DESCRIPTION_FAILED";
+export const CHANGE_TASK_DIRECTION_FAILED = "CHANGE_TASK_DIRECTION_FAILED";
+export const CHANGE_TASK_DETAILS_FAILED = "CHANGE_TASK_DETAILS_FAILED";
+export const CHANGE_TASK_ASSIGNEE_FAILED = "CHANGE_TASK_ASSIGNEE_FAILED";
+export const CHANGE_TASK_START_DATE_FAILED = "CHANGE_TASK_START_DATE_FAILED";
+export const CHANGE_TASK_REPEAT_MODE_FAILED = "CHANGE_TASK_REPEAT_MODE_FAILED";
+export const CHANGE_TASK_REPEAT_EVERY_FAILED = "CHANGE_TASK_REPEAT_EVERY_FAILED";
+export const CHANGE_TASK_REPEAT_WEEK_DAYS_FAILED = "CHANGE_TASK_WEEK_DAYS_FAILED";
+export const CHANGE_TASK_REPEAT_UNTIL_FAILED = "CHANGE_TASK_REPEAT_UNTIL_FAILED";
+
+export const CHANGE_TASK_DESCRIPTION_SUCCESS = "CHANGE_TASK_DESCRIPTION_SUCCESS";
+export const CHANGE_TASK_DIRECTION_SUCCESS = "CHANGE_TASK_DIRECTION_SUCCESS";
+export const CHANGE_TASK_DETAILS_SUCCESS = "CHANGE_TASK_DETAILS_SUCCESS";
+export const CHANGE_TASK_ASSIGNEE_SUCCESS = "CHANGE_TASK_ASSIGNEE_SUCCESS";
+export const CHANGE_TASK_START_DATE_SUCCESS = "CHANGE_TASK_START_DATE_SUCCESS";
+export const CHANGE_TASK_REPEAT_MODE_SUCCESS = "CHANGE_TASK_REPEAT_MODE_SUCCESS";
+export const CHANGE_TASK_REPEAT_EVERY_SUCCESS = "CHANGE_TASK_REPEAT_EVERY_SUCCESS";
+export const CHANGE_TASK_REPEAT_WEEK_DAYS_SUCCESS = "CHANGE_TASK_WEEK_DAYS_SUCCESS";
+export const CHANGE_TASK_REPEAT_UNTIL_SUCCESS = "CHANGE_TASK_REPEAT_UNTIL_SUCCESS";
+
+export const CHANGE_SAVED = "CHANGE_SAVED";
 
 export const RESET_TASK = "RESET_TASK";
 export const CHANGE_TASKS = "CHANGE_TASKS";
@@ -277,6 +300,266 @@ export function changeTaskFollowed(taskId, markFollowed) {
       });
   };
 }
+export function changeTaskDescription(taskId, description) {
+  return function (dispatch: Dispatch) {
+    console.log("change description");
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
+      taskSetDescription(taskId:"${taskId}",description:"${description}") 
+    }
+    `,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_TASK_DESCRIPTION_SUCCESS,
+            taskId: taskId,
+            payload: description,
+          });
+        } else {
+          dispatch({
+            type: CHANGE_TASK_DESCRIPTION_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_TASK_DESCRIPTION_FAILED,
+        });
+      });
+  };
+}
+export function changeTaskDetails(taskId, details) {
+  return function (dispatch: Dispatch) {
+    console.log("change details");
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
+      taskSetDetails(taskId:"${taskId}",details:"${details}") 
+    }
+    `,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_TASK_DETAILS_SUCCESS,
+            taskId: taskId,
+            payload: details,
+          });
+        } else {
+          dispatch({
+            type: CHANGE_TASK_DETAILS_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_TASK_DETAILS_FAILED,
+        });
+      });
+  };
+}
+export function changeTaskDirection(taskId, direction) {
+  return function (dispatch: Dispatch) {
+    console.log("change direction");
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
+      taskSetDirection(taskId:"${taskId}",directionId:"${direction.id}") 
+    }
+    `,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_TASK_DIRECTION_SUCCESS,
+            taskId: taskId,
+            payload: direction,
+          });
+        } else {
+          dispatch({
+            type: CHANGE_TASK_DIRECTION_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_TASK_DIRECTION_FAILED,
+        });
+      });
+  };
+}
+export function changeTaskAssignee(taskId, assignee) {
+  return function (dispatch: Dispatch) {
+    console.log("change assignee");
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
+      taskSetAssignee(taskId:"${taskId}",assigneeId:"${assignee.id}") 
+    }
+    `,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_TASK_ASSIGNEE_SUCCESS,
+            taskId: taskId,
+            payload: assignee,
+          });
+        } else {
+          dispatch({
+            type: CHANGE_TASK_ASSIGNEE_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_TASK_ASSIGNEE_FAILED,
+        });
+      });
+  };
+}
+export function changeTaskRepeatMode(taskId, repeatMode,repeatEvery,weekDays) {
+  return function (dispatch: Dispatch) {
+    console.log("change repeatMode");
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
+      taskSetRepeatMode(taskId:"${taskId}",repeatMode:"${repeatMode}",repeatEvery:"${repeatEvery}"
+      ${repeatMode == "WEEK"?`,weekDays:${weekDays}`:""}) 
+    `,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_TASK_REPEAT_MODE_SUCCESS,
+            taskId: taskId,
+            payload: repeatMode,
+          });
+        } else {
+          dispatch({
+            type: CHANGE_TASK_REPEAT_MODE_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_TASK_REPEAT_MODE_FAILED,
+        });
+      });
+  };
+}
+export function changeTaskRepeatUntil(taskId, repeatUntil) {
+  return function (dispatch: Dispatch) {
+    console.log("change repeatUntil");
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
+      taskSetRepeatUntil(taskId:"${taskId}",repeatUntil:"${repeatUntil}") 
+    }
+    `,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_TASK_REPEAT_UNTIL_SUCCESS,
+            taskId: taskId,
+            payload: repeatUntil,
+          });
+        } else {
+          dispatch({
+            type: CHANGE_TASK_REPEAT_UNTIL_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_TASK_REPEAT_UNTIL_FAILED,
+        });
+      });
+  };
+}
+export function changeTaskStartAt(taskId, startAt) {
+  return function (dispatch: Dispatch) {
+    console.log("change startAt");
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
+      taskSetStartAt(taskId:"${taskId}",startAt:"${startAt}") 
+    }
+    `,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_TASK_START_DATE_SUCCESS,
+            taskId: taskId,
+            payload: startAt,
+          });
+        } else {
+          dispatch({
+            type: CHANGE_TASK_START_DATE_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_TASK_START_DATE_FAILED,
+        });
+      });
+  };
+}
+
 export function deleteTask(taskId) {
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_TASK_REQUEST });

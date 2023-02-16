@@ -11,15 +11,24 @@ import {
   CHANGE_OPEN_TASK,
   CHANGE_TASKS,
   CHANGE_TASK_ASSIGNEE,
+  CHANGE_TASK_ASSIGNEE_SUCCESS,
   CHANGE_TASK_DESCRIPTION,
+  CHANGE_TASK_DESCRIPTION_SUCCESS,
   CHANGE_TASK_DETAILS,
+  CHANGE_TASK_DETAILS_SUCCESS,
   CHANGE_TASK_DIRECTION,
+  CHANGE_TASK_DIRECTION_SUCCESS,
   CHANGE_TASK_FOLLOWED_SUCCESS,
   CHANGE_TASK_REPEAT_EVERY,
+  CHANGE_TASK_REPEAT_EVERY_SUCCESS,
   CHANGE_TASK_REPEAT_MODE,
+  CHANGE_TASK_REPEAT_MODE_SUCCESS,
   CHANGE_TASK_REPEAT_UNTIL,
+  CHANGE_TASK_REPEAT_UNTIL_SUCCESS,
   CHANGE_TASK_REPEAT_WEEK_DAYS,
+  CHANGE_TASK_REPEAT_WEEK_DAYS_SUCCESS,
   CHANGE_TASK_START_DATE,
+  CHANGE_TASK_START_DATE_SUCCESS,
   DELETE_TASK_SUCCESS,
   GET_TASKS_FAILED,
   GET_TASKS_REQUEST,
@@ -54,22 +63,20 @@ export const tasksReducer = (
         taskId: string;
         date: string;
       }
-      | {
+    | {
         type: typeof CHANGE_TASK_FOLLOWED_SUCCESS;
         taskId: string;
         followed: boolean;
         userId: string;
       }
-      
     | {
         type:
           | typeof GET_TASKS_REQUEST
           | typeof GET_TASKS_FAILED
           | typeof ADD_TASK_REQUEST
           | typeof ADD_TASK_FAILED
-          | typeof ADD_TASK_SUCCESS
+          | typeof ADD_TASK_SUCCESS;
       }
-      
 ) => {
   switch (action.type) {
     case GET_TASKS_REQUEST: {
@@ -120,7 +127,7 @@ export const tasksReducer = (
             ? {
                 ...item,
                 subscribers: action.followed
-                  ? [...item.subscribers, {id:action.userId}]
+                  ? [...item.subscribers, { id: action.userId }]
                   : item.subscribers.filter((s) => s.id != action.userId),
               }
             : item
@@ -152,7 +159,7 @@ export const tasksReducer = (
     case DELETE_TASK_SUCCESS: {
       return {
         ...state,
-        items: state.items.filter(i=>i.id != action.taskId),
+        items: state.items.filter((i) => i.id != action.taskId),
       };
     }
     default: {
@@ -163,7 +170,7 @@ export const tasksReducer = (
 
 export const taskInitialState = {
   description: "",
-  details: "",
+  details: null,
   assigneeId: "",
   directionId: "",
   startAt: nowDate(),
@@ -181,10 +188,10 @@ export const editTaskReducer = (
           | typeof CHANGE_TASK_START_DATE
           | typeof CHANGE_TASK_ASSIGNEE
           | typeof CHANGE_TASK_DIRECTION
-          | typeof CHANGE_TASK_REPEAT_MODE    
-          | typeof CHANGE_TASK_REPEAT_EVERY 
-          | typeof CHANGE_TASK_REPEAT_UNTIL 
-          | typeof CHANGE_TASK_REPEAT_WEEK_DAYS       
+          | typeof CHANGE_TASK_REPEAT_MODE
+          | typeof CHANGE_TASK_REPEAT_EVERY
+          | typeof CHANGE_TASK_REPEAT_UNTIL
+          | typeof CHANGE_TASK_REPEAT_WEEK_DAYS;
         payload: any;
       }
     | {
@@ -202,17 +209,17 @@ export const editTaskReducer = (
       }
 ) => {
   switch (action.type) {
-    case CHANGE_TASK_DESCRIPTION: {
-      return {
-        ...state,
-        description: action.payload,
-      };
-    }
     case RESET_TASK: {
       return taskInitialState;
     }
     case CHANGE_OPEN_TASK: {
       return action.task;
+    }
+    case CHANGE_TASK_DESCRIPTION: {
+      return {
+        ...state,
+        description: action.payload,
+      };
     }
     case CHANGE_TASK_DETAILS: {
       return {
@@ -239,17 +246,17 @@ export const editTaskReducer = (
       };
     }
     case CHANGE_TASK_REPEAT_MODE: {
-        return { ...state, repeatMode: action.payload };
+      return { ...state, repeatMode: action.payload };
     }
     case CHANGE_TASK_REPEAT_EVERY: {
       return { ...state, repeatEvery: action.payload };
-  }
-  case CHANGE_TASK_REPEAT_UNTIL: {
-    return { ...state, repeatUntil: action.payload };
-}
-case CHANGE_TASK_REPEAT_WEEK_DAYS: {
-  return { ...state, weekDays: action.payload };
-}
+    }
+    case CHANGE_TASK_REPEAT_UNTIL: {
+      return { ...state, repeatUntil: action.payload };
+    }
+    case CHANGE_TASK_REPEAT_WEEK_DAYS: {
+      return { ...state, weekDays: action.payload };
+    }
     case CHANGE_COMPLETE_TASK_DATE_SUCCESS: {
       if (action.taskId == state.id)
         return { ...state, completedAt: action.date };

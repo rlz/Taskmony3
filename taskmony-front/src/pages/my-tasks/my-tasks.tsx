@@ -10,6 +10,7 @@ import { addRepeatedTasks, addTask, RESET_TASK } from "../../services/actions/ta
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { FilterByDirection } from "../../components/filter/by-direction";
 import { useSearchParams } from "react-router-dom";
+import { FilterByArchivedTaskType, FilterByTaskType } from "../../components/filter/by-task-type";
 
 function MyTasks() {
   const [newTask, setNewTask] = useState(false);
@@ -60,10 +61,7 @@ function Filter() {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   return (
     <div className="w-1/5 mt-12">
-      <FilterItem label="show future tasks" checked />
-      <FilterItem label="show assigned to me" checked />
-      <FilterItem label="show assigned by me" checked />
-      <FilterItem label="show followed" checked />
+      <FilterByTaskType/>
       <hr />
       <FilterByDirection/>
     </div>

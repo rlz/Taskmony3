@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getCookie } from "../../utils/cookies";
 import { useAppSelector } from "../../utils/hooks";
 import { FilterDivider } from "./filter-divider";
@@ -6,6 +7,8 @@ import { FilterItem } from "./filter-item";
 
 export const FilterByCreator = ({ id }) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
+  let [searchParams, setSearchParams] = useSearchParams();
+  const creator = searchParams.get("creator");
   const directions = useAppSelector((store) => store.directions.items);
   const direction = directions.filter((d) => d.id == id)[0];
   console.log(direction);
@@ -26,7 +29,15 @@ export const FilterByCreator = ({ id }) => {
             u.id == myId ? (
               <FilterItem label={"me"} checked />
             ) : (
-              <FilterItem label={u.displayName} checked />
+              <FilterItem label={u.displayName}
+              checked={creator == u.name}
+              onChange={(value, label) => {
+                if (value) setSearchParams({ creator: label });
+                else setSearchParams({ creator: "" });
+              }}
+              
+              
+              />
             );
           })}
         </>

@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { FilterDivider } from "./filter-divider";
 import hrLine from "../../images/hr-line.svg";
+import { useSearchParams } from "react-router-dom";
 
 export const FilterByDate = ({type}) => {
+  let [searchParams, setSearchParams] = useSearchParams();
+  const start = searchParams.get("start");
+  const end = searchParams.get("end");
     const [isOpen, setIsOpen] = useState<boolean>(true);
     return (
       <>

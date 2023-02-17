@@ -205,7 +205,7 @@ export function addRepeatedTasks(task, direction) {
       .then(checkResponse)
       .then((res) => {
         if (res) {
-          console.log(res);
+          dispatch(getTasks());
           // dispatch({
           //   type: ADD_TASK_SUCCESS,
           //   task: res.data.taskAdd,

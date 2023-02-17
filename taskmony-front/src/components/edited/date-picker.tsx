@@ -17,7 +17,7 @@ export const DatePicker = ({
   min,
 }: Props) => {
   return (
-    <div className={"flex justify-between pl-2"}>
+    <div className={"flex justify-between items-center pl-2"}>
       <p className={"font-semibold text-sm text-blue-500 whitespace-nowrap"}>
         {title}:
       </p>

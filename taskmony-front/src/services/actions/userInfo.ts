@@ -14,6 +14,7 @@ export const USER_INFO_FAILED = "USER_INFO_FAILED";
 export const USERS_REQUEST = "USERS_REQUEST";
 export const USERS_SUCCESS = "USERS_SUCCESS";
 export const USERS_FAILED = "USERS_FAILED";
+export const USERS_RESET = "USERS_RESET";
 
 export function getUserInfo() {
   return function (dispatch: any) {

@@ -387,6 +387,7 @@ const Comments = () => {
         <CommentInput
           commentValue={commentInput}
           changeComment={setCommentInput}
+          send={sendComment}
         />
       )}
       <div className="flex justify-center p-1">

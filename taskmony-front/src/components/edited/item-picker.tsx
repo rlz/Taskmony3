@@ -20,8 +20,8 @@ export const ItemPicker = ({
   width,
 }: Props) => {
   return (
-    <div className={"flex justify-between pl-2"}>
-      <p className={"font-semibold text-sm text-blue-500 pt-0.5"}>{title}:</p>
+    <div className={"flex justify-between items-center pl-2"}>
+      <p className={"font-semibold text-sm text-blue-500"}>{title}:</p>
       <select
         name="options"
         id="options"
@@ -31,8 +31,8 @@ export const ItemPicker = ({
         }
         onChange={(e) => onChange(e.target.selectedIndex)}
       >
-        {options.map((o) => (
-          <option value={o} className={"font-semibold text-sm text-blue-500"}>
+        {options.map((o,index) => (
+          <option value={o} key={index} className={"font-semibold text-sm text-blue-500"}>
             {o}
           </option>
         ))}

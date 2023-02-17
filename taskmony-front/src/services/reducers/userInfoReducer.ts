@@ -8,6 +8,7 @@ import {
   USERS_SUCCESS,
   USERS_REQUEST,
   USERS_FAILED,
+  USERS_RESET,
 } from "../actions/userInfo";
 
 type TUser = {
@@ -40,6 +41,7 @@ export const userInfoReducer = (
           | typeof USER_INFO_FAILED
           | typeof USERS_REQUEST
           | typeof USERS_FAILED
+          | typeof USERS_RESET
           | typeof CHANGE_USER_INFO_REQUEST
           | typeof CHANGE_USER_INFO_FAILED;
       }
@@ -122,6 +124,15 @@ export const userInfoReducer = (
         ...state,
         users_loading: false,
         users_error: true,
+      };
+    }
+    case USERS_RESET: {
+      return {
+        ...state,
+        users: [],
+        users_loading: true,
+        users_success: false,
+        users_error: false,
       };
     }
     default: {

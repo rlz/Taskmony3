@@ -20,7 +20,7 @@ export const NumberPicker = ({
   onChange,
 }: Props) => {
   return (
-    <div className={"flex justify-between pl-2"}>
+    <div className={"flex justify-between items-center pl-2"}>
       <p className={"font-semibold text-sm text-blue-500 pr-1 pt-0.5"}>
         {title}
       </p>

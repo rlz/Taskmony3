@@ -30,36 +30,21 @@ public class IdeaMutations
     public async Task<Guid?> IdeaSetDescription([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, string description)
     {
-        if (await ideaService.SetIdeaDescriptionAsync(ideaId, description, currentUserId))
-        {
-            return ideaId;
-        }
-
-        return null;
+        return await ideaService.SetIdeaDescriptionAsync(ideaId, description, currentUserId);
     }
 
     [Authorize]
     public async Task<Guid?> IdeaSetDetails([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, string? details)
     {
-        if (await ideaService.SetIdeaDetailsAsync(ideaId, details, currentUserId))
-        {
-            return ideaId;
-        }
-
-        return null;
+        return await ideaService.SetIdeaDetailsAsync(ideaId, details, currentUserId);
     }
 
     [Authorize]
     public async Task<Guid?> IdeaSetDirection([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, Guid? directionId)
     {
-        if (await ideaService.SetIdeaDirectionAsync(ideaId, directionId, currentUserId))
-        {
-            return ideaId;
-        }
-
-        return null;
+        return await ideaService.SetIdeaDirectionAsync(ideaId, directionId, currentUserId);
     }
 
     [Authorize]
@@ -68,24 +53,14 @@ public class IdeaMutations
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
 
-        if (await ideaService.SetIdeaDeletedAtAsync(ideaId, deletedAtUtc, currentUserId))
-        {
-            return ideaId;
-        }
-
-        return null;
+        return await ideaService.SetIdeaDeletedAtAsync(ideaId, deletedAtUtc, currentUserId);
     }
 
     [Authorize]
     public async Task<Guid?> IdeaSetGeneration([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, Generation generation)
     {
-        if (await ideaService.SetIdeaGenerationAsync(ideaId, generation, currentUserId))
-        {
-            return ideaId;
-        }
-
-        return null;
+        return await ideaService.SetIdeaGenerationAsync(ideaId, generation, currentUserId);
     }
 
     [Authorize]
@@ -93,12 +68,7 @@ public class IdeaMutations
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid ideaId, string? reviewedAt)
     {
         DateTime? reviewedAtUtc = reviewedAt is null ? null : timeConverter.StringToDateTimeUtc(reviewedAt);
-
-        if (await ideaService.SetIdeaReviewedAtAsync(ideaId, reviewedAtUtc, currentUserId))
-        {
-            return ideaId;
-        }
-
-        return null;
+        
+        return await ideaService.SetIdeaReviewedAtAsync(ideaId, reviewedAtUtc, currentUserId);
     }
 }

@@ -52,25 +52,27 @@ public sealed class NotificationRepository : INotificationRepository, IDisposabl
     {
         return type switch
         {
-            NotifiableType.Task => from n in _context.Notifications
-                                   join t in _context.Tasks on n.NotifiableId equals t.Id
-                                   join s in _context.TaskSubscriptions on t.Id equals s.TaskId into grouping
-                                   from s in grouping.DefaultIfEmpty() // that's a great way to perform left join
-                                   where s.UserId == userId || t.CreatedById == userId || t.AssigneeId == userId
-                                   where notifiableIds.Contains(n.NotifiableId)
-                                   select n,
-            NotifiableType.Idea => from n in _context.Notifications
-                                   join i in _context.Ideas on n.NotifiableId equals i.Id
-                                   join s in _context.IdeaSubscriptions on i.Id equals s.IdeaId into grouping
-                                   from s in grouping.DefaultIfEmpty()
-                                   where s.UserId == userId || i.CreatedById == userId
-                                   where notifiableIds.Contains(n.NotifiableId)
-                                   select n,
-            NotifiableType.Direction => from n in _context.Notifications
-                                        join m in _context.Memberships on n.NotifiableId equals m.DirectionId
-                                        where m.UserId == userId
-                                        where notifiableIds.Contains(n.NotifiableId)
-                                        select n,
+            NotifiableType.Task =>
+                from n in _context.Notifications
+                join t in _context.Tasks on n.NotifiableId equals t.Id
+                from s in _context.TaskSubscriptions.Where(s => s.TaskId == t.Id && n.ModifiedAt >= s.CreatedAt)
+                    .DefaultIfEmpty() // left join on two columns
+                where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId &&
+                      (s.UserId == userId || n.ActionType == ActionType.TaskAssigned && t.AssigneeId == userId)
+                select n,
+            NotifiableType.Idea =>
+                from n in _context.Notifications
+                join i in _context.Ideas on n.NotifiableId equals i.Id
+                from s in _context.IdeaSubscriptions.Where(s => s.IdeaId == i.Id && n.ModifiedAt >= s.CreatedAt)
+                    .DefaultIfEmpty()
+                where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId && (s.UserId == userId)
+                select n,
+            NotifiableType.Direction =>
+                from n in _context.Notifications
+                from m in _context.Memberships.Where(m => n.NotifiableId == m.DirectionId && n.ModifiedAt >= m.CreatedAt)
+                where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId && m.UserId == userId ||
+                      (n.ActionItemType == ActionItemType.User && n.ActionItemId == userId) // member added/removed/left
+                select n,
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };
     }

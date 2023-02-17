@@ -10,7 +10,7 @@ public class NotificationType : ObjectType<Notification>
 {
     protected override void Configure(IObjectTypeDescriptor<Notification> descriptor)
     {
-        descriptor.Field(n => n.ActorId).Ignore();
+        descriptor.Field(n => n.ModifiedById).Ignore();
         descriptor.Field(n => n.NotifiableId).Ignore();
         descriptor.Field(n => n.NotifiableType).Ignore();
         descriptor.Field(n => n.ActionItemId).Ignore();
@@ -23,9 +23,9 @@ public class NotificationType : ObjectType<Notification>
             .ResolveWith<Resolvers>(r => r.GetActionItem(default!, default!, default!, default!, default!))
             .Type<ActionItem>();
 
-        descriptor.Field(n => n.Actor)
+        descriptor.Field(n => n.ModifiedBy)
             .Type<UserType>()
-            .ResolveWith<Resolvers>(r => r.GetActor(default!, default!));
+            .ResolveWith<Resolvers>(r => r.GetModifiedBy(default!, default!));
     }
 
     private class Resolvers
@@ -49,9 +49,9 @@ public class NotificationType : ObjectType<Notification>
             };
         }
 
-        public async Task<User> GetActor([Parent] Notification notification, UserByIdDataLoader userById)
+        public async Task<User> GetModifiedBy([Parent] Notification notification, UserByIdDataLoader userById)
         {
-            return await userById.LoadAsync(notification.ActorId);
+            return await userById.LoadAsync(notification.ModifiedById);
         }
     }
 }

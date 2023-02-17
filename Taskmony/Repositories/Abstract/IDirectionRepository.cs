@@ -21,7 +21,7 @@ public interface IDirectionRepository
 
     Task AddDirectionAsync(Direction direction);
 
-    void AddMember(Membership membership);
+    Task AddMemberAsync(Membership membership);
 
     void RemoveMember(Membership membership);
 

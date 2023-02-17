@@ -74,17 +74,7 @@ public class TaskService : ITaskService
 
         await _taskRepository.AddTaskAsync(task);
 
-        if (!await _taskRepository.SaveChangesAsync())
-        {
-            return null;
-        }
-
-        if (task.AssigneeId is not null)
-        {
-            await _notificationService.NotifyTaskAssignedAsync(task.Id, task.CreatedById, task.AssigneeId.Value);
-        }
-
-        return task;
+        return await SaveAddedTaskAndNotify(task);
     }
 
     public async Task<IEnumerable<Guid>> AddRecurringTaskAsync(Task task, RepeatMode repeatMode, int repeatEvery,
@@ -242,9 +232,10 @@ public class TaskService : ITaskService
 
         ValidateTaskToUpdate(task);
 
+        var oldValue = task.Description!.Value;
         task.Description = newDescription;
 
-        return await _taskRepository.SaveChangesAsync() ? taskId : null;
+        return await SaveChangesAndNotifyAsync(task, nameof(Task.Description), oldValue, description, currentUserId);
     }
 
     public async Task<IEnumerable<Guid>> SetRecurringTaskDetailsAsync(Guid groupId, string? details, Guid currentUserId)
@@ -299,9 +290,10 @@ public class TaskService : ITaskService
 
         ValidateTaskToUpdate(task);
 
+        var oldDirectionId = task.DirectionId;
         task.DirectionId = directionId;
 
-        return await _taskRepository.SaveChangesAsync() ? taskId : null;
+        return await SaveDirectionIdAndNotifyAsync(task, oldDirectionId, currentUserId);
     }
 
     public async Task<IEnumerable<Guid>> SetRecurringTaskAssigneeAsync(Guid groupId, Guid? assigneeId,
@@ -329,21 +321,20 @@ public class TaskService : ITaskService
 
         ValidateTaskToUpdate(task);
 
+        var oldAssigneeId = task.AssigneeId;
         task.AssigneeId = assigneeId;
 
         await ValidateAssignee(task);
 
-        if (!await _taskRepository.SaveChangesAsync())
-        {
-            return null;
-        }
-
         if (assigneeId is not null)
         {
-            await _notificationService.NotifyTaskAssignedAsync(taskId, currentUserId, assigneeId.Value);
+            return await SaveUpdatedAssigneeIdAndNotify(task, assigneeId.Value, currentUserId);
         }
-
-        return taskId;
+        else
+        {
+            return await SaveChangesAndNotifyAsync(task, nameof(Task.AssigneeId), oldAssigneeId?.ToString(), null,
+                currentUserId);
+        }
     }
 
     public async Task<IEnumerable<Guid>> SetRecurringTaskStartAtAsync(Guid groupId, DateTime startAtUtc,
@@ -399,7 +390,7 @@ public class TaskService : ITaskService
 
         task.StartAt = startAtUtc;
 
-        return await UpdateTaskAndNotify(task, nameof(Task.StartAt), oldValue, newValue, currentUserId);
+        return await SaveChangesAndNotifyAsync(task, nameof(Task.StartAt), oldValue, newValue, currentUserId);
     }
 
     public async Task<IEnumerable<Guid>> SetRecurringTaskDeletedAtAsync(Guid groupId, DateTime? deletedAtUtc,
@@ -432,12 +423,10 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.AlreadyDeleted);
         }
 
-        var oldValue = task.DeletedAt is null ? null : _timeConverter.DateTimeToString(task.DeletedAt.Value);
-        var newValue = deletedAt is null ? null : _timeConverter.DateTimeToString(deletedAt.Value);
-
+        var oldValue = task.DeletedAt?.Value;
         task.DeletedAt = deletedAt;
 
-        return await UpdateTaskAndNotify(task, nameof(Task.DeletedAt), oldValue, newValue, currentUserId);
+        return await SaveDeletedAtAndNotifyAsync(task, oldValue, currentUserId);
     }
 
     public async Task<Guid?> SetTaskCompletedAtAsync(Guid taskId, DateTime? completedAtUtc, Guid currentUserId)
@@ -451,11 +440,6 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.CompleteDeletedTask);
         }
 
-        if (completedAtUtc is not null && task.StartAt!.Value > completedAtUtc)
-        {
-            throw new DomainException(TaskErrors.CompleteFutureTask);
-        }
-
         if (completedAtUtc is not null && task.CompletedAt is not null)
         {
             throw new DomainException(TaskErrors.AlreadyCompleted);
@@ -466,7 +450,7 @@ public class TaskService : ITaskService
 
         task.CompletedAt = completedAt;
 
-        return await UpdateTaskAndNotify(task, nameof(Task.CompletedAt), oldValue, newValue, currentUserId);
+        return await SaveChangesAndNotifyAsync(task, nameof(Task.CompletedAt), oldValue, newValue, currentUserId);
     }
 
     public async Task<IEnumerable<Guid>> SetRecurringTaskRepeatModeAsync(Guid groupId, RepeatMode? repeatMode,
@@ -544,12 +528,14 @@ public class TaskService : ITaskService
             return Array.Empty<Guid>();
         }
 
-        var tasks = GenerateNextTasks(task, repeatMode!.Value, repeatEvery!.Value, weekDays, RepeatUntil.From(repeatUntil.Value));
+        var tasks = GenerateNextTasks(task, repeatMode!.Value, repeatEvery!.Value, weekDays,
+            RepeatUntil.From(repeatUntil.Value));
 
         await _taskRepository.AddTasksAsync(tasks);
         await _taskRepository.SaveChangesAsync();
-        
-        await _notificationService.NotifyTaskUpdatedAsync(task.Id, currentUserId, nameof(Task.RepeatMode), oldValue, newValue);
+
+        await _notificationService.NotifyItemUpdatedAsync(NotifiableType.Task, task.Id, currentUserId,
+            nameof(Task.RepeatMode), oldValue, newValue);
 
         var updatedTasks = new List<Task> { task };
         updatedTasks.AddRange(tasks);
@@ -600,7 +586,74 @@ public class TaskService : ITaskService
             tasks.First().WeekDays, repeatUntil);
     }
 
-    private async Task<Guid?> UpdateTaskAndNotify(Task task, string field, string? oldValue, string? newValue,
+    private async Task<Guid?> SaveDirectionIdAndNotifyAsync(Task task, Guid? oldDirectionId, Guid currentUserId)
+    {
+        if (!await _taskRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        if (task.DirectionId is not null)
+        {
+            await _notificationService.NotifyItemAddedAsync(NotifiableType.Direction, task.DirectionId.Value,
+                task.ActionItemType, task.Id, currentUserId, null);
+        }
+
+        if (oldDirectionId is not null)
+        {
+            await _notificationService.NotifyItemRemovedAsync(NotifiableType.Direction, oldDirectionId.Value,
+                task.ActionItemType, task.Id, currentUserId, null);
+        }
+
+        return task.Id;
+    }
+
+    private async Task<Task?> SaveAddedTaskAndNotify(Task task)
+    {
+        if (!await _taskRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        if (task.AssigneeId is not null)
+        {
+            await _notificationService.NotifyTaskAssignedAsync(task.Id, task.CreatedById, task.AssigneeId.Value);
+        }
+
+        if (task.DirectionId is not null)
+        {
+            await _notificationService.NotifyItemAddedAsync(NotifiableType.Direction, task.DirectionId.Value,
+                task.ActionItemType, task.Id, task.CreatedById, task.CreatedAt);
+        }
+
+        return task;
+    }
+
+    private async Task<Guid?> SaveDeletedAtAndNotifyAsync(Task task, DateTime? oldValue, Guid currentUserId)
+    {
+        if (!await _taskRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        if (task.DeletedAt is not null && task.DirectionId is not null)
+        {
+            await _notificationService.NotifyItemRemovedAsync(NotifiableType.Direction, task.DirectionId.Value,
+                task.ActionItemType, task.Id, currentUserId, task.DeletedAt.Value);
+        }
+        else if (task.DirectionId is not null)
+        {
+            var newValue = task.DeletedAt is null ? null : _timeConverter.DateTimeToString(task.DeletedAt.Value);
+            var oldValueString = oldValue is null ? null : _timeConverter.DateTimeToString(oldValue.Value);
+
+            await _notificationService.NotifyItemUpdatedAsync(NotifiableType.Task, task.Id, currentUserId,
+                nameof(Task.DeletedAt), oldValueString, newValue);
+        }
+
+        return task.Id;
+    }
+
+    private async Task<Guid?> SaveChangesAndNotifyAsync(Task task, string field, string? oldValue, string? newValue,
         Guid currentUserId)
     {
         if (!await _taskRepository.SaveChangesAsync())
@@ -608,23 +661,39 @@ public class TaskService : ITaskService
             return null;
         }
 
-        await _notificationService.NotifyTaskUpdatedAsync(task.Id, currentUserId, field, oldValue, newValue);
+        if (task.DirectionId is not null)
+        {
+            await _notificationService.NotifyItemUpdatedAsync(NotifiableType.Task, task.Id, currentUserId, field,
+                oldValue, newValue);
+        }
 
         return task.Id;
     }
 
-    private async Task<List<Task>> GetNotCompletedTasksOrThrowAsync(Guid groupId, Guid currentUserId)
+    private async Task<Guid?> SaveUpdatedAssigneeIdAndNotify(Task task, Guid assigneeId, Guid currentUserId)
     {
-        var tasks = (await _taskRepository.GetNotCompletedTasksAsync(groupId)).ToList();
-        var task = tasks.FirstOrDefault();
-
-        if (await IsNotNullAndUserHasAccess(task, currentUserId))
+        if (!await _taskRepository.SaveChangesAsync())
         {
-            throw new DomainException(TaskErrors.NotFound);
+            return null;
         }
 
-        return tasks;
+        await _notificationService.NotifyTaskAssignedAsync(task.Id, currentUserId, assigneeId);
+
+        return task.Id;
     }
+
+    // private async Task<List<Task>> GetNotCompletedTasksOrThrowAsync(Guid groupId, Guid currentUserId)
+    // {
+    //     var tasks = (await _taskRepository.GetNotCompletedTasksAsync(groupId)).ToList();
+    //     var task = tasks.FirstOrDefault();
+    //
+    //     if (await IsNotNullAndUserHasAccess(task, currentUserId))
+    //     {
+    //         throw new DomainException(TaskErrors.NotFound);
+    //     }
+    //
+    //     return tasks;
+    // }
 
     private async Task<List<Task>> GetTasksOrThrowAsync(Guid groupId, Guid currentUserId)
     {

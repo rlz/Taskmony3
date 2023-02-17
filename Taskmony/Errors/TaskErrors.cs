@@ -16,8 +16,8 @@ public static class TaskErrors
     public static ErrorDetails AlreadyDeleted =>
         new("Task is already deleted", "TASK_ALREADY_DELETED");
 
-    public static ErrorDetails CompleteFutureTask =>
-        new("Cannot complete task that has not started yet", "COMPLETE_FUTURE_TASK");
+    // public static ErrorDetails CompleteFutureTask =>
+    //     new("Cannot complete task that has not started yet", "COMPLETE_FUTURE_TASK");
 
     public static ErrorDetails CompleteDeletedTask =>
         new("Cannot complete deleted task", "COMPLETE_DELETED_TASK");

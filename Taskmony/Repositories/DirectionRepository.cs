@@ -25,8 +25,8 @@ public sealed class DirectionRepository : IDirectionRepository, IDisposable, IAs
         var query = _context.Directions.AsQueryable();
 
         query = id is null
-            ? query.Where(d => d.CreatedById == userId || d.Members!.Any(m => m.Id == userId))
-            : query.Where(d => id.Contains(d.Id) && (d.CreatedById == userId || d.Members!.Any(m => m.Id == userId)));
+            ? query.Where(d => d.Members!.Any(m => m.Id == userId))
+            : query.Where(d => id.Contains(d.Id) && d.Members!.Any(m => m.Id == userId));
 
         query = AddPagination(query, offset, limit);
 
@@ -129,9 +129,9 @@ public sealed class DirectionRepository : IDirectionRepository, IDisposable, IAs
         await _context.Directions.AddAsync(direction);
     }
 
-    public void AddMember(Membership membership)
+    public async Task AddMemberAsync(Membership membership)
     {
-        _context.Memberships.Add(membership);
+        await _context.Memberships.AddAsync(membership);
     }
 
     public void RemoveMember(Membership membership)

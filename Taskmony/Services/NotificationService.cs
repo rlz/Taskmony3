@@ -16,7 +16,7 @@ public class NotificationService : INotificationService
         _notificationRepository = notificationRepository;
     }
 
-    public async Task<IEnumerable<Notification>> GetNotificationsByNotifiableIdsAsync(NotifiableType type, Guid[] ids, 
+    public async Task<IEnumerable<Notification>> GetNotificationsByNotifiableIdsAsync(NotifiableType type, Guid[] ids,
         DateTime? start, DateTime? end, Guid currentUserId)
     {
         if (end < start)
@@ -29,33 +29,67 @@ public class NotificationService : INotificationService
 
     public async Task<bool> NotifyTaskAssignedAsync(Guid taskId, Guid assignerId, Guid assigneeId)
     {
-        await _notificationRepository.AddNotificationAsync(new Notification
+        return await CreateNotificationAsync(new Notification
         {
             NotifiableId = taskId,
             NotifiableType = NotifiableType.Task,
             ActionItemId = assigneeId,
+            ActionItemType = ActionItemType.User,
             ActionType = ActionType.TaskAssigned,
-            ModifiedAt = DateTime.UtcNow,
-            ActorId = assignerId
+            ModifiedById = assignerId
         });
-
-        return await _notificationRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> NotifyTaskUpdatedAsync(Guid taskId, Guid actorId, string field, string? oldValue, string? newValue)
+    public async Task<bool> NotifyItemUpdatedAsync(NotifiableType type, Guid notifiableId, Guid modifiedById,
+        string field, string? oldValue, string? newValue)
     {
-        await _notificationRepository.AddNotificationAsync(new Notification
+        return await CreateNotificationAsync(new Notification
         {
-            NotifiableId = taskId,
-            NotifiableType = NotifiableType.Task,
-            ActionItemId = taskId,
+            NotifiableId = notifiableId,
+            NotifiableType = type,
+            ModifiedById = modifiedById,
             ActionType = ActionType.ItemUpdated,
-            ModifiedAt = DateTime.UtcNow,
-            ActorId = actorId,
             Field = field,
             OldValue = oldValue,
             NewValue = newValue
         });
+    }
+
+    public async Task<bool> NotifyItemAddedAsync(NotifiableType notifiableType, Guid notifiableId,
+        ActionItemType itemType, Guid itemId, Guid modifiedById, DateTime? modifiedAtUtc)
+    {
+        return await CreateNotificationAsync(new Notification
+        {
+            NotifiableId = notifiableId,
+            NotifiableType = notifiableType,
+            ActionType = ActionType.ItemAdded,
+            ActionItemId = itemId,
+            ActionItemType = itemType,
+            ModifiedAt = modifiedAtUtc,
+            ModifiedById = modifiedById
+        });
+    }
+
+    public async Task<bool> NotifyItemRemovedAsync(NotifiableType notifiableType, Guid notifiableId,
+        ActionItemType itemType, Guid itemId, Guid modifiedById, DateTime? modifiedAtUtc)
+    {
+        return await CreateNotificationAsync(new Notification
+        {
+            NotifiableId = notifiableId,
+            NotifiableType = notifiableType,
+            ActionType = ActionType.ItemDeleted,
+            ActionItemId = itemId,
+            ActionItemType = itemType,
+            ModifiedAt = modifiedAtUtc,
+            ModifiedById = modifiedById
+        });
+    }
+
+    private async Task<bool> CreateNotificationAsync(Notification notification)
+    {
+        notification.ModifiedAt ??= DateTime.UtcNow;
+
+        await _notificationRepository.AddNotificationAsync(notification);
 
         return await _notificationRepository.SaveChangesAsync();
     }

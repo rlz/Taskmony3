@@ -26,48 +26,28 @@ public class DirectionMutations
     public async Task<Guid?> DirectionSetName([Service] IDirectionService directionService,
         [GlobalState] Guid currentUserId, Guid directionId, string name)
     {
-        if (await directionService.SetDirectionName(directionId, name, currentUserId))
-        {
-            return directionId;
-        }
-
-        return null;
+        return await directionService.SetDirectionName(directionId, name, currentUserId);
     }
 
     [Authorize]
     public async Task<Guid?> DirectionSetDetails([Service] IDirectionService directionService,
         [GlobalState] Guid currentUserId, Guid directionId, string? details)
     {
-        if (await directionService.SetDirectionDetails(directionId, details, currentUserId))
-        {
-            return directionId;
-        }
-
-        return null;
+        return await directionService.SetDirectionDetails(directionId, details, currentUserId);
     }
 
     [Authorize]
     public async Task<Guid?> DirectionAddMember([Service] IDirectionService directionService,
         [GlobalState] Guid currentUserId, Guid directionId, Guid userId)
     {
-        if (await directionService.AddMember(directionId, userId, currentUserId))
-        {
-            return directionId;
-        }
-
-        return null;
+        return await directionService.AddMember(directionId, userId, currentUserId);
     }
 
     [Authorize]
     public async Task<Guid?> DirectionRemoveMember([Service] IDirectionService directionService,
         [GlobalState] Guid currentUserId, Guid directionId, Guid userId)
     {
-        if (await directionService.RemoveMember(directionId, userId, currentUserId))
-        {
-            return directionId;
-        }
-
-        return null;
+        return await directionService.RemoveMember(directionId, userId, currentUserId);
     }
 
     [Authorize]
@@ -75,12 +55,7 @@ public class DirectionMutations
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid directionId, string? deletedAt)
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
-
-        if (await directionService.SetDirectionDeletedAt(directionId, deletedAtUtc, currentUserId))
-        {
-            return directionId;
-        }
-
-        return null;
+        
+        return await directionService.SetDirectionDeletedAt(directionId, deletedAtUtc, currentUserId);
     }
 }

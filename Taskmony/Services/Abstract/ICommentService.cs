@@ -10,9 +10,9 @@ public interface ICommentService
     
     Task<IEnumerable<Comment>> GetCommentsByIdsAsync(Guid[] ids);
     
-    Task<Comment> AddComment(TaskComment comment);
+    Task<Comment?> AddComment(TaskComment comment);
 
-    Task<Comment> AddComment(IdeaComment comment);
+    Task<Comment?> AddComment(IdeaComment comment);
 
     Task<bool> SetCommentText(Guid id, string text, Guid currentUserId);
 

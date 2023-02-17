@@ -8,9 +8,9 @@ public class Notification
 
     public DateTime? ModifiedAt { get; set; }
 
-    public Guid ActorId { get; set; }
+    public Guid ModifiedById { get; set; }
 
-    public User? Actor { get; set; }
+    public User? ModifiedBy { get; set; }
 
     public NotifiableType? NotifiableType { get; set; }
 

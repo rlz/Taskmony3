@@ -16,13 +16,13 @@ public interface IDirectionService
 
     Task<Direction> AddDirection(Direction direction);
 
-    Task<bool> SetDirectionName(Guid id, string name, Guid currentUserId);
+    Task<Guid?> SetDirectionName(Guid id, string name, Guid currentUserId);
 
-    Task<bool> SetDirectionDetails(Guid id, string? details, Guid currentUserId);
+    Task<Guid?> SetDirectionDetails(Guid id, string? details, Guid currentUserId);
 
-    Task<bool> AddMember(Guid directionId, Guid memberId, Guid currentUserId);
+    Task<Guid?> AddMember(Guid directionId, Guid memberId, Guid currentUserId);
 
-    Task<bool> RemoveMember(Guid directionId, Guid memberId, Guid currentUserId);
+    Task<Guid?> RemoveMember(Guid directionId, Guid memberId, Guid currentUserId);
 
-    Task<bool> SetDirectionDeletedAt(Guid id, DateTime? deletedAtUtc, Guid currentUserId);
+    Task<Guid?> SetDirectionDeletedAt(Guid id, DateTime? deletedAtUtc, Guid currentUserId);
 }

@@ -23,7 +23,7 @@ function Tasks({ directionId, directionName }) {
   const [newTask, setNewTask] = useState(false);
   const task = useAppSelector((store) => store.editedTask);
   const tasksToShow = useAppSelector((store) => store.tasks.items).filter(
-    (t) => t.direction?.id == directionId
+    (t) => t.deletedAt == null && t.direction?.id == directionId
   );
   const direction = useAppSelector((store) => store.directions.items).filter(
     (d) => d.id == directionId

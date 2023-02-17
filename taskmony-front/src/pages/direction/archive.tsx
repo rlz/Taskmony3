@@ -15,7 +15,7 @@ export const Archive = ({ directionId }) => {
   const type = location.pathname.split("/")[3];
   const archiveType = location.pathname.split("/")[4];
   const tasks = useAppSelector((store) => store.tasks.items).filter(
-    (i) => i.deletedAt != null
+    (i) => i.deletedAt != null && i.direction?.id == directionId
   );
   return (
     <div className="flex w-full">

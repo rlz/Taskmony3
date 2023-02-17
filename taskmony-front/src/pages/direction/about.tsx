@@ -161,7 +161,7 @@ type LeaveBtnPropsT = {
 const Btn = ({ onClick, label, color }) => {
   return (
     <div
-      className={`p-1 w-fit mt-4 mb-2 pl-2 pr-2 bg-${color}-400 rounded-lg cursor-pointer`}
+      className={`p-1 w-fit mt-4 mb-2 pl-2 pr-2 bg-blue-400 rounded-lg cursor-pointer`}
       onClick={() => onClick()}
     >
       <span className={"text-white"}>{label}</span>

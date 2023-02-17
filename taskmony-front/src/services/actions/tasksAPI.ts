@@ -572,6 +572,7 @@ export function changeTaskStartAt(taskId, startAt) {
 }
 
 export function deleteTask(taskId) {
+  const date = nowDate();
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_TASK_REQUEST });
     console.log("delete task");
@@ -584,7 +585,7 @@ export function deleteTask(taskId) {
       },
       body: JSON.stringify({
         query: `mutation {
-      taskSetDeletedAt(taskId:"${taskId}",deletedAt:"${nowDate()}") 
+      taskSetDeletedAt(taskId:"${taskId}",deletedAt:"${date}") 
     }
     `,
       }),
@@ -595,6 +596,7 @@ export function deleteTask(taskId) {
           dispatch({
             type: DELETE_TASK_SUCCESS,
             taskId: taskId,
+            date:date
           });
         } else {
           dispatch({

@@ -55,7 +55,7 @@ export const tasksReducer = (
   state: TTasksState = tasksInitialState,
   action:
     | { type: typeof GET_TASKS_SUCCESS; items: Array<any> }
-    | { type: typeof DELETE_TASK_SUCCESS; taskId: string }
+    | { type: typeof DELETE_TASK_SUCCESS; taskId: string,date: any }
     | { type: typeof ADD_TASK_SUCCESS; task: any }
     | { type: typeof CHANGE_TASKS; task: any }
     | {
@@ -159,7 +159,11 @@ export const tasksReducer = (
     case DELETE_TASK_SUCCESS: {
       return {
         ...state,
-        items: state.items.filter((i) => i.id != action.taskId),
+        items: state.items.map((item) =>
+          item.id == action.taskId
+            ? { ...item, deletedAt: action.date }
+            : item
+        ),
       };
     }
     default: {

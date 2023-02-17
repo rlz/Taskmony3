@@ -53,6 +53,9 @@ function MyTasks() {
               setNewTask(false);
               addANewTask();
             }}
+            close={() => {
+              setNewTask(false);
+            }}
           />
         )}
         <div className="overflow-x-hidden">{tasks}</div>

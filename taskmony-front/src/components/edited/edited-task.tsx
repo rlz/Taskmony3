@@ -4,13 +4,15 @@ import follow from "../../images/followed.svg";
 import divider from "../../images/divider.svg";
 import commentsI from "../../images/comment2.svg";
 import createdByI from "../../images/by.svg";
+import arrowUp from "../../images/arrow-up.svg";
 // import recurrentI from "../images/recurrent.svg";
 import recurrentI from "../../images/arrows-rotate.svg";
 import { AddBtn } from "./btn";
 import { Comment, CommentInput } from "./comment";
 import { ItemPicker } from "./item-picker";
 import { useState } from "react";
-import deleteI from "../../images/delete.svg";
+import closeI from "../../images/delete2.svg";
+import deleteI from "../../images/delete3.svg";
 import add from "../../images/add-light.svg";
 import { BigBtn } from "./big-btn";
 import { DatePicker } from "./date-picker";
@@ -35,6 +37,7 @@ import {
   CHANGE_TASK_REPEAT_UNTIL,
   CHANGE_TASK_REPEAT_WEEK_DAYS,
   CHANGE_TASK_START_DATE,
+  RESET_TASK,
 } from "../../services/actions/tasksAPI";
 import { WeekPicker } from "./week-picker";
 import { sendTaskComment } from "../../services/actions/comments";
@@ -48,6 +51,7 @@ type TaskProps = {
   createdBy?: string;
   direction?: string;
   save: Function;
+  close: Function;
   changeCheck: Function;
   deleteTask: Function;
 };
@@ -55,6 +59,7 @@ type TaskProps = {
 export const EditedTask = ({
   direction,
   save,
+  close,
   deleteTask,
   followed,
   recurrent,
@@ -89,22 +94,42 @@ export const EditedTask = ({
             }}
           />
         </div>
-        {typeof followed !== "undefined" && (
-          <img className="w-4" src={followed ? followBlue : followGray}></img>
+        {task.id ? (
+          <img
+            src={deleteI}
+            onClick={() => {
+              deleteTask(task);
+            }}
+            className={"w-4 mt-1 mr-1 cursor-pointer"}
+          />
+        ) : (
+          <img
+            src={closeI}
+            onClick={() => {
+              close();
+              dispatch({ type: RESET_TASK });
+            }}
+            className={"w-4 p-0.5 cursor-pointer"}
+          />
         )}
       </div>
       <Description />
       <Details recurrent={recurrent} fromDirection={direction} />
       {task.id && <Comments comments={task.comments} taskId={task.id} />}
       <div className={"w-full flex justify-end"}>
-        {task.id && (
+        {!task.id ? (
           <BigBtn
-            label={"delete"}
-            onClick={() => deleteTask(task)}
-            color="red"
+            label={"add a task"}
+            onClick={() => save(task)}
+            color="blue"
           />
+        ) : (
+          <img
+            src={arrowUp}
+            onClick={() => save(task)}
+            className={"w-4 cursor-pointer mr-3 m-2"}
+          ></img>
         )}
-        <BigBtn label={"save"} onClick={() => save(task)} color="blue" />
       </div>
     </div>
   );

@@ -62,6 +62,9 @@ function Tasks({ directionId, directionName }) {
               setNewTask(false);
               addANewTask(directionId);
             }}
+            close={() => {
+              setNewTask(false);
+            }}
           />
         )}
         {tasks}

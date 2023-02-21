@@ -1,7 +1,6 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models;
-using Taskmony.Models.Enums;
 using Taskmony.Repositories.Abstract;
 using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
@@ -41,22 +40,22 @@ public class DirectionService : IDirectionService
         int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
 
-        return await _directionRepository.GetDirectionsAsync(id, offsetValue, limitValue, currentUserId);
+        return await _directionRepository.GetAsync(id, offsetValue, limitValue, currentUserId);
     }
 
     public async Task<IEnumerable<Direction>> GetDirectionsByIdsAsync(Guid[] ids)
     {
-        return await _directionRepository.GetDirectionByIdsAsync(ids);
+        return await _directionRepository.GetByIdsAsync(ids);
     }
 
-    public async Task<IEnumerable<Guid>> GetUserDirectionIds(Guid userId)
+    public async Task<IEnumerable<Guid>> GetUserDirectionIdsAsync(Guid userId)
     {
         return await _directionRepository.GetUserDirectionIds(userId);
     }
 
-    public async Task<Direction> AddDirection(Direction direction)
+    public async Task<Direction> AddDirectionAsync(Direction direction)
     {
-        await _directionRepository.AddDirectionAsync(direction);
+        await _directionRepository.AddAsync(direction);
 
         await _directionRepository.AddMemberAsync(new Membership
         {
@@ -69,7 +68,7 @@ public class DirectionService : IDirectionService
         return direction;
     }
 
-    public async Task<Guid?> AddMember(Guid directionId, Guid memberId, Guid currentUserId)
+    public async Task<Guid?> AddMemberAsync(Guid directionId, Guid memberId, Guid currentUserId)
     {
         var direction = await GetDirectionOrThrowAsync(directionId, currentUserId);
 
@@ -95,13 +94,13 @@ public class DirectionService : IDirectionService
             return null;
         }
 
-        await _notificationService.NotifyItemAddedAsync(NotifiableType.Direction, direction.Id,
-            user.ActionItemType, user.Id, currentUserId, membership.CreatedAt);
+        await _notificationService.NotifyDirectionMemberAddedAsync(direction.Id, user.Id, membership.CreatedAt,
+            currentUserId);
 
         return direction.Id;
     }
 
-    public async Task<Guid?> RemoveMember(Guid directionId, Guid memberId, Guid currentUserId)
+    public async Task<Guid?> RemoveMemberAsync(Guid directionId, Guid memberId, Guid currentUserId)
     {
         var direction = await GetDirectionOrThrowAsync(directionId, currentUserId);
 
@@ -120,13 +119,14 @@ public class DirectionService : IDirectionService
             return null;
         }
 
-        await _notificationService.NotifyItemRemovedAsync(NotifiableType.Direction, direction.Id,
-            user.ActionItemType, user.Id, currentUserId, null);
+        await _notificationService.NotifyDirectionMemberRemovedAsync(direction.Id, user.Id, null, currentUserId);
+
+        await DeleteDirectionIfNoMembersAsync(direction);
 
         return direction.Id;
     }
 
-    public async Task<Guid?> SetDirectionDeletedAt(Guid id, DateTime? deletedAtUtc, Guid currentUserId)
+    public async Task<Guid?> SetDirectionDeletedAtAsync(Guid id, DateTime? deletedAtUtc, Guid currentUserId)
     {
         var deletedAt = deletedAtUtc is not null ? DeletedAt.From(deletedAtUtc.Value) : null;
 
@@ -151,7 +151,15 @@ public class DirectionService : IDirectionService
         var oldValue = direction.Details;
         direction.Details = details;
 
-        return await SaveChangesAndNotifyAsync(direction, nameof(Direction.Details), oldValue, details, currentUserId);
+        if (!await _directionRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        await _notificationService.NotifyDirectionUpdatedAsync(direction.Id, nameof(Direction.Details), oldValue,
+            details, currentUserId);
+
+        return direction.Id;
     }
 
     public async Task<Guid?> SetDirectionName(Guid id, string name, Guid currentUserId)
@@ -165,26 +173,32 @@ public class DirectionService : IDirectionService
         var oldValue = direction.Name!.Value;
         direction.Name = newName;
 
-        return await SaveChangesAndNotifyAsync(direction, nameof(Direction.Name), oldValue, name, currentUserId);
-    }
-
-    private async Task<Guid?> SaveChangesAndNotifyAsync(Direction direction, string field, string? oldValue,
-        string? newValue, Guid currentUserId)
-    {
         if (!await _directionRepository.SaveChangesAsync())
         {
             return null;
         }
 
-        await _notificationService.NotifyItemUpdatedAsync(NotifiableType.Direction, direction.Id, currentUserId, field,
-            oldValue, newValue);
+        await _notificationService.NotifyDirectionUpdatedAsync(direction.Id, nameof(Direction.Name), oldValue,
+            newName.Value, currentUserId);
 
         return direction.Id;
     }
 
+    private async Task<bool> DeleteDirectionIfNoMembersAsync(Direction direction)
+    {
+        if (await _directionRepository.AnyMemberInDirectionAsync(direction.Id))
+        {
+            return false;
+        }
+
+        _directionRepository.Delete(direction);
+
+        return await _directionRepository.SaveChangesAsync();
+    }
+
     private async Task<Direction> GetDirectionOrThrowAsync(Guid id, Guid currentUserId)
     {
-        var direction = await _directionRepository.GetDirectionByIdAsync(id);
+        var direction = await _directionRepository.GetByIdAsync(id);
 
         if (direction is null || !await _directionRepository.AnyMemberWithIdAsync(id, currentUserId))
         {
@@ -198,7 +212,7 @@ public class DirectionService : IDirectionService
     {
         if (direction.DeletedAt is not null)
         {
-            throw new DomainException(IdeaErrors.UpdateDeletedIdea);
+            throw new DomainException(DirectionErrors.UpdateDeletedDirection);
         }
     }
 }

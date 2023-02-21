@@ -41,12 +41,7 @@ public class CommentMutations
     public async Task<Guid?> CommentSetText([Service] ICommentService commentService,
         [GlobalState] Guid currentUserId, Guid commentId, string text)
     {
-        if (await commentService.SetCommentText(commentId, text, currentUserId))
-        {
-            return commentId;
-        }
-
-        return null;
+        return await commentService.SetCommentText(commentId, text, currentUserId);
     }
 
     [Authorize]
@@ -55,11 +50,6 @@ public class CommentMutations
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
 
-        if (await commentService.SetCommentDeletedAt(commentId, deletedAtUtc, currentUserId))
-        {
-            return commentId;
-        }
-
-        return null;
+        return await commentService.SetCommentDeletedAt(commentId, deletedAtUtc, currentUserId);
     }
 }

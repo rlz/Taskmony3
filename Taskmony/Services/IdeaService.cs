@@ -36,7 +36,7 @@ public class IdeaService : IIdeaService
             return await _ideaRepository.GetIdeasAsync(id, directionId, offset, limit, currentUserId);
         }
 
-        var userDirectionIds = await _directionService.GetUserDirectionIds(currentUserId);
+        var userDirectionIds = await _directionService.GetUserDirectionIdsAsync(currentUserId);
         var authorizedDirectionIds = userDirectionIds.Cast<Guid?>().Append(null);
 
         //If directionId is null return all ideas visible to the current user.
@@ -52,7 +52,7 @@ public class IdeaService : IIdeaService
 
     public async Task<IEnumerable<Idea>> GetIdeaByIdsAsync(Guid[] ids)
     {
-        return await _ideaRepository.GetIdeaByIdsAsync(ids);
+        return await _ideaRepository.GetByIdsAsync(ids);
     }
 
     public async Task<Idea?> AddIdeaAsync(Idea idea)
@@ -63,18 +63,14 @@ public class IdeaService : IIdeaService
             throw new DomainException(DirectionErrors.NotFound);
         }
 
-        await _ideaRepository.AddIdeaAsync(idea);
+        await _ideaRepository.AddAsync(idea);
 
         if (!await _ideaRepository.SaveChangesAsync())
         {
             return null;
         }
 
-        if (idea.DirectionId is not null)
-        {
-            await _notificationService.NotifyItemAddedAsync(NotifiableType.Direction, idea.DirectionId.Value,
-                idea.ActionItemType, idea.Id, idea.CreatedById, idea.CreatedAt);
-        }
+        await _notificationService.NotifyDirectionEntityAddedAsync(idea, idea.CreatedAt, idea.CreatedById);
 
         return idea;
     }
@@ -90,7 +86,15 @@ public class IdeaService : IIdeaService
         var oldValue = idea.Description!.Value;
         idea.Description = newDescription;
 
-        return await SaveChangesAndNotifyAsync(idea, nameof(Idea.Description), oldValue, description, currentUserId);
+        if (!await _ideaRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        await _notificationService.NotifyDirectionEntityUpdatedAsync(idea, nameof(Idea.Description), oldValue,
+            description, currentUserId);
+
+        return idea.Id;
     }
 
     public async Task<Guid?> SetIdeaDetailsAsync(Guid id, string? details, Guid currentUserId)
@@ -102,7 +106,15 @@ public class IdeaService : IIdeaService
         var oldValue = idea.Details;
         idea.Details = details;
 
-        return await SaveChangesAndNotifyAsync(idea, nameof(Idea.Details), oldValue, idea.Details, currentUserId);
+        if (!await _ideaRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        await _notificationService.NotifyDirectionEntityUpdatedAsync(idea, nameof(Idea.Details), oldValue,
+            details, currentUserId);
+
+        return idea.Id;
     }
 
     public async Task<Guid?> SetIdeaDirectionAsync(Guid id, Guid? directionId, Guid currentUserId)
@@ -120,22 +132,13 @@ public class IdeaService : IIdeaService
         var oldDirectionId = idea.DirectionId;
         idea.DirectionId = directionId;
 
+
         if (!await _ideaRepository.SaveChangesAsync())
         {
             return null;
         }
 
-        if (idea.DirectionId is not null)
-        {
-            await _notificationService.NotifyItemAddedAsync(NotifiableType.Direction, idea.DirectionId.Value,
-                idea.ActionItemType, idea.Id, currentUserId, null);
-        }
-
-        if (oldDirectionId is not null)
-        {
-            await _notificationService.NotifyItemRemovedAsync(NotifiableType.Direction, oldDirectionId.Value,
-                idea.ActionItemType, idea.Id, currentUserId, null);
-        }
+        await _notificationService.NotifyDirectionEntityMovedAsync(idea, oldDirectionId, currentUserId, null);
 
         return idea.Id;
     }
@@ -157,6 +160,8 @@ public class IdeaService : IIdeaService
         }
 
         var oldValue = idea.DeletedAt?.Value;
+        var newValue = deletedAt?.Value;
+
         idea.DeletedAt = deletedAt;
 
         if (!await _ideaRepository.SaveChangesAsync())
@@ -164,19 +169,8 @@ public class IdeaService : IIdeaService
             return null;
         }
 
-        if (idea.DeletedAt is not null && idea.DirectionId is not null)
-        {
-            await _notificationService.NotifyItemRemovedAsync(NotifiableType.Direction, idea.DirectionId.Value,
-                ActionItemType.Idea, idea.Id, currentUserId, idea.DeletedAt.Value);
-        }
-        else if (idea.DirectionId is not null)
-        {
-            var newValue = idea.DeletedAt is null ? null : _timeConverter.DateTimeToString(idea.DeletedAt.Value);
-            var oldValueString = oldValue is null ? null : _timeConverter.DateTimeToString(oldValue.Value);
-
-            await _notificationService.NotifyItemUpdatedAsync(NotifiableType.Idea, idea.Id, currentUserId,
-                nameof(Idea.DeletedAt), oldValueString, newValue);
-        }
+        await _notificationService.NotifyDirectionEntityDeletedAtUpdatedAsync(idea, oldValue, newValue,
+            currentUserId);
 
         return idea.Id;
     }
@@ -190,8 +184,15 @@ public class IdeaService : IIdeaService
         var oldValue = idea.Generation;
         idea.Generation = generation;
 
-        return await SaveChangesAndNotifyAsync(idea, nameof(Idea.Generation), oldValue?.ToString(),
+        if (!await _ideaRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        await _notificationService.NotifyDirectionEntityUpdatedAsync(idea, nameof(Idea.Generation), oldValue?.ToString(),
             generation.ToString(), currentUserId);
+
+        return idea.Id;
     }
 
     public async Task<Guid?> SetIdeaReviewedAtAsync(Guid id, DateTime? reviewedAtUtc, Guid currentUserId)
@@ -205,30 +206,20 @@ public class IdeaService : IIdeaService
         var oldValue = idea.ReviewedAt;
         idea.ReviewedAt = reviewedAt;
 
-        return await SaveChangesAndNotifyAsync(idea, nameof(Idea.ReviewedAt), oldValue?.ToString(),
-            reviewedAt?.ToString(), currentUserId);
-    }
-
-    private async Task<Guid?> SaveChangesAndNotifyAsync(Idea idea, string field, string? oldValue, string? newValue,
-        Guid currentUserId)
-    {
         if (!await _ideaRepository.SaveChangesAsync())
         {
             return null;
         }
 
-        if (idea.DirectionId is not null)
-        {
-            await _notificationService.NotifyItemUpdatedAsync(NotifiableType.Task, idea.Id, currentUserId, field,
-                oldValue, newValue);
-        }
+        await _notificationService.NotifyDirectionEntityUpdatedAsync(idea, nameof(Idea.ReviewedAt), oldValue?.Value.ToString(),
+            reviewedAt?.Value.ToString(), currentUserId);
 
         return idea.Id;
     }
 
     public async Task<Idea> GetIdeaOrThrowAsync(Guid id, Guid currentUserId)
     {
-        var idea = await _ideaRepository.GetIdeaByIdAsync(id);
+        var idea = await _ideaRepository.GetByIdAsync(id);
 
         //Idea should either be created by the current user or 
         //belong to a direction where the current user is a member

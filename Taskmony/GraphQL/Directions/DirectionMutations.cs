@@ -19,7 +19,7 @@ public class DirectionMutations
             Details = details
         };
 
-        return await directionService.AddDirection(direction);
+        return await directionService.AddDirectionAsync(direction);
     }
 
     [Authorize]
@@ -40,14 +40,14 @@ public class DirectionMutations
     public async Task<Guid?> DirectionAddMember([Service] IDirectionService directionService,
         [GlobalState] Guid currentUserId, Guid directionId, Guid userId)
     {
-        return await directionService.AddMember(directionId, userId, currentUserId);
+        return await directionService.AddMemberAsync(directionId, userId, currentUserId);
     }
 
     [Authorize]
     public async Task<Guid?> DirectionRemoveMember([Service] IDirectionService directionService,
         [GlobalState] Guid currentUserId, Guid directionId, Guid userId)
     {
-        return await directionService.RemoveMember(directionId, userId, currentUserId);
+        return await directionService.RemoveMemberAsync(directionId, userId, currentUserId);
     }
 
     [Authorize]
@@ -56,6 +56,6 @@ public class DirectionMutations
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
         
-        return await directionService.SetDirectionDeletedAt(directionId, deletedAtUtc, currentUserId);
+        return await directionService.SetDirectionDeletedAtAsync(directionId, deletedAtUtc, currentUserId);
     }
 }

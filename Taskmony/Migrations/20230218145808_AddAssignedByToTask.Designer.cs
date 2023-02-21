@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Taskmony.Data;
@@ -11,9 +12,11 @@ using Taskmony.Data;
 namespace Taskmony.Migrations
 {
     [DbContext(typeof(TaskmonyDbContext))]
-    partial class TaskmonyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230218145808_AddAssignedByToTask")]
+    partial class AddAssignedByToTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
 
                     b.UseTptMappingStrategy();
                 });
@@ -68,7 +71,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Directions", (string)null);
+                    b.ToTable("Directions");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Idea", b =>
@@ -101,7 +104,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("DirectionId");
 
-                    b.ToTable("Ideas", (string)null);
+                    b.ToTable("Ideas");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Membership", b =>
@@ -121,7 +124,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Memberships", (string)null);
+                    b.ToTable("Memberships");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Notifications.Notification", b =>
@@ -167,7 +170,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("ModifiedById");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Subscriptions.Subscription", b =>
@@ -189,7 +192,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Subscriptions", (string)null);
+                    b.ToTable("Subscriptions");
 
                     b.UseTptMappingStrategy();
                 });
@@ -252,7 +255,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("DirectionId");
 
-                    b.ToTable("Tasks", (string)null);
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("Taskmony.Models.User", b =>
@@ -277,7 +280,7 @@ namespace Taskmony.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Comments.IdeaComment", b =>
@@ -289,7 +292,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("IdeaId");
 
-                    b.ToTable("IdeaComments", (string)null);
+                    b.ToTable("IdeaComments");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Comments.TaskComment", b =>
@@ -301,7 +304,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("TaskComments", (string)null);
+                    b.ToTable("TaskComments");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Subscriptions.IdeaSubscription", b =>
@@ -313,7 +316,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("IdeaId");
 
-                    b.ToTable("IdeaSubscriptions", (string)null);
+                    b.ToTable("IdeaSubscriptions");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Subscriptions.TaskSubscription", b =>
@@ -325,7 +328,7 @@ namespace Taskmony.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("TaskSubscriptions", (string)null);
+                    b.ToTable("TaskSubscriptions");
                 });
 
             modelBuilder.Entity("Taskmony.Models.Comments.Comment", b =>
@@ -336,7 +339,7 @@ namespace Taskmony.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Taskmony.Models.Comments.Comment.DeletedAt#Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
                         {
                             b1.Property<Guid>("CommentId")
                                 .HasColumnType("uuid");
@@ -347,13 +350,13 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("CommentId");
 
-                            b1.ToTable("Comments", (string)null);
+                            b1.ToTable("Comments");
 
                             b1.WithOwner()
                                 .HasForeignKey("CommentId");
                         });
 
-                    b.OwnsOne("Taskmony.Models.Comments.Comment.Text#Taskmony.ValueObjects.CommentText", "Text", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.CommentText", "Text", b1 =>
                         {
                             b1.Property<Guid>("CommentId")
                                 .HasColumnType("uuid");
@@ -365,7 +368,7 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("CommentId");
 
-                            b1.ToTable("Comments", (string)null);
+                            b1.ToTable("Comments");
 
                             b1.WithOwner()
                                 .HasForeignKey("CommentId");
@@ -387,7 +390,7 @@ namespace Taskmony.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Taskmony.Models.Direction.DeletedAt#Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
                         {
                             b1.Property<Guid>("DirectionId")
                                 .HasColumnType("uuid");
@@ -398,13 +401,13 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("DirectionId");
 
-                            b1.ToTable("Directions", (string)null);
+                            b1.ToTable("Directions");
 
                             b1.WithOwner()
                                 .HasForeignKey("DirectionId");
                         });
 
-                    b.OwnsOne("Taskmony.Models.Direction.Name#Taskmony.ValueObjects.DirectionName", "Name", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.DirectionName", "Name", b1 =>
                         {
                             b1.Property<Guid>("DirectionId")
                                 .HasColumnType("uuid");
@@ -416,7 +419,7 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("DirectionId");
 
-                            b1.ToTable("Directions", (string)null);
+                            b1.ToTable("Directions");
 
                             b1.WithOwner()
                                 .HasForeignKey("DirectionId");
@@ -442,7 +445,7 @@ namespace Taskmony.Migrations
                         .WithMany("Ideas")
                         .HasForeignKey("DirectionId");
 
-                    b.OwnsOne("Taskmony.Models.Idea.DeletedAt#Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
                         {
                             b1.Property<Guid>("IdeaId")
                                 .HasColumnType("uuid");
@@ -453,13 +456,13 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("IdeaId");
 
-                            b1.ToTable("Ideas", (string)null);
+                            b1.ToTable("Ideas");
 
                             b1.WithOwner()
                                 .HasForeignKey("IdeaId");
                         });
 
-                    b.OwnsOne("Taskmony.Models.Idea.Description#Taskmony.ValueObjects.Description", "Description", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.Description", "Description", b1 =>
                         {
                             b1.Property<Guid>("IdeaId")
                                 .HasColumnType("uuid");
@@ -471,13 +474,13 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("IdeaId");
 
-                            b1.ToTable("Ideas", (string)null);
+                            b1.ToTable("Ideas");
 
                             b1.WithOwner()
                                 .HasForeignKey("IdeaId");
                         });
 
-                    b.OwnsOne("Taskmony.Models.Idea.ReviewedAt#Taskmony.ValueObjects.ReviewedAt", "ReviewedAt", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.ReviewedAt", "ReviewedAt", b1 =>
                         {
                             b1.Property<Guid>("IdeaId")
                                 .HasColumnType("uuid");
@@ -488,7 +491,7 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("IdeaId");
 
-                            b1.ToTable("Ideas", (string)null);
+                            b1.ToTable("Ideas");
 
                             b1.WithOwner()
                                 .HasForeignKey("IdeaId");
@@ -563,24 +566,7 @@ namespace Taskmony.Migrations
                         .WithMany("Tasks")
                         .HasForeignKey("DirectionId");
 
-                    b.OwnsOne("Taskmony.Models.Task.CompletedAt#Taskmony.ValueObjects.CompletedAt", "CompletedAt", b1 =>
-                        {
-                            b1.Property<Guid>("TaskId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("Value")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("CompletedAt");
-
-                            b1.HasKey("TaskId");
-
-                            b1.ToTable("Tasks", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("TaskId");
-                        });
-
-                    b.OwnsOne("Taskmony.Models.Task.DeletedAt#Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.DeletedAt", "DeletedAt", b1 =>
                         {
                             b1.Property<Guid>("TaskId")
                                 .HasColumnType("uuid");
@@ -591,13 +577,13 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("TaskId");
 
-                            b1.ToTable("Tasks", (string)null);
+                            b1.ToTable("Tasks");
 
                             b1.WithOwner()
                                 .HasForeignKey("TaskId");
                         });
 
-                    b.OwnsOne("Taskmony.Models.Task.Description#Taskmony.ValueObjects.Description", "Description", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.Description", "Description", b1 =>
                         {
                             b1.Property<Guid>("TaskId")
                                 .HasColumnType("uuid");
@@ -609,7 +595,24 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("TaskId");
 
-                            b1.ToTable("Tasks", (string)null);
+                            b1.ToTable("Tasks");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TaskId");
+                        });
+
+                    b.OwnsOne("Taskmony.ValueObjects.CompletedAt", "CompletedAt", b1 =>
+                        {
+                            b1.Property<Guid>("TaskId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("Value")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("CompletedAt");
+
+                            b1.HasKey("TaskId");
+
+                            b1.ToTable("Tasks");
 
                             b1.WithOwner()
                                 .HasForeignKey("TaskId");
@@ -633,7 +636,7 @@ namespace Taskmony.Migrations
 
             modelBuilder.Entity("Taskmony.Models.User", b =>
                 {
-                    b.OwnsOne("Taskmony.Models.User.DisplayName#Taskmony.ValueObjects.DisplayName", "DisplayName", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.DisplayName", "DisplayName", b1 =>
                         {
                             b1.Property<Guid>("UserId")
                                 .HasColumnType("uuid");
@@ -645,13 +648,13 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("Users", (string)null);
+                            b1.ToTable("Users");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
                         });
 
-                    b.OwnsOne("Taskmony.Models.User.Email#Taskmony.ValueObjects.Email", "Email", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.Email", "Email", b1 =>
                         {
                             b1.Property<Guid>("UserId")
                                 .HasColumnType("uuid");
@@ -663,13 +666,13 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("Users", (string)null);
+                            b1.ToTable("Users");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
                         });
 
-                    b.OwnsOne("Taskmony.Models.User.Login#Taskmony.ValueObjects.Login", "Login", b1 =>
+                    b.OwnsOne("Taskmony.ValueObjects.Login", "Login", b1 =>
                         {
                             b1.Property<Guid>("UserId")
                                 .HasColumnType("uuid");
@@ -681,7 +684,7 @@ namespace Taskmony.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("Users", (string)null);
+                            b1.ToTable("Users");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");

@@ -26,7 +26,7 @@ public class SubscriptionService : ISubscriptionService
         int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
 
-        var subscriptions = await _subscriptionRepository.GetTaskSubscriptionsAsync(taskIds, offsetValue, limitValue);
+        var subscriptions = await _subscriptionRepository.GetByTaskIdsAsync(taskIds, offsetValue, limitValue);
 
         return subscriptions.ToLookup(s => s.TaskId, s => s.UserId);
     }
@@ -36,7 +36,7 @@ public class SubscriptionService : ISubscriptionService
         int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
 
-        var subscriptions = await _subscriptionRepository.GetIdeaSubscriptionsAsync(ideaIds, offsetValue, limitValue);
+        var subscriptions = await _subscriptionRepository.GetByIdeaIdsAsync(ideaIds, offsetValue, limitValue);
 
         return subscriptions.ToLookup(s => s.IdeaId, s => s.UserId);
     }
@@ -60,14 +60,14 @@ public class SubscriptionService : ISubscriptionService
             throw new DomainException(TaskErrors.SubscribeToPrivateTask);
         }
 
-        var subscription = await _subscriptionRepository.GetTaskSubscriptionAsync(taskId, currentUserId);
+        var subscription = await _subscriptionRepository.GetByTaskAndUserAsync(taskId, currentUserId);
 
         if (subscription is not null)
         {
             throw new DomainException(TaskErrors.AlreadySubscribedToTask);
         }
 
-        _subscriptionRepository.AddTaskSubscription(new TaskSubscription
+        _subscriptionRepository.Add(new TaskSubscription
         {
             TaskId = task.Id,
             UserId = currentUserId
@@ -90,14 +90,14 @@ public class SubscriptionService : ISubscriptionService
             throw new DomainException(IdeaErrors.SubscribeToPrivateIdea);
         }
 
-        var subscription = await _subscriptionRepository.GetIdeaSubscriptionAsync(ideaId, currentUserId);
+        var subscription = await _subscriptionRepository.GetByIdeaAndUserAsync(ideaId, currentUserId);
 
         if (subscription is not null)
         {
             throw new DomainException(IdeaErrors.AlreadySubscribedToIdea);
         }
 
-        _subscriptionRepository.AddIdeaSubscription(new IdeaSubscription
+        _subscriptionRepository.Add(new IdeaSubscription
         {
             IdeaId = idea.Id,
             UserId = currentUserId
@@ -110,7 +110,7 @@ public class SubscriptionService : ISubscriptionService
     {
         var taskSubscription = await GetTaskSubscriptionOrThrowAsync(taskId, currentUserId);
 
-        _subscriptionRepository.RemoveTaskSubscription(taskSubscription);
+        _subscriptionRepository.Delete(taskSubscription);
 
         return await _subscriptionRepository.SaveChangesAsync();
     }
@@ -119,14 +119,14 @@ public class SubscriptionService : ISubscriptionService
     {
         var ideaSubscription = await GetIdeaSubscriptionOrThrowAsync(ideaId, currentUserId);
 
-        _subscriptionRepository.RemoveIdeaSubscription(ideaSubscription);
+        _subscriptionRepository.Delete(ideaSubscription);
 
         return await _subscriptionRepository.SaveChangesAsync();
     }
 
     private async Task<TaskSubscription> GetTaskSubscriptionOrThrowAsync(Guid taskId, Guid userId)
     {
-        var subscription = await _subscriptionRepository.GetTaskSubscriptionAsync(taskId, userId);
+        var subscription = await _subscriptionRepository.GetByTaskAndUserAsync(taskId, userId);
 
         if (subscription == null)
         {
@@ -138,7 +138,7 @@ public class SubscriptionService : ISubscriptionService
 
     private async Task<IdeaSubscription> GetIdeaSubscriptionOrThrowAsync(Guid ideaId, Guid userId)
     {
-        var subscription = await _subscriptionRepository.GetIdeaSubscriptionAsync(ideaId, userId);
+        var subscription = await _subscriptionRepository.GetByIdeaAndUserAsync(ideaId, userId);
 
         if (subscription == null)
         {

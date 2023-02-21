@@ -3,10 +3,8 @@ using Taskmony.ValueObjects;
 
 namespace Taskmony.Models;
 
-public class Direction
+public class Direction : Entity
 {
-    public Guid Id { get; set; }
-
     public DirectionName? Name { get; set; }
 
     public string? Details { get; set; }

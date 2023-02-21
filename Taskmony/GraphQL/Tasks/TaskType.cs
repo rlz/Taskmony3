@@ -18,6 +18,7 @@ public class TaskType : ObjectType<Task>
     {
         descriptor.Field(t => t.AssigneeId).Ignore();
         descriptor.Field(t => t.CreatedById).Ignore();
+        descriptor.Field(t => t.AssignedById).Ignore();
         descriptor.Field(t => t.DirectionId).Ignore();
         descriptor.Field(t => t.Subscriptions).Ignore();
         descriptor.Field(t => t.ActionItemType).Ignore();
@@ -43,6 +44,9 @@ public class TaskType : ObjectType<Task>
 
         descriptor.Field(t => t.Assignee)
             .ResolveWith<Resolvers>(r => r.GetAssignee(default!, default!));
+        
+        descriptor.Field(t => t.AssignedBy)
+            .ResolveWith<Resolvers>(r => r.GetAssignedBy(default!, default!));
 
         descriptor.Field(t => t.Comments)
             .Type<ListType<NonNullType<CommentType>>>()
@@ -81,6 +85,16 @@ public class TaskType : ObjectType<Task>
             }
 
             return await userById.LoadAsync(task.AssigneeId.Value);
+        }
+        
+        public async Task<User?> GetAssignedBy([Parent] Task task, UserByIdDataLoader userById)
+        {
+            if (task.AssignedById is null)
+            {
+                return null;
+            }
+
+            return await userById.LoadAsync(task.AssignedById.Value);
         }
 
         public async Task<Direction?> GetDirection([Parent] Task task, DirectionByIdDataLoader directionById)

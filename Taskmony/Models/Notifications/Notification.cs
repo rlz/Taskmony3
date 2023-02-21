@@ -2,10 +2,8 @@ using Taskmony.Models.Enums;
 
 namespace Taskmony.Models.Notifications;
 
-public class Notification
+public class Notification : Entity
 {
-    public Guid Id { get; set; }
-
     public DateTime? ModifiedAt { get; set; }
 
     public Guid ModifiedById { get; set; }

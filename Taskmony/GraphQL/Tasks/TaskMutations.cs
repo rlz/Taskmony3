@@ -46,7 +46,7 @@ public class TaskMutations
             RepeatMode = repeatMode,
             RepeatEvery = repeatEvery,
             WeekDays = weekDays?.Aggregate((current, weekDay) => current | weekDay),
-            RepeatUntil = RepeatUntil.From(repeatUntilUtc)
+            RepeatUntil = repeatUntilUtc
         };
 
         return await taskService.AddRecurringTaskAsync(task, repeatMode, repeatEvery, task.WeekDays, repeatUntilUtc);
@@ -58,7 +58,7 @@ public class TaskMutations
     {
         if (groupId is not null)
         {
-            return await taskService.SetRecurringTaskDescriptionAsync(groupId.Value, description, currentUserId);
+            return await taskService.SetRecurringTaskDescriptionAsync(taskId, groupId.Value, description, currentUserId);
         }
 
         return await taskService.SetTaskDescriptionAsync(taskId, description, currentUserId) is null
@@ -72,7 +72,7 @@ public class TaskMutations
     {
         if (groupId is not null)
         {
-            return await taskService.SetRecurringTaskDetailsAsync(groupId.Value, details, currentUserId);
+            return await taskService.SetRecurringTaskDetailsAsync(taskId, groupId.Value, details, currentUserId);
         }
 
         return await taskService.SetTaskDetailsAsync(taskId, details, currentUserId) is null
@@ -86,7 +86,7 @@ public class TaskMutations
     {
         if (groupId is not null)
         {
-            return await taskService.SetRecurringTaskDirectionAsync(groupId.Value, directionId, currentUserId);
+            return await taskService.SetRecurringTaskDirectionAsync(taskId, groupId.Value, directionId, currentUserId);
         }
 
         return await taskService.SetTaskDirectionAsync(taskId, directionId, currentUserId) is null
@@ -103,7 +103,7 @@ public class TaskMutations
 
         if (groupId is not null)
         {
-            return await taskService.SetRecurringTaskDeletedAtAsync(groupId.Value, deletedAtUtc, currentUserId, all ?? false);
+            return await taskService.SetRecurringTaskDeletedAtAsync(taskId, groupId.Value, deletedAtUtc, currentUserId, all ?? false);
         }
 
         return await taskService.SetTaskDeletedAtAsync(taskId, deletedAtUtc, currentUserId) is null
@@ -117,7 +117,7 @@ public class TaskMutations
     {
         if (groupId is not null)
         {
-            return await taskService.SetRecurringTaskAssigneeAsync(groupId.Value, assigneeId, currentUserId);
+            return await taskService.SetRecurringTaskAssigneeAsync(taskId, groupId.Value, assigneeId, currentUserId);
         }
 
         return await taskService.SetTaskAssigneeAsync(taskId, assigneeId, currentUserId) is null
@@ -134,7 +134,7 @@ public class TaskMutations
 
         if (groupId is not null)
         {
-            return await taskService.SetRecurringTaskStartAtAsync(groupId.Value, startAtUtc, currentUserId);
+            return await taskService.SetRecurringTaskStartAtAsync(taskId, groupId.Value, startAtUtc, currentUserId);
         }
 
         return await taskService.SetTaskStartAtAsync(taskId, startAtUtc, currentUserId) is null
@@ -154,27 +154,29 @@ public class TaskMutations
     [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetRepeatMode([Service] ITaskService taskService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, 
-        Guid? groupId, RepeatMode? repeatMode, WeekDay[]? weekDays, string? repeatUntil, int? repeatEvery)
+        Guid? groupId, RepeatMode? repeatMode, WeekDay[]? weekDays, string? startAt, string? repeatUntil, int? repeatEvery)
     {
         DateTime? repeatUntilUtc = repeatUntil == null ? null : timeConverter.StringToDateTimeUtc(repeatUntil);
+        DateTime? startAtUtc = startAt == null ? null : timeConverter.StringToDateTimeUtc(startAt);
         var weekDayFlags = weekDays?.Aggregate((current, weekDay) => current | weekDay);
 
         if (groupId is not null)
         {
-            return await taskService.SetRecurringTaskRepeatModeAsync(groupId.Value, repeatMode, weekDayFlags,
-                repeatUntilUtc, repeatEvery, currentUserId);
+            return await taskService.SetRecurringTaskRepeatModeAsync(taskId, groupId.Value, repeatMode, weekDayFlags,
+                startAtUtc, repeatUntilUtc, repeatEvery, currentUserId);
         }
 
         return await taskService.SetTaskRepeatModeAsync(taskId, repeatMode, weekDayFlags, repeatUntilUtc,
-            repeatEvery, currentUserId);
+            startAtUtc, repeatEvery, currentUserId);
     }
 
     [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetRepeatUntil([Service] ITaskService taskService,
-        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid groupId, string repeatUntil)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, 
+        Guid groupId, string repeatUntil)
     {
         var repeatUntilUtc = timeConverter.StringToDateTimeUtc(repeatUntil);
 
-        return await taskService.SetRecurringTaskRepeatUntilAsync(groupId, repeatUntilUtc, currentUserId);
+        return await taskService.SetRecurringTaskRepeatUntilAsync(taskId, groupId, repeatUntilUtc, currentUserId);
     }
 }

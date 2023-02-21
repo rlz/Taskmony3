@@ -72,6 +72,6 @@ public static class ValidationErrors
     public static ErrorDetails WeekDaysAreRequired =>
         new("Week days must be specified if repeat mode is weekly", "WEEK_DAYS_ARE_REQUIRED");
 
-    public static ErrorDetails StartAtIsRequired =>
-        new("Start at must be specified", "START_AT_IS_REQUIRED");
+    public static ErrorDetails RepeatUntilIsBeforeStartAt =>
+        new("Repeat until date must be after start at date", "REPEAT_UNTIL_IS_BEFORE_START_AT");
 }

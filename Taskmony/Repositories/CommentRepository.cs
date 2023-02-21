@@ -5,18 +5,15 @@ using Taskmony.Repositories.Abstract;
 
 namespace Taskmony.Repositories;
 
-public sealed class CommentRepository : ICommentRepository, IDisposable, IAsyncDisposable
+public sealed class CommentRepository : BaseRepository<Comment>, ICommentRepository
 {
-    private readonly TaskmonyDbContext _context;
-
-    public CommentRepository(IDbContextFactory<TaskmonyDbContext> contextFactory)
+    public CommentRepository(IDbContextFactory<TaskmonyDbContext> contextFactory) : base(contextFactory)
     {
-        _context = contextFactory.CreateDbContext();
     }
 
-    public async Task<IEnumerable<Comment>> GetCommentsByTaskIdsAsync(Guid[] ids, int? offset, int? limit)
+    public async Task<IEnumerable<Comment>> GetByTaskIdsAsync(IEnumerable<Guid> ids, int? offset, int? limit)
     {
-        var groupedByTask = _context.TaskComments.Where(c => ids.Contains(c.TaskId)).GroupBy(c => c.TaskId);
+        var groupedByTask = Context.TaskComments.Where(c => ids.Contains(c.TaskId)).GroupBy(c => c.TaskId);
 
         if (offset is not null && limit is not null)
         {
@@ -42,12 +39,12 @@ public sealed class CommentRepository : ICommentRepository, IDisposable, IAsyncD
                 .SelectMany(g => g);
         }
 
-        return await _context.TaskComments.Where(c => ids.Contains(c.TaskId)).ToListAsync();
+        return await Context.TaskComments.Where(c => ids.Contains(c.TaskId)).ToListAsync();
     }
 
-    public async Task<IEnumerable<Comment>> GetCommentsByIdeaIdsAsync(Guid[] ids, int? offset, int? limit)
+    public async Task<IEnumerable<Comment>> GetByIdeaIdsAsync(IEnumerable<Guid> ids, int? offset, int? limit)
     {
-        var groupedByIdea = _context.IdeaComments.Where(c => ids.Contains(c.IdeaId)).GroupBy(c => c.IdeaId);
+        var groupedByIdea = Context.IdeaComments.Where(c => ids.Contains(c.IdeaId)).GroupBy(c => c.IdeaId);
 
         if (offset is not null && limit is not null)
         {
@@ -73,41 +70,6 @@ public sealed class CommentRepository : ICommentRepository, IDisposable, IAsyncD
                 .SelectMany(g => g);
         }
 
-        return await _context.IdeaComments.Where(c => ids.Contains(c.IdeaId)).ToListAsync();
-    }
-
-    public async Task<IEnumerable<Comment>> GetCommentsByIdsAsync(Guid[] ids)
-    {
-        return await _context.Comments.Where(c => ids.Contains(c.Id)).ToListAsync();
-    }
-
-    public async Task<Comment?> GetCommentById(Guid id)
-    {
-        return await _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
-    }
-
-    public async Task AddComment(TaskComment comment)
-    {
-        await _context.TaskComments.AddAsync(comment);
-    }
-
-    public async Task AddComment(IdeaComment comment)
-    {
-        await _context.IdeaComments.AddAsync(comment);
-    }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync() > 0;
-    }
-    
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        return _context.DisposeAsync();
+        return await Context.IdeaComments.Where(c => ids.Contains(c.IdeaId)).ToListAsync();
     }
 }

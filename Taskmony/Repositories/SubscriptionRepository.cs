@@ -5,23 +5,15 @@ using Taskmony.Repositories.Abstract;
 
 namespace Taskmony.Repositories;
 
-public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposable, IAsyncDisposable
+public sealed class SubscriptionRepository : BaseRepository<Subscription>, ISubscriptionRepository
 {
-    private readonly TaskmonyDbContext _context;
-
-    public SubscriptionRepository(IDbContextFactory<TaskmonyDbContext> contextFactory)
+    public SubscriptionRepository(IDbContextFactory<TaskmonyDbContext> contextFactory) : base(contextFactory)
     {
-        _context = contextFactory.CreateDbContext();
     }
 
-    public async Task<IEnumerable<TaskSubscription>> GetTaskSubscriptionsAsync(Guid taskId)
+    public async Task<IEnumerable<TaskSubscription>> GetByTaskIdsAsync(Guid[] taskIds, int? offset, int? limit)
     {
-        return await _context.TaskSubscriptions.Where(s => s.TaskId == taskId).ToListAsync();
-    }
-
-    public async Task<IEnumerable<TaskSubscription>> GetTaskSubscriptionsAsync(Guid[] taskIds, int? offset, int? limit)
-    {
-        var groupedByTask = _context.TaskSubscriptions.Where(s => taskIds.Contains(s.TaskId)).GroupBy(s => s.TaskId);
+        var groupedByTask = Context.TaskSubscriptions.Where(s => taskIds.Contains(s.TaskId)).GroupBy(s => s.TaskId);
 
         if (offset is not null && limit is not null)
         {
@@ -47,17 +39,12 @@ public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposabl
                 .SelectMany(g => g);
         }
 
-        return await _context.TaskSubscriptions.Where(s => taskIds.Contains(s.TaskId)).ToListAsync();
+        return await Context.TaskSubscriptions.Where(s => taskIds.Contains(s.TaskId)).ToListAsync();
     }
 
-    public async Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid ideaId)
+    public async Task<IEnumerable<IdeaSubscription>> GetByIdeaIdsAsync(Guid[] ideaIds, int? offset, int? limit)
     {
-        return await _context.IdeaSubscriptions.Where(s => s.IdeaId == ideaId).ToListAsync();
-    }
-
-    public async Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid[] ideaIds, int? offset, int? limit)
-    {
-        var groupedByTask = _context.IdeaSubscriptions.Where(s => ideaIds.Contains(s.IdeaId)).GroupBy(s => s.IdeaId);
+        var groupedByTask = Context.IdeaSubscriptions.Where(s => ideaIds.Contains(s.IdeaId)).GroupBy(s => s.IdeaId);
 
         if (offset is not null && limit is not null)
         {
@@ -83,53 +70,18 @@ public sealed class SubscriptionRepository : ISubscriptionRepository, IDisposabl
                 .SelectMany(g => g);
         }
 
-        return await _context.IdeaSubscriptions.Where(s => ideaIds.Contains(s.IdeaId)).ToListAsync();
+        return await Context.IdeaSubscriptions.Where(s => ideaIds.Contains(s.IdeaId)).ToListAsync();
     }
 
-    public void AddTaskSubscription(TaskSubscription subscription)
+    public async Task<TaskSubscription?> GetByTaskAndUserAsync(Guid taskId, Guid currentUserId)
     {
-        _context.TaskSubscriptions.Add(subscription);
-    }
-
-    public void AddIdeaSubscription(IdeaSubscription subscription)
-    {
-        _context.IdeaSubscriptions.Add(subscription);
-    }
-
-    public void RemoveTaskSubscription(TaskSubscription subscription)
-    {
-        _context.TaskSubscriptions.Remove(subscription);
-    }
-
-    public void RemoveIdeaSubscription(IdeaSubscription subscription)
-    {
-        _context.IdeaSubscriptions.Remove(subscription);
-    }
-
-    public async Task<TaskSubscription?> GetTaskSubscriptionAsync(Guid taskId, Guid currentUserId)
-    {
-        return await _context.TaskSubscriptions.Where(s => s.TaskId == taskId && s.UserId == currentUserId)
+        return await Context.TaskSubscriptions.Where(s => s.TaskId == taskId && s.UserId == currentUserId)
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IdeaSubscription?> GetIdeaSubscriptionAsync(Guid ideaId, Guid currentUserId)
+    public async Task<IdeaSubscription?> GetByIdeaAndUserAsync(Guid ideaId, Guid currentUserId)
     {
-        return await _context.IdeaSubscriptions.Where(s => s.IdeaId == ideaId && s.UserId == currentUserId)
+        return await Context.IdeaSubscriptions.Where(s => s.IdeaId == ideaId && s.UserId == currentUserId)
             .FirstOrDefaultAsync();
-    }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync() > 0;
-    }
-
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        return _context.DisposeAsync();
     }
 }

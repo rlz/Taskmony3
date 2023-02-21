@@ -5,9 +5,9 @@ namespace Taskmony.Repositories.Abstract;
 
 public interface INotificationRepository
 {
-    Task<IEnumerable<Notification>> GetUserNotificationsAsync(NotifiableType type, Guid[] notifiableIds, DateTime? start, DateTime? end, Guid userId);
+    Task<IEnumerable<Notification>> GetByUserAsync(NotifiableType type, Guid[] notifiableIds, DateTime? start, DateTime? end, Guid userId);
 
-    Task AddNotificationAsync(Notification notification);
+    Task AddAsync(Notification notification);
 
     Task<bool> SaveChangesAsync();
 }

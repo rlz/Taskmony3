@@ -6,9 +6,8 @@ namespace Taskmony.GraphQL;
 
 public class HttpRequestInterceptor : DefaultHttpRequestInterceptor
 {
-    public override ValueTask OnCreateAsync(HttpContext context,
-        IRequestExecutor requestExecutor, IQueryRequestBuilder requestBuilder,
-        CancellationToken cancellationToken)
+    public override ValueTask OnCreateAsync(HttpContext context, IRequestExecutor requestExecutor,
+        IQueryRequestBuilder requestBuilder, CancellationToken cancellationToken)
     {
         if (context.User.Identity is not null && context.User.Identity.IsAuthenticated)
         {
@@ -16,7 +15,7 @@ public class HttpRequestInterceptor : DefaultHttpRequestInterceptor
                                     ?? throw new ArgumentException("User identifier claim is required",
                                         nameof(context)));
 
-            requestBuilder.SetProperty("currentUserId", userId);
+            requestBuilder.SetGlobalState("currentUserId", userId);
         }
 
         return base.OnCreateAsync(context, requestExecutor, requestBuilder,

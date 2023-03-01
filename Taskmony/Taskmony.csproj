@@ -12,15 +12,15 @@
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'Swagger' " />
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'Banana cake pop' " />
     <ItemGroup>
-      <PackageReference Include="HotChocolate.AspNetCore" Version="12.16.0" />
-      <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="12.16.0" />
-      <PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.16.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.2" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
+      <PackageReference Include="HotChocolate.AspNetCore" Version="13.0.5" />
+      <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.0.5" />
+      <PackageReference Include="HotChocolate.Data.EntityFramework" Version="13.0.5" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.3" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.3" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
       <PackageReference Include="ValueOf" Version="2.0.31" />
     </ItemGroup>

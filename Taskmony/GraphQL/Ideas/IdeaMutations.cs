@@ -1,16 +1,13 @@
-using HotChocolate.AspNetCore.Authorization;
 using Taskmony.Models;
 using Taskmony.Models.Enums;
-using Taskmony.Services;
 using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
 
 namespace Taskmony.GraphQL.Ideas;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
+[ExtendObjectType(typeof(Mutation))]
 public class IdeaMutations
 {
-    [Authorize]
     public async Task<Idea?> IdeaAdd([Service] IIdeaService ideaService, [GlobalState] Guid currentUserId,
         string description, string? details, Guid? directionId, Generation generation)
     {
@@ -26,28 +23,24 @@ public class IdeaMutations
         return await ideaService.AddIdeaAsync(idea);
     }
 
-    [Authorize]
     public async Task<Guid?> IdeaSetDescription([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, string description)
     {
         return await ideaService.SetIdeaDescriptionAsync(ideaId, description, currentUserId);
     }
 
-    [Authorize]
     public async Task<Guid?> IdeaSetDetails([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, string? details)
     {
         return await ideaService.SetIdeaDetailsAsync(ideaId, details, currentUserId);
     }
 
-    [Authorize]
     public async Task<Guid?> IdeaSetDirection([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, Guid? directionId)
     {
         return await ideaService.SetIdeaDirectionAsync(ideaId, directionId, currentUserId);
     }
 
-    [Authorize]
     public async Task<Guid?> IdeaSetDeletedAt([Service] IIdeaService ideaService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid ideaId, string? deletedAt)
     {
@@ -56,14 +49,12 @@ public class IdeaMutations
         return await ideaService.SetIdeaDeletedAtAsync(ideaId, deletedAtUtc, currentUserId);
     }
 
-    [Authorize]
     public async Task<Guid?> IdeaSetGeneration([Service] IIdeaService ideaService,
         [GlobalState] Guid currentUserId, Guid ideaId, Generation generation)
     {
         return await ideaService.SetIdeaGenerationAsync(ideaId, generation, currentUserId);
     }
 
-    [Authorize]
     public async Task<Guid?> IdeaSetReviewedAt([Service] IIdeaService ideaService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid ideaId, string? reviewedAt)
     {

@@ -1,4 +1,3 @@
-using HotChocolate.AspNetCore.Authorization;
 using Taskmony.Models.Enums;
 using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
@@ -6,10 +5,9 @@ using Task = Taskmony.Models.Task;
 
 namespace Taskmony.GraphQL.Tasks;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
+[ExtendObjectType(typeof(Mutation))]
 public class TaskMutations
 {
-    [Authorize]
     public async Task<Task?> TaskAdd([Service] ITaskService taskService, [Service] ITimeConverter timeConverter,
         [GlobalState] Guid currentUserId, string description, string? details, Guid? assigneeId, Guid? directionId,
         string startAt)
@@ -27,7 +25,6 @@ public class TaskMutations
         return await taskService.AddTaskAsync(task);
     }
 
-    [Authorize]
     public async Task<IEnumerable<Guid>?> TasksGenerate([Service] ITaskService taskService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, string description,
         string? details, Guid? assigneeId, Guid? directionId, string startAt, RepeatMode repeatMode,
@@ -52,7 +49,6 @@ public class TaskMutations
         return await taskService.AddRecurringTaskAsync(task, repeatMode, repeatEvery, task.WeekDays, repeatUntilUtc);
     }
 
-    [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetDescription([Service] ITaskService taskService,
         [GlobalState] Guid currentUserId, Guid taskId, Guid? groupId, string description)
     {
@@ -66,7 +62,6 @@ public class TaskMutations
             : new[] { taskId };
     }
 
-    [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetDetails([Service] ITaskService taskService,
         [GlobalState] Guid currentUserId, Guid taskId, Guid? groupId, string? details)
     {
@@ -80,7 +75,6 @@ public class TaskMutations
             : new[] { taskId };
     }
 
-    [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetDirection([Service] ITaskService taskService,
         [GlobalState] Guid currentUserId, Guid taskId, Guid? groupId, Guid? directionId)
     {
@@ -94,7 +88,6 @@ public class TaskMutations
             : new[] { taskId };
     }
 
-    [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetDeletedAt([Service] ITaskService taskService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, 
         Guid? groupId, string? deletedAt, bool? all)
@@ -111,7 +104,6 @@ public class TaskMutations
             : new[] { taskId };
     }
 
-    [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetAssignee([Service] ITaskService taskService,
         [GlobalState] Guid currentUserId, Guid taskId, Guid? groupId, Guid? assigneeId)
     {
@@ -125,7 +117,6 @@ public class TaskMutations
             : new[] { taskId };
     }
 
-    [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetStartAt([Service] ITaskService taskService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, 
         Guid? groupId, string startAt)
@@ -142,7 +133,6 @@ public class TaskMutations
             : new[] { taskId };
     }
 
-    [Authorize]
     public async Task<Guid?> TaskSetCompletedAt([Service] ITaskService taskService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, string? completedAt)
     {
@@ -151,7 +141,6 @@ public class TaskMutations
         return await taskService.SetTaskCompletedAtAsync(taskId, completedAtUtc, currentUserId);
     }
 
-    [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetRepeatMode([Service] ITaskService taskService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, 
         Guid? groupId, RepeatMode? repeatMode, WeekDay[]? weekDays, string? startAt, string? repeatUntil, int? repeatEvery)
@@ -170,7 +159,6 @@ public class TaskMutations
             startAtUtc, repeatEvery, currentUserId);
     }
 
-    [Authorize]
     public async Task<IEnumerable<Guid>?> TaskSetRepeatUntil([Service] ITaskService taskService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, 
         Guid groupId, string repeatUntil)

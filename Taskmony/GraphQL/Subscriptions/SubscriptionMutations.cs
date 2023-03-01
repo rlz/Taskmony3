@@ -1,12 +1,10 @@
-using HotChocolate.AspNetCore.Authorization;
 using Taskmony.Services.Abstract;
 
 namespace Taskmony.GraphQL.Subscriptions;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
+[ExtendObjectType(typeof(Mutation))]
 public class SubscriptionMutations
 {
-    [Authorize]
     public async Task<Guid?> TaskSubscribe([Service] ISubscriptionService subscriptionService,
         [GlobalState] Guid currentUserId, Guid taskId)
     {
@@ -18,7 +16,6 @@ public class SubscriptionMutations
         return null;
     }
 
-    [Authorize]
     public async Task<Guid?> IdeaSubscribe([Service] ISubscriptionService subscriptionService,
         [GlobalState] Guid currentUserId, Guid ideaId)
     {
@@ -30,7 +27,6 @@ public class SubscriptionMutations
         return null;
     }
 
-    [Authorize]
     public async Task<Guid?> TaskUnsubscribe([Service] ISubscriptionService subscriptionService,
         [GlobalState] Guid currentUserId, Guid taskId)
     {
@@ -42,7 +38,6 @@ public class SubscriptionMutations
         return null;
     }
 
-    [Authorize]
     public async Task<Guid?> IdeaUnsubscribe([Service] ISubscriptionService subscriptionService,
         [GlobalState] Guid currentUserId, Guid ideaId)
     {

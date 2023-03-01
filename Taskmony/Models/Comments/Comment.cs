@@ -4,10 +4,8 @@ using Taskmony.ValueObjects;
 
 namespace Taskmony.Models.Comments;
 
-public abstract class Comment : IActionItem
+public abstract class Comment : Entity, IActionItem
 {
-    public Guid Id { get; set; }
-
     public ActionItemType ActionItemType => ActionItemType.Comment;
 
     public CommentText? Text { get; set; }

@@ -5,23 +5,29 @@ namespace Taskmony.Repositories.Abstract;
 
 public interface IDirectionRepository
 {
-    Task<Direction?> GetDirectionByIdAsync(Guid id);
+    Task<Direction?> GetByIdAsync(Guid id);
 
-    Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, int? offset, int? limit, Guid userId);
+    Task<IEnumerable<Direction>> GetAsync(Guid[]? id, int? offset, int? limit, Guid userId);
 
     Task<IEnumerable<Guid>> GetUserDirectionIds(Guid userId);
 
-    Task<IEnumerable<Direction>> GetDirectionByIdsAsync(Guid[] ids);
+    Task<IEnumerable<Direction>> GetByIdsAsync(IEnumerable<Guid> ids);
 
     Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds, int? offset, int? limit);
 
     Task<bool> AnyMemberWithIdAsync(Guid directionId, Guid memberId);
 
-    Task AddDirectionAsync(Direction direction);
+    Task<bool> AnyMemberInDirectionAsync(Guid directionId);
 
-    void AddMember(Membership membership);
+    Task<bool> AnyMemberOtherThanUserInDirectionAsync(Guid directionId, Guid userId);
+
+    Task AddAsync(Direction direction);
+
+    Task AddMemberAsync(Membership membership);
 
     void RemoveMember(Membership membership);
+
+    void Delete(Direction direction);
 
     Task<bool> SaveChangesAsync();
 }

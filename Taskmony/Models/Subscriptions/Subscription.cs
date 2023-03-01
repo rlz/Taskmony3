@@ -1,9 +1,7 @@
 namespace Taskmony.Models.Subscriptions;
 
-public abstract class Subscription
+public abstract class Subscription : Entity
 {
-    public Guid Id { get; set; }
-
     public User? User { get; set; }
 
     public Guid UserId { get; set; }

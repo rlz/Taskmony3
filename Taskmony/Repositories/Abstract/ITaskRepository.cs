@@ -11,17 +11,15 @@ public interface ITaskRepository
     /// <param name="limit">max number of the tasks sorted by creation date and id to return</param>
     /// <param name="userId">user id</param>
     /// <returns>user tasks</returns>
-    Task<IEnumerable<Models.Task>> GetTasksAsync(Guid[]? id, Guid?[] directionId,
+    Task<IEnumerable<Models.Task>> GetAsync(Guid[]? id, Guid?[] directionId,
         int? offset, int? limit, Guid userId);
 
-    Task<IEnumerable<Models.Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids);
+    Task<IEnumerable<Models.Task>> GetByIdsAsync(IEnumerable<Guid> ids);
 
-    Task<Models.Task?> GetTaskByIdAsync(Guid id);
-
-    Task<IEnumerable<Models.Task>> GetNotCompletedTasksAsync(Guid groupId);
-
+    Task<Models.Task?> GetByIdAsync(Guid id);
+    
     /// <summary>
-    /// Gets not completed and not deleted tasks by group id
+    /// Gets not completed and not deleted tasks
     /// </summary>
     /// <param name="groupId">group id of the recurring task</param>
     /// <returns>active tasks from the group</returns>
@@ -29,11 +27,13 @@ public interface ITaskRepository
 
     Task<IEnumerable<Models.Task>> GetTasksByGroupIdAsync(Guid groupId);
 
-    Task AddTaskAsync(Models.Task task);
+    Task AddAsync(Models.Task task);
 
-    Task AddTasksAsync(IEnumerable<Models.Task> tasks);
+    Task AddRangeAsync(IEnumerable<Models.Task> tasks);
 
-    void DeleteTasks(IEnumerable<Models.Task> tasks);
+    void DeleteRange(IEnumerable<Models.Task> tasks);
+
+    void Delete(Models.Task task);
 
     Task<bool> SaveChangesAsync();
 }

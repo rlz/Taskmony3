@@ -18,6 +18,7 @@ public class TaskType : ObjectType<Task>
     {
         descriptor.Field(t => t.AssigneeId).Ignore();
         descriptor.Field(t => t.CreatedById).Ignore();
+        descriptor.Field(t => t.AssignedById).Ignore();
         descriptor.Field(t => t.DirectionId).Ignore();
         descriptor.Field(t => t.Subscriptions).Ignore();
         descriptor.Field(t => t.ActionItemType).Ignore();
@@ -43,6 +44,9 @@ public class TaskType : ObjectType<Task>
 
         descriptor.Field(t => t.Assignee)
             .ResolveWith<Resolvers>(r => r.GetAssignee(default!, default!));
+        
+        descriptor.Field(t => t.AssignedBy)
+            .ResolveWith<Resolvers>(r => r.GetAssignedBy(default!, default!));
 
         descriptor.Field(t => t.Comments)
             .Type<ListType<NonNullType<CommentType>>>()
@@ -63,7 +67,7 @@ public class TaskType : ObjectType<Task>
             .Argument("start", a => a.Type<StringType>())
             .Argument("end", a => a.Type<StringType>())
             .ResolveWith<Resolvers>(r =>
-                r.GetNotifications(default!, default!, default!, default!, default, default));
+                r.GetNotifications(default!, default!, default!, default!, default!, default, default));
     }
 
     private class Resolvers
@@ -81,6 +85,16 @@ public class TaskType : ObjectType<Task>
             }
 
             return await userById.LoadAsync(task.AssigneeId.Value);
+        }
+        
+        public async Task<User?> GetAssignedBy([Parent] Task task, UserByIdDataLoader userById)
+        {
+            if (task.AssignedById is null)
+            {
+                return null;
+            }
+
+            return await userById.LoadAsync(task.AssignedById.Value);
         }
 
         public async Task<Direction?> GetDirection([Parent] Task task, DirectionByIdDataLoader directionById)
@@ -127,7 +141,7 @@ public class TaskType : ObjectType<Task>
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Task task, IResolverContext context,
             [Service] IServiceProvider serviceProvider, [Service] ITimeConverter timeConverter,
-            string? start, string? end)
+            [GlobalState] Guid currentUserId, string? start, string? end)
         {
             DateTime? startUtc = start is null ? null : timeConverter.StringToDateTimeUtc(start);
             DateTime? endUtc = end is null ? null : timeConverter.StringToDateTimeUtc(end);
@@ -138,7 +152,7 @@ public class TaskType : ObjectType<Task>
                     await using var scope = serviceProvider.CreateAsyncScope();
 
                     var notifications = await scope.ServiceProvider.GetRequiredService<INotificationService>()
-                        .GetNotificationsByNotifiableIdsAsync(notifiableIds.ToArray(), startUtc, endUtc);
+                        .GetNotificationsByNotifiableIdsAsync(NotifiableType.Task, notifiableIds.ToArray(), startUtc, endUtc, currentUserId);
 
                     return notifications.ToLookup(n => n.NotifiableId);
                 }, "NotificationByTaskId"

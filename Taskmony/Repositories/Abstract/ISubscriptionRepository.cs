@@ -4,25 +4,17 @@ namespace Taskmony.Repositories.Abstract;
 
 public interface ISubscriptionRepository
 {
-    Task<IEnumerable<TaskSubscription>> GetTaskSubscriptionsAsync(Guid taskId);
+    Task<IEnumerable<TaskSubscription>> GetByTaskIdsAsync(Guid[] taskIds, int? offset, int? limit);
     
-    Task<IEnumerable<TaskSubscription>> GetTaskSubscriptionsAsync(Guid[] taskIds, int? offset, int? limit);
-
-    Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid ideaId);
+    Task<IEnumerable<IdeaSubscription>> GetByIdeaIdsAsync(Guid[] ideaIds, int? offset, int? limit);
     
-    Task<IEnumerable<IdeaSubscription>> GetIdeaSubscriptionsAsync(Guid[] ideaIds, int? offset, int? limit);
+    Task<TaskSubscription?> GetByTaskAndUserAsync(Guid taskId, Guid currentUserId);
     
-    Task<TaskSubscription?> GetTaskSubscriptionAsync(Guid taskId, Guid currentUserId);
+    Task<IdeaSubscription?> GetByIdeaAndUserAsync(Guid ideaId, Guid currentUserId);
     
-    Task<IdeaSubscription?> GetIdeaSubscriptionAsync(Guid ideaId, Guid currentUserId);
-
-    void AddTaskSubscription(TaskSubscription subscription);
+    void Add(Subscription subscription);
     
-    void AddIdeaSubscription(IdeaSubscription subscription);
-    
-    void RemoveTaskSubscription(TaskSubscription subscription);
-    
-    void RemoveIdeaSubscription(IdeaSubscription subscription);
+    void Delete(Subscription subscription);
 
     Task<bool> SaveChangesAsync();
 }

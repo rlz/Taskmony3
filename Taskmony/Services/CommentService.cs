@@ -12,12 +12,15 @@ public class CommentService : ICommentService
     private readonly ICommentRepository _commentRepository;
     private readonly ITaskService _taskService;
     private readonly IIdeaService _ideaService;
+    private readonly INotificationService _notificationService;
 
-    public CommentService(ICommentRepository commentRepository, ITaskService taskService, IIdeaService ideaService)
+    public CommentService(ICommentRepository commentRepository, ITaskService taskService,
+        IIdeaService ideaService, INotificationService notificationService)
     {
         _commentRepository = commentRepository;
         _taskService = taskService;
         _ideaService = ideaService;
+        _notificationService = notificationService;
     }
 
     public async Task<IEnumerable<Comment>> GetCommentsByTaskIds(Guid[] ids, int? offset, int? limit)
@@ -25,7 +28,7 @@ public class CommentService : ICommentService
         int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
 
-        return await _commentRepository.GetCommentsByTaskIdsAsync(ids, offsetValue, limitValue);
+        return await _commentRepository.GetByTaskIdsAsync(ids, offsetValue, limitValue);
     }
 
     public async Task<IEnumerable<Comment>> GetCommentsByIdeaIds(Guid[] ids, int? offset, int? limit)
@@ -33,37 +36,47 @@ public class CommentService : ICommentService
         int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
 
-        return await _commentRepository.GetCommentsByIdeaIdsAsync(ids, offsetValue, limitValue);
+        return await _commentRepository.GetByIdeaIdsAsync(ids, offsetValue, limitValue);
     }
 
     public async Task<IEnumerable<Comment>> GetCommentsByIdsAsync(Guid[] ids)
     {
-        return await _commentRepository.GetCommentsByIdsAsync(ids);
+        return await _commentRepository.GetByIdsAsync(ids);
     }
 
-    public async Task<Comment> AddComment(TaskComment comment)
+    public async Task<Comment?> AddComment(TaskComment comment)
     {
-        await _taskService.GetTaskOrThrowAsync(comment.TaskId, comment.CreatedById);
+        var task = await _taskService.GetTaskOrThrowAsync(comment.TaskId, comment.CreatedById);
 
-        await _commentRepository.AddComment(comment);
+        await _commentRepository.AddAsync(comment);
 
-        await _commentRepository.SaveChangesAsync();
+        if (!await _commentRepository.SaveChangesAsync())
+        {
+            return null;
+        }
+
+        await _notificationService.NotifyCommentAddedAsync(task, comment.Id, comment.CreatedById, comment.CreatedAt);
 
         return comment;
     }
 
-    public async Task<Comment> AddComment(IdeaComment comment)
+    public async Task<Comment?> AddComment(IdeaComment comment)
     {
-        await _ideaService.GetIdeaOrThrowAsync(comment.IdeaId, comment.CreatedById);
+        var idea = await _ideaService.GetIdeaOrThrowAsync(comment.IdeaId, comment.CreatedById);
+        
+        await _commentRepository.AddAsync(comment);
 
-        await _commentRepository.AddComment(comment);
+        if (!await _commentRepository.SaveChangesAsync())
+        {
+            return null;
+        }
 
-        await _commentRepository.SaveChangesAsync();
+        await _notificationService.NotifyCommentAddedAsync(idea, comment.Id, comment.CreatedById, comment.CreatedAt);
 
         return comment;
     }
 
-    public async Task<bool> SetCommentText(Guid commentId, string text, Guid currentUserId)
+    public async Task<Guid?> SetCommentText(Guid commentId, string text, Guid currentUserId)
     {
         var commentText = CommentText.From(text);
 
@@ -71,12 +84,12 @@ public class CommentService : ICommentService
 
         comment.Text = commentText;
 
-        return await _commentRepository.SaveChangesAsync();
+        return await _commentRepository.SaveChangesAsync() ? commentId : null;
     }
 
-    public async Task<bool> SetCommentDeletedAt(Guid commentId, DateTime? deletedAt, Guid currentUserId)
+    public async Task<Guid?> SetCommentDeletedAt(Guid commentId, DateTime? deletedAt, Guid currentUserId)
     {
-        DeletedAt? commentDeletedAt = deletedAt is null ? null : DeletedAt.From(deletedAt.Value);
+        var commentDeletedAt = deletedAt is null ? null : DeletedAt.From(deletedAt.Value);
 
         var comment = await GetCommentOrThrow(commentId, currentUserId);
 
@@ -87,12 +100,12 @@ public class CommentService : ICommentService
 
         comment.DeletedAt = commentDeletedAt;
 
-        return await _commentRepository.SaveChangesAsync();
+        return await _commentRepository.SaveChangesAsync() ? commentId : null;
     }
 
     private async Task<Comment> GetCommentOrThrow(Guid id, Guid currentUserId)
     {
-        var comment = await _commentRepository.GetCommentById(id);
+        var comment = await _commentRepository.GetByIdAsync(id);
 
         if (comment is null)
         {

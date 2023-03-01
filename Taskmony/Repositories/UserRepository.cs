@@ -3,47 +3,33 @@ using Taskmony.Data;
 using Taskmony.Models;
 using Taskmony.Repositories.Abstract;
 using Taskmony.ValueObjects;
-using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories;
 
-public sealed class UserRepository : IUserRepository, IDisposable, IAsyncDisposable
+public sealed class UserRepository : BaseRepository<User>, IUserRepository
 {
-    private readonly TaskmonyDbContext _context;
-
-    public UserRepository(IDbContextFactory<TaskmonyDbContext> contextFactory)
+    public UserRepository(IDbContextFactory<TaskmonyDbContext> contextFactory) : base(contextFactory)
     {
-        _context = contextFactory.CreateDbContext();
-    }
-
-    public async Task AddUserAsync(User user)
-    {
-        await _context.Users.AddAsync(user);
     }
 
     public async Task<bool> AnyUserWithEmailAsync(Email email)
     {
-        return await _context.Users.AnyAsync(x => x.Email!.Value == email.Value);
+        return await Context.Users.AnyAsync(x => x.Email!.Value == email.Value);
     }
 
     public async Task<bool> AnyUserWithLoginAsync(Login login)
     {
-        return await _context.Users.AnyAsync(x => x.Login!.Value == login.Value);
+        return await Context.Users.AnyAsync(x => x.Login!.Value == login.Value);
     }
 
-    public async Task<User?> GetUserByLoginAsync(Login login)
+    public async Task<User?> GetByLoginAsync(Login login)
     {
-        return await _context.Users.FirstOrDefaultAsync(x => x.Login!.Value == login.Value);
+        return await Context.Users.FirstOrDefaultAsync(x => x.Login!.Value == login.Value);
     }
 
-    public async Task<User?> GetUserByIdAsync(Guid id)
+    public async Task<IEnumerable<User>> GetAsync(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
     {
-        return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
-    }
-
-    public async Task<IEnumerable<User>> GetUsersAsync(Guid[]? id, string[]? email, string[]? login, int? offset, int? limit)
-    {
-        var query = _context.Users.AsQueryable();
+        var query = Context.Users.AsQueryable();
 
         if (id is not null)
         {
@@ -84,20 +70,5 @@ public sealed class UserRepository : IUserRepository, IDisposable, IAsyncDisposa
         }
 
         return query;
-    }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync() > 0;
-    }
-
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        return _context.DisposeAsync();
     }
 }

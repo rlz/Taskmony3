@@ -3,6 +3,7 @@ using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Notifications;
 using Taskmony.GraphQL.Users;
 using Taskmony.Models;
+using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
 using Taskmony.Services.Abstract;
 
@@ -34,7 +35,7 @@ public class DirectionType : ObjectType<Direction>
             .Type<ListType<NonNullType<NotificationType>>>()
             .Argument("start", a => a.Type<StringType>())
             .Argument("end", a => a.Type<StringType>())
-            .ResolveWith<Resolvers>(r => r.GetNotifications(default!, default!, default!, default!, default, default));
+            .ResolveWith<Resolvers>(r => r.GetNotifications(default!, default!, default!, default!, default!, default, default));
     }
 
     private class Resolvers
@@ -61,7 +62,7 @@ public class DirectionType : ObjectType<Direction>
         }
 
         public async Task<IEnumerable<Notification>?> GetNotifications([Parent] Direction direction,
-            IResolverContext context, [Service] IServiceProvider serviceProvider,
+            [GlobalState] Guid currentUserId, IResolverContext context, [Service] IServiceProvider serviceProvider,
             [Service] ITimeConverter timeConverter, string? start, string? end)
         {
             DateTime? startUtc = start is null ? null : timeConverter.StringToDateTimeUtc(start);
@@ -71,9 +72,9 @@ public class DirectionType : ObjectType<Direction>
                 async (notifiableIds, _) =>
                 {
                     await using var scope = serviceProvider.CreateAsyncScope();
-                    
+
                     var notifications = await scope.ServiceProvider.GetRequiredService<INotificationService>()
-                        .GetNotificationsByNotifiableIdsAsync(notifiableIds.ToArray(), startUtc, endUtc);
+                        .GetNotificationsByNotifiableIdsAsync(NotifiableType.Direction, notifiableIds.ToArray(), startUtc, endUtc, currentUserId);
 
                     return notifications.ToLookup(n => n.NotifiableId);
                 }, "NotificationByDirectionId"

@@ -6,27 +6,19 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories;
 
-public sealed class DirectionRepository : IDirectionRepository, IDisposable, IAsyncDisposable
+public sealed class DirectionRepository : BaseRepository<Direction>, IDirectionRepository
 {
-    private readonly TaskmonyDbContext _context;
-
-    public DirectionRepository(IDbContextFactory<TaskmonyDbContext> contextFactory)
+    public DirectionRepository(IDbContextFactory<TaskmonyDbContext> contextFactory) : base(contextFactory)
     {
-        _context = contextFactory.CreateDbContext();
     }
 
-    public async Task<Direction?> GetDirectionByIdAsync(Guid id)
+    public async Task<IEnumerable<Direction>> GetAsync(Guid[]? id, int? offset, int? limit, Guid userId)
     {
-        return await _context.Directions.FindAsync(id);
-    }
-
-    public async Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, int? offset, int? limit, Guid userId)
-    {
-        var query = _context.Directions.AsQueryable();
+        var query = Context.Directions.AsQueryable();
 
         query = id is null
-            ? query.Where(d => d.CreatedById == userId || d.Members!.Any(m => m.Id == userId))
-            : query.Where(d => id.Contains(d.Id) && (d.CreatedById == userId || d.Members!.Any(m => m.Id == userId)));
+            ? query.Where(d => d.Members!.Any(m => m.Id == userId))
+            : query.Where(d => id.Contains(d.Id) && d.Members!.Any(m => m.Id == userId));
 
         query = AddPagination(query, offset, limit);
 
@@ -35,16 +27,9 @@ public sealed class DirectionRepository : IDirectionRepository, IDisposable, IAs
 
     public async Task<IEnumerable<Guid>> GetUserDirectionIds(Guid userId)
     {
-        return await _context.Directions
+        return await Context.Directions
             .Where(d => d.CreatedById == userId || d.Members!.Any(m => m.Id == userId))
             .Select(d => d.Id)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Direction>> GetDirectionByIdsAsync(Guid[] ids)
-    {
-        return await _context.Directions
-            .Where(d => ids.Contains(d.Id))
             .ToListAsync();
     }
 
@@ -71,7 +56,7 @@ public sealed class DirectionRepository : IDirectionRepository, IDisposable, IAs
 
     public async Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds, int? offset, int? limit)
     {
-        var groupedByDirection = _context.Memberships
+        var groupedByDirection = Context.Memberships
             .Where(m => directionIds.Contains(m.DirectionId))
             .GroupBy(m => m.DirectionId);
 
@@ -103,43 +88,33 @@ public sealed class DirectionRepository : IDirectionRepository, IDisposable, IAs
                 .ToLookup(m => m.DirectionId, m => m.UserId);
         }
 
-        var memberships = await _context.Memberships.Where(m => directionIds.Contains(m.DirectionId)).ToListAsync();
+        var memberships = await Context.Memberships.Where(m => directionIds.Contains(m.DirectionId)).ToListAsync();
 
         return memberships.ToLookup(m => m.DirectionId, m => m.UserId);
     }
 
     public async Task<bool> AnyMemberWithIdAsync(Guid directionId, Guid memberId)
     {
-        return await _context.Memberships.AnyAsync(m => m.DirectionId == directionId && m.UserId == memberId);
+        return await Context.Memberships.AnyAsync(m => m.DirectionId == directionId && m.UserId == memberId);
     }
 
-    public async Task AddDirectionAsync(Direction direction)
+    public async Task<bool> AnyMemberInDirectionAsync(Guid directionId)
     {
-        await _context.Directions.AddAsync(direction);
+        return await Context.Memberships.AnyAsync(m => m.DirectionId == directionId);
+    }
+    
+    public async Task<bool> AnyMemberOtherThanUserInDirectionAsync(Guid directionId, Guid userId)
+    {
+        return await Context.Memberships.AnyAsync(m => m.DirectionId == directionId && m.UserId != userId);
     }
 
-    public void AddMember(Membership membership)
+    public async Task AddMemberAsync(Membership membership)
     {
-        _context.Memberships.Add(membership);
+        await Context.Memberships.AddAsync(membership);
     }
 
     public void RemoveMember(Membership membership)
     {
-        _context.Memberships.Remove(membership);
-    }
-
-    public async Task<bool> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync() > 0;
-    }
-
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        return _context.DisposeAsync();
+        Context.Memberships.Remove(membership);
     }
 }

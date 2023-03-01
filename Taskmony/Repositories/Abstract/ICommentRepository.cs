@@ -4,17 +4,15 @@ namespace Taskmony.Repositories.Abstract;
 
 public interface ICommentRepository
 {
-    Task<IEnumerable<Comment>> GetCommentsByTaskIdsAsync(Guid[] ids, int? offset, int? limit);
+    Task<IEnumerable<Comment>> GetByTaskIdsAsync(IEnumerable<Guid> ids, int? offset, int? limit);
 
-    Task<IEnumerable<Comment>> GetCommentsByIdeaIdsAsync(Guid[] ids, int? offset, int? limit);
+    Task<IEnumerable<Comment>> GetByIdeaIdsAsync(IEnumerable<Guid> ids, int? offset, int? limit);
     
-    Task<IEnumerable<Comment>> GetCommentsByIdsAsync(Guid[] ids);
+    Task<IEnumerable<Comment>> GetByIdsAsync(IEnumerable<Guid> ids);
 
-    Task<Comment?> GetCommentById(Guid id);
+    Task<Comment?> GetByIdAsync(Guid id);
 
-    Task AddComment(TaskComment comment);
-
-    Task AddComment(IdeaComment comment);
+    Task AddAsync(Comment comment);
 
     Task<bool> SaveChangesAsync();
 }

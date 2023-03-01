@@ -6,11 +6,9 @@ using Taskmony.ValueObjects;
 
 namespace Taskmony.Models;
 
-public class Task : IActionItem
+public class Task : DirectionEntity
 {
-    public Guid Id { get; set; }
-
-    public ActionItemType ActionItemType => ActionItemType.Task;
+    public override ActionItemType ActionItemType => ActionItemType.Task;
 
     public Description? Description { get; set; }
 
@@ -28,13 +26,13 @@ public class Task : IActionItem
 
     public DeletedAt? DeletedAt { get; set; }
 
-    public Direction? Direction { get; set; }
-
-    public Guid? DirectionId { get; set; }
-
     public User? Assignee { get; set; }
 
     public Guid? AssigneeId { get; set; }
+
+    public User? AssignedBy { get; set; }
+
+    public Guid? AssignedById { get; set; }
 
     public RepeatMode? RepeatMode { get; set; }
 
@@ -42,7 +40,7 @@ public class Task : IActionItem
 
     public int? RepeatEvery { get; set; }
 
-    public RepeatUntil? RepeatUntil { get; set; }
+    public DateTime? RepeatUntil { get; set; }
     
     public Guid? GroupId { get; set; }
 

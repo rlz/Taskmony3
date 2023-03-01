@@ -45,7 +45,7 @@ public class UserService : IUserService
 
         user.Password = _passwordHasher.HashPassword(password);
 
-        await _userRepository.AddUserAsync(user);
+        await _userRepository.AddAsync(user);
 
         return await _userRepository.SaveChangesAsync();
     }
@@ -55,7 +55,7 @@ public class UserService : IUserService
         var login = Login.From(request.Login);
         var password = Password.From(request.Password);
 
-        var user = await _userRepository.GetUserByLoginAsync(login);
+        var user = await _userRepository.GetByLoginAsync(login);
 
         if (user is null || !_passwordHasher.VerifyPassword(password.Value, user.Password!))
         {
@@ -75,7 +75,7 @@ public class UserService : IUserService
 
         if (id is null && email is null && login is null)
         {
-            id = new[] { currentUserId };
+            id = new[] {currentUserId};
         }
 
         email = email?
@@ -88,15 +88,15 @@ public class UserService : IUserService
             .Select(l => l.Trim())
             .ToArray();
 
-        var users = await _userRepository.GetUsersAsync(id, email, login, offsetValue, limitValue);
+        var users = (await _userRepository.GetAsync(id, email, login, offsetValue, limitValue)).ToList();
 
-        return users.Select(x => new User
+        return users.Select(u => new User
         {
-            Id = x.Id,
-            Email = x.Id == currentUserId ? x.Email : null,
-            Login = x.Login,
-            DisplayName = x.DisplayName,
-            NotificationReadTime = x.Id == currentUserId ? x.NotificationReadTime : null,
+            Id = u.Id,
+            Email = currentUserId == u.Id ? u.Email : null,
+            Login = u.Login,
+            DisplayName = u.DisplayName,
+            NotificationReadTime = u.Id == currentUserId ? u.NotificationReadTime : null,
         });
     }
 
@@ -156,7 +156,7 @@ public class UserService : IUserService
 
     public async Task<User> GetUserOrThrowAsync(Guid id)
     {
-        var user = await _userRepository.GetUserByIdAsync(id);
+        var user = await _userRepository.GetByIdAsync(id);
 
         if (user is null)
         {

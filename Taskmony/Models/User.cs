@@ -6,10 +6,8 @@ using Taskmony.ValueObjects;
 
 namespace Taskmony.Models;
 
-public class User : IActionItem
+public class User : Entity, IActionItem
 {
-    public Guid Id { get; set; }
-
     public ActionItemType ActionItemType => ActionItemType.User;
 
     public Login? Login { get; set; }

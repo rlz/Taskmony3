@@ -12,17 +12,17 @@ public interface IIdeaService
 
     Task<Idea> GetIdeaOrThrowAsync(Guid id, Guid currentUserId);
 
-    Task<Idea> AddIdeaAsync(Idea idea);
+    Task<Idea?> AddIdeaAsync(Idea idea);
 
-    Task<bool> SetIdeaDescriptionAsync(Guid id, string description, Guid currentUserId);
+    Task<Guid?> SetIdeaDescriptionAsync(Guid id, string description, Guid currentUserId);
 
-    Task<bool> SetIdeaDetailsAsync(Guid id, string? details, Guid currentUserId);
+    Task<Guid?> SetIdeaDetailsAsync(Guid id, string? details, Guid currentUserId);
 
-    Task<bool> SetIdeaDirectionAsync(Guid id, Guid? directionId, Guid currentUserId);
+    Task<Guid?> SetIdeaDirectionAsync(Guid id, Guid? directionId, Guid currentUserId);
 
-    Task<bool> SetIdeaDeletedAtAsync(Guid id, DateTime? deletedAtUtc, Guid currentUserId);
+    Task<Guid?> SetIdeaDeletedAtAsync(Guid id, DateTime? deletedAtUtc, Guid currentUserId);
 
-    Task<bool> SetIdeaGenerationAsync(Guid id, Generation generation, Guid currentUserId);
+    Task<Guid?> SetIdeaGenerationAsync(Guid id, Generation generation, Guid currentUserId);
 
-    Task<bool> SetIdeaReviewedAtAsync(Guid id, DateTime? reviewedAtUtc, Guid currentUserId);
+    Task<Guid?> SetIdeaReviewedAtAsync(Guid id, DateTime? reviewedAtUtc, Guid currentUserId);
 }

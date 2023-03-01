@@ -6,11 +6,9 @@ using Taskmony.ValueObjects;
 
 namespace Taskmony.Models;
 
-public class Idea : IActionItem
+public class Idea : DirectionEntity
 {
-    public Guid Id { get; set; }
-
-    public ActionItemType ActionItemType => ActionItemType.Idea;
+    public override ActionItemType ActionItemType => ActionItemType.Idea;
 
     public Description? Description { get; set; }
 
@@ -25,10 +23,6 @@ public class Idea : IActionItem
     public DeletedAt? DeletedAt { get; set; }
 
     public ReviewedAt? ReviewedAt { get; set; }
-
-    public Direction? Direction { get; set; }
-
-    public Guid? DirectionId { get; set; }
 
     public Generation? Generation { get; set; }
 

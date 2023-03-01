@@ -1,24 +1,22 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
+using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
 using Taskmony.Repositories.Abstract;
 
 namespace Taskmony.Repositories;
 
-public sealed class NotificationRepository : INotificationRepository, IDisposable, IAsyncDisposable
+public sealed class NotificationRepository : BaseRepository<Notification>, INotificationRepository
 {
-    private readonly TaskmonyDbContext _context;
-
-    public NotificationRepository(IDbContextFactory<TaskmonyDbContext> contextFactory)
+    public NotificationRepository(IDbContextFactory<TaskmonyDbContext> contextFactory) : base(contextFactory)
     {
-        _context = contextFactory.CreateDbContext();
     }
 
-    public async Task<IEnumerable<Notification>> GetNotificationsAsync(Guid[] notifiableIds, DateTime? start,
-        DateTime? end)
+    public async Task<IEnumerable<Notification>> GetByUserAsync(NotifiableType type, Guid[] notifiableIds,
+        DateTime? start, DateTime? end, Guid userId)
     {
-        var groupedByNotifiable = _context.Notifications.Where(n => notifiableIds.Contains(n.NotifiableId))
-            .GroupBy(n => n.NotifiableId);
+        var query = GetUserNotifications(type, notifiableIds, userId);
+        var groupedByNotifiable = query.GroupBy(n => n.NotifiableId);
 
         if (start is not null && end is not null)
         {
@@ -44,21 +42,41 @@ public sealed class NotificationRepository : INotificationRepository, IDisposabl
                 .SelectMany(g => g);
         }
 
-        return await _context.Notifications.Where(n => notifiableIds.Contains(n.NotifiableId)).ToListAsync();
+        return await query.ToListAsync();
     }
 
-    public async Task<bool> SaveChangesAsync()
+    private IQueryable<Notification> GetUserNotifications(NotifiableType type, Guid[] notifiableIds, Guid userId)
     {
-        return await _context.SaveChangesAsync() > 0;
-    }
-
-    public void Dispose()
-    {
-        _context.Dispose();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
+        // user gets notifications if
+        return type switch
+        {
+            // user is a creator or subscriber or assignee or assignor
+            NotifiableType.Task =>
+                from n in Context.Notifications
+                join t in Context.Tasks on n.NotifiableId equals t.Id
+                from s in Context.TaskSubscriptions.Where(s => s.TaskId == t.Id && n.ModifiedAt >= s.CreatedAt)
+                    .DefaultIfEmpty() // left join on two columns
+                where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId &&
+                      (t.CreatedById == userId || s.UserId == userId || t.AssigneeId == userId ||
+                       t.AssignedById == userId)
+                select n,
+            // user is a creator or subscriber
+            NotifiableType.Idea =>
+                from n in Context.Notifications
+                join i in Context.Ideas on n.NotifiableId equals i.Id
+                from s in Context.IdeaSubscriptions.Where(s => s.IdeaId == i.Id && n.ModifiedAt >= s.CreatedAt)
+                    .DefaultIfEmpty()
+                where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId &&
+                      (i.CreatedById == userId || s.UserId == userId)
+                select n,
+            // user is a member
+            NotifiableType.Direction =>
+                from n in Context.Notifications
+                from m in Context.Memberships.Where(
+                    m => n.NotifiableId == m.DirectionId && n.ModifiedAt >= m.CreatedAt)
+                where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId && m.UserId == userId
+                select n,
+            _ => throw new ArgumentOutOfRangeException(nameof(type))
+        };
     }
 }

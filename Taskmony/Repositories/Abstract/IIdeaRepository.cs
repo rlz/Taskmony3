@@ -8,11 +8,11 @@ public interface IIdeaRepository
     Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[] directionId,
         int? offset, int? limit, Guid userId);
     
-    Task<IEnumerable<Idea>> GetIdeaByIdsAsync(Guid[] ids);
+    Task<IEnumerable<Idea>> GetByIdsAsync(IEnumerable<Guid> ids);
 
-    Task<Idea?> GetIdeaByIdAsync(Guid id);
+    Task<Idea?> GetByIdAsync(Guid id);
 
-    Task AddIdeaAsync(Idea idea);
+    Task AddAsync(Idea idea);
 
     Task<bool> SaveChangesAsync();
 }

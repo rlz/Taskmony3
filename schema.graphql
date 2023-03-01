@@ -61,20 +61,21 @@ type Mutation {
   taskAddComment(taskId: ID!, text: String!): Comment
   ideaAddComment(ideaId: ID!, text: String!): Comment 
 
-  taskSetDescription(taskId: ID, groupId: ID, description: String!): [ID!]
-  taskSetDetails(taskId: ID, groupId: ID, details: String): [ID!]
-  taskSetDirection(taskId: ID, groupId: ID, directionId: ID): [ID!]
-  taskSetDeletedAt(taskId: ID, groupId: ID, deletedAt: String, all: Boolean): [ID!]
-  taskSetAssignee(taskId: ID, groupId: ID, assigneeId: ID): [ID!]
-  taskSetStartAt(taskId: ID, groupId: ID, startAt: String!): [ID!]
+  taskSetDescription(taskId: ID!, groupId: ID, description: String!): [ID!]
+  taskSetDetails(taskId: ID!, groupId: ID, details: String): [ID!]
+  taskSetDirection(taskId: ID!, groupId: ID, directionId: ID): [ID!]
+  taskSetDeletedAt(taskId: ID!, groupId: ID, deletedAt: String, all: Boolean): [ID!]
+  taskSetAssignee(taskId: ID!, groupId: ID, assigneeId: ID): [ID!]
+  taskSetStartAt(taskId: ID!, groupId: ID, startAt: String!): [ID!]
   taskSetCompletedAt(taskId: ID!, completedAt: String): ID
-  taskSetRepeatUntil(groupId: ID!, repeatUntil: String!): [ID!]
+  taskSetRepeatUntil(taskId: ID!, groupId: ID!, repeatUntil: String!): [ID!]
   taskSetRepeatMode(
-    taskId: ID
+    taskId: ID!
     groupId: ID
     repeatMode: RepeatMode
     repeatEvery: Int
-    weekDays: [WeekDay!] 
+    weekDays: [WeekDay!]
+    startAt: String
     repeatUntil: String
   ): [ID!]
 
@@ -98,7 +99,7 @@ type Mutation {
   userSetLogin(login: String!): ID
   userSetDisplayName(displayName: String!): ID
   userSetEmail(email: String!): ID
-  userSetPassword(password: String!): ID
+  userSetPassword(oldPassword: String!, newPassword: String!): ID
 
   taskSubscribe(taskId: ID!): ID
   ideaSubscribe(ideaId: ID!): ID
@@ -196,43 +197,19 @@ type Direction {
 
 enum ActionType {
   """
-  Task added to the direction
+  Task/Idea/User/Comment added to the direction/task/idea
   """
-  TASK_ADDED
+  ITEM_ADDED
   """
-  Task deleted (from the direction or subscribed task)
+  Task/Idea/User deleted from the direction
   """
-  TASK_DELETED
+  ITEM_DELETED
   """
   Task assigned to the user
   """
   TASK_ASSIGNED
   """
-  Idea added to the direction
-  """
-  IDEA_ADDED
-  """
-  Idea deleted (from the direction or subscribed idea)
-  """
-  IDEA_DELETED
-  """
-  Member added to the direction
-  """
-  MEMBER_ADDED
-  """
-  Member removed from the direction
-  """
-  MEMBER_REMOVED
-  """
-  Member left the direction
-  """
-  MEMBER_LEFT
-  """
-  Comment added to the task or idea
-  """
-  COMMENT_ADDED
-  """
-  Task, idea or direction updated
+  Task/Idea/Direction updated
   """
   ITEM_UPDATED
 }

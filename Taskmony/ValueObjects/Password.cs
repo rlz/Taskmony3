@@ -7,9 +7,9 @@ namespace Taskmony.ValueObjects;
 
 public class Password : ValueOf<string, Password>
 {
-    //8+ characters, at least one uppercase letter, one lowercase letter, one number and one special character
+    //8+ characters, at least one uppercase letter, one lowercase letter, one number and optionally special characters
     private static readonly Regex EmailRegex =
-        new(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,100}$", RegexOptions.Compiled);
+            new("""^(?=\D*\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])[\w~@#$%^&*+=`|{}:;!.?"()\[\]-]{8,100}$""", RegexOptions.Compiled);
 
     protected override void Validate()
     {

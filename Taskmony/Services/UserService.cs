@@ -144,12 +144,17 @@ public class UserService : IUserService
         return await _userRepository.SaveChangesAsync();
     }
 
-    public async Task<bool> SetPasswordAsync(Guid id, string password, Guid currentUserId)
+    public async Task<bool> SetPasswordAsync(Guid id, string oldPassword, string newPassword, Guid currentUserId)
     {
-        var passwordValue = Password.From(password);
+        var newPasswordValue = Password.From(newPassword);
         var user = await GetUserOrThrowAsync(id);
 
-        user.Password = _passwordHasher.HashPassword(passwordValue);
+        if (!_passwordHasher.VerifyPassword(oldPassword, user.Password!))
+        {
+            throw new DomainException(UserErrors.WrongPassword);
+        }
+
+        user.Password = _passwordHasher.HashPassword(newPasswordValue);
 
         return await _userRepository.SaveChangesAsync();
     }

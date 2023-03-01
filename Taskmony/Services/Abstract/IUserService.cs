@@ -32,5 +32,5 @@ public interface IUserService
 
     Task<bool> SetEmailAsync(Guid id, string email, Guid currentUserId);
 
-    Task<bool> SetPasswordAsync(Guid id, string password, Guid currentUserId);
+    Task<bool> SetPasswordAsync(Guid id, string oldPassword, string newPassword, Guid currentUserId);
 }

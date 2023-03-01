@@ -5,7 +5,7 @@ public static class ValidationErrors
     public static ErrorDetails InvalidId => new("Invalid id format", "INVALID_ID");
 
     public static ErrorDetails InvalidPassword => new(
-        "Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character",
+        "Password must contain minimum eight characters, at least one uppercase letter, one lowercase letter, one number and optionally special characters",
         "INVALID_PASSWORD");
 
     public static ErrorDetails InvalidLogin => new(

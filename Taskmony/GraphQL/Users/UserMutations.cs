@@ -54,9 +54,10 @@ public class UserMutations
     }
 
     [Authorize]
-    public async Task<Guid?> UserSetPassword([Service] IUserService userService, [GlobalState] Guid currentUserId, string password)
+    public async Task<Guid?> UserSetPassword([Service] IUserService userService, [GlobalState] Guid currentUserId, 
+        string oldPassword, string newPassword)
     {
-        if (await userService.SetPasswordAsync(currentUserId, password, currentUserId))
+        if (await userService.SetPasswordAsync(currentUserId, oldPassword, newPassword, currentUserId))
         {
             return currentUserId;
         }

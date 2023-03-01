@@ -12,4 +12,6 @@ public static class UserErrors
         new("User with specified email already exists", "EMAIL_IS_ALREADY_IN_USE");
 
     public static ErrorDetails NotFound => new("User not found", "USER_NOT_FOUND");
+
+    public static ErrorDetails WrongPassword => new("Wrong password", "WRONG_PASSWORD");
 }

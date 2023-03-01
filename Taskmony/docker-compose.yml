@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__TaskmonyDatabase: "Host=db;Port=5432;Database=TaskmonyDatabase;Username=postgres;Password=pa55word"
+      Authentication__Schemes__Bearer__Secret: "Wnsjknsn4dxh5dsxN5JWNDjkn0sjkxnjs"
+      Authentication__Schemes__Bearer__Issuer: "https://localhost:8080"
+      Authentication__Schemes__Bearer__ExpirationMinutes: 4320
+    networks:
+      - app-network
+
+  db:
+    image: postgres
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "pa55word"
+      POSTGRES_DB: "TaskmonyDatabase"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

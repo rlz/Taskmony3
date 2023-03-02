@@ -8,5 +8,7 @@ public class JwtOptions
 
     public string Audience { get; set; } = default!;
     
-    public int ExpirationMinutes { get; set; }
+    public int AccessTokenExpirationMinutes { get; set; }
+
+    public int RefreshTokenExpirationMinutes { get; set; }
 }

@@ -12,7 +12,8 @@ services:
       ConnectionStrings__TaskmonyDatabase: "Host=db;Port=5432;Database=TaskmonyDatabase;Username=postgres;Password=pa55word"
       Authentication__Schemes__Bearer__Secret: "Wnsjknsn4dxh5dsxN5JWNDjkn0sjkxnjs"
       Authentication__Schemes__Bearer__Issuer: "https://localhost:8080"
-      Authentication__Schemes__Bearer__ExpirationMinutes: 4320
+      Authentication__Schemes__Bearer__AccessTokenExpirationMinutes: 30
+      Authentication__Schemes__Bearer__RefreshTokenExpirationDays: 43200
     networks:
       - app-network
 

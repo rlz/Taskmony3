@@ -47,4 +47,6 @@ public class User : Entity, IActionItem
     public ICollection<Subscription>? Subscriptions { get; set; }
 
     public ICollection<Comment>? Comments { get; set; }
+
+    public ICollection<RefreshToken>? RefreshTokens { get; internal set; }
 }

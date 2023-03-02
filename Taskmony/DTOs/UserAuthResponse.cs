@@ -1,3 +1,3 @@
 namespace Taskmony.DTOs;
 
-public record UserAuthResponse(Guid Id, string DisplayName, string AccessToken);
+public record UserAuthResponse(Guid UserId, string DisplayName, string AccessToken, string RefreshToken);

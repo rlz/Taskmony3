@@ -1,4 +1,3 @@
-using Taskmony.Auth;
 using Taskmony.DTOs;
 using Taskmony.Errors;
 using Taskmony.Exceptions;
@@ -13,13 +12,11 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly IJwtProvider _jwtProvider;
 
-    public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher, IJwtProvider jwtProvider)
+    public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
-        _jwtProvider = jwtProvider;
     }
 
     public async Task<bool> AddUserAsync(UserRegisterRequest request)
@@ -48,23 +45,6 @@ public class UserService : IUserService
         await _userRepository.AddAsync(user);
 
         return await _userRepository.SaveChangesAsync();
-    }
-
-    public async Task<UserAuthResponse> AuthenticateUserAsync(UserAuthRequest request)
-    {
-        var login = Login.From(request.Login);
-        var password = Password.From(request.Password);
-
-        var user = await _userRepository.GetByLoginAsync(login);
-
-        if (user is null || !_passwordHasher.VerifyPassword(password.Value, user.Password!))
-        {
-            throw new DomainException(UserErrors.WrongLoginOrPassword);
-        }
-
-        var token = _jwtProvider.GenerateToken(user);
-
-        return new UserAuthResponse(user.Id, user.DisplayName!.Value, token);
     }
 
     public async Task<IEnumerable<User>> GetUsersAsync(Guid[]? id, string[]? email, string[]? login,

@@ -24,7 +24,5 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
 
         builder.Property(s => s.Id)
             .HasValueGenerator<GuidValueGenerator>();
-
-        builder.Property(s => s.CreatedAt).IsRequired();
     }
 }

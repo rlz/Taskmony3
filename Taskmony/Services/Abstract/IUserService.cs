@@ -5,8 +5,6 @@ namespace Taskmony.Services.Abstract;
 
 public interface IUserService
 {
-    Task<UserAuthResponse> AuthenticateUserAsync(UserAuthRequest request);
-
     Task<bool> AddUserAsync(UserRegisterRequest request);
 
     /// <summary>

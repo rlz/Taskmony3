@@ -37,6 +37,8 @@ public class TaskmonyDbContext : DbContext
 
     public DbSet<IdeaComment> IdeaComments => Set<IdeaComment>();
 
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserConfiguration());

@@ -62,11 +62,13 @@ builder.Services.AddTransient<ISubscriptionRepository, SubscriptionRepository>()
 builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
 builder.Services.AddTransient<IIdeaRepository, IdeaRepository>();
 builder.Services.AddTransient<IDirectionRepository, DirectionRepository>();
+builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
 
-builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
 builder.Services.AddTransient<ITimeConverter, TimeConverter>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ISecurityService, SecurityService>();
 builder.Services.AddTransient<ITaskService, TaskService>();
 builder.Services.AddTransient<ICommentService, CommentService>();
 builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();

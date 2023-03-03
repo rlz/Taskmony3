@@ -24,6 +24,7 @@ import { getTasks } from "../../services/actions/tasksAPI";
 import { useAppDispatch } from "../../utils/hooks";
 import { getDirections } from "../../services/actions/directionsAPI";
 import { getUserInfo } from "../../services/actions/userInfo";
+import { getNotifications } from "../../services/actions/notifications";
 
 function App() {
   return (
@@ -65,6 +66,8 @@ function Home() {
     dispatch(getTasks());
     dispatch(getDirections());
     dispatch(getUserInfo());
+    dispatch(getNotifications());
+    setInterval(()=>{dispatch(getNotifications())}, 60 * 1000); 
   }, []);
 
   return (

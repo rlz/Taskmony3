@@ -28,6 +28,37 @@ export const tasksAllQuery = `id
     repeatUntil
     weekDays`;
 
+    export const notificationsAllQuery = `
+    actionItem {
+      __typename
+      ... on User {
+        id
+        displayName
+      }
+      ... on Task {
+        id
+        description
+        details
+      }
+      ... on Idea {
+        id
+        description
+        details
+      }
+      ... on Comment {
+        id
+        text
+      }
+
+    }
+    actionType
+    field
+    id
+    modifiedAt
+    modifiedBy { displayName }
+    newValue
+    oldValue`
+
 export const directionsAllQuery = `{directions{
     id
     name

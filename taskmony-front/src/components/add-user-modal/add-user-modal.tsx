@@ -74,10 +74,11 @@ const Input = ({ directionId,close }: InputPropsT) => {
         }}
       />
       <div className="border w-full border-gray-200 rounded">
-        {foundUsers.map((user) => (
+        {foundUsers.map((user,index) => (
           <SearchItem
             label={user.displayName}
             addUser={() => addNewUser(user)}
+            key={index}
           />
         ))}
       </div>

@@ -54,7 +54,7 @@ export const FilterByTaskType = () => {
 export const FilterByArchivedTaskType = () => {
   let [searchParams, setSearchParams] = useSearchParams();
   const archiveType = searchParams.get("archiveType");
-  if (!archiveType) setSearchParams({ archiveType: "deleted" });
+  // if (!archiveType) setSearchParams({ archiveType: "deleted" });
   console.log(archiveType);
   return (
     <>

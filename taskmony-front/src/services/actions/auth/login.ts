@@ -27,7 +27,7 @@ export function login(login: string, password: string) {
         console.log(res);
         if (res) {
           setCookie("accessToken", res.accessToken);
-          setCookie("id", res.id);
+          setCookie("id", res.userId);
           dispatch({
             type: LOGIN_SUCCESS,
           });

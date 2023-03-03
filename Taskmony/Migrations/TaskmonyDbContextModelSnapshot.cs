@@ -188,10 +188,6 @@ namespace Taskmony.Migrations
                     b.Property<bool>("IsUsed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("JwtId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasColumnType("text");

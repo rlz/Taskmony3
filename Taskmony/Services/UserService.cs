@@ -136,6 +136,8 @@ public class UserService : IUserService
 
         user.Password = _passwordHasher.HashPassword(newPasswordValue);
 
+        // TODO: revoke refresh tokens
+
         return await _userRepository.SaveChangesAsync();
     }
 

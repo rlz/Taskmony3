@@ -38,9 +38,9 @@ public class AccountController : ControllerBase
 
     [Authorize]
     [HttpPost("token/revoke")]
-    public async Task<ActionResult> RevokeToken([FromBody] string refreshToken)
+    public async Task<ActionResult> RevokeToken([FromBody] RevokeTokenRequest request)
     {
-        return Ok(await _securityService.RevokeTokenAsync(refreshToken));
+        return Ok(await _securityService.RevokeTokenAsync(request.RefreshToken));
     }
 
     [Authorize]

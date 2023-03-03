@@ -17,7 +17,6 @@ namespace Taskmony.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    JwtId = table.Column<string>(type: "text", nullable: false),
                     Token = table.Column<string>(type: "text", nullable: false),
                     IsUsed = table.Column<bool>(type: "boolean", nullable: false),
                     IsRevoked = table.Column<bool>(type: "boolean", nullable: false),

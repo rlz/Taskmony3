@@ -12,7 +12,7 @@ using Taskmony.Data;
 namespace Taskmony.Migrations
 {
     [DbContext(typeof(TaskmonyDbContext))]
-    [Migration("20230302103025_AddRefreshTokens")]
+    [Migration("20230302133320_AddRefreshTokens")]
     partial class AddRefreshTokens
     {
         /// <inheritdoc />
@@ -190,10 +190,6 @@ namespace Taskmony.Migrations
 
                     b.Property<bool>("IsUsed")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("JwtId")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("Token")
                         .IsRequired()

@@ -7,6 +7,7 @@ type FilterProps = {
   label: string;
   checked?: boolean;
   radio?: boolean;
+  style?: string;
 };
 
 export const FilterItem = ({
@@ -14,6 +15,7 @@ export const FilterItem = ({
   checked,
   radio,
   onChange,
+  style
 }: FilterProps) => {
   return (
     <div className={"gap-4 flex m-4"}>
@@ -22,7 +24,7 @@ export const FilterItem = ({
         src={radio ? (checked ? yesRadio : noRadio) : checked ? yes : no}
         onClick={() => onChange(!checked, label)}
       ></img>
-      <span className={"font-semibold text-sm"}>{label}</span>
+      <span className={"font-semibold text-sm "+ style}>{label}</span>
     </div>
   );
 };

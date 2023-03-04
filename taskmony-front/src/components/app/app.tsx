@@ -28,11 +28,14 @@ import { getUserInfo } from "../../services/actions/userInfo";
 import { getNotifications } from "../../services/actions/notifications";
 import { getCookie } from "../../utils/cookies";
 import { refreshToken } from "../../services/actions/auth/refreshToken";
+import { QueryParamProvider } from 'use-query-params';
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 
 function App() {
   return (
     <>
       <BrowserRouter>
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -57,6 +60,7 @@ function App() {
           </Route>
           <Route path="*" element={<Navigate to="/tasks" replace />} />
         </Routes>
+        </QueryParamProvider>
       </BrowserRouter>
     </>
   );

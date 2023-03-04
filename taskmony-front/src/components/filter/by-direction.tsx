@@ -3,11 +3,18 @@ import { useSearchParams } from "react-router-dom";
 import { useAppSelector } from "../../utils/hooks";
 import { FilterDivider } from "./filter-divider";
 import { FilterItem } from "./filter-item";
+import {
+  useQueryParam,
+  NumberParam,
+  StringParam,
+  ArrayParam,
+  withDefault,
+} from "use-query-params";
 
 export const FilterByDirection = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
-  let [searchParams, setSearchParams] = useSearchParams();
-  const chosenDirection = searchParams.get("direction");
+  const MyFiltersParam = withDefault(ArrayParam, []);
+  const [dir, setDir] = useQueryParam("direction", MyFiltersParam);
   const directions = useAppSelector((store) => store.directions.items).filter(
     (i) => i.deletedAt == null
   );
@@ -21,22 +28,30 @@ export const FilterByDirection = () => {
       {isOpen && (
         <>
           <FilterItem
-            label={"none"}
+            label={"unassigned"}
+            style={"italic"}
             key={"0"}
-            checked={chosenDirection == "none"}
+            checked={dir.includes("unassigned")}
             onChange={(value, label) => {
-              if (value) setSearchParams({ direction: label });
-              else setSearchParams({ direction: "" });
+              if (value) {
+                setDir([...dir, "unassigned"]);
+              } else {
+                setDir(dir.filter(el=>el!="unassigned"));
+              }
             }}
           />
           {directions.map((direction) => (
             <FilterItem
               label={direction.name}
               key={direction.id}
-              checked={chosenDirection == direction.name}
+              checked={dir.includes(direction.name)}
               onChange={(value, label) => {
-                if (value) setSearchParams({ direction: label });
-                else setSearchParams({ direction: "" });
+                if (value) {
+                  console.log(dir);
+                  setDir([...dir, label]);
+                } else {
+                  setDir(dir.filter(el=>el!=label));
+                }
               }}
             />
           ))}

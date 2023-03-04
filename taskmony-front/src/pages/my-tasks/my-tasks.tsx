@@ -22,17 +22,27 @@ import {
 function MyTasks() {
   const [newTask, setNewTask] = useState(false);
   let [searchParams, setSearchParams] = useSearchParams();
-  const chosenDirection = searchParams.get("direction");
+  const chosenDirection = searchParams.getAll("direction");
+  const future = searchParams.get("future");
+  const followed = searchParams.get("followed");
+  const assignedByMe = searchParams.get("assignedByMe");
   const task = useAppSelector((store) => store.editedTask);
   let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
     (i) => i.deletedAt == null
   );
-  if (chosenDirection != "")
+  if (chosenDirection.length > 0)
     tasksToShow = tasksToShow.filter(
       (i) =>
-        i.direction?.name == chosenDirection ||
-        (chosenDirection == "none" && !i.direction)
+        chosenDirection.includes(i.direction?.name) ||
+        (chosenDirection.includes("unassigned") && !i.direction)
     );
+    if (!future){
+      console.log("show no future");
+      tasksToShow = tasksToShow.filter(
+        (i) => i.startAt < new Date().toISOString()
+      );
+    }
+
   const dispatch = useAppDispatch();
   const addANewTask = () => {
     if (task.repeatMode) dispatch(addRepeatedTasks(task, null));

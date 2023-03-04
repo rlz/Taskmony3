@@ -7,6 +7,7 @@ import {
   Link,
   Navigate,
   Outlet,
+  useNavigate,
 } from "react-router-dom";
 import MyTasks from "../../pages/my-tasks/my-tasks";
 import MyIdeas from "../../pages/my-ideas/my-ideas";
@@ -25,6 +26,8 @@ import { useAppDispatch } from "../../utils/hooks";
 import { getDirections } from "../../services/actions/directionsAPI";
 import { getUserInfo } from "../../services/actions/userInfo";
 import { getNotifications } from "../../services/actions/notifications";
+import { getCookie } from "../../utils/cookies";
+import { refreshToken } from "../../services/actions/auth/refreshToken";
 
 function App() {
   return (
@@ -61,8 +64,10 @@ function App() {
 
 function Home() {
   const [openNotif, setOpenNotif] = useState(false);
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   useEffect(() => {
+    if(!getCookie("refreshToken")) navigate("/login")
     dispatch(getTasks());
     dispatch(getDirections());
     dispatch(getUserInfo());

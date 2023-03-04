@@ -27,8 +27,12 @@ export function register(email: string, password: string, name: string) {
       .then((res) => {
         console.log(res);
         if (res) {
-          setCookie("accessToken", res.accessToken);
-          setCookie("refreshToken", res.refreshToken);
+          setCookie("accessToken", res.accessToken,{
+            expires: 30 * 60,
+          });
+          setCookie("refreshToken", res.refreshToken,{
+            expires: 30 * 24 * 60 * 60,
+          });
           dispatch({
             type: REGISTER_SUCCESS,
           });

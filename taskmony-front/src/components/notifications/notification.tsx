@@ -56,7 +56,7 @@ export const NotificationItem = ({
   const goToDirection = (id) => navigate(`directions/${id}`)
   return (
     <div className={`w-full drop-shadow-sm bg-white rounded-lg`}>
-      <div className={"gap-4 flex justify-between p-2 mt-2 mb"}>
+      <div className={"gap-4 flex justify-between p-2 mt-2 mb  overflow-hidden"}>
         <div>
           <div className="flex  gap-2">
             <img src={iconByType(type)}></img>

@@ -55,7 +55,7 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
     ) {
       label = `New comment on ${notif.type} “${notif.name}”:`;
       type = "commentAdded";
-      details = null;
+      details = notif.actionItem.text;
     } 
     else if (
       notif.type != "direction" &&

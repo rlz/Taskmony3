@@ -26,7 +26,12 @@ export function login(login: string, password: string) {
       .then((res) => {
         console.log(res);
         if (res) {
-          setCookie("accessToken", res.accessToken);
+          setCookie("accessToken", res.accessToken,{
+            expires: 30 * 60,
+          });
+          setCookie("refreshToken", res.refreshToken,{
+            expires: 30 * 24 * 60 * 60,
+          });
           setCookie("id", res.userId);
           dispatch({
             type: LOGIN_SUCCESS,

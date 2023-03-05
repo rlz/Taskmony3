@@ -2,11 +2,11 @@ import { useState } from "react";
 import { FilterDivider } from "./filter-divider";
 import hrLine from "../../images/hr-line.svg";
 import { useSearchParams } from "react-router-dom";
+import { StringParam, useQueryParam } from "use-query-params";
 
 export const FilterByDate = ({ type }) => {
-  let [searchParams, setSearchParams] = useSearchParams();
-  const start = searchParams.get("start");
-  const end = searchParams.get("end");
+  const [startDate, setStartDate] = useQueryParam("startDate", StringParam);
+  const [endDate, setEndDate] = useQueryParam("endDate", StringParam);
   const [isOpen, setIsOpen] = useState<boolean>(true);
   return (
     <>
@@ -20,11 +20,13 @@ export const FilterByDate = ({ type }) => {
           <input
             type="date"
             className="border border-gray-300 rounded pl-2 pr-2 font-semibold text-sm text-gray-800"
+            onChange={(e) => setStartDate(e.target.value)}
           />
           <img src={hrLine} />
           <input
             type="date"
             className="border border-gray-300 rounded pl-2 pr-2 font-semibold text-sm text-gray-800"
+            onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
       )}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AddBtn } from "../../components/add-btn/add-btn";
 import { FilterByDirection } from "../../components/filter/by-direction";
-import { FilterByIdeaCategory } from "../../components/filter/by-idea-category";
+import { FilterByFollowed, FilterByIdeaCategory } from "../../components/filter/by-idea-category";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { FilterItem } from "../../components/filter/filter-item";
 
@@ -32,7 +32,7 @@ function Filter() {
     <div className="w-1/5 mt-12">
       <FilterByIdeaCategory />
       <hr />
-      <FilterItem label="show followed" checked />
+      <FilterByFollowed />
       <hr />
       <FilterByDirection />
     </div>

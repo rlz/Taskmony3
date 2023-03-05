@@ -1,7 +1,24 @@
 import { useEffect, useState } from "react";
-import { StringParam, useQueryParam } from "use-query-params";
+import { BooleanParam, StringParam, useQueryParam } from "use-query-params";
+import { getCookie } from "../../utils/cookies";
 import { FilterDivider } from "./filter-divider";
 import { FilterItem } from "./filter-item";
+
+export const FilterByFollowed = () => {
+  const myId = getCookie("id");
+  const [followed, setFollowed] = useQueryParam("followed",BooleanParam);
+
+  return (
+      <FilterItem
+        label="show followed"
+        checked={followed}
+        onChange={(value, label) => {
+          setFollowed(value)
+          }}
+      />
+  );
+};
+
 
 export const FilterByIdeaCategory = () => {
   const [category, setCategory] = useQueryParam("ideaCategory", StringParam);

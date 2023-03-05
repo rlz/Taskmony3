@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { ArrayParam, useQueryParam, withDefault } from "use-query-params";
 import { getCookie } from "../../utils/cookies";
 import { useAppSelector } from "../../utils/hooks";
 import { FilterDivider } from "./filter-divider";
 import { FilterItem } from "./filter-item";
 
 export const FilterByCreator = ({ id }) => {
+  const MyFiltersParam = withDefault(ArrayParam, []);
+  const [createdBy, setCreatedBy] = useQueryParam("createdBy", MyFiltersParam);
   const [isOpen, setIsOpen] = useState<boolean>(true);
-  let [searchParams, setSearchParams] = useSearchParams();
-  const creator = searchParams.get("creator");
   const directions = useAppSelector((store) => store.directions.items);
   const direction = directions.filter((d) => d.id == id)[0];
-  console.log(direction);
   const myId = getCookie("id");
   const users = direction?.members;
   return (
@@ -23,22 +23,20 @@ export const FilterByCreator = ({ id }) => {
       />
       {isOpen && (
         <>
-          <FilterItem label="all" checked />
-          <FilterItem label="me" checked />
-          {users?.map((u) => {
-            u.id == myId ? (
-              <FilterItem label={"me"} checked />
-            ) : (
-              <FilterItem
-                label={u.displayName}
-                checked={creator == u.name}
-                onChange={(value, label) => {
-                  if (value) setSearchParams({ creator: label });
-                  else setSearchParams({ creator: "" });
-                }}
-              />
-            );
-          })}
+          {users?.map((u) => (
+            <FilterItem
+              key={u.id}
+              label={u.id == myId? "me" : u.displayName}
+              checked={createdBy.includes(u.id)}
+              onChange={(value, label) => {
+                if (value) {
+                  setCreatedBy([...createdBy, u.id]);
+                } else {
+                  setCreatedBy(createdBy.filter((el) => el != u.id));
+                }
+              }}
+            />
+          ))}
         </>
       )}
     </>

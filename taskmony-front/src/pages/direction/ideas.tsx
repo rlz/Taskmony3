@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { AddBtn } from "../../components/add-btn/add-btn";
-import { FilterByFollowed, FilterByIdeaCategory } from "../../components/filter/by-idea-category";
+import {
+  FilterByFollowed,
+  FilterByIdeaCategory,
+} from "../../components/filter/by-idea-category";
 import { Idea } from "../../components/idea";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { EditedIdea } from "../../components/edited/edited-idea";
 import {
-
   addIdea,
   CHANGE_IDEA_DIRECTION,
   RESET_IDEA,
@@ -14,28 +16,25 @@ import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { FilterByCreator } from "../../components/filter/by-creator";
 import { useSearchParams } from "react-router-dom";
 
-
 function Ideas({ directionId, directionName }) {
   const [newIdea, setNewIdea] = useState(false);
   let [searchParams, setSearchParams] = useSearchParams();
-  const chosenDirection = searchParams.getAll("direction");
+  const createdBy = searchParams.getAll("createdBy");
   const chosenGeneration = searchParams.get("ideaCategory");
   const followed = searchParams.get("followed");
   const idea = useAppSelector((store) => store.editedIdea);
   let ideasToShow = useAppSelector((store) => store.ideas.items).filter(
-    (i) => i.deletedAt == null  && i.direction?.id == directionId
+    (i) => i.deletedAt == null && i.direction?.id == directionId
   );
-  if (chosenDirection.length > 0)
-    ideasToShow = ideasToShow.filter(
-      (i) =>
-        chosenDirection.includes(i.direction?.name) ||
-        (chosenDirection.includes("unassigned") && !i.direction)
-    );
-    if (chosenGeneration){
-      ideasToShow = ideasToShow.filter(
-        (i) => i.generation === chosenGeneration
-      );
-    }
+
+  if (createdBy.length > 0) {
+    ideasToShow = ideasToShow.filter((i) => createdBy.includes(i.createdBy.id));
+  }
+  if (createdBy.length > 0)
+    ideasToShow = ideasToShow.filter((i) => createdBy.includes(i.createdBy.id));
+  if (chosenGeneration) {
+    ideasToShow = ideasToShow.filter((i) => i.generation === chosenGeneration);
+  }
 
   const dispatch = useAppDispatch();
   const addANewIdea = (direction) => {
@@ -43,7 +42,12 @@ function Ideas({ directionId, directionName }) {
     dispatch({ type: RESET_IDEA });
   };
   const ideas = ideasToShow.map((idea, i) => (
-    <Idea last={i + 1 === ideasToShow.length} idea={idea} direction={directionName} key={idea.id} />
+    <Idea
+      last={i + 1 === ideasToShow.length}
+      idea={idea}
+      direction={directionName}
+      key={idea.id}
+    />
   ));
   return (
     <div className="flex w-full">

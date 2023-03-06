@@ -18,7 +18,10 @@ export const tasksAllQuery = `id
       id
      }
     repeatMode
-    createdBy { displayName }
+    createdBy { 
+      id
+      displayName 
+    }
     comments {
      text
      createdAt
@@ -41,7 +44,10 @@ export const tasksAllQuery = `id
       id
      }
     generation
-    createdBy { displayName }
+    createdBy { 
+      id
+      displayName
+     }
     comments {
      text
      createdAt

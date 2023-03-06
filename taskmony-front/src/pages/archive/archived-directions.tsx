@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { ArchivedItem } from "../../components/archived-item";
 import { FilterByDate } from "../../components/filter/by-date";
 import { FilterDivider } from "../../components/filter/filter-divider";
@@ -9,13 +9,25 @@ import hrLine from "../../images/hr-line.svg";
 import { useAppSelector } from "../../utils/hooks";
 
 export const ArchivedDirections = () => {
-  const directions = useAppSelector((store) => store.directions.items).filter(
+  let [searchParams, setSearchParams] = useSearchParams();
+  const startDate = searchParams.get("startDate");
+  const endDate = searchParams.get("endDate");
+  const directions = useAppSelector((store) => store.directions.items);
+  let chosenDirections = directions.filter(
     (i) => i.deletedAt != null
   );
+  if(startDate){
+    chosenDirections = chosenDirections.filter(
+      (i) => i.deletedAt > startDate)
+  }
+  if(endDate){
+    chosenDirections = chosenDirections.filter(
+      (i) => i.deletedAt < endDate)
+  }
   return (
     <div className="flex w-full">
       <div className="w-3/4  m-3 ml-0">
-        {directions.map((dir) => (
+        {chosenDirections.map((dir) => (
           <ArchivedItem label={dir.name} date={dir.deletedAt} key={dir.id} />
         ))}
       </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { ArchivedItem } from "../../components/archived-item";
 import { FilterByDate } from "../../components/filter/by-date";
 import { FilterByDirection } from "../../components/filter/by-direction";
@@ -10,12 +10,36 @@ import hrLine from "../../images/hr-line.svg";
 import { useAppSelector } from "../../utils/hooks";
 
 export const ArchivedIdeas = () => {
-  // const ideas = useAppSelector((store) => store.ideas.items).filter(i=>i.deletedAt != null);
+  let [searchParams, setSearchParams] = useSearchParams();
+  const startDate = searchParams.get("startDate");
+  const endDate = searchParams.get("endDate");
+  const chosenDirection = searchParams.getAll("direction");
+  const ideas = useAppSelector((store) => store.ideas.items);
+  let chosenIdeas = ideas.filter(
+    (i) => i.deletedAt != null
+  );
+  if(startDate){
+    chosenIdeas = chosenIdeas.filter(
+      (i) => i.deletedAt > startDate)
+  }
+  if(endDate){
+    chosenIdeas = chosenIdeas.filter(
+      (i) => i.deletedAt < endDate)
+  }
+  if (chosenDirection.length > 0)
+  chosenIdeas = chosenIdeas.filter(
+    (i) =>
+      chosenDirection.includes(i.direction?.name) ||
+      (chosenDirection.includes("unassigned") && !i.direction)
+  );
   return (
     <div className="flex w-full">
       <div className="w-3/4    m-3 ml-0">
-        <ArchivedItem label={"idea #2"} direction="Taskmony" />
-        <ArchivedItem label={"idea #3"} direction="Taskmony" />
+      {chosenIdeas.map((idea,index)=><ArchivedItem             
+      label={idea.description}
+            date={idea.deletedAt}
+            direction={idea.direction?.name}
+            key={index} />)}
       </div>
       <Filter />
     </div>

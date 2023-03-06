@@ -18,13 +18,19 @@ import {
   FilterByArchivedTaskType,
   FilterByTaskType,
 } from "../../components/filter/by-task-type";
+import { useSearchParams } from "react-router-dom";
 
 function Tasks({ directionId, directionName }) {
   const [newTask, setNewTask] = useState(false);
   const task = useAppSelector((store) => store.editedTask);
-  const tasksToShow = useAppSelector((store) => store.tasks.items).filter(
+  let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
     (t) => t.deletedAt == null && t.direction?.id == directionId
   );
+  let [searchParams, setSearchParams] = useSearchParams();
+  const createdBy = searchParams.getAll("createdBy");
+  if (createdBy.length > 0) {
+    tasksToShow = tasksToShow.filter((i) => createdBy.includes(i.createdBy.id));
+  }
   const direction = useAppSelector((store) => store.directions.items).filter(
     (d) => d.id == directionId
   )[0];

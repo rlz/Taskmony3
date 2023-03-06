@@ -4,11 +4,14 @@ import { userInfoReducer } from "./userInfoReducer";
 import { combineReducers } from "redux";
 import { directionsReducer } from "./directionsReducers";
 import { notificationsReducer } from "./notificationsReducer";
+import { editIdeaReducer, ideasReducer } from "./ideasReducers";
 
 export const rootReducer = combineReducers({
   tasks: tasksReducer,
-  directions: directionsReducer,
   editedTask: editTaskReducer,
+  ideas: ideasReducer,
+  editedIdea: editIdeaReducer,
+  directions: directionsReducer,
   auth: authReducer,
   resetPassword: resetPasswordReducer,
   userInfo: userInfoReducer,

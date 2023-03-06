@@ -1,55 +1,106 @@
-import arrowDown from "../images/arrow-down.svg";
-import follow from "../images/followed.svg";
+import yes from "../images/checkbox-yes.svg";
+import no from "../images/checkbox-no.svg";
+import followBlue from "../images/followed.svg";
+import followGray from "../images/follow.svg";
 import divider from "../images/divider.svg";
 import commentsI from "../images/comment2.svg";
 import createdByI from "../images/by.svg";
-import followBlue from "../images/followed.svg";
-import followGray from "../images/follow.svg";
-import postponeBlue from "../images/circle-down-blue.svg";
-import postponeGray from "../images/circle-down-gray.svg";
 // import recurrentI from "../images/recurrent.svg";
 import recurrentI from "../images/arrows-rotate.svg";
-import { AddBtn } from "./add-btn/add-btn";
-import { EditedIdea } from "./edited/edited-idea";
 import { useState } from "react";
+import { EditedIdea } from "./edited/edited-idea";
+import { useAppDispatch } from "../utils/hooks";
+import {
+  changeCompleteIdeaDate,
+  changeIdeaFollowed,
+  CHANGE_OPEN_IDEA,
+  CHANGE_IDEAS,
+  deleteIdea,
+  openIdea,
+  RESET_IDEA,
+} from "../services/actions/ideasAPI";
+import { getCookie } from "../utils/cookies";
+import { nowDate } from "../utils/APIUtils";
+import postponeBlue from "../images/circle-down-blue.svg";
+import postponeGray from "../images/circle-down-gray.svg";
 
-export const Idea = (props) => {
+type IdeaProps = {
+  label: string;
+  checked?: boolean;
+  followed?: boolean;
+  comments?: number;
+  recurrent?: string;
+  createdBy?: string;
+  direction?: string;
+  last: boolean;
+};
+
+export const Idea = ({ idea, direction, last }) => {
+  const myId = getCookie("id");
+  const dispatch = useAppDispatch();
   const [edited, setEdited] = useState(false);
   const open = () => {
+    console.log("opening");
     if (edited) return;
     setEdited(true);
+    dispatch({ type: CHANGE_OPEN_IDEA, idea: idea });
   };
-  const save = () => {
+  const save = (idea) => {
     if (!edited) return;
+    dispatch({ type: CHANGE_IDEAS, idea: idea });
+    dispatch({ type: RESET_IDEA });
     setEdited(false);
   };
+  const deleteThisIdea = (idea) => {
+    console.log(idea);
+    dispatch(deleteIdea(idea.id));
+    dispatch({ type: RESET_IDEA });
+    setEdited(false);
+  };
+
+  const isFollowed = () => {
+    if (idea.subscribers.some((s) => s.id == myId)) return true;
+    return false;
+  };
+  const changeFollowed = (markFollowed) => {
+    console.log("following", markFollowed);
+    dispatch(changeIdeaFollowed(idea.id, markFollowed));
+  };
+
   return (
     <div onClick={open}>
       {edited ? (
-        <EditedIdea {...props} save={save} />
+        <EditedIdea
+          save={save}
+          deleteIdea={deleteThisIdea}
+          direction={direction}
+        />
       ) : (
-        <UneditedIdea {...props} />
+        <IdeaUnedited
+          label={idea.description}
+          last={last}
+          checked={!!idea.completedAt}
+          changeFollowed={changeFollowed}
+          followed={direction || isFollowed() ? isFollowed() : undefined}
+          direction={direction ? null : idea.direction?.name}
+          generation={idea.generation}
+          comments={idea?.comments?.length}
+        />
       )}
     </div>
   );
 };
 
-type IdeaProps = {
-  label: string;
-  followed?: boolean;
-  comments?: number;
-  createdBy?: string;
-  direction?: string;
-  last?: boolean;
-};
-
-export const UneditedIdea = ({
+export const IdeaUnedited = ({
   label,
+  checked,
   followed,
   comments,
   createdBy,
+  generation,
   direction,
-  last,
+  changeFollowed,
+  last
 }: IdeaProps) => {
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
@@ -58,42 +109,51 @@ export const UneditedIdea = ({
           <span className={"font-semibold text-sm"}>{label}</span>
         </div>
         <div className="relative z-30 flex gap-2">
-          {typeof followed !== "undefined" && (
-            <img className="w-4" src={followed ? followBlue : followGray}></img>
-          )}
-          <img src={last ? postponeGray : postponeBlue} className="w-4"></img>
+        {typeof followed !== "undefined" && (
+          <img
+            className="w-4"
+            src={followed ? followBlue : followGray}
+            onClick={(e) => {
+              e.stopPropagation();
+              changeFollowed(!followed);
+            }}
+          ></img>
+        )}
+        <img src={last ? postponeGray : postponeBlue} className="w-4"></img>
         </div>
       </div>
       <div className={"gap flex justify-start pb-2 w-full ml-1"}>
         {createdBy && (
-          <Details icon={createdByI} label={`by ${createdBy}`} hasBorder />
+          <IdeaDetails icon={createdByI} label={`by ${createdBy}`} hasBorder />
         )}
         {
-          <Details
+          <IdeaDetails
             icon={commentsI}
             label={comments ? comments.toString() : "0"}
             hasBorder
           />
         }
-        {<Details label={direction} textColor="text-yellow-500" />}
+        {<IdeaDetails label={direction} textColor="text-yellow-500" hasBorder/>}
+        {<IdeaDetails label={generation.toLowerCase().replaceAll("_"," ")} textColor="text-yellow-500" />}
+
       </div>
     </div>
   );
 };
 
-type DetailsProps = {
+type IdeaDetailsProps = {
   icon?: string;
   label?: string;
   hasBorder?: boolean;
   textColor?: string;
 };
 
-export const Details = ({
+export const IdeaDetails = ({
   icon,
   label,
   hasBorder,
   textColor,
-}: DetailsProps) => {
+}: IdeaDetailsProps) => {
   return (
     <div className={`flex flex-nowrap gap-1 mr-1  ${!icon ? "ml-5" : "ml-1"}`}>
       {icon && <img src={icon}></img>}
@@ -106,23 +166,6 @@ export const Details = ({
         {label}
       </span>
       {hasBorder && <img src={divider}></img>}
-    </div>
-  );
-};
-
-type BtnProps = {
-  label: string;
-  onClick: Function;
-};
-
-export const MoveBtn = ({ label, onClick }: BtnProps) => {
-  return (
-    <div
-      className={"gap-4 flex justify-center bg-blue-500 rounded"}
-      onClick={() => onClick()}
-    >
-      <img src={arrowDown}></img>
-      <span className={"text-white"}>{label}</span>
     </div>
   );
 };

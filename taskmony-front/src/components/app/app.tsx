@@ -30,6 +30,7 @@ import { getCookie } from "../../utils/cookies";
 import { refreshToken } from "../../services/actions/auth/refreshToken";
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
+import { getIdeas } from "../../services/actions/ideasAPI";
 
 function App() {
   return (
@@ -73,6 +74,7 @@ function Home() {
   useEffect(() => {
     if(!getCookie("refreshToken")) navigate("/login")
     dispatch(getTasks());
+    dispatch(getIdeas());
     dispatch(getDirections());
     dispatch(getUserInfo());
     dispatch(getNotifications());

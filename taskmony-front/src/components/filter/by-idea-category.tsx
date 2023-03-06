@@ -34,21 +34,21 @@ export const FilterByIdeaCategory = () => {
         <>
           <FilterItem
             label="hot"
-            checked={category == "hot"}
+            checked={category == "HOT"}
             radio
-            onChange={(value, label) => setCategory(label)}
+            onChange={(value, label) => setCategory("HOT")}
           />
           <FilterItem
             label="later"
-            checked={category == "later"}
+            checked={category == "LATER"}
             radio
-            onChange={(value, label) => setCategory(label)}
+            onChange={(value, label) => setCategory("LATER")}
           />
           <FilterItem
             label="too good to delete"
-            checked={category == "too good to delete"}
+            checked={category == "TOO_GOOD_TO_DELETE"}
             radio
-            onChange={(value, label) => setCategory(label)}
+            onChange={(value, label) => setCategory("TOO_GOOD_TO_DELETE")}
           />
         </>
       )}

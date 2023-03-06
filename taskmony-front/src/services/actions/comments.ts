@@ -55,3 +55,51 @@ export function sendTaskComment(taskId, text) {
       });
   };
 }
+
+export function sendIdeaComment(ideaId, text) {
+  //   console.log(`sending ${taskId}${text}`);
+  return function (dispatch: Dispatch) {
+    console.log("sending_comment");
+    dispatch({ type: SEND_COMMENT_REQUEST });
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+
+      body: JSON.stringify({
+        query: `mutation {
+          ideaAddComment(ideaId:"${ideaId}", text:"${text}") {
+            text
+            createdAt
+            createdBy { displayName }
+        }
+    }
+        `,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        console.log(res);
+        if (res) {
+          dispatch({
+            type: SEND_COMMENT_SUCCESS,
+            comment: res.data.ideaAddComment,
+            id: ideaId,
+          });
+        } else {
+          console.log(res);
+          dispatch({
+            type: SEND_COMMENT_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch({
+          type: SEND_COMMENT_FAILED,
+        });
+      });
+  };
+}

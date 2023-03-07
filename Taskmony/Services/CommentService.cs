@@ -23,7 +23,7 @@ public class CommentService : ICommentService
         _notificationService = notificationService;
     }
 
-    public async Task<IEnumerable<Comment>> GetCommentsByTaskIds(Guid[] ids, int? offset, int? limit)
+    public async Task<IEnumerable<Comment>> GetCommentsByTaskIds(IEnumerable<Guid> ids, int? offset, int? limit)
     {
         int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
@@ -31,7 +31,7 @@ public class CommentService : ICommentService
         return await _commentRepository.GetByTaskIdsAsync(ids, offsetValue, limitValue);
     }
 
-    public async Task<IEnumerable<Comment>> GetCommentsByIdeaIds(Guid[] ids, int? offset, int? limit)
+    public async Task<IEnumerable<Comment>> GetCommentsByIdeaIds(IEnumerable<Guid> ids, int? offset, int? limit)
     {
         int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
@@ -39,7 +39,7 @@ public class CommentService : ICommentService
         return await _commentRepository.GetByIdeaIdsAsync(ids, offsetValue, limitValue);
     }
 
-    public async Task<IEnumerable<Comment>> GetCommentsByIdsAsync(Guid[] ids)
+    public async Task<IEnumerable<Comment>> GetCommentsByIdsAsync(IEnumerable<Guid> ids)
     {
         return await _commentRepository.GetByIdsAsync(ids);
     }

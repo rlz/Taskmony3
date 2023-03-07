@@ -4,7 +4,7 @@ using Taskmony.ValueObjects;
 
 namespace Taskmony.Models.Comments;
 
-public abstract class Comment : Entity, IActionItem
+public class Comment : Entity, IActionItem
 {
     public ActionItemType ActionItemType => ActionItemType.Comment;
 

@@ -49,43 +49,11 @@ public class TokenProvider : ITokenProvider
         return (new JwtSecurityTokenHandler().WriteToken(jwt), token);
     }
 
-    public async Task<(string accessToken, string refreshToken)> RefreshTokensAsync(string accessToken, string refreshToken)
+    public async Task<(string accessToken, string refreshToken)> RefreshTokensAsync(string refreshToken)
     {
-        var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-
-        try
-        {
-            jwtSecurityTokenHandler.ValidateToken(accessToken, _tokenValidationParameters, out var validatedToken);
-
-            if (validatedToken is JwtSecurityToken jwtSecurityToken && !jwtSecurityToken.Header.Alg.Equals(
-                    SecurityAlgorithms.HmacSha256, StringComparison.InvariantCulture))
-            {
-                throw new DomainException(TokenErrors.InvalidToken);
-            }
-
-            return await CreateNewTokensAsync(accessToken, refreshToken);
-        }
-        catch (SecurityTokenExpiredException)
-        {
-            return await CreateNewTokensAsync(accessToken, refreshToken);
-        }
-        catch (DomainException)
-        {
-            throw;
-        }
-        catch
-        {
-            throw new DomainException(TokenErrors.InvalidToken);
-        }
-    }
-
-    private async Task<(string accessToken, string refreshToken)> CreateNewTokensAsync(string accessToken, string refreshToken)
-    {
-        var (claims, decodedJwt) = DecodeExpiredJwt(accessToken);
         var storedRefreshToken = await _refreshTokenRepository.GetAsync(refreshToken);
 
-        if (storedRefreshToken is null || !Guid.TryParse(claims.FindFirstValue(ClaimTypes.NameIdentifier), out var userId)
-            || storedRefreshToken.UserId != userId)
+        if (storedRefreshToken is null)
         {
             throw new DomainException(TokenErrors.InvalidToken);
         }
@@ -98,6 +66,11 @@ public class TokenProvider : ITokenProvider
         if (storedRefreshToken.IsRevoked)
         {
             throw new DomainException(TokenErrors.RefreshTokenRevoked);
+        }
+
+        if (storedRefreshToken.ExpiresAt < DateTime.UtcNow)
+        {
+            throw new DomainException(TokenErrors.RefreshTokenExpired);
         }
 
         var user = await _userRepository.GetByIdAsync(storedRefreshToken.UserId);
@@ -114,29 +87,42 @@ public class TokenProvider : ITokenProvider
         return await GenerateTokensAsync(user);
     }
 
-    public (ClaimsPrincipal, JwtSecurityToken) DecodeExpiredJwt(string token)
+    private async Task<(string accessToken, string refreshToken)> CreateNewTokensAsync(string accessToken, string refreshToken)
     {
-        var principal = new JwtSecurityTokenHandler()
-            .ValidateToken(token,
-                new TokenValidationParameters
-                {
-                    ValidateIssuer = _tokenValidationParameters.ValidateIssuer,
-                    ValidIssuer = _tokenValidationParameters.ValidIssuer,
-                    ValidateIssuerSigningKey = _tokenValidationParameters.ValidateIssuerSigningKey,
-                    IssuerSigningKey = _tokenValidationParameters.IssuerSigningKey,
-                    ValidAudience = _tokenValidationParameters.ValidAudience,
-                    ValidateAudience = _tokenValidationParameters.ValidateAudience,
-                    ValidateLifetime = false,
-                },
-                out var validatedToken);
+        var storedRefreshToken = await _refreshTokenRepository.GetAsync(refreshToken);
 
-        if (validatedToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(
-                SecurityAlgorithms.HmacSha256, StringComparison.InvariantCulture))
+        if (storedRefreshToken is null)
         {
             throw new DomainException(TokenErrors.InvalidToken);
         }
 
-        return (principal, jwtSecurityToken);
+        if (storedRefreshToken.IsUsed)
+        {
+            throw new DomainException(TokenErrors.RefreshTokenAlreadyUsed);
+        }
+
+        if (storedRefreshToken.IsRevoked)
+        {
+            throw new DomainException(TokenErrors.RefreshTokenRevoked);
+        }
+
+        if (storedRefreshToken.ExpiresAt < DateTime.UtcNow)
+        {
+            throw new DomainException(TokenErrors.RefreshTokenExpired);
+        }
+
+        var user = await _userRepository.GetByIdAsync(storedRefreshToken.UserId);
+
+        if (user is null)
+        {
+            throw new DomainException(TokenErrors.InvalidToken);
+        }
+
+        storedRefreshToken.IsUsed = true;
+
+        await _refreshTokenRepository.SaveChangesAsync();
+
+        return await GenerateTokensAsync(user);
     }
 
     private JwtSecurityToken GenerateJwt(User user)
@@ -145,9 +131,6 @@ public class TokenProvider : ITokenProvider
         {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email!.Value),
-            new(JwtRegisteredClaimNames.Name, user.DisplayName!.Value),
-            new(JwtRegisteredClaimNames.UniqueName, user.Login!.Value)
         };
 
         var token = new JwtSecurityToken(

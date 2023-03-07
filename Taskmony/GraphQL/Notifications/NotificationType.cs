@@ -1,6 +1,7 @@
 using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Users;
 using Taskmony.Models;
+using Taskmony.Models.Comments;
 using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
 
@@ -30,9 +31,8 @@ public class NotificationType : ObjectType<Notification>
 
     private class Resolvers
     {
-        public async Task<IActionItem?> GetActionItem([Parent] Notification notification,
-            UserByIdDataLoader userById, TaskByIdDataLoader taskById,
-            IdeaByIdDataLoader ideaById, CommentByIdDataLoader commentById)
+        public async Task<IActionItem?> GetActionItem([Parent] Notification notification, UserByIdDataLoader userById,
+            TaskByIdDataLoader taskById, IdeaByIdDataLoader ideaById, CommentByIdDataLoader commentById)
         {
             if (notification.ActionItemId is null)
             {
@@ -44,8 +44,22 @@ public class NotificationType : ObjectType<Notification>
                 ActionItemType.User => await userById.LoadAsync(notification.ActionItemId.Value),
                 ActionItemType.Task => await taskById.LoadAsync(notification.ActionItemId.Value),
                 ActionItemType.Idea => await ideaById.LoadAsync(notification.ActionItemId.Value),
-                ActionItemType.Comment => await commentById.LoadAsync(notification.ActionItemId.Value),
+                ActionItemType.Comment => await GetCommentAsync(notification.ActionItemId.Value, commentById),
                 _ => null
+            };
+        }
+
+        private async Task<Comment> GetCommentAsync(Guid id, CommentByIdDataLoader commentById)
+        {
+            var concreteComment = await commentById.LoadAsync(id);
+
+            return new Comment
+            {
+                Id = concreteComment.Id,
+                CreatedAt = concreteComment.CreatedAt,
+                CreatedById = concreteComment.CreatedById,
+                Text = concreteComment.Text,
+                DeletedAt = concreteComment.DeletedAt,
             };
         }
 

@@ -4,11 +4,11 @@ namespace Taskmony.Services.Abstract;
 
 public interface ICommentService
 {
-    Task<IEnumerable<Comment>> GetCommentsByTaskIds(Guid[] ids, int? offset, int? limit);
+    Task<IEnumerable<Comment>> GetCommentsByTaskIds(IEnumerable<Guid> ids, int? offset, int? limit);
 
-    Task<IEnumerable<Comment>> GetCommentsByIdeaIds(Guid[] ids, int? offset, int? limit);
+    Task<IEnumerable<Comment>> GetCommentsByIdeaIds(IEnumerable<Guid> ids, int? offset, int? limit);
     
-    Task<IEnumerable<Comment>> GetCommentsByIdsAsync(Guid[] ids);
+    Task<IEnumerable<Comment>> GetCommentsByIdsAsync(IEnumerable<Guid> ids);
     
     Task<Comment?> AddComment(TaskComment comment);
 

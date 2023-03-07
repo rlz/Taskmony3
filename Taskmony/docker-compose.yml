@@ -8,10 +8,10 @@ services:
     depends_on:
       - db
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__TaskmonyDatabase: "Host=db;Port=5432;Database=TaskmonyDatabase;Username=postgres;Password=pa55word"
       Authentication__Schemes__Bearer__Secret: "Wnsjknsn4dxh5dsxN5JWNDjkn0sjkxnjs"
-      Authentication__Schemes__Bearer__Issuer: "https://localhost:8080"
+      Authentication__Schemes__Bearer__Issuer: "https://localhost:7094;http://localhost:5098"
       Authentication__Schemes__Bearer__AccessTokenExpirationMinutes: 30
       Authentication__Schemes__Bearer__RefreshTokenExpirationDays: 43200
     networks:

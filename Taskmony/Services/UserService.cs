@@ -23,12 +23,12 @@ public class UserService : IUserService
     {
         var user = new User
         {
-            Login = Login.From(request.Login),
-            Email = Email.From(request.Email),
-            DisplayName = DisplayName.From(request.DisplayName),
+            Login = Login.From(request.Login.Trim()),
+            Email = Email.From(request.Email.Trim()),
+            DisplayName = DisplayName.From(request.DisplayName.Trim()),
         };
 
-        var password = Password.From(request.Password);
+        var password = Password.From(request.Password.Trim());
 
         if (await _userRepository.AnyUserWithLoginAsync(user.Login))
         {
@@ -82,7 +82,7 @@ public class UserService : IUserService
 
     public async Task<bool> SetEmailAsync(Guid id, string email, Guid currentUserId)
     {
-        var emailValue = Email.From(email);
+        var emailValue = Email.From(email.Trim());
         var user = await GetUserOrThrowAsync(id);
 
         user.Email = emailValue;
@@ -92,7 +92,7 @@ public class UserService : IUserService
 
     public async Task<bool> SetLoginAsync(Guid id, string login, Guid currentUserId)
     {
-        var loginValue = Login.From(login);
+        var loginValue = Login.From(login.Trim());
         var user = await GetUserOrThrowAsync(id);
 
         user.Login = loginValue;
@@ -102,7 +102,7 @@ public class UserService : IUserService
 
     public async Task<bool> SetDisplayNameAsync(Guid id, string displayName, Guid currentUserId)
     {
-        var displayNameValue = DisplayName.From(displayName);
+        var displayNameValue = DisplayName.From(displayName.Trim());
         var user = await GetUserOrThrowAsync(id);
 
         user.DisplayName = displayNameValue;
@@ -126,7 +126,7 @@ public class UserService : IUserService
 
     public async Task<bool> SetPasswordAsync(Guid id, string oldPassword, string newPassword, Guid currentUserId)
     {
-        var newPasswordValue = Password.From(newPassword);
+        var newPasswordValue = Password.From(newPassword.Trim());
         var user = await GetUserOrThrowAsync(id);
 
         if (!_passwordHasher.VerifyPassword(oldPassword, user.Password!))

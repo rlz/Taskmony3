@@ -18,10 +18,10 @@ public class CommentByIdDataLoader : BatchDataLoader<Guid, Comment>
     {
         await using var scope = _serviceProvider.CreateAsyncScope();
 
-        var taskService = scope.ServiceProvider.GetRequiredService<ICommentService>();
+        var commentService = scope.ServiceProvider.GetRequiredService<ICommentService>();
 
-        var tasks = await taskService.GetCommentsByIdsAsync(ids.ToArray());
+        var comments = await commentService.GetCommentsByIdsAsync(ids.ToArray());
 
-        return tasks.ToDictionary(t => t.Id);
+        return comments.ToDictionary(c => c.Id);
     }
 }

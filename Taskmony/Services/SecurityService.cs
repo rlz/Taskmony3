@@ -46,7 +46,7 @@ public class SecurityService : ISecurityService
 
     public async Task<RefreshTokenResponse> RefreshTokensAsync(RefreshTokenRequest request)
     {
-        var (accessToken, refreshToken) = await _tokenProvider.RefreshTokensAsync(request.AccessToken, request.RefreshToken);
+        var (accessToken, refreshToken) = await _tokenProvider.RefreshTokensAsync(request.RefreshToken);
 
         return new RefreshTokenResponse(accessToken, refreshToken);
     }

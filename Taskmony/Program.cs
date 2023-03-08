@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Taskmony.Auth;
 using Taskmony.Data;
+using Taskmony.Emails;
 using Taskmony.Errors;
 using Taskmony.GraphQL;
 using Taskmony.GraphQL.Comments;
@@ -51,8 +52,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication().AddJwtBearer();
 
-builder.Services.Configure<JwtOptions>(
-    builder.Configuration.GetSection("Authentication:Schemes:Bearer"));
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Authentication:Schemes:Bearer"));
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 builder.Services.AddTransient<IUserRepository, UserRepository>();
@@ -76,6 +77,7 @@ builder.Services.AddTransient<INotificationService, NotificationService>();
 builder.Services.AddTransient<IIdeaService, IdeaService>();
 builder.Services.AddTransient<IDirectionService, DirectionService>();
 builder.Services.AddTransient<IUserIdentifierProvider, UserIdentifierProvider>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -115,8 +117,8 @@ var app = builder.Build();
 
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 //}
 
 app.UseMiddleware<ErrorHandlingMiddleware>();

@@ -16,5 +16,5 @@ public interface ISecurityService
 
     Task SendConfirmationEmailAsync(User user, Uri baseUri);
 
-    Task ConfirmEmailAsync(Guid userId, Guid token);
+    Task<string?> ConfirmEmailAsync(Guid userId, Guid token);
 }

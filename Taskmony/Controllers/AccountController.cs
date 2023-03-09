@@ -64,7 +64,12 @@ public class AccountController : ControllerBase
     [HttpGet("confirm-email")]
     public async Task<ActionResult> ConfirmEmail(Guid userId, Guid token)
     {
-        await _securityService.ConfirmEmailAsync(userId, token);
+        var redirectTo = await _securityService.ConfirmEmailAsync(userId, token);
+
+        if (redirectTo is not null)
+        {
+            return Redirect(redirectTo);
+        }
 
         return Ok();
     }

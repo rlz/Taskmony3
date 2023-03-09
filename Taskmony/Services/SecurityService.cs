@@ -20,11 +20,12 @@ public class SecurityService : ISecurityService
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IEmailService _emailService;
     private readonly IVerificationTokenRepository _verificationTokenRepository;
+    private readonly IConfiguration _configuration;
 
     public SecurityService(ITokenProvider tokenProvider, IUserRepository userRepository,
         IPasswordHasher passwordHasher, IRefreshTokenRepository refreshTokenRepository,
         IUserIdentifierProvider userIdentifierProvider, IEmailService emailService,
-        IVerificationTokenRepository verificationTokenRepository)
+        IVerificationTokenRepository verificationTokenRepository, IConfiguration configuration)
     {
         _tokenProvider = tokenProvider;
         _userRepository = userRepository;
@@ -33,6 +34,7 @@ public class SecurityService : ISecurityService
         _userIdentifierProvider = userIdentifierProvider;
         _emailService = emailService;
         _verificationTokenRepository = verificationTokenRepository;
+        _configuration = configuration;
     }
 
     public async Task<UserAuthResponse> AuthenticateAsync(UserAuthRequest request)
@@ -106,9 +108,10 @@ public class SecurityService : ISecurityService
             $"To complete your registration, please verify your email address: <a href='{confirmUrl}'>verify email</a>");
     }
 
-    public async Task ConfirmEmailAsync(Guid userId, Guid token)
+    public async Task<string?> ConfirmEmailAsync(Guid userId, Guid token)
     {
         var user = await _userRepository.GetByIdAsync(userId);
+        var redirectTo = _configuration.GetValue<string>("ConfirmEmailRedirectUrl");
 
         if (user is null)
         {
@@ -117,7 +120,7 @@ public class SecurityService : ISecurityService
 
         if (user.IsActive)
         {
-            return;
+            return redirectTo;
         }
 
         var verificationToken = await _verificationTokenRepository.GetAsync(userId, token);
@@ -134,5 +137,7 @@ public class SecurityService : ISecurityService
         _verificationTokenRepository.DeleteByUserId(userId);
 
         await _verificationTokenRepository.SaveChangesAsync();
+
+        return redirectTo;
     }
 }

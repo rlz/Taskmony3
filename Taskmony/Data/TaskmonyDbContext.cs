@@ -41,6 +41,8 @@ public class TaskmonyDbContext : DbContext
 
     public DbSet<VerificationToken> VerificationTokens => Set<VerificationToken>();
 
+    public DbSet<MessageTemplate> MessageTemplates => Set<MessageTemplate>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserConfiguration());

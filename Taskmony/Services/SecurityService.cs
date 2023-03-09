@@ -20,12 +20,14 @@ public class SecurityService : ISecurityService
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IEmailService _emailService;
     private readonly IVerificationTokenRepository _verificationTokenRepository;
+    private readonly IMessageTemplateRepository _messageTemplateRepository;
     private readonly IConfiguration _configuration;
 
     public SecurityService(ITokenProvider tokenProvider, IUserRepository userRepository,
         IPasswordHasher passwordHasher, IRefreshTokenRepository refreshTokenRepository,
         IUserIdentifierProvider userIdentifierProvider, IEmailService emailService,
-        IVerificationTokenRepository verificationTokenRepository, IConfiguration configuration)
+        IVerificationTokenRepository verificationTokenRepository, IConfiguration configuration,
+        IMessageTemplateRepository messageTemplateRepository)
     {
         _tokenProvider = tokenProvider;
         _userRepository = userRepository;
@@ -35,6 +37,7 @@ public class SecurityService : ISecurityService
         _emailService = emailService;
         _verificationTokenRepository = verificationTokenRepository;
         _configuration = configuration;
+        _messageTemplateRepository = messageTemplateRepository;
     }
 
     public async Task<UserAuthResponse> AuthenticateAsync(UserAuthRequest request)
@@ -102,10 +105,16 @@ public class SecurityService : ISecurityService
         await _verificationTokenRepository.SaveChangesAsync();
 
         var confirmUrl = new Uri(baseUri, $"api/account/confirm-email?userId={user.Id}&token={token}");
+        var template = await _messageTemplateRepository.GetByNameAsync("ConfirmEmail");
 
-        // TODO: create pretty template
-        await _emailService.SendEmailAsync(user.Email!.Value, "Verify your email address",
-            $"To complete your registration, please verify your email address: <a href='{confirmUrl}'>verify email</a>");
+        if (template is null)
+        {
+            return;
+        }
+
+        var body = string.Format(template!.Body, confirmUrl);
+
+        await _emailService.SendEmailAsync(user.Email!.Value, template.Subject, body);
     }
 
     public async Task<string?> ConfirmEmailAsync(Guid userId, Guid token)

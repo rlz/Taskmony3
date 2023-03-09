@@ -65,6 +65,7 @@ builder.Services.AddTransient<IIdeaRepository, IdeaRepository>();
 builder.Services.AddTransient<IDirectionRepository, DirectionRepository>();
 builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddTransient<IVerificationTokenRepository, VerificationTokenRepository>();
+builder.Services.AddTransient<IMessageTemplateRepository, MessageTemplateRepository>();
 
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();

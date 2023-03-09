@@ -40,6 +40,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("PasswordHash")
             .IsRequired();
 
+        builder.Property(u => u.IsActive)
+            .IsRequired()
+            .HasDefaultValue(false);
+
+        builder.HasMany(u => u.VerificationTokens)
+            .WithOne(vt => vt.User)
+            .HasForeignKey(vt => vt.UserId)
+            .IsRequired();
+
         builder.OwnsOne(u => u.Login, b =>
         {
             b.Property(l => l.Value)

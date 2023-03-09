@@ -14,4 +14,13 @@ public static class UserErrors
     public static ErrorDetails NotFound => new("User not found", "USER_NOT_FOUND");
 
     public static ErrorDetails WrongPassword => new("Wrong password", "WRONG_PASSWORD");
+
+    public static ErrorDetails CouldNotCreateUser =>
+        new("Could not create user", "COULD_NOT_CREATE_USER");
+
+    public static ErrorDetails WrongConrimationLink =>
+        new("Wrong confirmation link", "WRONG_CONFIRMATION_LINK");
+
+    public static ErrorDetails UserIsNotActive =>
+        new("User is not active", "USER_IS_NOT_ACTIVE");
 }

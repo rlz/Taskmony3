@@ -22,6 +22,8 @@ public class User : Entity, IActionItem
 
     public DateTime? CreatedAt { get; set; }
 
+    public bool IsActive { get; set; }
+
     /// <summary>
     /// Tasks created by the user
     /// </summary>
@@ -48,5 +50,7 @@ public class User : Entity, IActionItem
 
     public ICollection<Comment>? Comments { get; set; }
 
-    public ICollection<RefreshToken>? RefreshTokens { get; internal set; }
+    public ICollection<RefreshToken>? RefreshTokens { get; set; }
+
+    public ICollection<VerificationToken>? VerificationTokens { get; set; }
 }

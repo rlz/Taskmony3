@@ -16,6 +16,8 @@ public class UserType : ObjectType<User>
         descriptor.Field(u => u.ActionItemType).Ignore();
         descriptor.Field(u => u.Comments).Ignore();
         descriptor.Field(u => u.RefreshTokens).Ignore();
+        descriptor.Field(u => u.VerificationTokens).Ignore();
+        descriptor.Field(u => u.IsActive).Ignore();
 
         descriptor.Field(u => u.Login).Type<StringType>();
         descriptor.Field(u => u.CreatedAt).Type<StringType>();

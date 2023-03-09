@@ -5,7 +5,7 @@ namespace Taskmony.Services.Abstract;
 
 public interface IUserService
 {
-    Task<bool> AddUserAsync(UserRegisterRequest request);
+    Task<User> AddUserAsync(UserRegisterRequest request);
 
     /// <summary>
     /// Gets users filtered by the given parameters

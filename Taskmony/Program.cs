@@ -52,7 +52,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication().AddJwtBearer();
 
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.Configure<EmailCommunicationSettings>(builder.Configuration.GetSection("Email"));
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Authentication:Schemes:Bearer"));
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
@@ -64,6 +64,7 @@ builder.Services.AddTransient<INotificationRepository, NotificationRepository>()
 builder.Services.AddTransient<IIdeaRepository, IdeaRepository>();
 builder.Services.AddTransient<IDirectionRepository, DirectionRepository>();
 builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddTransient<IVerificationTokenRepository, VerificationTokenRepository>();
 
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
@@ -77,7 +78,7 @@ builder.Services.AddTransient<INotificationService, NotificationService>();
 builder.Services.AddTransient<IIdeaService, IdeaService>();
 builder.Services.AddTransient<IDirectionService, DirectionService>();
 builder.Services.AddTransient<IUserIdentifierProvider, UserIdentifierProvider>();
-builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IEmailService, EmailCommunicationService>();
 
 builder.Services.AddHttpContextAccessor();
 

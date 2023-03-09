@@ -19,7 +19,7 @@ public class UserService : IUserService
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<bool> AddUserAsync(UserRegisterRequest request)
+    public async Task<User> AddUserAsync(UserRegisterRequest request)
     {
         var user = new User
         {
@@ -44,7 +44,12 @@ public class UserService : IUserService
 
         await _userRepository.AddAsync(user);
 
-        return await _userRepository.SaveChangesAsync();
+        if (!await _userRepository.SaveChangesAsync())
+        {
+            throw new DomainException(UserErrors.CouldNotCreateUser);
+        }
+
+        return user;
     }
 
     public async Task<IEnumerable<User>> GetUsersAsync(Guid[]? id, string[]? email, string[]? login,

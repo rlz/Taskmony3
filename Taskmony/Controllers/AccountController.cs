@@ -14,7 +14,7 @@ public class AccountController : ControllerBase
     private readonly ISecurityService _securityService;
     private readonly IEmailService _emailService;
 
-    public AccountController(IUserService userService, ISecurityService securityService, 
+    public AccountController(IUserService userService, ISecurityService securityService,
         IEmailService emailService)
     {
         _userService = userService;
@@ -31,7 +31,13 @@ public class AccountController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult> Register([FromBody] UserRegisterRequest request)
     {
-        return Ok(await _userService.AddUserAsync(request));
+        var user = await _userService.AddUserAsync(request);
+
+        var baseUri = new Uri($"{Request.Scheme}://{Request.Host}{Request.PathBase}");
+
+        await _securityService.SendConfirmationEmailAsync(user, baseUri);
+
+        return Ok();
     }
 
     [HttpPost("token/refresh")]
@@ -55,12 +61,10 @@ public class AccountController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost("confirm-email")]
-    public async Task<ActionResult> SendConfirmationEmail(string emailTo)
+    [HttpGet("confirm-email")]
+    public async Task<ActionResult> ConfirmEmail(Guid userId, Guid token)
     {
-        // TODO: implement email confirmation
-        
-        await _emailService.SendEmailAsync(emailTo, "Kek", "Hello");
+        await _securityService.ConfirmEmailAsync(userId, token);
 
         return Ok();
     }

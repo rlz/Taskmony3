@@ -88,8 +88,6 @@ function Filter({ directionId }) {
     <div className="w-1/5 mt-4">
       <FilterByIdeaCategory />
       <hr />
-      <FilterByFollowed />
-      <hr />
       <FilterByCreator id={directionId} />
     </div>
   );

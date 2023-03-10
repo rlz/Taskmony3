@@ -46,6 +46,22 @@ export const FilterByTaskType = () => {
   );
 };
 
+export const FilterByFuture = () => {
+  const [future, setFuture] = useQueryParam("future",BooleanParam);
+
+  return (
+    <>
+      <FilterItem
+        label="show future tasks"
+        checked={future}
+        onChange={(value, label) => {
+          setFuture(value)
+          }}
+      />
+    </>
+  );
+};
+
 export const FilterByArchivedTaskType = () => {
   const [archiveType, setArchiveType] = useQueryParam("archiveType",StringParam);
   if(!archiveType) setArchiveType("completed")

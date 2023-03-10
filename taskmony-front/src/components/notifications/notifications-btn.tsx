@@ -7,7 +7,7 @@ type NotificationsBtnPropsT = {
 };
 
 export const NotificationsBtn = ({ onClick }: NotificationsBtnPropsT) => {
-  const digit = useAppSelector(store => store.notifications.notifications.length)
+  const digit = useAppSelector(store => store.notifications.newCount)
   return (
     <div className={"absolute top-0 right-0 m-4"} onClick={(e) => onClick()}>
       <button

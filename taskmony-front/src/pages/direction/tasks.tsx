@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { FilterByCreator } from "../../components/filter/by-creator";
 import {
   FilterByArchivedTaskType,
+  FilterByFuture,
   FilterByTaskType,
 } from "../../components/filter/by-task-type";
 import { useSearchParams } from "react-router-dom";
@@ -83,9 +84,9 @@ function Tasks({ directionId, directionName }) {
 function Filter({ directionId }) {
   return (
     <div className="w-1/5 mt-4">
-      <FilterByTaskType />
-      <hr />
       <FilterByCreator id={directionId} />
+      <hr />
+      <FilterByFuture />
     </div>
   );
 }

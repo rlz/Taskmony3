@@ -7,7 +7,7 @@ export const GET_NOTIFICATIONS_REQUEST = "GET_NOTIFICATIONS_REQUEST";
 export const GET_NOTIFICATIONS_SUCCESS = "GET_NOTIFICATIONS_SUCCESS";
 export const GET_NOTIFICATIONS_FAILED = "GET_NOTIFICATIONS_FAILED";
 
-export const CHANGE_READ_TIME = "CHANGE_READ_TIME";
+export const RESET_COUNT = "RESET_COUNT";
 
 const URL = BASE_URL + "/graphql";
 
@@ -92,6 +92,7 @@ export function getNotifications() {
         }
       })
       .catch((error) => {
+        console.log(error)
         dispatch({
           type: GET_NOTIFICATIONS_FAILED,
         });

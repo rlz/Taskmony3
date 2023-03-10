@@ -23,7 +23,7 @@ export const DatePicker = ({
       </p>
       <input
         type="date"
-        className="font-semibold text-sm text-blue-500 focus:outline-none w-28"
+        className="font-semibold border-none text-sm text-blue-500 focus:outline-none w-28"
         value={new Date(date).toISOString().substring(0, 10)}
         min={
           min

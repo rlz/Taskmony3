@@ -242,11 +242,11 @@ const Details = ({ recurrent, fromDirection }) => {
       {task.direction && (
         <ItemPicker
           title={"assignee"}
-          options={["none", ...members.map((m) => m.displayName)]}
+          options={members.map((m) => m.displayName)}
           option={task.assignee?.displayName}
           onChange={(index) => {
             console.log(index);
-            const payload = index == 0 ? null : members[index - 1];
+            const payload = members[index];
             console.log(payload);
             dispatch({ type: CHANGE_TASK_ASSIGNEE, payload: payload });
             if (task.id) dispatch(changeTaskAssignee(task.id, payload));

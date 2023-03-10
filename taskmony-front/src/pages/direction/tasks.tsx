@@ -22,15 +22,22 @@ import {
 import { useSearchParams } from "react-router-dom";
 
 function Tasks({ directionId, directionName }) {
+  let [searchParams, setSearchParams] = useSearchParams();
+  const future = searchParams.get("future");
   const [newTask, setNewTask] = useState(false);
   const task = useAppSelector((store) => store.editedTask);
   let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
     (t) => t.deletedAt == null && t.direction?.id == directionId
-  );
-  let [searchParams, setSearchParams] = useSearchParams();
+  );;
   const createdBy = searchParams.getAll("createdBy");
   if (createdBy.length > 0) {
     tasksToShow = tasksToShow.filter((i) => createdBy.includes(i.createdBy.id));
+  }
+  if (!future || future == "0"){
+    console.log("show no future");
+    tasksToShow = tasksToShow.filter(
+      (i) => i.startAt < new Date().toISOString()
+    );
   }
   const direction = useAppSelector((store) => store.directions.items).filter(
     (d) => d.id == directionId

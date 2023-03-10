@@ -18,17 +18,19 @@ import {
   FilterByArchivedTaskType,
   FilterByTaskType,
 } from "../../components/filter/by-task-type";
+import { getCookie } from "../../utils/cookies";
 
 function MyTasks() {
   const [newTask, setNewTask] = useState(false);
   let [searchParams, setSearchParams] = useSearchParams();
+  const myId = getCookie("id");
   const chosenDirection = searchParams.getAll("direction");
   const future = searchParams.get("future");
   const followed = searchParams.get("followed");
   const assignedByMe = searchParams.get("assignedByMe");
   const task = useAppSelector((store) => store.editedTask);
   let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
-    (i) => i.deletedAt == null
+    (i) => i.deletedAt == null && (i.createdBy.id == myId || i.assignee?.id == myId || i.subscribers.some((s) => s.id == myId))
   );
   if (chosenDirection.length > 0)
     tasksToShow = tasksToShow.filter(
@@ -36,11 +38,17 @@ function MyTasks() {
         chosenDirection.includes(i.direction?.name) ||
         (chosenDirection.includes("unassigned") && !i.direction)
     );
-    if (!future){
+    if (!future || future == "0"){
       console.log("show no future");
       tasksToShow = tasksToShow.filter(
         (i) => i.startAt < new Date().toISOString()
       );
+    }
+    if (!followed || followed == "0") {
+      tasksToShow = tasksToShow.filter((i) => (!i.subscribers.some((s) => s.id == myId)));
+    }
+    if (!assignedByMe || assignedByMe == "0") {
+      tasksToShow = tasksToShow.filter((i) => (!(i.createdBy.id == myId && i.assignee && i.assignee.id != myId)));
     }
 
   const dispatch = useAppDispatch();

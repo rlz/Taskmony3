@@ -44,10 +44,8 @@ export const notificationsReducer = (
       let lastNotif = getCookie("lastNotification");
       let lastOldIndex = -1;
       action.notifications.map((notif,index)=>{
-        console.log(notif.id, lastNotif)
         if(notif.id == lastNotif) lastOldIndex = index;
       })
-      console.log(lastOldIndex,lastNotif)
       return {
         ...state,
         loading: false,

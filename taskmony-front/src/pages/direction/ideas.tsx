@@ -25,7 +25,13 @@ function Ideas({ directionId, directionName }) {
   const idea = useAppSelector((store) => store.editedIdea);
   let ideasToShow = useAppSelector((store) => store.ideas.items).filter(
     (i) => i.deletedAt == null && i.direction?.id == directionId
-  );
+  ).sort((a, b) => {
+    console.log("sorting")
+    if(!a.reviewedAt && b.reviewedAt) return -1
+    else if(!b.reviewedAt && a.reviewedAt) return 1
+    else if(!b.reviewedAt && !a.reviewedAt) return 0
+    else {return b.reviewedAt < a.reviewedAt?1:-1 }
+  });;
 
   if (createdBy.length > 0) {
     ideasToShow = ideasToShow.filter((i) => createdBy.includes(i.createdBy.id));

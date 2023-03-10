@@ -36,6 +36,8 @@ import {
   RESET_IDEA,
   CHANGE_IDEA_CATEGORY,
   CHANGE_IDEA_GENERATION,
+  CHANGE_IDEA_REVIEWED_DATE,
+  CHANGE_IDEA_REVIEWED_DATE_SUCCESS,
 } from "../actions/ideasAPI";
 
 type TIdeasState = {
@@ -62,6 +64,11 @@ export const ideasReducer = (
     | { type: typeof CHANGE_IDEAS; idea: any }
     | {
         type: typeof CHANGE_COMPLETE_IDEA_DATE_SUCCESS;
+        ideaId: string;
+        date: string;
+      }
+      | {
+        type: typeof CHANGE_IDEA_REVIEWED_DATE_SUCCESS;
         ideaId: string;
         date: string;
       }
@@ -117,6 +124,16 @@ export const ideasReducer = (
         items: state.items.map((item) =>
           item.id == action.ideaId
             ? { ...item, completedAt: action.date }
+            : item
+        ),
+      };
+    }
+    case CHANGE_IDEA_REVIEWED_DATE_SUCCESS: {
+      return {
+        ...state,
+        items: state.items.map((item) =>
+          item.id == action.ideaId
+            ? { ...item, reviewedAt: action.date }
             : item
         ),
       };
@@ -192,6 +209,7 @@ export const editIdeaReducer = (
           | typeof RESET_IDEA
           | typeof CHANGE_IDEA_DIRECTION
           | typeof CHANGE_IDEA_CATEGORY
+          | typeof CHANGE_IDEA_REVIEWED_DATE
         payload: any;
       }
     | {

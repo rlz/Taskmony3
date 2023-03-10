@@ -30,11 +30,13 @@ export const CHANGE_IDEA_DESCRIPTION = "CHANGE_IDEA_DESCRIPTION";
 export const CHANGE_IDEA_DIRECTION = "CHANGE_IDEA_DIRECTION";
 export const CHANGE_IDEA_GENERATION = "CHANGE_IDEA_GENERATION";
 export const CHANGE_IDEA_DETAILS = "CHANGE_IDEA_DETAILS";
+export const CHANGE_IDEA_REVIEWED_DATE = "CHANGE_IDEA_REVIEWED_DATE";
 
 export const CHANGE_IDEA_DESCRIPTION_FAILED = "CHANGE_IDEA_DESCRIPTION_FAILED";
 export const CHANGE_IDEA_DIRECTION_FAILED = "CHANGE_IDEA_DIRECTION_FAILED";
 export const CHANGE_IDEA_GENERATION_FAILED = "CHANGE_IDEA_GENERATION_FAILED";
 export const CHANGE_IDEA_DETAILS_FAILED = "CHANGE_IDEA_DETAILS_FAILED";
+export const CHANGE_IDEA_REVIEWED_DATE_FAILED = "CHANGE_IDEA_REVIEWED_DATE_FAILED";
 
 
 export const CHANGE_IDEA_DESCRIPTION_SUCCESS =
@@ -42,6 +44,7 @@ export const CHANGE_IDEA_DESCRIPTION_SUCCESS =
 export const CHANGE_IDEA_DIRECTION_SUCCESS = "CHANGE_IDEA_DIRECTION_SUCCESS";
 export const CHANGE_IDEA_GENERATION_SUCCESS = "CHANGE_IDEA_GENERATION_SUCCESS";
 export const CHANGE_IDEA_DETAILS_SUCCESS = "CHANGE_IDEA_DETAILS_SUCCESS";
+export const CHANGE_IDEA_REVIEWED_DATE_SUCCESS = "CHANGE_IDEA_REVIEWED_DATE_SUCCESS";
 
 
 export const CHANGE_SAVED = "CHANGE_SAVED";
@@ -372,6 +375,46 @@ export function deleteIdea(ideaId) {
       .catch((error) => {
         dispatch({
           type: DELETE_IDEA_FAILED,
+        });
+      });
+  };
+}
+
+export function reviewIdea(ideaId) {
+  const date = nowDate();
+  return function (dispatch: Dispatch) {
+    console.log("review idea");
+    fetch(URL, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
+      ideaSetReviewedAt(ideaId:"${ideaId}",reviewedAt:"${date}") 
+    }
+    `,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_IDEA_REVIEWED_DATE_SUCCESS,
+            ideaId: ideaId,
+            date:date
+          });
+        } else {
+          dispatch({
+            type: CHANGE_IDEA_REVIEWED_DATE_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_IDEA_REVIEWED_DATE_FAILED,
         });
       });
   };

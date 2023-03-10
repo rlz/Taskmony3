@@ -34,6 +34,7 @@ export const tasksAllQuery = `id
     export const ideasAllQuery = `id
     description
     deletedAt
+    reviewedAt
     subscribers 
     {
         id

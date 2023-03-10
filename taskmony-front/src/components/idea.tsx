@@ -18,6 +18,7 @@ import {
   deleteIdea,
   openIdea,
   RESET_IDEA,
+  reviewIdea,
 } from "../services/actions/ideasAPI";
 import { getCookie } from "../utils/cookies";
 import { nowDate } from "../utils/APIUtils";
@@ -66,6 +67,9 @@ export const Idea = ({ idea, direction, last }) => {
     console.log("following", markFollowed);
     dispatch(changeIdeaFollowed(idea.id, markFollowed));
   };
+  const review = () => {
+    dispatch(reviewIdea(idea.id));
+  };
 
   return (
     <div onClick={open}>
@@ -81,6 +85,8 @@ export const Idea = ({ idea, direction, last }) => {
           last={last}
           checked={!!idea.completedAt}
           changeFollowed={changeFollowed}
+          review={review}
+          reviewedAt={idea.reviewedAt}
           followed={direction || isFollowed() ? isFollowed() : undefined}
           direction={direction ? null : idea.direction?.name}
           generation={idea.generation}
@@ -98,8 +104,10 @@ export const IdeaUnedited = ({
   comments,
   createdBy,
   generation,
+  reviewedAt,
   direction,
   changeFollowed,
+  review,
   last
 }: IdeaProps) => {
   return (
@@ -119,10 +127,18 @@ export const IdeaUnedited = ({
             }}
           ></img>
         )}
-        <img src={last ? postponeGray : postponeBlue} className="w-4"></img>
+        
+        <img src={last ? postponeGray : postponeBlue} className="w-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if(last) return;
+                      review();
+                    }}
+                    ></img>
         </div>
       </div>
       <div className={"gap flex justify-start pb-2 w-full ml-1"}>
+      {/* <IdeaDetails icon={createdByI} label={`${reviewedAt}`} hasBorder /> */}
         {createdBy && (
           <IdeaDetails icon={createdByI} label={`by ${createdBy}`} hasBorder />
         )}

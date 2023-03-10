@@ -28,7 +28,12 @@ function Tasks({ directionId, directionName }) {
   const task = useAppSelector((store) => store.editedTask);
   let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
     (t) => t.deletedAt == null && t.direction?.id == directionId
-  );;
+  ).sort((a, b) => {
+    if(!a.completedAt && b.completedAt) return -1
+    else if(!b.completedAt && a.completedAt) return 1
+    else if(!b.completedAt && !a.completedAt) return 0
+    else return 0
+  });
   const createdBy = searchParams.getAll("createdBy");
   if (createdBy.length > 0) {
     tasksToShow = tasksToShow.filter((i) => createdBy.includes(i.createdBy.id));

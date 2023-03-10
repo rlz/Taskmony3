@@ -31,7 +31,12 @@ function MyTasks() {
   const task = useAppSelector((store) => store.editedTask);
   let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
     (i) => i.deletedAt == null && (i.createdBy.id == myId || i.assignee?.id == myId || i.subscribers.some((s) => s.id == myId))
-  );
+  ).sort((a, b) => {
+    if(!a.completedAt && b.completedAt) return -1
+    else if(!b.completedAt && a.completedAt) return 1
+    else if(!b.completedAt && !a.completedAt) return 0
+    else return 0
+  });
   if (chosenDirection.length > 0)
     tasksToShow = tasksToShow.filter(
       (i) =>

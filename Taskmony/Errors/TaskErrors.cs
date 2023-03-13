@@ -37,9 +37,6 @@ public static class TaskErrors
     public static ErrorDetails SubscribeToCompletedTask =>
         new("Cannot subscribe to completed task", "SUBSCRIBE_TO_COMPLETED_TASK");
     
-    public static ErrorDetails SubscribeToPrivateTask =>
-        new("Cannot subscribe to task with no direction", "SUBSCRIBE_TO_PRIVATE_TASK");
-    
     public static ErrorDetails AlreadySubscribedToTask =>
         new("User is already subscribed to the specified task", "ALREADY_SUBSCRIBED_TO_TASK");
 }

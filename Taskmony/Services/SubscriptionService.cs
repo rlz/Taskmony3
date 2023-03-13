@@ -55,11 +55,6 @@ public class SubscriptionService : ISubscriptionService
             throw new DomainException(TaskErrors.SubscribeToCompletedTask);
         }
 
-        if (task.DirectionId is null)
-        {
-            throw new DomainException(TaskErrors.SubscribeToPrivateTask);
-        }
-
         var subscription = await _subscriptionRepository.GetByTaskAndUserAsync(taskId, currentUserId);
 
         if (subscription is not null)
@@ -83,11 +78,6 @@ public class SubscriptionService : ISubscriptionService
         if (idea.DeletedAt is not null)
         {
             throw new DomainException(IdeaErrors.SubscribeToDeletedIdea);
-        }
-
-        if (idea.DirectionId is null)
-        {
-            throw new DomainException(IdeaErrors.SubscribeToPrivateIdea);
         }
 
         var subscription = await _subscriptionRepository.GetByIdeaAndUserAsync(ideaId, currentUserId);

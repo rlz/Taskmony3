@@ -221,14 +221,18 @@ public class IdeaService : IIdeaService
     {
         var idea = await _ideaRepository.GetByIdAsync(id);
 
+        if (idea is null)
+        {
+            throw new DomainException(IdeaErrors.NotFound);
+        }
+
         //Idea should either be created by the current user or 
         //belong to a direction where the current user is a member
-        if (idea is null ||
-            idea.CreatedById != currentUserId && idea.DirectionId == null ||
+        if (idea.CreatedById != currentUserId && idea.DirectionId == null ||
             idea.DirectionId != null &&
             !await _directionService.AnyMemberWithIdAsync(idea.DirectionId.Value, currentUserId))
         {
-            throw new DomainException(IdeaErrors.NotFound);
+            throw new DomainException(GeneralErrors.Forbidden);
         }
 
         return idea;

@@ -200,9 +200,14 @@ public class DirectionService : IDirectionService
     {
         var direction = await _directionRepository.GetByIdAsync(id);
 
-        if (direction is null || !await _directionRepository.AnyMemberWithIdAsync(id, currentUserId))
+        if (direction is null)
         {
             throw new DomainException(DirectionErrors.NotFound);
+        }
+
+        if (!await _directionRepository.AnyMemberWithIdAsync(id, currentUserId))
+        {
+            throw new DomainException(GeneralErrors.Forbidden);
         }
 
         return direction;

@@ -832,9 +832,14 @@ public class TaskService : ITaskService
         var tasks = (await _taskRepository.GetTasksByGroupIdAsync(groupId)).ToList();
         var task = tasks.FirstOrDefault();
 
-        if (await IsNotNullAndUserHasAccess(task, currentUserId))
+        if (task is null)
         {
             throw new DomainException(TaskErrors.NotFound);
+        }
+
+        if (await UserHasAccess(task, currentUserId))
+        {
+            throw new DomainException(GeneralErrors.Forbidden);
         }
 
         return tasks;
@@ -845,9 +850,14 @@ public class TaskService : ITaskService
         var tasks = (await _taskRepository.GetActiveTasksAsync(groupId)).ToList();
         var task = tasks.FirstOrDefault();
 
-        if (await IsNotNullAndUserHasAccess(task, currentUserId))
+        if (task is null)
         {
             throw new DomainException(TaskErrors.NotFound);
+        }
+
+        if (await UserHasAccess(task, currentUserId))
+        {
+            throw new DomainException(GeneralErrors.Forbidden);
         }
 
         return tasks;
@@ -857,20 +867,24 @@ public class TaskService : ITaskService
     {
         var task = await _taskRepository.GetByIdAsync(id);
 
-        if (await IsNotNullAndUserHasAccess(task, currentUserId))
+        if (task is null)
         {
             throw new DomainException(TaskErrors.NotFound);
         }
 
-        return task!;
+        if (!await UserHasAccess(task, currentUserId))
+        {
+            throw new DomainException(GeneralErrors.Forbidden);
+        }
+
+        return task;
     }
 
-    private async Task<bool> IsNotNullAndUserHasAccess(Task? task, Guid currentUserId)
+    private async Task<bool> UserHasAccess(Task task, Guid currentUserId)
     {
         //Task should either be created by the current user or 
         //belong to a direction where the current user is a member
-        return task is null ||
-               task.CreatedById != currentUserId && task.DirectionId == null ||
+        return task.CreatedById != currentUserId && task.DirectionId == null ||
                task.DirectionId != null &&
                !await _directionService.AnyMemberWithIdAsync(task.DirectionId.Value, currentUserId);
     }

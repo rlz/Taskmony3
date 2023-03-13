@@ -11,15 +11,15 @@ namespace Taskmony.Services;
 public class IdeaService : IIdeaService
 {
     private readonly IIdeaRepository _ideaRepository;
-    private readonly IDirectionService _directionService;
+    private readonly IDirectionRepository _directionReposiotry;
     private readonly INotificationService _notificationService;
     private readonly ITimeConverter _timeConverter;
 
-    public IdeaService(IIdeaRepository ideaRepository, IDirectionService directionService,
+    public IdeaService(IIdeaRepository ideaRepository, IDirectionRepository directionRepository,
         INotificationService notificationService, ITimeConverter timeConverter)
     {
         _ideaRepository = ideaRepository;
-        _directionService = directionService;
+        _directionReposiotry = directionRepository;
         _notificationService = notificationService;
         _timeConverter = timeConverter;
     }
@@ -36,7 +36,7 @@ public class IdeaService : IIdeaService
             return await _ideaRepository.GetIdeasAsync(id, directionId, offset, limit, currentUserId);
         }
 
-        var userDirectionIds = await _directionService.GetUserDirectionIdsAsync(currentUserId);
+        var userDirectionIds = await _directionReposiotry.GetUserDirectionIdsAsync(currentUserId);
         var authorizedDirectionIds = userDirectionIds.Cast<Guid?>().Append(null);
 
         //If directionId is null return all ideas visible to the current user.
@@ -58,7 +58,7 @@ public class IdeaService : IIdeaService
     public async Task<Idea?> AddIdeaAsync(Idea idea)
     {
         if (idea.DirectionId is not null &&
-            !await _directionService.AnyMemberWithIdAsync(idea.DirectionId.Value, idea.CreatedById))
+            !await _directionReposiotry.AnyMemberWithIdAsync(idea.DirectionId.Value, idea.CreatedById))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
@@ -124,7 +124,7 @@ public class IdeaService : IIdeaService
         ValidateIdeaToUpdate(idea);
 
         if (directionId is not null &&
-            !await _directionService.AnyMemberWithIdAsync(directionId.Value, currentUserId))
+            !await _directionReposiotry.AnyMemberWithIdAsync(directionId.Value, currentUserId))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
@@ -230,7 +230,7 @@ public class IdeaService : IIdeaService
         //belong to a direction where the current user is a member
         if (idea.CreatedById != currentUserId && idea.DirectionId == null ||
             idea.DirectionId != null &&
-            !await _directionService.AnyMemberWithIdAsync(idea.DirectionId.Value, currentUserId))
+            !await _directionReposiotry.AnyMemberWithIdAsync(idea.DirectionId.Value, currentUserId))
         {
             throw new DomainException(GeneralErrors.Forbidden);
         }

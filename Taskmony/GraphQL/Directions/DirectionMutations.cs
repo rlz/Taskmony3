@@ -23,13 +23,13 @@ public class DirectionMutations
     public async Task<Guid?> DirectionSetName([Service] IDirectionService directionService,
         [GlobalState] Guid currentUserId, Guid directionId, string name)
     {
-        return await directionService.SetDirectionName(directionId, name, currentUserId);
+        return await directionService.SetDirectionNameAsync(directionId, name, currentUserId);
     }
 
     public async Task<Guid?> DirectionSetDetails([Service] IDirectionService directionService,
         [GlobalState] Guid currentUserId, Guid directionId, string? details)
     {
-        return await directionService.SetDirectionDetails(directionId, details, currentUserId);
+        return await directionService.SetDirectionDetailsAsync(directionId, details, currentUserId);
     }
 
     public async Task<Guid?> DirectionAddMember([Service] IDirectionService directionService,

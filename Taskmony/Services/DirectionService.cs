@@ -12,18 +12,15 @@ public class DirectionService : IDirectionService
     private readonly IDirectionRepository _directionRepository;
     private readonly IUserService _userService;
     private readonly INotificationService _notificationService;
+    private readonly ITaskService _taskService;
 
     public DirectionService(IDirectionRepository directionRepository, IUserService userService,
-        INotificationService notificationService)
+        INotificationService notificationService, ITaskService taskService)
     {
         _directionRepository = directionRepository;
         _userService = userService;
         _notificationService = notificationService;
-    }
-
-    public async Task<bool> AnyMemberWithIdAsync(Guid directionId, Guid memberId)
-    {
-        return await _directionRepository.AnyMemberWithIdAsync(directionId, memberId);
+        _taskService = taskService;
     }
 
     public async Task<ILookup<Guid, Guid>> GetMemberIdsAsync(Guid[] directionIds, int? offset, int? limit)
@@ -46,11 +43,6 @@ public class DirectionService : IDirectionService
     public async Task<IEnumerable<Direction>> GetDirectionsByIdsAsync(Guid[] ids)
     {
         return await _directionRepository.GetByIdsAsync(ids);
-    }
-
-    public async Task<IEnumerable<Guid>> GetUserDirectionIdsAsync(Guid userId)
-    {
-        return await _directionRepository.GetUserDirectionIds(userId);
     }
 
     public async Task<Direction> AddDirectionAsync(Direction direction)
@@ -119,6 +111,8 @@ public class DirectionService : IDirectionService
             return null;
         }
 
+        await _taskService.RemoveAssigneeFromDirectionTasksAsync(user.Id, direction.Id);
+
         await _notificationService.NotifyDirectionMemberRemovedAsync(direction.Id, user.Id, null, currentUserId);
 
         await DeleteDirectionIfNoMembersAsync(direction);
@@ -142,7 +136,7 @@ public class DirectionService : IDirectionService
         return await _directionRepository.SaveChangesAsync() ? direction.Id : null;
     }
 
-    public async Task<Guid?> SetDirectionDetails(Guid id, string? details, Guid currentUserId)
+    public async Task<Guid?> SetDirectionDetailsAsync(Guid id, string? details, Guid currentUserId)
     {
         var direction = await GetDirectionOrThrowAsync(id, currentUserId);
 
@@ -162,7 +156,7 @@ public class DirectionService : IDirectionService
         return direction.Id;
     }
 
-    public async Task<Guid?> SetDirectionName(Guid id, string name, Guid currentUserId)
+    public async Task<Guid?> SetDirectionNameAsync(Guid id, string name, Guid currentUserId)
     {
         var newName = DirectionName.From(name);
 

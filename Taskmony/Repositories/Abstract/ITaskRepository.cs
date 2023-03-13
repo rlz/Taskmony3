@@ -17,7 +17,7 @@ public interface ITaskRepository
     Task<IEnumerable<Models.Task>> GetByIdsAsync(IEnumerable<Guid> ids);
 
     Task<Models.Task?> GetByIdAsync(Guid id);
-    
+
     /// <summary>
     /// Gets not completed and not deleted tasks
     /// </summary>
@@ -26,6 +26,8 @@ public interface ITaskRepository
     Task<IEnumerable<Models.Task>> GetActiveTasksAsync(Guid groupId);
 
     Task<IEnumerable<Models.Task>> GetTasksByGroupIdAsync(Guid groupId);
+
+    Task<IEnumerable<Models.Task>> GetByDirectionIdAsync(Guid directionId);
 
     Task AddAsync(Models.Task task);
 

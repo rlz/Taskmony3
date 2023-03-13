@@ -11,15 +11,15 @@ namespace Taskmony.Services;
 public class TaskService : ITaskService
 {
     private readonly ITaskRepository _taskRepository;
-    private readonly IDirectionService _directionService;
+    private readonly IDirectionRepository _directionRepository;
     private readonly INotificationService _notificationService;
     private readonly ITimeConverter _timeConverter;
 
-    public TaskService(ITaskRepository taskRepository, IDirectionService directionService,
+    public TaskService(ITaskRepository taskRepository, IDirectionRepository directionRepository,
         INotificationService notificationService, ITimeConverter timeConverter)
     {
         _taskRepository = taskRepository;
-        _directionService = directionService;
+        _directionRepository = directionRepository;
         _notificationService = notificationService;
         _timeConverter = timeConverter;
     }
@@ -39,7 +39,7 @@ public class TaskService : ITaskService
         }
         else
         {
-            var userDirectionIds = await _directionService.GetUserDirectionIdsAsync(currentUserId);
+            var userDirectionIds = await _directionRepository.GetUserDirectionIdsAsync(currentUserId);
             var authorizedDirectionIds = userDirectionIds.Cast<Guid?>().Append(null);
 
             //If directionId is null return all tasks visible to the current user.
@@ -65,7 +65,7 @@ public class TaskService : ITaskService
     public async Task<Task?> AddTaskAsync(Task task)
     {
         if (task.DirectionId is not null &&
-            !await _directionService.AnyMemberWithIdAsync(task.DirectionId.Value, task.CreatedById))
+            !await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, task.CreatedById))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
@@ -359,7 +359,7 @@ public class TaskService : ITaskService
         Guid currentUserId)
     {
         if (directionId is not null &&
-            !await _directionService.AnyMemberWithIdAsync(directionId.Value, currentUserId))
+            !await _directionRepository.AnyMemberWithIdAsync(directionId.Value, currentUserId))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
@@ -392,7 +392,7 @@ public class TaskService : ITaskService
     public async Task<Guid?> SetTaskDirectionAsync(Guid taskId, Guid? directionId, Guid currentUserId)
     {
         if (directionId is not null &&
-            !await _directionService.AnyMemberWithIdAsync(directionId.Value, currentUserId))
+            !await _directionRepository.AnyMemberWithIdAsync(directionId.Value, currentUserId))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
@@ -827,6 +827,22 @@ public class TaskService : ITaskService
         return (await _taskRepository.GetTasksByGroupIdAsync(groupId)).Select(t => t.Id);
     }
 
+    public async Task<bool> RemoveAssigneeFromDirectionTasksAsync(Guid assigneeId, Guid directionId)
+    {
+        var tasks = await _taskRepository.GetByDirectionIdAsync(directionId);
+
+        foreach (var task in tasks)
+        {
+            if (task.AssigneeId == assigneeId)
+            {
+                task.AssigneeId = null;
+                task.AssignedById = null;
+            }
+        }
+
+        return await _taskRepository.SaveChangesAsync();
+    }
+
     private async Task<List<Task>> GetTasksOrThrowAsync(Guid groupId, Guid currentUserId)
     {
         var tasks = (await _taskRepository.GetTasksByGroupIdAsync(groupId)).ToList();
@@ -837,7 +853,7 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.NotFound);
         }
 
-        if (await UserHasAccess(task, currentUserId))
+        if (!await UserHasAccess(task, currentUserId))
         {
             throw new DomainException(GeneralErrors.Forbidden);
         }
@@ -855,7 +871,7 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.NotFound);
         }
 
-        if (await UserHasAccess(task, currentUserId))
+        if (!await UserHasAccess(task, currentUserId))
         {
             throw new DomainException(GeneralErrors.Forbidden);
         }
@@ -884,9 +900,9 @@ public class TaskService : ITaskService
     {
         //Task should either be created by the current user or 
         //belong to a direction where the current user is a member
-        return task.CreatedById != currentUserId && task.DirectionId == null ||
+        return task.CreatedById == currentUserId && task.DirectionId == null ||
                task.DirectionId != null &&
-               !await _directionService.AnyMemberWithIdAsync(task.DirectionId.Value, currentUserId);
+               await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, currentUserId);
     }
 
     private void ValidateRepeatMode(RepeatMode? repeatMode, WeekDay? weekDays, DateTime? repeatUntil, int? repeatEvery)
@@ -944,7 +960,7 @@ public class TaskService : ITaskService
         }
 
         if (task.AssigneeId is not null && task.DirectionId is not null &&
-            !await _directionService.AnyMemberWithIdAsync(task.DirectionId.Value, task.AssigneeId.Value))
+            !await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, task.AssigneeId.Value))
         {
             throw new DomainException(DirectionErrors.MemberNotFound);
         }

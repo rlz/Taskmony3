@@ -9,7 +9,7 @@ public interface IDirectionRepository
 
     Task<IEnumerable<Direction>> GetAsync(Guid[]? id, int? offset, int? limit, Guid userId);
 
-    Task<IEnumerable<Guid>> GetUserDirectionIds(Guid userId);
+    Task<IEnumerable<Guid>> GetUserDirectionIdsAsync(Guid userId);
 
     Task<IEnumerable<Direction>> GetByIdsAsync(IEnumerable<Guid> ids);
 

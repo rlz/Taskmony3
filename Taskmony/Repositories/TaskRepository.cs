@@ -67,4 +67,9 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
     {
         return await Context.Tasks.Where(t => t.GroupId == groupId).ToListAsync();
     }
+
+    public async Task<IEnumerable<Models.Task>> GetByDirectionIdAsync(Guid directionId)
+    {
+        return await Context.Tasks.Where(t => t.DirectionId == directionId).ToListAsync();
+    }
 }

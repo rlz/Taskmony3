@@ -112,7 +112,7 @@ public class SecurityService : ISecurityService
             return;
         }
 
-        var body = string.Format(template!.Body, confirmUrl);
+        var body = string.Format(template.Body, user.DisplayName, confirmUrl);
 
         await _emailService.SendEmailAsync(user.Email!.Value, template.Subject, body);
     }

@@ -4,6 +4,7 @@ import { getCookie } from "../../utils/cookies";
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
 import { ideasAllQuery } from "../../utils/queries";
+import { TIdea } from "../../utils/types";
 export const GET_IDEAS_REQUEST = "GET_IDEAS_REQUEST";
 export const GET_IDEAS_SUCCESS = "GET_IDEAS_SUCCESS";
 export const GET_IDEAS_FAILED = "GET_IDEAS_FAILED";
@@ -54,7 +55,7 @@ export const CHANGE_IDEAS = "CHANGE_IDEAS";
 
 const URL = BASE_URL + "/graphql";
 
-export function openIdea(id) {
+export function openIdea(id: string) {
   const ideas = useAppSelector((store) => store.ideas.items);
   const idea = ideas.filter((idea) => idea.id == id)[0];
   return function (dispatch: Dispatch) {
@@ -99,7 +100,7 @@ export function getIdeas() {
   };
 }
 
-export function addIdea(idea, direction) {
+export function addIdea(idea : TIdea, direction: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_IDEA_REQUEST });
     console.log("adding");
@@ -149,7 +150,7 @@ export function addIdea(idea, direction) {
   };
 }
 
-export function changeIdeaFollowed(ideaId, markFollowed) {
+export function changeIdeaFollowed(ideaId: string, markFollowed : boolean) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_IDEA_FOLLOWED_REQUEST });
     console.log("change followed");
@@ -189,7 +190,7 @@ export function changeIdeaFollowed(ideaId, markFollowed) {
       });
   };
 }
-export function changeIdeaDescription(ideaId, description) {
+export function changeIdeaDescription(ideaId: string, description: string) {
   return function (dispatch: Dispatch) {
     console.log("change description");
     fetch(URL, {
@@ -226,7 +227,7 @@ export function changeIdeaDescription(ideaId, description) {
       });
   };
 }
-export function changeIdeaDetails(ideaId, details) {
+export function changeIdeaDetails(ideaId: string, details: string) {
   return function (dispatch: Dispatch) {
     console.log("change details");
     fetch(URL, {
@@ -263,7 +264,7 @@ export function changeIdeaDetails(ideaId, details) {
       });
   };
 }
-export function changeIdeaDirection(ideaId, direction) {
+export function changeIdeaDirection(ideaId: string, direction : {id: string}) {
   return function (dispatch: Dispatch) {
     console.log("change direction");
     fetch(URL, {
@@ -301,7 +302,7 @@ export function changeIdeaDirection(ideaId, direction) {
   };
 }
 
-export function changeIdeaGeneration(ideaId, generation) {
+export function changeIdeaGeneration(ideaId: string, generation: string) {
   return function (dispatch: Dispatch) {
     console.log("change category");
     fetch(URL, {
@@ -339,7 +340,7 @@ export function changeIdeaGeneration(ideaId, generation) {
   };
 }
 
-export function deleteIdea(ideaId) {
+export function deleteIdea(ideaId: string) {
   const date = nowDate();
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_IDEA_REQUEST });
@@ -380,7 +381,7 @@ export function deleteIdea(ideaId) {
   };
 }
 
-export function reviewIdea(ideaId) {
+export function reviewIdea(ideaId: string) {
   const date = nowDate();
   return function (dispatch: Dispatch) {
     console.log("review idea");

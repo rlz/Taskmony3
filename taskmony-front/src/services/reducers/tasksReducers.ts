@@ -55,7 +55,7 @@ export const tasksReducer = (
   state: TTasksState = tasksInitialState,
   action:
     | { type: typeof GET_TASKS_SUCCESS; items: Array<any> }
-    | { type: typeof DELETE_TASK_SUCCESS; taskId: string,date: any }
+    | { type: typeof DELETE_TASK_SUCCESS; taskId: string; date: any }
     | { type: typeof ADD_TASK_SUCCESS; task: any }
     | { type: typeof CHANGE_TASKS; task: any }
     | {
@@ -74,8 +74,7 @@ export const tasksReducer = (
           | typeof GET_TASKS_REQUEST
           | typeof GET_TASKS_FAILED
           | typeof ADD_TASK_REQUEST
-          | typeof ADD_TASK_FAILED
-          | typeof ADD_TASK_SUCCESS;
+          | typeof ADD_TASK_FAILED;
       }
 ) => {
   switch (action.type) {
@@ -160,9 +159,7 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.taskId
-            ? { ...item, deletedAt: action.date }
-            : item
+          item.id == action.taskId ? { ...item, deletedAt: action.date } : item
         ),
       };
     }
@@ -172,13 +169,28 @@ export const tasksReducer = (
   }
 };
 
-export const taskInitialState = {
-  description: "",
-  details: null,
-  assigneeId: "",
-  directionId: "",
-  startAt: nowDate(),
+export const taskInitialState: TTask = {
   id: "",
+  description: "",
+  completedAt: "",
+  deletedAt: "",
+  assignee: {
+    displayName: "",
+    id: "",
+  },
+  subscribers: [],
+  details: "",
+  startAt: "",
+  direction: { name: "", id: "" },
+  repeatMode: "",
+  createdBy: {
+    id: "",
+    displayName: "",
+  },
+  comments: [],
+  repeatUntil: "",
+  weekDays: [],
+  repeatEvery: 1
 };
 
 export const editTaskReducer = (

@@ -10,8 +10,6 @@ import {
   CHANGE_COMPLETE_IDEA_DATE_SUCCESS,
   CHANGE_OPEN_IDEA,
   CHANGE_IDEAS,
-  CHANGE_IDEA_ASSIGNEE,
-  CHANGE_IDEA_ASSIGNEE_SUCCESS,
   CHANGE_IDEA_DESCRIPTION,
   CHANGE_IDEA_DESCRIPTION_SUCCESS,
   CHANGE_IDEA_DETAILS,
@@ -19,22 +17,11 @@ import {
   CHANGE_IDEA_DIRECTION,
   CHANGE_IDEA_DIRECTION_SUCCESS,
   CHANGE_IDEA_FOLLOWED_SUCCESS,
-  CHANGE_IDEA_REPEAT_EVERY,
-  CHANGE_IDEA_REPEAT_EVERY_SUCCESS,
-  CHANGE_IDEA_REPEAT_MODE,
-  CHANGE_IDEA_REPEAT_MODE_SUCCESS,
-  CHANGE_IDEA_REPEAT_UNTIL,
-  CHANGE_IDEA_REPEAT_UNTIL_SUCCESS,
-  CHANGE_IDEA_REPEAT_WEEK_DAYS,
-  CHANGE_IDEA_REPEAT_WEEK_DAYS_SUCCESS,
-  CHANGE_IDEA_START_DATE,
-  CHANGE_IDEA_START_DATE_SUCCESS,
   DELETE_IDEA_SUCCESS,
   GET_IDEAS_FAILED,
   GET_IDEAS_REQUEST,
   GET_IDEAS_SUCCESS,
   RESET_IDEA,
-  CHANGE_IDEA_CATEGORY,
   CHANGE_IDEA_GENERATION,
   CHANGE_IDEA_REVIEWED_DATE,
   CHANGE_IDEA_REVIEWED_DATE_SUCCESS,
@@ -58,16 +45,16 @@ export const ideasInitialState = {
 export const ideasReducer = (
   state: TIdeasState = ideasInitialState,
   action:
-    | { type: typeof GET_IDEAS_SUCCESS; items: Array<any> }
-    | { type: typeof DELETE_IDEA_SUCCESS; ideaId: string,date: any }
-    | { type: typeof ADD_IDEA_SUCCESS; idea: any }
-    | { type: typeof CHANGE_IDEAS; idea: any }
+     { type: typeof GET_IDEAS_SUCCESS; items: Array<TIdea> }
+    | { type: typeof DELETE_IDEA_SUCCESS; ideaId: string; date: string }
+    | { type: typeof ADD_IDEA_SUCCESS; idea: TIdea }
+    | { type: typeof CHANGE_IDEAS; idea: TIdea }
     | {
         type: typeof CHANGE_COMPLETE_IDEA_DATE_SUCCESS;
         ideaId: string;
         date: string;
       }
-      | {
+    | {
         type: typeof CHANGE_IDEA_REVIEWED_DATE_SUCCESS;
         ideaId: string;
         date: string;
@@ -84,7 +71,6 @@ export const ideasReducer = (
           | typeof GET_IDEAS_FAILED
           | typeof ADD_IDEA_REQUEST
           | typeof ADD_IDEA_FAILED
-          | typeof ADD_IDEA_SUCCESS;
       }
 ) => {
   switch (action.type) {
@@ -132,9 +118,7 @@ export const ideasReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.ideaId
-            ? { ...item, reviewedAt: action.date }
-            : item
+          item.id == action.ideaId ? { ...item, reviewedAt: action.date } : item
         ),
       };
     }
@@ -179,9 +163,7 @@ export const ideasReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.ideaId
-            ? { ...item, deletedAt: action.date }
-            : item
+          item.id == action.ideaId ? { ...item, deletedAt: action.date } : item
         ),
       };
     }
@@ -191,12 +173,17 @@ export const ideasReducer = (
   }
 };
 
-export const ideaInitialState = {
+export const ideaInitialState: TIdea = {
   description: "",
-  details: null,
-  directionId: "",
+  details: undefined,
   generation: "HOT",
   id: "",
+  deletedAt:"",
+  reviewedAt:"", 
+  subscribers: [], 
+  direction: {name:"",id:""},
+  createdBy: {displayName:"",id:""},
+  comments: [],
 };
 
 export const editIdeaReducer = (
@@ -208,7 +195,7 @@ export const editIdeaReducer = (
           | typeof CHANGE_IDEA_DETAILS
           | typeof RESET_IDEA
           | typeof CHANGE_IDEA_DIRECTION
-          | typeof CHANGE_IDEA_CATEGORY
+          | typeof CHANGE_IDEA_GENERATION
           | typeof CHANGE_IDEA_REVIEWED_DATE
         payload: any;
       }
@@ -245,12 +232,6 @@ export const editIdeaReducer = (
         details: action.payload,
       };
     }
-    case CHANGE_IDEA_ASSIGNEE: {
-      return {
-        ...state,
-        assignee: action.payload,
-      };
-    }
     case CHANGE_IDEA_DIRECTION: {
       return {
         ...state,
@@ -263,7 +244,6 @@ export const editIdeaReducer = (
         generation: action.payload,
       };
     }
-
 
     case SEND_COMMENT_SUCCESS: {
       return {

@@ -1,4 +1,5 @@
 import { getCookie } from "../../utils/cookies";
+import { TNotification } from "../../utils/types";
 import {
   GET_NOTIFICATIONS_REQUEST,
   GET_NOTIFICATIONS_SUCCESS,
@@ -20,15 +21,12 @@ export const notificationsReducer = (
     | {
         type:
           | typeof GET_NOTIFICATIONS_REQUEST
-          | typeof GET_NOTIFICATIONS_FAILED;
+          | typeof GET_NOTIFICATIONS_FAILED
+          | typeof RESET_COUNT
       }
     | {
         type: typeof GET_NOTIFICATIONS_SUCCESS;
-        notifications: any;
-      }
-    | {
-        type: typeof CHANGE_READ_TIME;
-        readTime: any;
+        notifications: Array<TNotification>;
       }
 ) => {
   switch (action.type) {

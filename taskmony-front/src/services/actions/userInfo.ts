@@ -61,7 +61,7 @@ export function getUserInfo() {
   };
 }
 
-export function getUser(login) {
+export function getUser(login: string) {
   return function (dispatch: any) {
     dispatch({ type: USERS_REQUEST });
     console.log("getting user");

@@ -3,6 +3,7 @@ import { checkResponse } from "../../utils/APIUtils";
 import { getCookie } from "../../utils/cookies";
 import { BASE_URL } from "../../utils/data";
 import { notificationsAllQuery } from "../../utils/queries";
+import { TNotification } from "../../utils/types";
 export const GET_NOTIFICATIONS_REQUEST = "GET_NOTIFICATIONS_REQUEST";
 export const GET_NOTIFICATIONS_SUCCESS = "GET_NOTIFICATIONS_SUCCESS";
 export const GET_NOTIFICATIONS_FAILED = "GET_NOTIFICATIONS_FAILED";

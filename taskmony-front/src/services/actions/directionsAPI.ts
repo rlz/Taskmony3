@@ -73,7 +73,7 @@ export function getDirections() {
   };
 }
 
-export function addDirection(name) {
+export function addDirection(name: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_DIRECTION_REQUEST });
     console.log("adding");
@@ -124,7 +124,7 @@ export function addDirection(name) {
       });
   };
 }
-export function deleteDirection(directionId) {
+export function deleteDirection(directionId: string) {
   const deletedDate = new Date().toISOString();
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_DIRECTION_REQUEST });
@@ -164,7 +164,7 @@ export function deleteDirection(directionId) {
       });
   };
 }
-export function addUser(directionId, user) {
+export function addUser(directionId: string, user: {id: string, dispayName: string}) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("adding user");
@@ -203,7 +203,7 @@ export function addUser(directionId, user) {
       });
   };
 }
-export function removeUser(directionId, user) {
+export function removeUser(directionId: string, user: {id: string, dispayName: string}) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("removing user");
@@ -243,7 +243,7 @@ export function removeUser(directionId, user) {
   };
 }
 
-export function changeDetails(details, directionId) {
+export function changeDetails(details: string, directionId: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_DIRECTION_DETAILS_REQUEST });
     console.log("adding");

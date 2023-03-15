@@ -49,8 +49,8 @@ export const directionsInitialState = {
 export const directionsReducer = (
   state: TDirectionsState = directionsInitialState,
   action:
-    | { type: typeof GET_DIRECTIONS_SUCCESS; items: Array<any> }
-    | { type: typeof ADD_DIRECTION_SUCCESS; direction: any }
+    | { type: typeof GET_DIRECTIONS_SUCCESS; items: Array<TDirection> }
+    | { type: typeof ADD_DIRECTION_SUCCESS; direction: TDirection }
     | { type: typeof REMOVE_DIRECTION; directionId: string }
     | {
         type: typeof DELETE_DIRECTION_SUCCESS;
@@ -59,12 +59,12 @@ export const directionsReducer = (
       }
     | {
         type: typeof ADD_USER_SUCCESS;
-        directionId: any;
+        directionId: string;
         user: { displayName: string; id: string };
       }
     | {
         type: typeof REMOVE_USER_SUCCESS;
-        directionId: any;
+        directionId: string;
         user: { displayName: string; id: string };
       }
     | {

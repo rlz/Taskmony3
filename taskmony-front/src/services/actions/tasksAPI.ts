@@ -4,6 +4,7 @@ import { getCookie } from "../../utils/cookies";
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
 import { tasksAllQuery } from "../../utils/queries";
+import { TTask } from "../../utils/types";
 export const GET_TASKS_REQUEST = "GET_TASKS_REQUEST";
 export const GET_TASKS_SUCCESS = "GET_TASKS_SUCCESS";
 export const GET_TASKS_FAILED = "GET_TASKS_FAILED";
@@ -71,7 +72,7 @@ export const CHANGE_TASKS = "CHANGE_TASKS";
 
 const URL = BASE_URL + "/graphql";
 
-export function openTask(id) {
+export function openTask(id: string) {
   const tasks = useAppSelector((store) => store.tasks.items);
   const task = tasks.filter((task) => task.id == id)[0];
   return function (dispatch: Dispatch) {
@@ -116,7 +117,7 @@ export function getTasks() {
   };
 }
 
-export function addTask(task, direction) {
+export function addTask(task: TTask, direction: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_TASK_REQUEST });
     console.log("adding");
@@ -166,7 +167,7 @@ export function addTask(task, direction) {
   };
 }
 
-export function addRepeatedTasks(task, direction) {
+export function addRepeatedTasks(task: TTask, direction: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_TASK_REQUEST });
     console.log("adding");
@@ -224,7 +225,7 @@ export function addRepeatedTasks(task, direction) {
   };
 }
 
-export function changeCompleteTaskDate(taskId, date) {
+export function changeCompleteTaskDate(taskId: string, date: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_COMPLETE_TASK_DATE_REQUEST });
     console.log("change complete date");
@@ -266,7 +267,7 @@ export function changeCompleteTaskDate(taskId, date) {
   };
 }
 
-export function changeTaskFollowed(taskId, markFollowed) {
+export function changeTaskFollowed(taskId: string, markFollowed: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_TASK_FOLLOWED_REQUEST });
     console.log("change followed");
@@ -306,7 +307,7 @@ export function changeTaskFollowed(taskId, markFollowed) {
       });
   };
 }
-export function changeTaskDescription(taskId, description) {
+export function changeTaskDescription(taskId: string, description: string) {
   return function (dispatch: Dispatch) {
     console.log("change description");
     fetch(URL, {
@@ -343,7 +344,7 @@ export function changeTaskDescription(taskId, description) {
       });
   };
 }
-export function changeTaskDetails(taskId, details) {
+export function changeTaskDetails(taskId: string, details: string) {
   return function (dispatch: Dispatch) {
     console.log("change details");
     fetch(URL, {
@@ -380,7 +381,7 @@ export function changeTaskDetails(taskId, details) {
       });
   };
 }
-export function changeTaskDirection(taskId, direction) {
+export function changeTaskDirection(taskId: string, direction: {id: string} ) {
   return function (dispatch: Dispatch) {
     console.log("change direction");
     fetch(URL, {
@@ -417,7 +418,7 @@ export function changeTaskDirection(taskId, direction) {
       });
   };
 }
-export function changeTaskAssignee(taskId, assignee) {
+export function changeTaskAssignee(taskId: string, assignee: {id: string}) {
   return function (dispatch: Dispatch) {
     console.log("change assignee");
     fetch(URL, {
@@ -455,10 +456,10 @@ export function changeTaskAssignee(taskId, assignee) {
   };
 }
 export function changeTaskRepeatMode(
-  taskId,
-  repeatMode,
-  repeatEvery,
-  weekDays
+  taskId: string,
+  repeatMode: string,
+  repeatEvery: string,
+  weekDays: string
 ) {
   return function (dispatch: Dispatch) {
     console.log("change repeatMode");
@@ -496,7 +497,7 @@ export function changeTaskRepeatMode(
       });
   };
 }
-export function changeTaskRepeatUntil(taskId, repeatUntil) {
+export function changeTaskRepeatUntil(taskId: string, repeatUntil: string) {
   return function (dispatch: Dispatch) {
     console.log("change repeatUntil");
     fetch(URL, {
@@ -533,7 +534,7 @@ export function changeTaskRepeatUntil(taskId, repeatUntil) {
       });
   };
 }
-export function changeTaskStartAt(taskId, startAt) {
+export function changeTaskStartAt(taskId: string, startAt: string) {
   return function (dispatch: Dispatch) {
     console.log("change startAt");
     fetch(URL, {
@@ -571,7 +572,7 @@ export function changeTaskStartAt(taskId, startAt) {
   };
 }
 
-export function deleteTask(taskId) {
+export function deleteTask(taskId: string) {
   const date = nowDate();
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_TASK_REQUEST });

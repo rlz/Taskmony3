@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Taskmony.Auth;
@@ -19,6 +20,17 @@ using Taskmony.Services;
 using Taskmony.Services.Abstract;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("*")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+        });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -86,6 +98,7 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services
     .AddGraphQLServer()
+    .AllowIntrospection(builder.Environment.IsDevelopment())
     .AddErrorFilter(provider => new ErrorFilter(
         provider.GetRequiredService<ILogger<ErrorFilter>>(),
         builder.Environment))
@@ -113,15 +126,22 @@ builder.Services
 
 var app = builder.Build();
 
-//if (app.Environment.IsDevelopment())
-//{
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-//}
+}
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseRouting();
+
+app.UseCors();
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

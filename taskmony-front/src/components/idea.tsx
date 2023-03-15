@@ -111,7 +111,7 @@ export const IdeaUnedited = ({
   last
 }: IdeaProps) => {
   return (
-    <div className="w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
+    <div className="uneditedIdea w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           <span className={"font-semibold text-sm"}>{label}</span>
@@ -149,8 +149,8 @@ export const IdeaUnedited = ({
             hasBorder
           />
         }
-        {<IdeaDetails label={direction} textColor="text-yellow-500" hasBorder/>}
-        {<IdeaDetails label={generation.toLowerCase().replaceAll("_"," ")} textColor="text-yellow-500" />}
+        {direction && <IdeaDetails label={direction} textColor="text-yellow-500" hasBorder/>}
+        {<IdeaDetails label={"  "+generation.toLowerCase().replaceAll("_"," ")} textColor="text-yellow-500" />}
 
       </div>
     </div>

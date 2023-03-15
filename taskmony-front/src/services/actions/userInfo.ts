@@ -102,51 +102,116 @@ export function getUser(login) {
   };
 }
 
-export const CHANGE_USER_INFO_REQUEST = "CHANGE_USER_INFO_REQUEST";
-export const CHANGE_USER_INFO_SUCCESS = "CHANGE_USER_INFO_SUCCESS";
-export const CHANGE_USER_INFO_FAILED = "CHANGE_USER_INFO_FAILED";
+export const CHANGE_USER_NAME_REQUEST = "CHANGE_USER_NAME_REQUEST";
+export const CHANGE_USER_NAME_SUCCESS = "CHANGE_USER_NAME_SUCCESS";
+export const CHANGE_USER_NAME_FAILED = "CHANGE_USER_NAME_FAILED";
+export const CHANGE_USER_EMAIL_REQUEST = "CHANGE_USER_EMAIL_REQUEST";
+export const CHANGE_USER_EMAIL_SUCCESS = "CHANGE_USER_EMAIL_SUCCESS";
+export const CHANGE_USER_EMAIL_FAILED = "CHANGE_USER_EMAIL_FAILED";
+export const CHANGE_USER_PASSWORD_REQUEST = "CHANGE_USER_PASSWORD_REQUEST";
+export const CHANGE_USER_PASSWORD_SUCCESS = "CHANGE_USER_PASSWORD_SUCCESS";
+export const CHANGE_USER_PASSWORD_FAILED = "CHANGE_USER_PASSWORD_FAILED";
 
-export function changeUserInfo(name: string, email: string, password: string) {
+export function changeUserPassword(oldPassword: string,newPassword: string) {
   return function (dispatch: Dispatch) {
-    dispatch({ type: CHANGE_USER_INFO_REQUEST });
-    let body;
-    if (password === "")
-      body = {
-        email: email,
-        name: name,
-      };
-    else {
-      body = {
-        email: email,
-        name: name,
-        password: password,
-      };
-    }
-    const token = getCookie("accessToken") ? getCookie("accessToken") : "";
+    dispatch({ type: CHANGE_USER_PASSWORD_REQUEST });
     fetch(URL, {
-      method: "PATCH",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: "Bearer " + getCookie("accessToken"),
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        query: `mutation {
+          userSetPassword(oldPassword:"${oldPassword}",newPassword:"${newPassword}") 
+        }`,
+      }),
     })
       .then(checkResponse)
       .then((res) => {
         if (res) {
           dispatch({
-            type: CHANGE_USER_INFO_SUCCESS,
-            userInfo: res.user,
+            type: CHANGE_USER_PASSWORD_SUCCESS
           });
         } else {
           dispatch({
-            type: CHANGE_USER_INFO_FAILED,
+            type: CHANGE_USER_PASSWORD_FAILED,
           });
         }
       })
       .catch((error) => {
         dispatch({
-          type: CHANGE_USER_INFO_FAILED,
+          type: CHANGE_USER_PASSWORD_FAILED,
+        });
+      });
+  };
+}
+export function changeUserName(name: string) {
+  return function (dispatch: Dispatch) {
+    dispatch({ type: CHANGE_USER_NAME_REQUEST });
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
+          userSetDisplayName(displayName:"${name}") 
+        }`,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_USER_NAME_SUCCESS,
+            payload: name,
+          });
+        } else {
+          dispatch({
+            type: CHANGE_USER_NAME_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_USER_PASSWORD_FAILED,
+        });
+      });
+  };
+}
+export function changeUserEmail(email: string) {
+  return function (dispatch: Dispatch) {
+    dispatch({ type: CHANGE_USER_PASSWORD_REQUEST });
+    fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + getCookie("accessToken"),
+      },
+      body: JSON.stringify({
+        query: `mutation {
+          userSetEmail(email:"${email}") 
+        }`,
+      }),
+    })
+      .then(checkResponse)
+      .then((res) => {
+        if (res) {
+          dispatch({
+            type: CHANGE_USER_EMAIL_SUCCESS,
+            payload: email,
+          });
+        } else {
+          dispatch({
+            type: CHANGE_USER_EMAIL_FAILED,
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({
+          type: CHANGE_USER_EMAIL_FAILED,
         });
       });
   };

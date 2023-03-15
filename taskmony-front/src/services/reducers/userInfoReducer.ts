@@ -2,13 +2,13 @@ import {
   USER_INFO_REQUEST,
   USER_INFO_SUCCESS,
   USER_INFO_FAILED,
-  CHANGE_USER_INFO_REQUEST,
-  CHANGE_USER_INFO_SUCCESS,
-  CHANGE_USER_INFO_FAILED,
   USERS_SUCCESS,
   USERS_REQUEST,
   USERS_FAILED,
   USERS_RESET,
+  CHANGE_USER_PASSWORD_SUCCESS,
+  CHANGE_USER_NAME_SUCCESS,
+  CHANGE_USER_EMAIL_SUCCESS,
 } from "../actions/userInfo";
 
 type TUser = {
@@ -42,12 +42,14 @@ export const userInfoReducer = (
           | typeof USERS_REQUEST
           | typeof USERS_FAILED
           | typeof USERS_RESET
-          | typeof CHANGE_USER_INFO_REQUEST
-          | typeof CHANGE_USER_INFO_FAILED;
       }
     | {
-        type: typeof USER_INFO_SUCCESS | typeof CHANGE_USER_INFO_SUCCESS;
+        type: typeof USER_INFO_SUCCESS
         userInfo: any;
+      }
+      | {
+        type: typeof CHANGE_USER_EMAIL_SUCCESS | typeof CHANGE_USER_NAME_SUCCESS
+        payload: any;
       }
     | {
         type: typeof USERS_SUCCESS;
@@ -78,28 +80,20 @@ export const userInfoReducer = (
         user_info_error: true,
       };
     }
-    case CHANGE_USER_INFO_REQUEST: {
+    case CHANGE_USER_NAME_SUCCESS: {
       return {
         ...state,
-        change_user_info_loading: true,
-        change_user_info_error: false,
-        change_user_info_success: false,
+        user: {...state.user,displayName: action.payload
+
+        }
       };
     }
-    case CHANGE_USER_INFO_SUCCESS: {
+    case CHANGE_USER_EMAIL_SUCCESS: {
       return {
         ...state,
-        change_user_info_loading: false,
-        change_user_info_success: true,
-        email: action.userInfo.email,
-        name: action.userInfo.name,
-      };
-    }
-    case CHANGE_USER_INFO_FAILED: {
-      return {
-        ...state,
-        change_user_info_loading: false,
-        change_user_info_error: true,
+        user: {...state.user,email: action.payload
+
+        }
       };
     }
     case USERS_REQUEST: {

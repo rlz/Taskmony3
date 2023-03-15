@@ -68,7 +68,7 @@ export const EditedTask = ({
   const task = useAppSelector((store) => store.editedTask);
   const dispatch = useAppDispatch();
   return (
-    <div className="w-full bg-white rounded-lg drop-shadow-sm  pb-1">
+    <div className="editedTask w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           <img
@@ -100,7 +100,7 @@ export const EditedTask = ({
             onClick={() => {
               deleteTask(task);
             }}
-            className={"w-4 mt-1 mr-1 cursor-pointer"}
+            className={"deleteBtn w-4 mt-1 mr-1 cursor-pointer"}
           />
         ) : (
           <img
@@ -127,7 +127,7 @@ export const EditedTask = ({
           <img
             src={arrowUp}
             onClick={() => save(task)}
-            className={"w-4 cursor-pointer mr-3 m-2"}
+            className={"closeBtn w-4 cursor-pointer mr-3 m-2"}
           ></img>
         )}
       </div>

@@ -30,7 +30,7 @@ function Direction() {
           <Tasks directionId={directionId} directionName={direction?.name} />
         );
       case "ideas":
-        return <Ideas directionId={directionId} />;
+        return <Ideas directionId={directionId} directionName={direction?.name}/>;
       case "archive":
         return <Archive directionId={directionId} />;
     }

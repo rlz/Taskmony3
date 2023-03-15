@@ -105,7 +105,7 @@ export const TaskUnedited = ({
   changeFollowed,
 }: TaskProps) => {
   return (
-    <div className="w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
+    <div className="uneditedTask w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           <img

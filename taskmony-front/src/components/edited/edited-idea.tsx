@@ -69,7 +69,7 @@ export const EditedIdea = ({
   const idea = useAppSelector((store) => store.editedIdea);
   const dispatch = useAppDispatch();
   return (
-    <div className="w-full bg-white rounded-lg drop-shadow-sm  pb-1">
+    <div className="editedIdea w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           <input
@@ -94,7 +94,7 @@ export const EditedIdea = ({
             onClick={() => {
               deleteIdea(idea);
             }}
-            className={"w-4 mt-1 mr-1 cursor-pointer"}
+            className={"deleteBtn w-4 mt-1 mr-1 cursor-pointer"}
           />
         ) : (
           <img
@@ -121,7 +121,7 @@ export const EditedIdea = ({
           <img
             src={arrowUp}
             onClick={() => save(idea)}
-            className={"w-4 cursor-pointer mr-3 m-2"}
+            className={"closeBtn w-4 cursor-pointer mr-3 m-2"}
           ></img>
         )}
       </div>

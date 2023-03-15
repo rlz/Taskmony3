@@ -11,7 +11,7 @@ public sealed class IdeaRepository : BaseRepository<Idea>, IIdeaRepository
     {
     }
 
-    public async Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[] directionId, int? offset,
+    public async Task<IEnumerable<Idea>> GetAsync(Guid[]? id, Guid?[] directionId, int? offset,
         int? limit, Guid userId)
     {
         var query = Context.Ideas.AsQueryable();

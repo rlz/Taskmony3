@@ -33,7 +33,7 @@ public class IdeaService : IIdeaService
         //If directionId is [null] return ideas created by the current user with direction id = null
         if (directionId?.Length == 1 && directionId.Contains(null))
         {
-            return await _ideaRepository.GetIdeasAsync(id, directionId, offset, limit, currentUserId);
+            return await _ideaRepository.GetAsync(id, directionId, offset, limit, currentUserId);
         }
 
         var userDirectionIds = await _directionReposiotry.GetUserDirectionIdsAsync(currentUserId);
@@ -47,7 +47,7 @@ public class IdeaService : IIdeaService
             ? authorizedDirectionIds.ToArray()
             : directionId.Intersect(authorizedDirectionIds).ToArray();
 
-        return await _ideaRepository.GetIdeasAsync(id, directionId, offsetValue, limitValue, currentUserId);
+        return await _ideaRepository.GetAsync(id, directionId, offsetValue, limitValue, currentUserId);
     }
 
     public async Task<IEnumerable<Idea>> GetIdeaByIdsAsync(Guid[] ids)

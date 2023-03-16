@@ -3,7 +3,7 @@ import { checkResponse } from "../../utils/APIUtils";
 import { getCookie } from "../../utils/cookies";
 import { BASE_URL } from "../../utils/data";
 import { notificationsAllQuery } from "../../utils/queries";
-import { TNotification } from "../../utils/types";
+import { TDirectionNotification, TIdeaNotification, TNotification, TTaskNotification } from "../../utils/types";
 export const GET_NOTIFICATIONS_REQUEST = "GET_NOTIFICATIONS_REQUEST";
 export const GET_NOTIFICATIONS_SUCCESS = "GET_NOTIFICATIONS_SUCCESS";
 export const GET_NOTIFICATIONS_FAILED = "GET_NOTIFICATIONS_FAILED";
@@ -60,24 +60,24 @@ export function getNotifications() {
       .then((res) => {
         if (res) {
           const tasksNotifications = res.data.tasks
-            .filter((n) => n.notifications.length)
-            .map((t) => {
-              return t.notifications.map((n) => {
-                return { type: "task", direction:t.direction, name: t.description, id: t.id, ...n };
+            .filter((n : TTaskNotification) => n.notifications.length)
+            .map((t : TTaskNotification) => {
+              return t.notifications.map((n: TNotification) => {
+                return { type: "task", direction:t.direction, name: t.description, ...n };
               });
             }).flat();
             const ideasNotifications = res.data.ideas
-            .filter((n) => n.notifications.length)
-            .map((t) => {
-              return t.notifications.map((n) => {
-                return { type: "idea",direction:t.direction, name: t.description, id: t.id, ...n };
+            .filter((notifs : TIdeaNotification) => notifs.notifications.length)
+            .map((t : TIdeaNotification) => {
+              return t.notifications.map((n: TNotification) => {
+                return { type: "idea",direction:t.direction, name: t.description, ...n };
               });
             }).flat();
             const directionsNotifications = res.data.directions
-            .filter((n) => n.notifications.length)
-            .map((t) => {
-              return t.notifications.map((n) => {
-                return { type: "direction", direction:{name:t.name,id:t.id},name: t.name, id: t.id, ...n };
+            .filter((n : TDirectionNotification) => n.notifications.length)
+            .map((t: TDirectionNotification) => {
+              return t.notifications.map((n: TNotification) => {
+                return { type: "direction", direction:{name:t.name,id:t.id},name: t.name, ...n };
               });
             }).flat();
           const notifications = [...tasksNotifications,...directionsNotifications,...ideasNotifications].sort((a,b) => (a.modifiedAt < b.modifiedAt) ? 1 : ((b.modifiedAt < a.modifiedAt) ? -1 : 0))

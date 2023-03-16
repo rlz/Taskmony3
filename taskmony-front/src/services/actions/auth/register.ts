@@ -24,13 +24,14 @@ export function register(email: string, password: string, name: string) {
         login: name,
       }),
     })
+      .then((res) => res.json())
       .then((res) => {
         console.log(res);
         if (res) {
-          setCookie("accessToken", res.accessToken,{
+          setCookie("accessToken", res.accessToken, {
             expires: 30 * 60,
           });
-          setCookie("refreshToken", res.refreshToken,{
+          setCookie("refreshToken", res.refreshToken, {
             expires: 30 * 24 * 60 * 60,
           });
           dispatch({

@@ -195,7 +195,7 @@ export function addRepeatedTasks(task: TTask, direction: string) {
           : ""
       }
       ${
-        task.weekDays ? `, weekDays:[${task.weekDays.join(",").split(-1)}]` : ""
+        task.weekDays ? `, weekDays:[${task.weekDays.join(",")}]` : ""
       }
       
       )
@@ -206,7 +206,7 @@ export function addRepeatedTasks(task: TTask, direction: string) {
       .then(checkResponse)
       .then((res) => {
         if (res) {
-          dispatch(getTasks());
+          dispatch(getTasks() as any);
           // dispatch({
           //   type: ADD_TASK_SUCCESS,
           //   task: res.data.taskAdd,

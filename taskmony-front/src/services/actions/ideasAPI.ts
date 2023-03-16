@@ -324,7 +324,7 @@ export function changeIdeaGeneration(ideaId: string, generation: string) {
           dispatch({
             type: CHANGE_IDEA_GENERATION_SUCCESS,
             ideaId: ideaId,
-            payload: category,
+            payload: generation,
           });
         } else {
           dispatch({

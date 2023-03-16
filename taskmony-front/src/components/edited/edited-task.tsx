@@ -239,11 +239,11 @@ const Details = ({ recurrent, fromDirection }) => {
           hasBorder
         />
       )}
-      {task.direction && (
+      {members && (
         <ItemPicker
           title={"assignee"}
           options={members.map((m) => m.displayName)}
-          option={task.assignee?.displayName}
+          option={task.assignee?.displayName ? task.assignee?.displayName : "undefined"}
           onChange={(index) => {
             console.log(index);
             const payload = members[index];

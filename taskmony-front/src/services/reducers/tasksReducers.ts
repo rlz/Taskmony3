@@ -180,9 +180,9 @@ export const taskInitialState: TTask = {
   },
   subscribers: [],
   details: "",
-  startAt: "",
+  startAt: nowDate(),
   direction: { name: "", id: "" },
-  repeatMode: "",
+  repeatMode: null,
   createdBy: {
     id: "",
     displayName: "",

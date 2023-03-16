@@ -10,7 +10,7 @@ export const SEND_COMMENT_FAILED = "SEND_COMMENT_FAILED";
 
 const URL = BASE_URL + "/graphql";
 
-export function sendTaskComment(taskId, text) {
+export function sendTaskComment(taskId: string, text: string) {
   //   console.log(`sending ${taskId}${text}`);
   return function (dispatch: Dispatch) {
     console.log("sending_comment");
@@ -56,7 +56,7 @@ export function sendTaskComment(taskId, text) {
   };
 }
 
-export function sendIdeaComment(ideaId, text) {
+export function sendIdeaComment(ideaId: string, text: string) {
   //   console.log(`sending ${taskId}${text}`);
   return function (dispatch: Dispatch) {
     console.log("sending_comment");

@@ -13,7 +13,7 @@ export type TTask = {
   details?: string;
   startAt: string;
   direction: { name: string; id: string };
-  repeatMode: string;
+  repeatMode: string | null;
   createdBy: {
     id: string;
     displayName: string;
@@ -83,3 +83,30 @@ export type TNotification = {
   newValue: string;
   oldValue: string; 
 };
+
+export type TTaskNotification = {
+  id: string;
+  description: string;
+  direction: {
+      name: string;
+      id: string;
+  }
+  notifications: Array<TNotification>;
+}
+
+export type TIdeaNotification = {
+  id: string;
+  description: string;
+  direction: {
+      name: string;
+      id: string;
+  }
+  notifications: Array<TNotification>;
+}
+
+export type TDirectionNotification = {
+  id: string;
+  name: string;
+  notifications: Array<TNotification>;
+}
+

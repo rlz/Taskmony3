@@ -164,7 +164,7 @@ export function deleteDirection(directionId: string) {
       });
   };
 }
-export function addUser(directionId: string, user: {id: string, dispayName: string}) {
+export function addUser(directionId: string, user: {id: string, displayName: string}) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("adding user");
@@ -203,7 +203,7 @@ export function addUser(directionId: string, user: {id: string, dispayName: stri
       });
   };
 }
-export function removeUser(directionId: string, user: {id: string, dispayName: string}) {
+export function removeUser(directionId: string, user: {id: string, displayName: string}) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("removing user");

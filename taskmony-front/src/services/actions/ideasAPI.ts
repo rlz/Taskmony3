@@ -117,7 +117,7 @@ export function addIdea(idea : TIdea, direction: string | null) {
       ${
         direction
           ? `,directionId:"${direction}"`
-          : idea.direction
+          : idea.direction?.id
           ? `,directionId:"${idea.direction?.id}"`
           : ""
       }

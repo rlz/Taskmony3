@@ -21,17 +21,6 @@ using Taskmony.Services.Abstract;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(
-        policy =>
-        {
-            policy.WithOrigins("*")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-        });
-});
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -135,8 +124,6 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseRouting();
-
-app.UseCors();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {

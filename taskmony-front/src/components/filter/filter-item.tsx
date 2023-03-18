@@ -8,6 +8,7 @@ type FilterProps = {
   checked?: boolean;
   radio?: boolean;
   style?: string;
+  onChange: Function;
 };
 
 export const FilterItem = ({

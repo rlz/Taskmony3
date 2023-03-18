@@ -6,7 +6,10 @@ import { useAppSelector } from "../../utils/hooks";
 import { FilterDivider } from "./filter-divider";
 import { FilterItem } from "./filter-item";
 
-export const FilterByCreator = ({ id }) => {
+type FilterByCreatorProps = {
+  id: string;
+}
+export const FilterByCreator = ({ id } : FilterByCreatorProps) => {
   const MyFiltersParam = withDefault(ArrayParam, []);
   const [createdBy, setCreatedBy] = useQueryParam("createdBy", MyFiltersParam);
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -28,7 +31,7 @@ export const FilterByCreator = ({ id }) => {
               key={u.id}
               label={u.id == myId? "me" : u.displayName}
               checked={createdBy.includes(u.id)}
-              onChange={(value, label) => {
+              onChange={(value : boolean, label : string) => {
                 if (value) {
                   setCreatedBy([...createdBy, u.id]);
                 } else {

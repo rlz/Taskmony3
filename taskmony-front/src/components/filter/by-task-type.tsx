@@ -23,22 +23,22 @@ export const FilterByTaskType = () => {
     <>
       <FilterItem
         label="show future tasks"
-        checked={future}
-        onChange={(value, label) => {
+        checked={future?future:false}
+        onChange={(value : boolean, label : string) => {
           setFuture(value)
           }}
       />
       <FilterItem
         label="show assigned by me"
-        checked={assignedByMe}
-        onChange={(value, label) => {
+        checked={assignedByMe?assignedByMe:false}
+        onChange={(value : boolean, label : string) => {
           setAssignedByMe(value)
         }}
       />
       <FilterItem
         label="show followed"
-        checked={followed}
-        onChange={(value, label) => {
+        checked={followed?followed:false}
+        onChange={(value : boolean, label : string) => {
           setFollowed(value)
           }}
       />
@@ -53,8 +53,8 @@ export const FilterByFuture = () => {
     <>
       <FilterItem
         label="show future tasks"
-        checked={future}
-        onChange={(value, label) => {
+        checked={future?future:false}
+        onChange={(value : boolean, label : string) => {
           setFuture(value)
           }}
       />
@@ -70,7 +70,7 @@ export const FilterByArchivedTaskType = () => {
       <FilterItem
         label="deleted"
         checked={archiveType == "deleted"}
-        onChange={(value, label) => {
+        onChange={(value : boolean, label : string) => {
           if (value) setArchiveType("deleted") 
           else setArchiveType("completed")
         }}
@@ -79,7 +79,7 @@ export const FilterByArchivedTaskType = () => {
       <FilterItem
         label="completed"
         checked={archiveType == "completed"}
-        onChange={(value, label) => {
+        onChange={(value : boolean, label : string) => {
           if (value) setArchiveType("completed")
           else setArchiveType("deleted")
         }}

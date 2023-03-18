@@ -4,7 +4,7 @@ import { getCookie } from "../../utils/cookies";
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
 import { tasksAllQuery } from "../../utils/queries";
-import { TTask } from "../../utils/types";
+import { TDirection, TTask } from "../../utils/types";
 export const GET_TASKS_REQUEST = "GET_TASKS_REQUEST";
 export const GET_TASKS_SUCCESS = "GET_TASKS_SUCCESS";
 export const GET_TASKS_FAILED = "GET_TASKS_FAILED";
@@ -117,7 +117,7 @@ export function getTasks() {
   };
 }
 
-export function addTask(task: TTask, direction: string) {
+export function addTask(task: TTask, direction: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_TASK_REQUEST });
     console.log("adding");
@@ -134,7 +134,7 @@ export function addTask(task: TTask, direction: string) {
       ${
         direction
           ? `,directionId:"${direction}"`
-          : task.direction
+          : task.direction?.id
           ? `,directionId:"${task.direction?.id}"`
           : ""
       }
@@ -167,7 +167,7 @@ export function addTask(task: TTask, direction: string) {
   };
 }
 
-export function addRepeatedTasks(task: TTask, direction: string) {
+export function addRepeatedTasks(task: TTask, direction: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_TASK_REQUEST });
     console.log("adding");
@@ -225,7 +225,7 @@ export function addRepeatedTasks(task: TTask, direction: string) {
   };
 }
 
-export function changeCompleteTaskDate(taskId: string, date: string) {
+export function changeCompleteTaskDate(taskId: string, date: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_COMPLETE_TASK_DATE_REQUEST });
     console.log("change complete date");
@@ -267,7 +267,7 @@ export function changeCompleteTaskDate(taskId: string, date: string) {
   };
 }
 
-export function changeTaskFollowed(taskId: string, markFollowed: string) {
+export function changeTaskFollowed(taskId: string, markFollowed: boolean) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_TASK_FOLLOWED_REQUEST });
     console.log("change followed");
@@ -381,7 +381,7 @@ export function changeTaskDetails(taskId: string, details: string) {
       });
   };
 }
-export function changeTaskDirection(taskId: string, direction: {id: string} ) {
+export function changeTaskDirection(taskId: string, direction: TDirection) {
   return function (dispatch: Dispatch) {
     console.log("change direction");
     fetch(URL, {
@@ -457,9 +457,9 @@ export function changeTaskAssignee(taskId: string, assignee: {id: string}) {
 }
 export function changeTaskRepeatMode(
   taskId: string,
-  repeatMode: string,
+  repeatMode: string | null,
   repeatEvery: string,
-  weekDays: string
+  weekDays: Array<string>
 ) {
   return function (dispatch: Dispatch) {
     console.log("change repeatMode");

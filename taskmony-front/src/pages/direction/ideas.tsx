@@ -16,7 +16,11 @@ import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { FilterByCreator } from "../../components/filter/by-creator";
 import { useSearchParams } from "react-router-dom";
 
-function Ideas({ directionId, directionName }) {
+type IdeasProps = {
+  directionId: string; directionName: string
+}
+
+function Ideas({ directionId, directionName } : IdeasProps) {
   const [newIdea, setNewIdea] = useState(false);
   let [searchParams, setSearchParams] = useSearchParams();
   const createdBy = searchParams.getAll("createdBy");
@@ -43,7 +47,10 @@ function Ideas({ directionId, directionName }) {
   }
 
   const dispatch = useAppDispatch();
-  const addANewIdea = (direction) => {
+  const direction = useAppSelector((store) => store.directions.items).filter(
+    (d) => d.id == directionId
+  )[0];
+  const addANewIdea = (direction : string) => {
     dispatch(addIdea(idea, direction));
     dispatch({ type: RESET_IDEA });
   };
@@ -88,8 +95,11 @@ function Ideas({ directionId, directionName }) {
     </div>
   );
 }
+type FilterProps = {
+  directionId: string;
+}
 
-function Filter({ directionId }) {
+function Filter({ directionId } : FilterProps) {
   return (
     <div className="w-1/5 mt-4">
       <FilterByIdeaCategory />

@@ -54,10 +54,10 @@ export const tasksInitialState = {
 export const tasksReducer = (
   state: TTasksState = tasksInitialState,
   action:
-    | { type: typeof GET_TASKS_SUCCESS; items: Array<any> }
-    | { type: typeof DELETE_TASK_SUCCESS; taskId: string; date: any }
-    | { type: typeof ADD_TASK_SUCCESS; task: any }
-    | { type: typeof CHANGE_TASKS; task: any }
+    | { type: typeof GET_TASKS_SUCCESS; items: Array<TTask> }
+    | { type: typeof DELETE_TASK_SUCCESS; taskId: string; date: string }
+    | { type: typeof ADD_TASK_SUCCESS; task: TTask }
+    | { type: typeof CHANGE_TASKS; task: TTask }
     | {
         type: typeof CHANGE_COMPLETE_TASK_DATE_SUCCESS;
         taskId: string;
@@ -172,8 +172,8 @@ export const tasksReducer = (
 export const taskInitialState: TTask = {
   id: "",
   description: "",
-  completedAt: "",
-  deletedAt: "",
+  completedAt: null,
+  deletedAt: null,
   assignee: {
     displayName: "",
     id: "",
@@ -190,17 +190,17 @@ export const taskInitialState: TTask = {
   comments: [],
   repeatUntil: "",
   weekDays: [],
-  repeatEvery: 1
+  repeatEvery: 1,
 };
 
 export const editTaskReducer = (
   state: TTask = taskInitialState,
   action:
+    | { type: typeof RESET_TASK }
     | {
         type:
           | typeof CHANGE_TASK_DESCRIPTION
           | typeof CHANGE_TASK_DETAILS
-          | typeof RESET_TASK
           | typeof CHANGE_TASK_START_DATE
           | typeof CHANGE_TASK_ASSIGNEE
           | typeof CHANGE_TASK_DIRECTION
@@ -212,7 +212,7 @@ export const editTaskReducer = (
       }
     | {
         type: typeof CHANGE_OPEN_TASK;
-        task: any;
+        task: TTask;
       }
     | {
         type: typeof SEND_COMMENT_SUCCESS;

@@ -41,13 +41,13 @@ export const Login = () => {
             label={"login"}
             type={"text"}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={setEmail}
           />
           <Input
             label={"password"}
             type={"password"}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={setPassword}
           />
 
           <NavLink to="/forgot-password">

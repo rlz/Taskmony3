@@ -1,12 +1,6 @@
-import yes from "../../images/checkbox-yes.svg";
-import no from "../../images/checkbox-no.svg";
-import follow from "../../images/followed.svg";
 import divider from "../../images/divider.svg";
-import commentsI from "../../images/comment2.svg";
-import createdByI from "../../images/by.svg";
 import arrowUp from "../../images/arrow-up.svg";
 // import recurrentI from "../images/recurrent.svg";
-import recurrentI from "../../images/arrows-rotate.svg";
 import { AddBtn } from "./btn";
 import { Comment, CommentInput } from "./comment";
 import { ItemPicker } from "./item-picker";
@@ -15,33 +9,18 @@ import closeI from "../../images/delete2.svg";
 import deleteI from "../../images/delete3.svg";
 import add from "../../images/add-light.svg";
 import { BigBtn } from "./big-btn";
-import { DatePicker } from "./date-picker";
-import { NumberPicker } from "./number-picker";
-import followBlue from "../../images/followed.svg";
-import followGray from "../../images/follow.svg";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import {
-  changeIdeaAssignee,
   changeIdeaDescription,
   changeIdeaDetails,
   changeIdeaDirection,
   changeIdeaGeneration,
-  changeIdeaRepeatMode,
-  changeIdeaRepeatUntil,
-  changeIdeaStartAt,
-  CHANGE_IDEA_ASSIGNEE,
   CHANGE_IDEA_DESCRIPTION,
   CHANGE_IDEA_DETAILS,
   CHANGE_IDEA_DIRECTION,
   CHANGE_IDEA_GENERATION,
-  CHANGE_IDEA_REPEAT_EVERY,
-  CHANGE_IDEA_REPEAT_MODE,
-  CHANGE_IDEA_REPEAT_UNTIL,
-  CHANGE_IDEA_REPEAT_WEEK_DAYS,
-  CHANGE_IDEA_START_DATE,
   RESET_IDEA,
 } from "../../services/actions/ideasAPI";
-import { WeekPicker } from "./week-picker";
 import { sendIdeaComment } from "../../services/actions/comments";
 
 type IdeaProps = {
@@ -53,9 +32,9 @@ type IdeaProps = {
   createdBy?: string;
   direction?: string;
   save: Function;
-  close: Function;
-  changeCheck: Function;
-  deleteIdea: Function;
+  close?: Function;
+  changeCheck?: Function;
+  deleteIdea?: Function;
 };
 
 export const EditedIdea = ({
@@ -90,17 +69,19 @@ export const EditedIdea = ({
         </div>
         {idea.id ? (
           <img
+          alt="delete button"
             src={deleteI}
             onClick={() => {
-              deleteIdea(idea);
+              if (deleteIdea) deleteIdea(idea);
             }}
             className={"deleteBtn w-4 mt-1 mr-1 cursor-pointer"}
           />
         ) : (
           <img
             src={closeI}
+            alt="close button"
             onClick={() => {
-              close();
+              if (close) close();
               dispatch({ type: RESET_IDEA });
             }}
             className={"w-4 p-0.5 cursor-pointer"}
@@ -108,8 +89,8 @@ export const EditedIdea = ({
         )}
       </div>
       <Description />
-      <Details recurrent={recurrent} fromDirection={direction} />
-      {idea.id && <Comments comments={idea.comments} ideaId={idea.id} />}
+      <Details fromDirection={direction} />
+      {idea.id && <Comments />}
       <div className={"w-full flex justify-end"}>
         {!idea.id ? (
           <BigBtn
@@ -119,6 +100,7 @@ export const EditedIdea = ({
           />
         ) : (
           <img
+          alt="close button"
             src={arrowUp}
             onClick={() => save(idea)}
             className={"closeBtn w-4 cursor-pointer mr-3 m-2"}
@@ -136,6 +118,7 @@ const Description = () => {
   const details = (
     <div className="flex gap-2 mr-8">
       <img
+        alt="remove details button"
         src={deleteI}
         className="cursor-pointer"
         onClick={() => dispatch({ type: CHANGE_IDEA_DETAILS, payload: null })}
@@ -147,13 +130,7 @@ const Description = () => {
           dispatch({ type: CHANGE_IDEA_DETAILS, payload: e.target.value })
         }
         onBlur={(e) => {
-          if (ideaId)
-            dispatch(
-              changeIdeaDetails(
-                ideaId,
-                e.target.value == "" ? null : e.target.value
-              )
-            );
+          if (ideaId) dispatch(changeIdeaDetails(ideaId, e.target.value));
         }}
         className="text-black font-light underline placeholder:text-black placeholder:font-light 
         placeholder:underline 
@@ -182,40 +159,44 @@ const Description = () => {
   );
 };
 
-const Details = ({ recurrent, fromDirection }) => {
+type DetailsProps = { fromDirection?: string | null };
+const Details = ({ fromDirection }: DetailsProps) => {
   const dispatch = useAppDispatch();
   const idea = useAppSelector((store) => store.editedIdea);
   const directions = useAppSelector((store) => store.directions.items).filter(
     (i) => i.deletedAt == null
   );
-  const categories =  ["hot", "later", "too good to delete"];
-  const members = directions.filter((d) => d.id == idea.direction?.id)[0]
-    ?.members;
+  const categories = ["hot", "later", "too good to delete"];
 
   return (
     <div className={"gap flex justify-start pb-2 w-full ml-1"}>
-              <ItemPicker
-          title={"category"}
-          option={idea.generation ? idea.generation.toLowerCase().replaceAll("_"," ") : "hot"}
-          options={categories}
-          onChange={(index) => {
-            console.log(index);
-            const payload = categories[index];
-            dispatch({ type: CHANGE_IDEA_GENERATION, payload: payload });
-            if (idea.id) dispatch(changeIdeaGeneration(idea.id, payload));
-          }}
-          hasBorder
-        />
+      <ItemPicker
+        title={"category"}
+        option={
+          idea.generation
+            ? idea.generation.toLowerCase().replaceAll("_", " ")
+            : "hot"
+        }
+        options={categories}
+        onChange={(index: number) => {
+          console.log(index);
+          const payload = categories[index];
+          dispatch({ type: CHANGE_IDEA_GENERATION, payload: payload });
+          if (idea.id) dispatch(changeIdeaGeneration(idea.id, payload));
+        }}
+        hasBorder
+      />
       {!fromDirection && (
         <ItemPicker
           title={"direction"}
           option={idea.direction?.name ? idea.direction?.name : "none"}
           options={["none", ...directions.map((dir) => dir.name)]}
-          onChange={(index) => {
+          onChange={(index: number) => {
             console.log(index);
-            const payload = index == 0 ? null : directions[index - 1];
+            const payload = index === 0 ? null : directions[index - 1];
             dispatch({ type: CHANGE_IDEA_DIRECTION, payload: payload });
-            if (idea.id) dispatch(changeIdeaDirection(idea.id, payload));
+            if (idea.id && payload)
+              dispatch(changeIdeaDirection(idea.id, payload));
           }}
           hasBorder
         />
@@ -278,7 +259,7 @@ export const IdeaDetails = ({
 }: IdeaDetailsProps) => {
   return (
     <div className={`flex flex-nowrap gap-1 mr-1  ${!icon ? "ml-5" : "ml-1"}`}>
-      {icon && <img src={icon}></img>}
+      {icon && <img src={icon} alt=""></img>}
       <span
         className={
           "font-semibold inline whitespace-nowrap text-xs text-blue-500 mr-1 " +
@@ -287,7 +268,7 @@ export const IdeaDetails = ({
       >
         {label}
       </span>
-      {hasBorder && <img src={divider}></img>}
+      {hasBorder && <img src={divider} alt=""></img>}
     </div>
   );
 };

@@ -1,8 +1,8 @@
 export type TTask = {
   id: string;
   description: string;
-  completedAt: string;
-  deletedAt: string;
+  completedAt: string | null;
+  deletedAt: string | null;
   assignee: {
     displayName: string;
     id: string;
@@ -27,8 +27,8 @@ export type TTask = {
 export type TIdea = {
   id: string;
     description: string;
-    deletedAt: string;
-    reviewedAt: string;
+    deletedAt: string | null;
+    reviewedAt: string | null;
     subscribers: 
     Array<{
         id: string;
@@ -66,7 +66,11 @@ export type TComment = {
   createdAt: string;
   createdBy: { displayName: string };
 }
+
 export type TNotification = {
+  type: string;
+  direction: {id: string, name: string};
+  name: string;
   actionItem: {
     __typename: string;
     id: string;
@@ -84,29 +88,8 @@ export type TNotification = {
   oldValue: string; 
 };
 
-export type TTaskNotification = {
+export type TUser = {
+  displayName: string;
   id: string;
-  description: string;
-  direction: {
-      name: string;
-      id: string;
-  }
-  notifications: Array<TNotification>;
-}
-
-export type TIdeaNotification = {
-  id: string;
-  description: string;
-  direction: {
-      name: string;
-      id: string;
-  }
-  notifications: Array<TNotification>;
-}
-
-export type TDirectionNotification = {
-  id: string;
-  name: string;
-  notifications: Array<TNotification>;
 }
 

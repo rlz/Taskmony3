@@ -1,7 +1,4 @@
-import arrowUp from "../../images/arrow-up.svg";
-import arrowDown from "../../images/arrow-down.svg";
 import divider from "../../images/divider.svg";
-import { useState } from "react";
 
 type Props = {
   title: string;
@@ -9,7 +6,9 @@ type Props = {
   max: number;
   after: string;
   hasBorder?: boolean;
-};
+  value: number;
+  onChange: Function;
+}
 export const NumberPicker = ({
   title,
   min,
@@ -39,7 +38,7 @@ export const NumberPicker = ({
       >
         {after}{" "}
       </p>
-      {hasBorder && <img src={divider}></img>}
+      {hasBorder && <img src={divider} alt=""></img>}
     </div>
   );
 };

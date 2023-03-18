@@ -6,6 +6,8 @@ import { useState } from "react";
 type Props = {
   hasBorder?: boolean;
   width?: string;
+  value: Array<string>;
+  onChange: Function;
 };
 export const WeekPicker = ({ hasBorder, width, value, onChange }: Props) => {
   const [days, setDays] = useState([

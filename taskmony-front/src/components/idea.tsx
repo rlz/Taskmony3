@@ -1,42 +1,29 @@
-import yes from "../images/checkbox-yes.svg";
-import no from "../images/checkbox-no.svg";
 import followBlue from "../images/followed.svg";
 import followGray from "../images/follow.svg";
 import divider from "../images/divider.svg";
 import commentsI from "../images/comment2.svg";
 import createdByI from "../images/by.svg";
-// import recurrentI from "../images/recurrent.svg";
-import recurrentI from "../images/arrows-rotate.svg";
 import { useState } from "react";
 import { EditedIdea } from "./edited/edited-idea";
 import { useAppDispatch } from "../utils/hooks";
 import {
-  changeCompleteIdeaDate,
   changeIdeaFollowed,
   CHANGE_OPEN_IDEA,
   CHANGE_IDEAS,
   deleteIdea,
-  openIdea,
   RESET_IDEA,
   reviewIdea,
 } from "../services/actions/ideasAPI";
 import { getCookie } from "../utils/cookies";
-import { nowDate } from "../utils/APIUtils";
-import postponeBlue from "../images/circle-down-blue.svg";
 import postponeGray from "../images/circle-down-gray.svg";
+import postponeBlue from "../images/circle-down-blue.svg";
+import { TIdea } from "../utils/types";
 
 type IdeaProps = {
-  label: string;
-  checked?: boolean;
-  followed?: boolean;
-  comments?: number;
-  recurrent?: string;
-  createdBy?: string;
-  direction?: string;
-  last: boolean;
-};
+  idea: TIdea, direction: string, last: boolean
+}
 
-export const Idea = ({ idea, direction, last }) => {
+export const Idea = ({ idea, direction, last } : IdeaProps) => {
   const myId = getCookie("id");
   const dispatch = useAppDispatch();
   const [edited, setEdited] = useState(false);
@@ -46,13 +33,13 @@ export const Idea = ({ idea, direction, last }) => {
     setEdited(true);
     dispatch({ type: CHANGE_OPEN_IDEA, idea: idea });
   };
-  const save = (idea) => {
+  const save = (idea : TIdea) => {
     if (!edited) return;
     dispatch({ type: CHANGE_IDEAS, idea: idea });
     dispatch({ type: RESET_IDEA });
     setEdited(false);
   };
-  const deleteThisIdea = (idea) => {
+  const deleteThisIdea = (idea : TIdea) => {
     console.log(idea);
     dispatch(deleteIdea(idea.id));
     dispatch({ type: RESET_IDEA });
@@ -63,7 +50,7 @@ export const Idea = ({ idea, direction, last }) => {
     if (idea.subscribers.some((s) => s.id == myId)) return true;
     return false;
   };
-  const changeFollowed = (markFollowed) => {
+  const changeFollowed = (markFollowed : boolean) => {
     console.log("following", markFollowed);
     dispatch(changeIdeaFollowed(idea.id, markFollowed));
   };
@@ -83,7 +70,6 @@ export const Idea = ({ idea, direction, last }) => {
         <IdeaUnedited
           label={idea.description}
           last={last}
-          checked={!!idea.completedAt}
           changeFollowed={changeFollowed}
           review={review}
           reviewedAt={idea.reviewedAt}
@@ -97,6 +83,21 @@ export const Idea = ({ idea, direction, last }) => {
   );
 };
 
+type IdeaUneditedProps = {
+  label: string;
+  checked?: boolean;
+  followed?: boolean;
+  comments?: number;
+  recurrent?: string;
+  createdBy?: string;
+  direction?: string | null;
+  last: boolean;
+  generation: string;
+  changeFollowed: Function;
+  review: Function;
+  reviewedAt: string
+};
+
 export const IdeaUnedited = ({
   label,
   checked,
@@ -108,8 +109,8 @@ export const IdeaUnedited = ({
   direction,
   changeFollowed,
   review,
-  last
-}: IdeaProps) => {
+  last,
+}: IdeaUneditedProps) => {
   return (
     <div className="uneditedIdea w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
@@ -117,28 +118,30 @@ export const IdeaUnedited = ({
           <span className={"font-semibold text-sm"}>{label}</span>
         </div>
         <div className="relative z-30 flex gap-2">
-        {typeof followed !== "undefined" && (
+          {typeof followed !== "undefined" && (
+            <img
+              className="w-4"
+              src={followed ? followBlue : followGray}
+              onClick={(e) => {
+                e.stopPropagation();
+                changeFollowed(!followed);
+              }}
+            ></img>
+          )}
+
           <img
+            src={last ? postponeGray : postponeBlue}
             className="w-4"
-            src={followed ? followBlue : followGray}
             onClick={(e) => {
               e.stopPropagation();
-              changeFollowed(!followed);
+              if (last) return;
+              review();
             }}
           ></img>
-        )}
-        
-        <img src={last ? postponeGray : postponeBlue} className="w-4"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if(last) return;
-                      review();
-                    }}
-                    ></img>
         </div>
       </div>
       <div className={"gap flex justify-start pb-2 w-full ml-1"}>
-      {/* <IdeaDetails icon={createdByI} label={`${reviewedAt}`} hasBorder /> */}
+        {/* <IdeaDetails icon={createdByI} label={`${reviewedAt}`} hasBorder /> */}
         {createdBy && (
           <IdeaDetails icon={createdByI} label={`by ${createdBy}`} hasBorder />
         )}
@@ -149,9 +152,19 @@ export const IdeaUnedited = ({
             hasBorder
           />
         }
-        {direction && <IdeaDetails label={direction} textColor="text-yellow-500" hasBorder/>}
-        {<IdeaDetails label={"  "+generation.toLowerCase().replaceAll("_"," ")} textColor="text-yellow-500" />}
-
+        {direction && (
+          <IdeaDetails
+            label={direction}
+            textColor="text-yellow-500"
+            hasBorder
+          />
+        )}
+        {
+          <IdeaDetails
+            label={"  " + generation.toLowerCase().replaceAll("_", " ")}
+            textColor="text-yellow-500"
+          />
+        }
       </div>
     </div>
   );

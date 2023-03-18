@@ -4,15 +4,22 @@ import {
   GET_NOTIFICATIONS_REQUEST,
   GET_NOTIFICATIONS_SUCCESS,
   GET_NOTIFICATIONS_FAILED,
-  RESET_COUNT
+  RESET_COUNT,
 } from "../actions/notifications";
 
-export const initialState = {
+type TNotificationsState = {
+  loading: boolean;
+  error: boolean;
+  success: boolean;
+  notifications: Array<TNotification>;
+  newCount: number;
+};
+
+export const initialState: TNotificationsState = {
   loading: false,
   error: false,
   success: false,
   notifications: [],
-  readTime: null,
   newCount: 0,
 };
 export const notificationsReducer = (
@@ -22,7 +29,7 @@ export const notificationsReducer = (
         type:
           | typeof GET_NOTIFICATIONS_REQUEST
           | typeof GET_NOTIFICATIONS_FAILED
-          | typeof RESET_COUNT
+          | typeof RESET_COUNT;
       }
     | {
         type: typeof GET_NOTIFICATIONS_SUCCESS;
@@ -41,15 +48,15 @@ export const notificationsReducer = (
     case GET_NOTIFICATIONS_SUCCESS: {
       let lastNotif = getCookie("lastNotification");
       let lastOldIndex = 0;
-      action.notifications.map((notif,index)=>{
-        if(notif.id == lastNotif) lastOldIndex = index;
-      })
+      action.notifications.map((notif, index) => {
+        if (notif.id == lastNotif) lastOldIndex = index;
+      });
       return {
         ...state,
         loading: false,
         success: true,
         notifications: action.notifications,
-        newCount: lastOldIndex
+        newCount: lastOldIndex,
       };
     }
 
@@ -64,7 +71,7 @@ export const notificationsReducer = (
       return {
         ...state,
         newCount: 0,
-      }; 
+      };
     }
     default: {
       return state;

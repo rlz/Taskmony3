@@ -45,7 +45,7 @@ export const ideasInitialState = {
 export const ideasReducer = (
   state: TIdeasState = ideasInitialState,
   action:
-     { type: typeof GET_IDEAS_SUCCESS; items: Array<TIdea> }
+    | { type: typeof GET_IDEAS_SUCCESS; items: Array<TIdea> }
     | { type: typeof DELETE_IDEA_SUCCESS; ideaId: string; date: string }
     | { type: typeof ADD_IDEA_SUCCESS; idea: TIdea }
     | { type: typeof CHANGE_IDEAS; idea: TIdea }
@@ -70,7 +70,7 @@ export const ideasReducer = (
           | typeof GET_IDEAS_REQUEST
           | typeof GET_IDEAS_FAILED
           | typeof ADD_IDEA_REQUEST
-          | typeof ADD_IDEA_FAILED
+          | typeof ADD_IDEA_FAILED;
       }
 ) => {
   switch (action.type) {
@@ -178,30 +178,34 @@ export const ideaInitialState: TIdea = {
   details: undefined,
   generation: "HOT",
   id: "",
-  deletedAt:"",
-  reviewedAt:"", 
-  subscribers: [], 
-  direction: {name:"",id:""},
-  createdBy: {displayName:"",id:""},
+  deletedAt: "",
+  reviewedAt: "",
+  subscribers: [],
+  direction: { name: "", id: "" },
+  createdBy: { displayName: "", id: "" },
   comments: [],
 };
 
 export const editIdeaReducer = (
-  state: TIdea = ideaInitialState,
+  state = ideaInitialState,
   action:
+    | { type: typeof RESET_IDEA }
     | {
         type:
           | typeof CHANGE_IDEA_DESCRIPTION
           | typeof CHANGE_IDEA_DETAILS
           | typeof RESET_IDEA
-          | typeof CHANGE_IDEA_DIRECTION
           | typeof CHANGE_IDEA_GENERATION
-          | typeof CHANGE_IDEA_REVIEWED_DATE
+          | typeof CHANGE_IDEA_REVIEWED_DATE;
+        payload: string;
+      }
+    | {
+        type: typeof CHANGE_IDEA_DIRECTION;
         payload: any;
       }
     | {
         type: typeof CHANGE_OPEN_IDEA;
-        idea: any;
+        idea: TIdea;
       }
     | {
         type: typeof SEND_COMMENT_SUCCESS;

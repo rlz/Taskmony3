@@ -45,7 +45,7 @@ export const AddDirectionModal = ({ close }: ModalPropsT) => {
           <Input
             label={"direction name"}
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={setName}
           />
           <AddBtn label={"add a new direction"} onClick={addNewDirection} />
         </div>
@@ -56,15 +56,17 @@ export const AddDirectionModal = ({ close }: ModalPropsT) => {
 
 type InputPropsT = {
   label: string;
+  value: string;
+  onChange: Function;
 };
 
-const Input = ({ label, value, onChange }) => {
+const Input = ({ label, value, onChange }: InputPropsT) => {
   return (
     <>
       <input
         type="text"
         placeholder={label}
-        onChange={(e) => onChange(e)}
+        onChange={(e) => onChange(e.target.value)}
         value={value}
         className="border w-full border-gray-300 rounded-lg pl-2 pr-2 p-2 mt-2"
       />

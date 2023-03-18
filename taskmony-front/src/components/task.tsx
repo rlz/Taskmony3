@@ -21,18 +21,14 @@ import {
 } from "../services/actions/tasksAPI";
 import { getCookie } from "../utils/cookies";
 import { nowDate } from "../utils/APIUtils";
+import { TTask } from "../utils/types";
 
 type TaskProps = {
-  label: string;
-  checked?: boolean;
-  followed?: boolean;
-  comments?: number;
-  recurrent?: string;
-  createdBy?: string;
-  direction?: string;
+ task: TTask;
+ direction?: string;
 };
 
-export const Task = ({ task, direction }) => {
+export const Task = ({ task, direction} : TaskProps) => {
   const myId = getCookie("id");
   const dispatch = useAppDispatch();
   const [edited, setEdited] = useState(false);
@@ -42,13 +38,13 @@ export const Task = ({ task, direction }) => {
     setEdited(true);
     dispatch({ type: CHANGE_OPEN_TASK, task: task });
   };
-  const save = (task) => {
+  const save = (task : TTask) => {
     if (!edited) return;
     dispatch({ type: CHANGE_TASKS, task: task });
     dispatch({ type: RESET_TASK });
     setEdited(false);
   };
-  const deleteThisTask = (task) => {
+  const deleteThisTask = (task : TTask) => {
     console.log(task);
     dispatch(deleteTask(task.id));
     dispatch({ type: RESET_TASK });
@@ -59,12 +55,12 @@ export const Task = ({ task, direction }) => {
     if (task.subscribers.some((s) => s.id == myId)) return true;
     return false;
   };
-  const changeCheck = (markComplete) => {
+  const changeCheck = (markComplete : boolean) => {
     console.log("marking", markComplete);
     if (markComplete) dispatch(changeCompleteTaskDate(task.id, nowDate()));
     else dispatch(changeCompleteTaskDate(task.id, null));
   };
-  const changeFollowed = (markFollowed) => {
+  const changeFollowed = (markFollowed  : boolean) => {
     console.log("following", markFollowed);
     dispatch(changeTaskFollowed(task.id, markFollowed));
   };
@@ -85,12 +81,24 @@ export const Task = ({ task, direction }) => {
           changeCheck={changeCheck}
           changeFollowed={changeFollowed}
           followed={direction || isFollowed() ? isFollowed() : undefined}
-          direction={direction ? null : task.direction?.name}
+          direction={direction ? undefined : task.direction?.name}
           comments={task?.comments?.length}
         />
       )}
     </div>
   );
+};
+
+type TaskUneditedProps = {
+  label: string;
+  checked?: boolean;
+  followed?: boolean;
+  comments?: number;
+  recurrent?: string;
+  createdBy?: string;
+  direction?: string;
+  changeCheck: Function;
+  changeFollowed: Function;
 };
 
 export const TaskUnedited = ({
@@ -103,7 +111,7 @@ export const TaskUnedited = ({
   direction,
   changeCheck,
   changeFollowed,
-}: TaskProps) => {
+}: TaskUneditedProps) => {
   return (
     <div className="uneditedTask w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>

@@ -20,7 +20,13 @@ export const Comment = ({ text, author, time }: CommentProps) => {
   );
 };
 
-export const CommentInput = ({ commentValue, changeComment, send }) => {
+type CommentInputProps = {
+  commentValue: string;
+  changeComment: Function;
+  send: Function;
+};
+
+export const CommentInput = ({ commentValue, changeComment, send } : CommentInputProps) => {
   return (
     <div className={`bg-slate-100 m-2 p-2 rounded-lg text-gray-800`}>
       <textarea

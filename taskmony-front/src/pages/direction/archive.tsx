@@ -9,7 +9,11 @@ import { FilterItem } from "../../components/filter/filter-item";
 import { Idea } from "../../components/idea";
 import { useAppSelector } from "../../utils/hooks";
 
-export const Archive = ({ directionId }) => {
+type ArchiveProps = {
+  directionId: string;
+}
+
+export const Archive = ({ directionId } : ArchiveProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   let [searchParams, setSearchParams] = useSearchParams();
@@ -50,9 +54,13 @@ export const Archive = ({ directionId }) => {
   );
 };
 
-function Filter({ archiveType, directionId }) {
+type FilterProps = {
+  archiveType: string; directionId: string;
+}
+  
+function Filter({ archiveType, directionId } : FilterProps) {
   const navigate = useNavigate();
-  const changeType = (type) => {
+  const changeType = (type : string) => {
     navigate(`/directions/${directionId}/archive/${type}`);
   };
   return (

@@ -176,14 +176,14 @@ export function changeUserName(name: string) {
       })
       .catch((error) => {
         dispatch({
-          type: CHANGE_USER_PASSWORD_FAILED,
+          type: CHANGE_USER_NAME_FAILED,
         });
       });
   };
 }
 export function changeUserEmail(email: string) {
   return function (dispatch: Dispatch) {
-    dispatch({ type: CHANGE_USER_PASSWORD_REQUEST });
+    dispatch({ type: CHANGE_USER_EMAIL_REQUEST });
     fetch(URL, {
       method: "POST",
       headers: {

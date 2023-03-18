@@ -6,7 +6,6 @@ import { Input } from "./input";
 
 import React, { FormEvent, useEffect, useState } from "react";
 import { register } from "../../services/actions/auth/register";
-import ClipLoader from "react-spinners/ClipLoader";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 
 export const Register = () => {
@@ -45,19 +44,19 @@ export const Register = () => {
             label={"name"}
             type={"text"}
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={setName}
           />
           <Input
             label={"email"}
             type={"email"}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={setEmail}
           />
           <Input
             label={"password"}
             type={"password"}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={setPassword}
           />
           <div className="mt-10">
             <Btn label={"sign up"} onClick={registerUser} />

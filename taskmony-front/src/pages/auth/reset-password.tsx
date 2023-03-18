@@ -6,7 +6,6 @@ import { TaskmonyTitle } from "../../components/taskmony-title";
 import React, { useState, useEffect, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { changePassword } from "../../services/actions/auth/resetPassword";
-import ClipLoader from "react-spinners/ClipLoader";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 
 export const ResetPassword = () => {
@@ -32,7 +31,7 @@ export const ResetPassword = () => {
     if (!success) return;
     console.log("reseting was successful");
     //go to changing password page
-    history.push("/login");
+    navigate("/login");
   }, [success]);
 
   return (
@@ -45,13 +44,13 @@ export const ResetPassword = () => {
             label={"new password"}
             type={"password"}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={setPassword}
           />
           <Input
             label={"code from email"}
             type={"text"}
             value={code}
-            onChange={(e) => setCode(e.target.value)}
+            onChange={setCode}
           />
           <p className="mt-2">
             remembered your password?{" "}

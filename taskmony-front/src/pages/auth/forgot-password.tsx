@@ -5,7 +5,6 @@ import { Btn } from "./btn";
 import { Input } from "./input";
 import React, { useState, useEffect, FormEvent } from "react";
 import { resetPassword } from "../../services/actions/auth/resetPassword";
-import ClipLoader from "react-spinners/ClipLoader";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 
 export const ForgotPassword = () => {
@@ -41,7 +40,7 @@ export const ForgotPassword = () => {
             label={"email"}
             type={"email"}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={setEmail}
           />
           <p className="mt-2">
             remembered your password?{" "}

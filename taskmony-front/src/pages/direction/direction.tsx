@@ -41,13 +41,16 @@ function Direction() {
   return (
     <div className="p-3 w-full">
       <h1 className="font-bold text-3xl">{direction?.name}</h1>
-      <Menu directionId={directionId} archiveType={archiveType} />
+      <Menu directionId={directionId} />
       {renderSwitch(type)}
     </div>
   );
 }
-
-const Menu = ({ directionId, archiveType }) => {
+type MenuProps = {
+  directionId: string
+}
+  
+const Menu = ({ directionId } : MenuProps) => {
   return (
     <div className="flex gap-6 mt-4">
       <MenuItem link={`/directions/${directionId}/tasks`} label={"Tasks"} />
@@ -75,8 +78,13 @@ const MenuItem = ({ link, label }: MenuItemT) => {
     </NavLink>
   );
 };
+type BigMenuItemT = {
+  link: string;
+  label: string;
+  items : Array<MenuItemT>;
+};
 
-const BigMenuItem = ({ link, label, items }) => {
+const BigMenuItem = ({ link, label, items } : BigMenuItemT) => {
   const activeStyle = "underline underline-offset-8 text-blue-500";
   const unactiveStyle = "text-gray-300";
   return (

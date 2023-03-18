@@ -2,7 +2,7 @@ import { NotificationItem } from "./notification";
 import deleteI from "../../images/delete.svg";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { getCookie, setCookie } from "../../utils/cookies";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RESET_COUNT } from "../../services/actions/notifications";
 
 type NotificationsModalPropsT = {
@@ -90,7 +90,7 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
         direction={notif.direction}
         createdBy={notif.modifiedBy.displayName}
         time={date.toLocaleString()}
-        details={details}
+        details={details?details:undefined}
         type={type}
       />
     );

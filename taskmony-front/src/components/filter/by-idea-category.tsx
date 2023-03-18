@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BooleanParam, StringParam, useQueryParam } from "use-query-params";
 import { getCookie } from "../../utils/cookies";
 import { FilterDivider } from "./filter-divider";
@@ -11,8 +11,8 @@ export const FilterByFollowed = () => {
   return (
       <FilterItem
         label="show followed"
-        checked={followed}
-        onChange={(value, label) => {
+        checked={followed? followed : false}
+        onChange={(value : boolean, label : string) => {
           setFollowed(value)
           }}
       />
@@ -36,19 +36,19 @@ export const FilterByIdeaCategory = () => {
             label="hot"
             checked={category == "HOT"}
             radio
-            onChange={(value, label) => setCategory("HOT")}
+            onChange={(value : boolean, label : string) => setCategory("HOT")}
           />
           <FilterItem
             label="later"
             checked={category == "LATER"}
             radio
-            onChange={(value, label) => setCategory("LATER")}
+            onChange={(value : boolean, label : string) => setCategory("LATER")}
           />
           <FilterItem
             label="too good to delete"
             checked={category == "TOO_GOOD_TO_DELETE"}
             radio
-            onChange={(value, label) => setCategory("TOO_GOOD_TO_DELETE")}
+            onChange={(value : boolean, label : string) => setCategory("TOO_GOOD_TO_DELETE")}
           />
         </>
       )}

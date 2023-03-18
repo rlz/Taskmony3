@@ -21,7 +21,11 @@ import {
 } from "../../components/filter/by-task-type";
 import { useSearchParams } from "react-router-dom";
 
-function Tasks({ directionId, directionName }) {
+type TasksProps = {
+  directionId: string; directionName: string
+}
+  
+function Tasks({ directionId, directionName } : TasksProps) {
   let [searchParams, setSearchParams] = useSearchParams();
   const future = searchParams.get("future");
   const [newTask, setNewTask] = useState(false);
@@ -51,7 +55,7 @@ function Tasks({ directionId, directionName }) {
     console.log(tasksToShow);
   }, [tasksToShow]);
   const dispatch = useAppDispatch();
-  const addANewTask = (direction) => {
+  const addANewTask = (direction: string) => {
     if (task.repeatMode) dispatch(addRepeatedTasks(task, direction));
     else dispatch(addTask(task, direction));
     dispatch({ type: RESET_TASK });
@@ -92,8 +96,10 @@ function Tasks({ directionId, directionName }) {
     </div>
   );
 }
-
-function Filter({ directionId }) {
+type FilterProps = {
+  directionId: string;
+}
+function Filter({ directionId } : FilterProps) {
   return (
     <div className="w-1/5 mt-4">
       <FilterByCreator id={directionId} />

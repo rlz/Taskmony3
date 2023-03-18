@@ -4,7 +4,7 @@ import { getCookie } from "../../utils/cookies";
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
 import { ideasAllQuery } from "../../utils/queries";
-import { TIdea } from "../../utils/types";
+import { TDirection, TIdea } from "../../utils/types";
 export const GET_IDEAS_REQUEST = "GET_IDEAS_REQUEST";
 export const GET_IDEAS_SUCCESS = "GET_IDEAS_SUCCESS";
 export const GET_IDEAS_FAILED = "GET_IDEAS_FAILED";
@@ -100,7 +100,7 @@ export function getIdeas() {
   };
 }
 
-export function addIdea(idea : TIdea, direction: string) {
+export function addIdea(idea : TIdea, direction: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_IDEA_REQUEST });
     console.log("adding");
@@ -264,7 +264,7 @@ export function changeIdeaDetails(ideaId: string, details: string) {
       });
   };
 }
-export function changeIdeaDirection(ideaId: string, direction : {id: string}) {
+export function changeIdeaDirection(ideaId: string, direction : TDirection) {
   return function (dispatch: Dispatch) {
     console.log("change direction");
     fetch(URL, {

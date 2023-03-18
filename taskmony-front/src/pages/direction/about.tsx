@@ -17,7 +17,11 @@ import {
 } from "../../services/actions/directionsAPI";
 import { useNavigate } from "react-router-dom";
 
-export const About = ({ directionId }) => {
+type AboutProps = {
+  directionId: string;
+}  
+
+export const About = ({ directionId } : AboutProps) => {
   const dispatch = useAppDispatch();
   const myId = getCookie("id");
   const directions = useAppSelector((store) => store.directions.items);
@@ -37,7 +41,7 @@ export const About = ({ directionId }) => {
   }, [direction?.details]);
 
   useEffect(() => {
-    if (!isFirst & deleted_success) navigate("/");
+    if (!isFirst && deleted_success) navigate("/");
   }, [deleted_success]);
 
   // useEffect(()=>{
@@ -66,7 +70,7 @@ export const About = ({ directionId }) => {
   };
 
   const saveDescription = () => dispatch(changeDetails(about, directionId));
-  const removeThisUser = (user) => dispatch(removeUser(directionId, user));
+  const removeThisUser = (user : {id: string}) => dispatch(removeUser(directionId, user));
 
   return (
     <div>
@@ -113,13 +117,14 @@ export const About = ({ directionId }) => {
 
 type UserPropsT = {
   label: string;
+  onClick: Function;
 };
 
 export const User = ({ label, onClick }: UserPropsT) => {
   return (
     <div
       className="w-full bg-white rounded-lg drop-shadow-sm"
-      onClick={onClick}
+      onClick={(e)=>onClick()}
     >
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
@@ -130,9 +135,10 @@ export const User = ({ label, onClick }: UserPropsT) => {
     </div>
   );
 };
-
-export const AboutElement = ({ value, onChange, saveDescription }) => {
-  const success = useAppSelector((store) => store.directions.setDetailsSuccess);
+type AboutElementProps = {
+  value: string; onChange: Function; saveDescription: Function;
+}
+export const AboutElement = ({ value, onChange, saveDescription } : AboutElementProps) => {
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm">
       <textarea
@@ -154,11 +160,13 @@ export const AboutElement = ({ value, onChange, saveDescription }) => {
   );
 };
 
-type LeaveBtnPropsT = {
+type BtnPropsT = {
   onClick: Function;
+  label: string;
+  color: string
 };
 
-const Btn = ({ onClick, label, color }) => {
+const Btn = ({ onClick, label, color }: BtnPropsT) => {
   return (
     <div
       className={`p-1 w-fit mt-4 mb-2 pl-2 pr-2 bg-blue-400 rounded-lg cursor-pointer`}

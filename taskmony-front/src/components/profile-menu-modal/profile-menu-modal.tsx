@@ -31,14 +31,14 @@ export const ProfileMenuModal = ({ close }: ModalPropsT) => {
       ></img>
       <Input
         label={displayName}
-        onBlur={(e) => {
-          dispatch(changeUserName(e.target.value));
+        onBlur={(val : string) => {
+          dispatch(changeUserName(val));
         }}
       />
       <Input
         label={email}
-        onBlur={(e) => {
-          dispatch(changeUserEmail(e.target.value));
+        onBlur={(val : string) => {
+          dispatch(changeUserEmail(val));
         }}
       />
       {changePassword && (
@@ -46,12 +46,12 @@ export const ProfileMenuModal = ({ close }: ModalPropsT) => {
           <PasswordInput
           label={"old password"}
             value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
+            onChange={setOldPassword}
           />
           <PasswordInput
           label={"new password"}
             value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            onChange={setNewPassword}
           />
         </>
       )}
@@ -82,18 +82,24 @@ export const Input = ({ label, onBlur }: InputPropsT) => {
       type="text"
       defaultValue={label}
       className="border w-full border-gray-300 rounded mt-2 mb-1 pl-1 pr-2 p-1"
-      onBlur={(e) => onBlur(e)}
+      onBlur={(e) => onBlur(e.target.value)}
     />
   );
 };
-export const PasswordInput = ({ label,value, onChange }) => {
+
+type PasswordInputProps = {
+  label: string;
+  value: string;
+  onChange: Function;
+};
+export const PasswordInput = ({ label,value, onChange } : PasswordInputProps) => {
   return (
     <input
       type="password"
       value={value}
       placeholder={label}
       className="border w-full border-gray-300 rounded mt-2 mb-1 pl-1 pr-2 p-1"
-      onChange={(e) => onChange(e)}
+      onChange={(e) => onChange(e.target.value)}
     />
   );
 };

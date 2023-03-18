@@ -1,5 +1,4 @@
 import arrowDown from "../../images/arrow-down.svg";
-import follow from "../../images/followed.svg";
 import divider from "../../images/divider.svg";
 import createdByI from "../../images/by.svg";
 import timeI from "../../images/time.svg";
@@ -53,21 +52,21 @@ export const NotificationItem = ({
     }
   };
   const navigate = useNavigate();
-  const goToDirection = (id) => navigate(`directions/${id}`)
+  const goToDirection = (id? : string) => {if(id) navigate(`directions/${id}`)}
   return (
     <div className={`w-full drop-shadow-sm bg-white rounded-lg`}>
       <div className={"gap-4 flex justify-between p-2 mt-2 mb  overflow-hidden"}>
         <div>
           <div className="flex  gap-2">
-            <img src={iconByType(type)}></img>
+            <img src={iconByType(type)} alt=""></img>
             <span className={"font-semibold text-sm"}>{label}</span>
           </div>
           <p className={"text-sm italic"}>{details}</p>
         </div>
       </div>
       <div className={"gap flex justify-start pb-2 w-full ml-1"}>
-        <div onClick={()=>goToDirection(direction.id)} className={"cursor-pointer"}>
-        <Details label={direction.name} hasBorder />
+        <div onClick={()=>goToDirection(direction?.id)} className={"cursor-pointer"}>
+        <Details label={direction?.name} hasBorder />
         </div>
         {createdBy && (
           <Details icon={createdByI} label={`by ${createdBy}`} hasBorder />
@@ -93,7 +92,7 @@ export const Details = ({
 }: DetailsProps) => {
   return (
     <div className={`flex flex-nowrap gap-1 mr-1  ml-1`}>
-      {icon && <img src={icon}></img>}
+      {icon && <img src={icon} alt=""></img>}
       <span
         className={`font-semibold inline whitespace-nowrap text-xs mr-1 ${
           textColor ? textColor : "text-blue-500"
@@ -101,7 +100,7 @@ export const Details = ({
       >
         {label}
       </span>
-      {hasBorder && <img src={divider}></img>}
+      {hasBorder && <img src={divider} alt=""></img>}
     </div>
   );
 };
@@ -117,7 +116,7 @@ export const MoveBtn = ({ label, onClick }: BtnProps) => {
       className={"gap-4 flex justify-center bg-blue-500 rounded"}
       onClick={() => onClick()}
     >
-      <img src={arrowDown}></img>
+      <img src={arrowDown} alt="arrow down"></img>
       <span className={"text-white"}>{label}</span>
     </div>
   );

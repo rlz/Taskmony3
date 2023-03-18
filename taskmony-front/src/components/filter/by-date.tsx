@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { FilterDivider } from "./filter-divider";
 import hrLine from "../../images/hr-line.svg";
-import { useSearchParams } from "react-router-dom";
 import { StringParam, useQueryParam } from "use-query-params";
 
-export const FilterByDate = ({ type }) => {
+type FilterByDateProps = {
+  type: string;
+}
+export const FilterByDate = ({ type } : FilterByDateProps) => {
   const [startDate, setStartDate] = useQueryParam("startDate", StringParam);
   const [endDate, setEndDate] = useQueryParam("endDate", StringParam);
   const [isOpen, setIsOpen] = useState<boolean>(true);

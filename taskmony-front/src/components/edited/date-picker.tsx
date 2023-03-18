@@ -8,6 +8,7 @@ type Props = {
   date: Date;
   hasBorder?: boolean;
   onChange: Function;
+  min?: Date;
 };
 export const DatePicker = ({
   title,

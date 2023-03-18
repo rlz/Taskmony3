@@ -3,7 +3,6 @@ import { checkResponse } from "../../utils/APIUtils";
 import { getCookie } from "../../utils/cookies";
 import { BASE_URL } from "../../utils/data";
 import { notificationsAllQuery } from "../../utils/queries";
-import { TDirectionNotification, TIdeaNotification, TNotification, TTaskNotification } from "../../utils/types";
 export const GET_NOTIFICATIONS_REQUEST = "GET_NOTIFICATIONS_REQUEST";
 export const GET_NOTIFICATIONS_SUCCESS = "GET_NOTIFICATIONS_SUCCESS";
 export const GET_NOTIFICATIONS_FAILED = "GET_NOTIFICATIONS_FAILED";
@@ -11,6 +10,50 @@ export const GET_NOTIFICATIONS_FAILED = "GET_NOTIFICATIONS_FAILED";
 export const RESET_COUNT = "RESET_COUNT";
 
 const URL = BASE_URL + "/graphql";
+
+type TNotification = {
+  actionItem: {
+    __typename: string;
+    id: string;
+    displayName?: string;
+    description?: string;
+    details?: string;
+    text?: string;
+    }
+  actionType: string;
+  field: string;
+  id: string;
+  modifiedAt: string;
+  modifiedBy: { displayName: string; };
+  newValue: string;
+  oldValue: string; 
+};
+
+type TTaskNotification = {
+  id: string;
+  description: string;
+  direction: {
+      name: string;
+      id: string;
+  }
+  notifications: Array<TNotification>;
+}
+
+type TIdeaNotification = {
+  id: string;
+  description: string;
+  direction: {
+      name: string;
+      id: string;
+  }
+  notifications: Array<TNotification>;
+}
+
+type TDirectionNotification = {
+  id: string;
+  name: string;
+  notifications: Array<TNotification>;
+}
 
 export function getNotifications() {
   return function (dispatch: Dispatch) {

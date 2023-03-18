@@ -1,3 +1,4 @@
+import { TUser } from "../../utils/types";
 import {
   USER_INFO_REQUEST,
   USER_INFO_SUCCESS,
@@ -11,29 +12,35 @@ import {
   CHANGE_USER_EMAIL_SUCCESS,
 } from "../actions/userInfo";
 
-type TUser = {
+type TUserInfo = {
   user_info_loading: boolean;
   user_info_error: boolean;
   user_info_success: boolean;
   change_user_info_loading: boolean;
   change_user_info_error: boolean;
   change_user_info_success: boolean;
-  user: any;
-  users: Array<any>;
+  users_loading: boolean;
+  users_success: boolean;
+  users_error: boolean;
+  user: { displayName: string; email: string } | null;
+  users: Array<TUser>;
 };
 
-export const initialState = {
+export const initialState: TUserInfo = {
   user_info_loading: false,
   user_info_error: false,
   user_info_success: false,
   change_user_info_loading: false,
   change_user_info_error: false,
   change_user_info_success: false,
+  users_loading: true,
+  users_success: false,
+  users_error: false,
   user: null,
   users: [],
 };
 export const userInfoReducer = (
-  state: TUser = initialState,
+  state = initialState,
   action:
     | {
         type:
@@ -41,19 +48,21 @@ export const userInfoReducer = (
           | typeof USER_INFO_FAILED
           | typeof USERS_REQUEST
           | typeof USERS_FAILED
-          | typeof USERS_RESET
+          | typeof USERS_RESET;
       }
     | {
-        type: typeof USER_INFO_SUCCESS
-        userInfo: any;
+        type: typeof USER_INFO_SUCCESS;
+        userInfo: { displayName: string; email: string } | null;
       }
-      | {
-        type: typeof CHANGE_USER_EMAIL_SUCCESS | typeof CHANGE_USER_NAME_SUCCESS
-        payload: any;
+    | {
+        type:
+          | typeof CHANGE_USER_EMAIL_SUCCESS
+          | typeof CHANGE_USER_NAME_SUCCESS;
+        payload: string;
       }
     | {
         type: typeof USERS_SUCCESS;
-        users: any;
+        users: Array<TUser>;
       }
 ) => {
   switch (action.type) {
@@ -83,26 +92,19 @@ export const userInfoReducer = (
     case CHANGE_USER_NAME_SUCCESS: {
       return {
         ...state,
-        user: {...state.user,displayName: action.payload
-
-        }
+        user: { ...state.user, displayName: action.payload },
       };
     }
     case CHANGE_USER_EMAIL_SUCCESS: {
       return {
         ...state,
-        user: {...state.user,email: action.payload
-
-        }
+        user: { ...state.user, email: action.payload },
       };
     }
     case USERS_REQUEST: {
       return {
         ...state,
         users: [],
-        users_loading: true,
-        users_success: false,
-        users_error: false,
       };
     }
     case USERS_SUCCESS: {

@@ -31,8 +31,13 @@ type TDirectionsState = {
   add_direction_success: boolean;
   add_direction_error: boolean;
   change_details_loading: boolean;
+  add_user_loading: boolean;
+  add_user_success: boolean;
+  add_user_error: boolean;
   change_details_success: boolean;
   change_details_error: boolean;
+  delete_direction_loading: boolean;
+  delete_direction_success: boolean;
 };
 
 export const directionsInitialState = {
@@ -42,9 +47,14 @@ export const directionsInitialState = {
   add_direction_loading: false,
   add_direction_success: false,
   add_direction_error: false,
+  add_user_loading: false,
+  add_user_success: false,
+  add_user_error: false,
   change_details_loading: false,
   change_details_success: false,
   change_details_error: false,
+  delete_direction_loading: false,
+  delete_direction_success: false,
 };
 export const directionsReducer = (
   state: TDirectionsState = directionsInitialState,

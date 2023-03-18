@@ -8,6 +8,7 @@ import useIsFirstRender, {
 } from "../../utils/hooks";
 import { AddBtn } from "../add-btn/add-btn";
 import { useLocation } from "react-router-dom";
+import { TUser } from "../../utils/types";
 
 type ModalPropsT = {
   close: Function;
@@ -55,7 +56,7 @@ const Input = ({ directionId,close }: InputPropsT) => {
   const dispatch = useAppDispatch();
   const [value, setValue] = useState("");
   const foundUsers = useAppSelector((store) => store.userInfo.users);
-  const addNewUser = (user) => {
+  const addNewUser = (user : TUser) => {
     dispatch(addUser(directionId, user));
     dispatch({type:USERS_RESET});
     close();
@@ -74,7 +75,7 @@ const Input = ({ directionId,close }: InputPropsT) => {
         }}
       />
       <div className="border w-full border-gray-200 rounded">
-        {foundUsers.map((user,index) => (
+        {foundUsers.map((user : TUser,index : number) => (
           <SearchItem
             label={user.displayName}
             addUser={() => addNewUser(user)}
@@ -86,11 +87,16 @@ const Input = ({ directionId,close }: InputPropsT) => {
   );
 };
 
-const SearchItem = ({ label, addUser }: InputPropsT) => {
+type SearchItemProps = {
+  label: string;
+  addUser: Function;
+}
+
+const SearchItem = ({ label, addUser } : SearchItemProps) => {
   return (
     <div
       className="border w-full border-gray-200 bg-slate-100 pl-1 pr-2 p-1 cursor-pointer hover:font-semibold"
-      onClick={addUser}
+      onClick={(e)=>addUser()}
     >
       {label}
     </div>

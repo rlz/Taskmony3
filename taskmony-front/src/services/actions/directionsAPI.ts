@@ -203,7 +203,7 @@ export function addUser(directionId: string, user: {id: string, displayName: str
       });
   };
 }
-export function removeUser(directionId: string, user: {id: string, displayName: string}) {
+export function removeUser(directionId: string, user: {id: string}) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("removing user");
@@ -227,7 +227,7 @@ export function removeUser(directionId: string, user: {id: string, displayName: 
           dispatch({
             type: REMOVE_USER_SUCCESS,
             directionId: directionId,
-            user: { displayName: user.displayName, id: user.id },
+            user: { id: user.id },
           });
         } else {
           dispatch({

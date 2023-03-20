@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { checkResponse } from "../../utils/APIUtils";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { BASE_URL } from "../../utils/data";
 import { notificationsAllQuery } from "../../utils/queries";
 export const GET_NOTIFICATIONS_REQUEST = "GET_NOTIFICATIONS_REQUEST";
@@ -63,7 +63,7 @@ export function getNotifications() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `{

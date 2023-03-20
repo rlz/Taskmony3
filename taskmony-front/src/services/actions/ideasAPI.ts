@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { checkResponse, nowDate } from "../../utils/APIUtils";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
 import { ideasAllQuery } from "../../utils/queries";
@@ -71,7 +71,7 @@ export function getIdeas() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
 
       body: JSON.stringify({
@@ -109,7 +109,7 @@ export function addIdea(idea : TIdea, direction: string | null) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -159,7 +159,7 @@ export function changeIdeaFollowed(ideaId: string, markFollowed : boolean) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -175,7 +175,7 @@ export function changeIdeaFollowed(ideaId: string, markFollowed : boolean) {
             type: CHANGE_IDEA_FOLLOWED_SUCCESS,
             ideaId: ideaId,
             followed: markFollowed,
-            userId: getCookie("id"),
+            userId: Cookies.get("id"),
           });
         } else {
           dispatch({
@@ -197,7 +197,7 @@ export function changeIdeaDescription(ideaId: string, description: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -227,18 +227,18 @@ export function changeIdeaDescription(ideaId: string, description: string) {
       });
   };
 }
-export function changeIdeaDetails(ideaId: string, details: string) {
+export function changeIdeaDetails(ideaId: string, details: string | null) {
   return function (dispatch: Dispatch) {
     console.log("change details");
     fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
-      ideaSetDetails(ideaId:"${ideaId}",details:"${details}") 
+      ideaSetDetails(ideaId:"${ideaId}",details:${details === null ? "null" : `"${details}"`}) 
     }
     `,
       }),
@@ -271,7 +271,7 @@ export function changeIdeaDirection(ideaId: string, direction : TDirection) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -309,7 +309,7 @@ export function changeIdeaGeneration(ideaId: string, generation: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -350,7 +350,7 @@ export function deleteIdea(ideaId: string) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -390,7 +390,7 @@ export function reviewIdea(ideaId: string) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {

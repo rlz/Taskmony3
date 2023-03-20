@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { checkResponse } from "../../utils/APIUtils";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
 
@@ -19,7 +19,7 @@ export function sendTaskComment(taskId: string, text: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
 
       body: JSON.stringify({
@@ -65,7 +65,7 @@ export function sendIdeaComment(ideaId: string, text: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
 
       body: JSON.stringify({

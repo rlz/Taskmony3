@@ -3,7 +3,7 @@ import { FilterDivider } from "./filter-divider";
 import hrLine from "../../images/hr-line.svg";
 import { FilterItem } from "./filter-item";
 import { useSearchParams } from "react-router-dom";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import {
   useQueryParam,
   NumberParam,
@@ -14,7 +14,7 @@ import {
 } from "use-query-params";
 
 export const FilterByTaskType = () => {
-  const myId = getCookie("id");
+  const myId = Cookies.get("id");
   const [future, setFuture] = useQueryParam("future",BooleanParam);
   const [followed, setFollowed] = useQueryParam("followed",BooleanParam);
   const [assignedByMe,setAssignedByMe] = useQueryParam("assignedByMe",BooleanParam);

@@ -174,8 +174,8 @@ export const ideasReducer = (
 };
 
 export const ideaInitialState: TIdea = {
-  description: "",
-  details: undefined,
+  description: "New Idea",
+  details: null,
   generation: "HOT",
   id: "",
   deletedAt: "",

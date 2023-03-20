@@ -14,7 +14,7 @@ import {
   RESET_IDEA,
   reviewIdea,
 } from "../services/actions/ideasAPI";
-import { getCookie } from "../utils/cookies";
+import Cookies from 'js-cookie';
 import postponeGray from "../images/circle-down-gray.svg";
 import postponeBlue from "../images/circle-down-blue.svg";
 import { TIdea } from "../utils/types";
@@ -24,7 +24,7 @@ type IdeaProps = {
 }
 
 export const Idea = ({ idea, direction, last } : IdeaProps) => {
-  const myId = getCookie("id");
+  const myId = Cookies.get("id");
   const dispatch = useAppDispatch();
   const [edited, setEdited] = useState(false);
   const open = () => {

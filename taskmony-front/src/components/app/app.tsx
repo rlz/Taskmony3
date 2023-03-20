@@ -26,7 +26,7 @@ import { useAppDispatch } from "../../utils/hooks";
 import { getDirections } from "../../services/actions/directionsAPI";
 import { getUserInfo } from "../../services/actions/userInfo";
 import { getNotifications } from "../../services/actions/notifications";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { refreshToken } from "../../services/actions/auth/refreshToken";
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
@@ -72,7 +72,7 @@ function Home() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   useEffect(() => {
-    if(!getCookie("refreshToken")) navigate("/login")
+    if(!Cookies.get("refreshToken") || Cookies.get("refreshToken") === "undefined") navigate("/login")
     dispatch(getTasks());
     dispatch(getIdeas());
     dispatch(getDirections());

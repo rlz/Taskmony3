@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { checkResponse } from "../../../utils/APIUtils";
+import { checkResponse, getErrorMessages } from "../../../utils/APIUtils";
 import { BASE_URL } from "../../../utils/data";
 
 export const RESET_PASSWORD_REQUEST = "RESET_PASSWORD_REQUEST";
@@ -20,7 +20,11 @@ export function resetPassword(email: string) {
         email: email,
       }),
     })
-      .then(checkResponse)
+    .then(async (res) => {
+      let data = await res.json();      
+      if (res.status != 200) throw new Error(getErrorMessages(data));
+      else return data;
+    })
       .then((res) => {
         if (res) {
           dispatch({
@@ -35,6 +39,7 @@ export function resetPassword(email: string) {
       .catch((error) => {
         dispatch({
           type: RESET_PASSWORD_FAILED,
+          error: error.message
         });
       });
   };

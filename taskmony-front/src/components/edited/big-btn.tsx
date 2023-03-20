@@ -3,13 +3,15 @@ import add from "../../images/add-white.svg";
 type BtnProps = {
   label: string;
   onClick: Function;
-  color: string;
+  unactive?: boolean;
 };
 
-export const BigBtn = ({ label, onClick, color }: BtnProps) => {
+export const BigBtn = ({ label, onClick, unactive }: BtnProps) => {
   return (
     <div
-      className={`w-auto inline-block p-1 m-1 mr-2 bg-blue-500 rounded-lg cursor-pointer`}
+      className={`w-auto inline-block p-1 m-1 mr-2 ${
+        unactive === true ? "bg-gray-300" : "bg-blue-500 cursor-pointer"
+      } rounded-lg `}
       onClick={(e) => onClick()}
     >
       <span className={"text-white p-1 pr-2 pl-2"}>{label}</span>

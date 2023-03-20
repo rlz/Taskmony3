@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { BooleanParam, StringParam, useQueryParam } from "use-query-params";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { FilterDivider } from "./filter-divider";
 import { FilterItem } from "./filter-item";
 
 export const FilterByFollowed = () => {
-  const myId = getCookie("id");
+  const myId = Cookies.get("id");
   const [followed, setFollowed] = useQueryParam("followed",BooleanParam);
 
   return (

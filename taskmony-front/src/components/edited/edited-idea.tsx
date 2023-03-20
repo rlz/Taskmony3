@@ -9,6 +9,7 @@ import closeI from "../../images/delete2.svg";
 import deleteI from "../../images/delete3.svg";
 import add from "../../images/add-light.svg";
 import { BigBtn } from "./big-btn";
+import arrowUpGray from "../../images/arrow-up-gray.svg";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import {
   changeIdeaDescription,
@@ -53,7 +54,7 @@ export const EditedIdea = ({
         <div className="flex  gap-2">
           <input
             className={"font-semibold text-sm focus:outline-none underline"}
-            placeholder={"idea name"}
+            placeholder={undefined}
             value={idea.description}
             onChange={(e) =>
               dispatch({
@@ -92,20 +93,31 @@ export const EditedIdea = ({
       <Details fromDirection={direction} />
       {idea.id && <Comments />}
       <div className={"w-full flex justify-end"}>
-        {!idea.id ? (
+      {idea.description ? (!idea.id ? (
           <BigBtn
-            label={"add a idea"}
-            onClick={() => save(idea)}
-            color="blue"
+            label={"add an idea"}
+            onClick={() => save(idea.details===""?{...idea,details:null}:idea)}
           />
         ) : (
           <img
-          alt="close button"
             src={arrowUp}
-            onClick={() => save(idea)}
+            onClick={() => save(idea.details===""?{...idea,details:null}:idea)}
             className={"closeBtn w-4 cursor-pointer mr-3 m-2"}
           ></img>
-        )}
+        )) :
+        (!idea.id ? (
+          <BigBtn
+            label={"add an idea"}
+            onClick={() => {}}
+            unactive={true}
+          />
+        ) : (
+          <img
+            src={arrowUpGray}
+            onClick={() => {}}
+            className={"closeBtn w-4 mr-3 m-2"}
+          ></img>
+        ))}
       </div>
     </div>
   );
@@ -117,20 +129,14 @@ const Description = () => {
   const ideaId = useAppSelector((store) => store.editedIdea.id);
   const details = (
     <div className="flex gap-2 mr-8">
-      <img
-        alt="remove details button"
-        src={deleteI}
-        className="cursor-pointer"
-        onClick={() => dispatch({ type: CHANGE_IDEA_DETAILS, payload: null })}
-      ></img>
       <textarea
-        placeholder={"details"}
+        placeholder={undefined}
         value={description}
         onChange={(e) =>
           dispatch({ type: CHANGE_IDEA_DETAILS, payload: e.target.value })
         }
         onBlur={(e) => {
-          if (ideaId) dispatch(changeIdeaDetails(ideaId, e.target.value));
+          if (ideaId) dispatch(changeIdeaDetails(ideaId, e.target.value === "" ? null : e.target.value));
         }}
         className="text-black font-light underline placeholder:text-black placeholder:font-light 
         placeholder:underline 

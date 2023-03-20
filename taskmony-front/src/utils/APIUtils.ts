@@ -7,6 +7,7 @@ export async function checkResponse(response: Response) {
   if (result) return result;
   else return false;
 }
+export const getErrorMessages = (data : {errors : Array<{message: string}>}) => data.errors.map(e=>e.message).join(",")
 export const nowDate = () => {
   const now = new Date().setSeconds(0);
   return new Date(now).toISOString();

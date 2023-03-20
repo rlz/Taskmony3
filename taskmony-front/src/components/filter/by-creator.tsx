@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ArrayParam, useQueryParam, withDefault } from "use-query-params";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { useAppSelector } from "../../utils/hooks";
 import { FilterDivider } from "./filter-divider";
 import { FilterItem } from "./filter-item";
@@ -15,7 +15,7 @@ export const FilterByCreator = ({ id } : FilterByCreatorProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const directions = useAppSelector((store) => store.directions.items);
   const direction = directions.filter((d) => d.id == id)[0];
-  const myId = getCookie("id");
+  const myId = Cookies.get("id");
   const users = direction?.members;
   return (
     <>

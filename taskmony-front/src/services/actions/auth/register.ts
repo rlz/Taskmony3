@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
-import { checkResponse } from "../../../utils/APIUtils";
-import { setCookie } from "../../../utils/cookies";
+import { checkResponse, getErrorMessages } from "../../../utils/APIUtils";
+import Cookies from 'js-cookie';
 import { BASE_URL } from "../../../utils/data";
 
 export const REGISTER_REQUEST = "REGISTER_REQUEST";
@@ -9,7 +9,7 @@ export const REGISTER_FAILED = "REGISTER_FAILED";
 
 const REGISTER_URL = BASE_URL + "/api/account/register";
 
-export function register(email: string, password: string, name: string) {
+export function register(email: string, password: string, displayName: string, login: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: REGISTER_REQUEST });
     fetch(REGISTER_URL, {
@@ -20,19 +20,23 @@ export function register(email: string, password: string, name: string) {
       body: JSON.stringify({
         email: email,
         password: password,
-        displayName: name,
-        login: name,
+        displayName: displayName,
+        login: login,
       }),
     })
-      .then((res) => res.json())
+    .then(async (res) => {
+      let data = await res.json();      
+      if (res.status != 200) throw new Error(getErrorMessages(data));
+      else return data;
+    })
       .then((res) => {
         console.log(res);
         if (res) {
-          setCookie("accessToken", res.accessToken, {
-            expires: 30 * 60,
+          Cookies.set("accessToken", res.accessToken, {
+            expires: 1/48,
           });
-          setCookie("refreshToken", res.refreshToken, {
-            expires: 30 * 24 * 60 * 60,
+          Cookies.set("refreshToken", res.refreshToken, {
+            expires: 30,
           });
           dispatch({
             type: REGISTER_SUCCESS,
@@ -40,12 +44,14 @@ export function register(email: string, password: string, name: string) {
         } else {
           dispatch({
             type: REGISTER_FAILED,
+            error: "something went wrong"
           });
         }
       })
       .catch((error) => {
         dispatch({
           type: REGISTER_FAILED,
+          error: error.message
         });
       });
   };

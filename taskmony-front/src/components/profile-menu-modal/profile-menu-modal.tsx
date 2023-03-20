@@ -6,6 +6,7 @@ import {
   changeUserName,
   changeUserPassword,
 } from "../../services/actions/userInfo";
+import Cookies from 'js-cookie';
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 
 type ModalPropsT = {
@@ -22,6 +23,10 @@ export const ProfileMenuModal = ({ close }: ModalPropsT) => {
   const [newPassword, setNewPassword] = useState("");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const logout = () => {
+    Cookies.remove("refreshToken");
+    Cookies.remove("accessToken");      
+    navigate("/login")}
   return (
     <div className="w-1/4 absolute top-0 left-0 p-3 m-4 pb-2 bg-slate-50 rounded-lg drop-shadow-lg z-40">
       <img
@@ -66,7 +71,7 @@ export const ProfileMenuModal = ({ close }: ModalPropsT) => {
           }
         }}
       />
-      <Btn label={"Sign out"} onClick={()=> navigate("/login")} />
+      <Btn label={"Sign out"} onClick={logout} />
     </div>
   );
 };

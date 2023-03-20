@@ -22,9 +22,11 @@ type TUserInfo = {
   users_loading: boolean;
   users_success: boolean;
   users_error: boolean;
-  user: { displayName: string; email: string } | null;
+  user: userInfoType;
   users: Array<TUser>;
 };
+
+type userInfoType = { displayName: string; email: string } | null;
 
 export const initialState: TUserInfo = {
   user_info_loading: false,
@@ -52,7 +54,7 @@ export const userInfoReducer = (
       }
     | {
         type: typeof USER_INFO_SUCCESS;
-        userInfo: { displayName: string; email: string } | null;
+        userInfo: userInfoType;
       }
     | {
         type:

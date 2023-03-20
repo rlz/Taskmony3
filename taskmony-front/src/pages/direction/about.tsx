@@ -8,7 +8,7 @@ import useIsFirstRender, {
   useAppDispatch,
   useAppSelector,
 } from "../../utils/hooks";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import {
   changeDetails,
   deleteDirection,
@@ -23,7 +23,7 @@ type AboutProps = {
 
 export const About = ({ directionId } : AboutProps) => {
   const dispatch = useAppDispatch();
-  const myId = getCookie("id");
+  const myId = Cookies.get("id");
   const directions = useAppSelector((store) => store.directions.items);
   const direction = directions.filter((d) => d.id == directionId)[0];
   const [about, setAbout] = useState("");

@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { checkResponse } from "../../utils/APIUtils";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
 import { directionsAllQuery } from "../../utils/queries";
@@ -44,7 +44,7 @@ export function getDirections() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
 
       body: JSON.stringify({
@@ -82,7 +82,7 @@ export function addDirection(name: string) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       // mutation {
       //   directionAdd(description:"123", startAt:"1.12.12") {
@@ -134,7 +134,7 @@ export function deleteDirection(directionId: string) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -173,7 +173,7 @@ export function addUser(directionId: string, user: {id: string, displayName: str
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -212,7 +212,7 @@ export function removeUser(directionId: string, user: {id: string}) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -252,7 +252,7 @@ export function changeDetails(details: string, directionId: string) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {

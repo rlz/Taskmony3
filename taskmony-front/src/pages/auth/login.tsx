@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import React, { FormEvent, useEffect, useState } from "react";
 import { TaskmonyTitle } from "../../components/taskmony-title";
 import deleteI from "../../images/delete.svg";
-import { useAppDispatch, useAppSelector } from "../../utils/hooks";
+import useIsFirstRender, { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { Btn } from "./btn";
 import { Input } from "./input";
 import { login } from "../../services/actions/auth/login";
@@ -16,9 +16,10 @@ export const Login = () => {
   const loading = useAppSelector((store) => store.auth.login_loading);
   const error = useAppSelector((store) => store.auth.login_error);
   const success = useAppSelector((store) => store.auth.login_success);
+  const isFirst = useIsFirstRender();
 
   useEffect(() => {
-    if (!success) return;
+    if (!success || isFirst) return;
     console.log("logging was successful");
     //go to home page
     navigate("/");
@@ -49,7 +50,8 @@ export const Login = () => {
             value={password}
             onChange={setPassword}
           />
-
+          {error && <p className="text-red-400">{error}</p>
+          }
           <NavLink to="/forgot-password">
             <p className="mt-2">forgot your password?</p>
           </NavLink>

@@ -29,14 +29,14 @@ import {
 
 type TAuth = {
   login_loading: boolean;
-  login_error: boolean;
+  login_error: boolean | string;
   login_success: boolean;
   logout_loading: boolean;
-  logout_error: boolean;
+  logout_error: boolean | string;
   logout_success: boolean;
   register_loading: boolean;
   register_success: boolean;
-  register_error: boolean;
+  register_error: boolean | string;
   refresh_token_loading: boolean;
   refresh_token_success: boolean;
   refresh_token_error: boolean;
@@ -57,21 +57,26 @@ export const authInitialState = {
 };
 export const authReducer = (
   state: TAuth = authInitialState,
-  action: {
-    type:
-      | typeof LOGIN_REQUEST
-      | typeof LOGIN_SUCCESS
-      | typeof LOGIN_FAILED
-      | typeof LOGOUT_REQUEST
-      | typeof LOGOUT_SUCCESS
-      | typeof LOGOUT_FAILED
-      | typeof REGISTER_REQUEST
-      | typeof REGISTER_SUCCESS
-      | typeof REGISTER_FAILED
-      | typeof REFRESH_TOKEN_REQUEST
-      | typeof REFRESH_TOKEN_SUCCESS
-      | typeof REFRESH_TOKEN_FAILED;
-  }
+  action:
+    | {
+        type:
+          | typeof LOGIN_REQUEST
+          | typeof LOGIN_SUCCESS
+          | typeof LOGOUT_REQUEST
+          | typeof LOGOUT_SUCCESS
+          | typeof REGISTER_REQUEST
+          | typeof REGISTER_SUCCESS
+          | typeof REFRESH_TOKEN_REQUEST
+          | typeof REFRESH_TOKEN_SUCCESS
+          | typeof REFRESH_TOKEN_FAILED;
+      }
+    | {
+        type:
+          | typeof LOGIN_FAILED
+          | typeof LOGOUT_FAILED
+          | typeof REGISTER_FAILED;
+        error: string;
+      }
 ) => {
   switch (action.type) {
     case LOGIN_REQUEST: {
@@ -93,7 +98,7 @@ export const authReducer = (
       return {
         ...state,
         login_loading: false,
-        login_error: true,
+        login_error: action.error,
       };
     }
     case LOGOUT_REQUEST: {
@@ -115,7 +120,7 @@ export const authReducer = (
       return {
         ...state,
         logout_loading: false,
-        logout_error: true,
+        logout_error: action.error,
       };
     }
     case REGISTER_REQUEST: {
@@ -137,7 +142,7 @@ export const authReducer = (
       return {
         ...state,
         register_loading: false,
-        register_error: true,
+        register_error: action.error,
         register_success: false,
       };
     }

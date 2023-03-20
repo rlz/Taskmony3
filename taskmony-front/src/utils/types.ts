@@ -10,7 +10,7 @@ export type TTask = {
   subscribers: Array<{
     id: string;
   }>;
-  details?: string;
+  details?: string | null;
   startAt: string;
   direction: { name: string; id: string };
   repeatMode: string | null;
@@ -33,7 +33,7 @@ export type TIdea = {
     Array<{
         id: string;
     }>;
-    details?: string;
+    details?: string | null;
     direction: 
     { name: string; 
       id: string;

@@ -1,4 +1,4 @@
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { TNotification } from "../../utils/types";
 import {
   GET_NOTIFICATIONS_REQUEST,
@@ -46,7 +46,7 @@ export const notificationsReducer = (
       };
     }
     case GET_NOTIFICATIONS_SUCCESS: {
-      let lastNotif = getCookie("lastNotification");
+      let lastNotif = Cookies.get("lastNotification");
       let lastOldIndex = 0;
       action.notifications.map((notif, index) => {
         if (notif.id == lastNotif) lastOldIndex = index;

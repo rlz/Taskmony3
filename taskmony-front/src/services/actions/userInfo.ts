@@ -1,6 +1,6 @@
 import { checkResponse } from "../../utils/APIUtils";
 import { BASE_URL } from "../../utils/data";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { refreshToken } from "./auth/refreshToken";
 import { AnyAction, Dispatch } from "redux";
 import { userAllQuery } from "../../utils/queries";
@@ -23,7 +23,7 @@ export function getUserInfo() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
 
       body: JSON.stringify({
@@ -69,7 +69,7 @@ export function getUser(login: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
 
       body: JSON.stringify({
@@ -119,7 +119,7 @@ export function changeUserPassword(oldPassword: string,newPassword: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -153,7 +153,7 @@ export function changeUserName(name: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -188,7 +188,7 @@ export function changeUserEmail(email: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {

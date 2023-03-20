@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { checkResponse, nowDate } from "../../utils/APIUtils";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
 import { tasksAllQuery } from "../../utils/queries";
@@ -88,7 +88,7 @@ export function getTasks() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
 
       body: JSON.stringify({
@@ -126,7 +126,7 @@ export function addTask(task: TTask, direction: string | null) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -176,7 +176,7 @@ export function addRepeatedTasks(task: TTask, direction: string | null) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -234,7 +234,7 @@ export function changeCompleteTaskDate(taskId: string, date: string | null) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -276,7 +276,7 @@ export function changeTaskFollowed(taskId: string, markFollowed: boolean) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -292,7 +292,7 @@ export function changeTaskFollowed(taskId: string, markFollowed: boolean) {
             type: CHANGE_TASK_FOLLOWED_SUCCESS,
             taskId: taskId,
             followed: markFollowed,
-            userId: getCookie("id"),
+            userId: Cookies.get("id"),
           });
         } else {
           dispatch({
@@ -314,7 +314,7 @@ export function changeTaskDescription(taskId: string, description: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -344,18 +344,18 @@ export function changeTaskDescription(taskId: string, description: string) {
       });
   };
 }
-export function changeTaskDetails(taskId: string, details: string) {
+export function changeTaskDetails(taskId: string, details: string | null) {
   return function (dispatch: Dispatch) {
     console.log("change details");
     fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
-      taskSetDetails(taskId:"${taskId}",details:"${details}") 
+      taskSetDetails(taskId:"${taskId}",details:${details === null ? "null" : `"${details}"`}) 
     }
     `,
       }),
@@ -368,6 +368,7 @@ export function changeTaskDetails(taskId: string, details: string) {
             taskId: taskId,
             payload: details,
           });
+          
         } else {
           dispatch({
             type: CHANGE_TASK_DETAILS_FAILED,
@@ -388,7 +389,7 @@ export function changeTaskDirection(taskId: string, direction: TDirection) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -425,7 +426,7 @@ export function changeTaskAssignee(taskId: string, assignee: {id: string}) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -467,7 +468,7 @@ export function changeTaskRepeatMode(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -504,7 +505,7 @@ export function changeTaskRepeatUntil(taskId: string, repeatUntil: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -541,7 +542,7 @@ export function changeTaskStartAt(taskId: string, startAt: string) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {
@@ -582,7 +583,7 @@ export function deleteTask(taskId: string) {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + getCookie("accessToken"),
+        Authorization: "Bearer " + Cookies.get("accessToken"),
       },
       body: JSON.stringify({
         query: `mutation {

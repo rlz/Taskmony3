@@ -12,12 +12,12 @@ import { FilterItem } from "../../components/filter/filter-item";
 
 import { Idea } from "../../components/idea";
 import { addIdea, RESET_IDEA } from "../../services/actions/ideasAPI";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 
 function MyIdeas() {
   const [newIdea, setNewIdea] = useState(false);
-  const myId = getCookie("id");
+  const myId = Cookies.get("id");
   let [searchParams, setSearchParams] = useSearchParams();
   const chosenDirection = searchParams.getAll("direction");
   const chosenGeneration = searchParams.get("ideaCategory");

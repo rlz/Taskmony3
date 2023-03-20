@@ -1,6 +1,6 @@
-import { checkResponse } from "../../../utils/APIUtils";
+import { checkResponse, getErrorMessages } from "../../../utils/APIUtils";
 import { BASE_URL } from "../../../utils/data";
-import { setCookie } from "../../../utils/cookies";
+import Cookies from "js-cookie";
 import { Dispatch } from "redux";
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -22,29 +22,37 @@ export function login(login: string, password: string) {
         password: password,
       }),
     })
-      .then((res) => res.json())
+      .then(async (res) => {
+        let data = await res.json();      
+        if (res.status != 200) throw new Error(getErrorMessages(data));
+        else return data;
+      })
       .then((res) => {
         console.log(res);
         if (res) {
-          setCookie("accessToken", res.accessToken,{
-            expires: 30 * 60,
+          Cookies.set("accessToken", res.accessToken, {
+            expires: 1 / 48,
           });
-          setCookie("refreshToken", res.refreshToken,{
-            expires: 30 * 24 * 60 * 60,
+          Cookies.set("refreshToken", res.refreshToken, {
+            expires: 30,
           });
-          setCookie("id", res.userId);
+          Cookies.set("id", res.userId, {
+            expires: 30,
+          });
           dispatch({
             type: LOGIN_SUCCESS,
           });
         } else {
           dispatch({
             type: LOGIN_FAILED,
+            error: "something went wrong"
           });
         }
       })
       .catch((error) => {
         dispatch({
           type: LOGIN_FAILED,
+          error: error.message
         });
       });
   };

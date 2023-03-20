@@ -4,6 +4,7 @@ import divider from "../../images/divider.svg";
 import commentsI from "../../images/comment2.svg";
 import createdByI from "../../images/by.svg";
 import arrowUp from "../../images/arrow-up.svg";
+import arrowUpGray from "../../images/arrow-up-gray.svg";
 // import recurrentI from "../images/recurrent.svg";
 import recurrentI from "../../images/arrows-rotate.svg";
 import { AddBtn } from "./btn";
@@ -70,16 +71,16 @@ export const EditedTask = ({
     <div className="editedTask w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
-          <img
+          {task.id && <img
             src={task.completedAt ? yes : no}
             onClick={(e) => {
               e.stopPropagation();
               changeCheck(!task.completedAt);
             }}
-          ></img>
+          ></img>}
           <input
-            className={"font-semibold text-sm focus:outline-none underline"}
-            placeholder={"task name"}
+            className={`font-semibold text-sm focus:outline-none underline`}
+            placeholder={undefined}
             value={task.description}
             onChange={(e) =>
               dispatch({
@@ -116,19 +117,32 @@ export const EditedTask = ({
       <Details fromDirection={direction} />
       {task.id && <Comments />}
       <div className={"w-full flex justify-end"}>
-        {!task.id ? (
+        {task.description ? (!task.id ? (
           <BigBtn
             label={"add a task"}
-            onClick={() => save(task)}
+            onClick={() => save(task.details===""?{...task,details:null}:task)}
             color="blue"
           />
         ) : (
           <img
             src={arrowUp}
-            onClick={() => save(task)}
+            onClick={() => save(task.details===""?{...task,details:null}:task)}
             className={"closeBtn w-4 cursor-pointer mr-3 m-2"}
           ></img>
-        )}
+        )) :
+        (!task.id ? (
+          <BigBtn
+            label={"add a task"}
+            onClick={() => {}}
+            unactive={true}
+          />
+        ) : (
+          <img
+            src={arrowUpGray}
+            onClick={() => {}}
+            className={"closeBtn w-4 mr-3 m-2"}
+          ></img>
+        ))}
       </div>
     </div>
   );
@@ -140,13 +154,8 @@ const Description = () => {
   const taskId = useAppSelector((store) => store.editedTask.id);
   const details = (
     <div className="flex gap-2 mr-8">
-      <img
-        src={deleteI}
-        className="cursor-pointer"
-        onClick={() => dispatch({ type: CHANGE_TASK_DETAILS, payload: null })}
-      ></img>
       <textarea
-        placeholder={"details"}
+        placeholder={undefined}
         value={description}
         onChange={(e) =>
           dispatch({ type: CHANGE_TASK_DETAILS, payload: e.target.value })
@@ -156,7 +165,7 @@ const Description = () => {
             dispatch(
               changeTaskDetails(
                 taskId,
-                e.target.value
+                e.target.value === "" ? null : e.target.value
               )
             );
         }}

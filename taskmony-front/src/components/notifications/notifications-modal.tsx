@@ -1,7 +1,7 @@
 import { NotificationItem } from "./notification";
 import deleteI from "../../images/delete.svg";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
-import { getCookie, setCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 import { useState } from "react";
 import { RESET_COUNT } from "../../services/actions/notifications";
 
@@ -19,9 +19,9 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
   const onClose = () => {
     if (!notifications[0]) return;
     const lastNotification = notifications[0];
-    setCookie("lastNotification", lastNotification.id);
+    Cookies.set("lastNotification", lastNotification.id);
     dispatch({ type: RESET_COUNT });
-    console.log(getCookie("lastNotification"));
+    console.log(Cookies.get("lastNotification"));
   };
 
   const notificationsItems = notifications.map((notif) => {
@@ -35,7 +35,7 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
       notif.type == "direction" &&
       notif.actionItem?.__typename == "User"
     ) {
-      const myId = getCookie("id");
+      const myId = Cookies.get("id");
       const isYou = notif.actionItem.id === myId;
       label = `${isYou ? "You" : notif.actionItem.displayName} 
       was ${notif.actionType === "ITEM_ADDED" ? "added to" : "removed from"}

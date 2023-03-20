@@ -18,12 +18,12 @@ import {
   FilterByArchivedTaskType,
   FilterByTaskType,
 } from "../../components/filter/by-task-type";
-import { getCookie } from "../../utils/cookies";
+import Cookies from 'js-cookie';
 
 function MyTasks() {
   const [newTask, setNewTask] = useState(false);
   let [searchParams, setSearchParams] = useSearchParams();
-  const myId = getCookie("id");
+  const myId = Cookies.get("id");
   const chosenDirection = searchParams.getAll("direction");
   const future = searchParams.get("future");
   const followed = searchParams.get("followed");

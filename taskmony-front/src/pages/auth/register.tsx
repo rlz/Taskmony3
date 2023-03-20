@@ -12,6 +12,7 @@ export const Register = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [name, setName] = React.useState<string>("");
+  const [login, setLogin] = React.useState<string>("");
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
@@ -30,8 +31,8 @@ export const Register = () => {
     setPasswordVisible(!passwordVisible);
   };
   const registerUser = () => {
-    console.log("registering" + email + password + name);
-    dispatch(register(email, password, name));
+    console.log("registering" + email + password + name + login);
+    dispatch(register(email, password, name,login));
   };
 
   return (
@@ -41,10 +42,16 @@ export const Register = () => {
         <div className="w-1/3 m-auto pb-20">
           <h1 className="font-bold text-3xl">Sign up</h1>
           <Input
-            label={"name"}
+            label={"display name"}
             type={"text"}
             value={name}
             onChange={setName}
+          />
+           <Input
+            label={"login"}
+            type={"text"}
+            value={login}
+            onChange={setLogin}
           />
           <Input
             label={"email"}
@@ -58,6 +65,8 @@ export const Register = () => {
             value={password}
             onChange={setPassword}
           />
+          {error && <p className="text-red-400">{error}</p>
+          }
           <div className="mt-10">
             <Btn label={"sign up"} onClick={registerUser} />
           </div>

@@ -171,7 +171,7 @@ export const tasksReducer = (
 
 export const taskInitialState: TTask = {
   id: "",
-  description: "",
+  description: "New task",
   completedAt: null,
   deletedAt: null,
   assignee: {
@@ -179,7 +179,7 @@ export const taskInitialState: TTask = {
     id: "",
   },
   subscribers: [],
-  details: "",
+  details: null,
   startAt: nowDate(),
   direction: { name: "", id: "" },
   repeatMode: null,

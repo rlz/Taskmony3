@@ -19,7 +19,7 @@ import {
   openTask,
   RESET_TASK,
 } from "../services/actions/tasksAPI";
-import { getCookie } from "../utils/cookies";
+import Cookies from 'js-cookie';
 import { nowDate } from "../utils/APIUtils";
 import { TTask } from "../utils/types";
 
@@ -29,7 +29,7 @@ type TaskProps = {
 };
 
 export const Task = ({ task, direction} : TaskProps) => {
-  const myId = getCookie("id");
+  const myId = Cookies.get("id");
   const dispatch = useAppDispatch();
   const [edited, setEdited] = useState(false);
   const open = () => {

@@ -9,7 +9,7 @@ type ModalPropsT = {
 };
 
 export const AddDirectionModal = ({ close }: ModalPropsT) => {
-  const [name, setName] = useState<string>("");
+  const [name, setName] = useState<string>("New direction");
   const loading = useAppSelector(
     (store) => store.directions.add_direction_loading
   );
@@ -47,7 +47,7 @@ export const AddDirectionModal = ({ close }: ModalPropsT) => {
             value={name}
             onChange={setName}
           />
-          <AddBtn label={"add a new direction"} onClick={addNewDirection} />
+          <AddBtn label={"add a new direction"} onClick={addNewDirection} unactive={name===""}/>
         </div>
       </div>
     </>

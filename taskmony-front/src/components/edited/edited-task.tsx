@@ -10,7 +10,7 @@ import recurrentI from "../../images/arrows-rotate.svg";
 import { AddBtn } from "./btn";
 import { Comment, CommentInput } from "./comment";
 import { ItemPicker } from "./item-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import closeI from "../../images/delete2.svg";
 import deleteI from "../../images/delete3.svg";
 import add from "../../images/add-light.svg";

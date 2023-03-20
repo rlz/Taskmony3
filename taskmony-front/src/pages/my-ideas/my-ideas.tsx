@@ -62,7 +62,7 @@ function MyIdeas() {
     <div className="flex w-full">
       <div className="w-3/4  p-3 flex flex-col overflow-hidden h-screen">
         <h1 className="font-bold text-3xl">My Ideas</h1>
-        <AddBtn label={"add a new idea"} onClick={() => setNewIdea(true)} />
+        <AddBtn label={"add a new idea"} onClick={() => {dispatch({ type: RESET_IDEA });setNewIdea(true)}} />
         {newIdea && (
           <EditedIdea
             label={"new idea"}

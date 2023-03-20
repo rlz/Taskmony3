@@ -68,6 +68,7 @@ function Ideas({ directionId, directionName } : IdeasProps) {
         <AddBtn
           label={"add a new idea"}
           onClick={() => {
+            dispatch({ type: RESET_IDEA })
             setNewIdea(true);
             dispatch({
               type: CHANGE_IDEA_DIRECTION,

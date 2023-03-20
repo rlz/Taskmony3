@@ -7,9 +7,9 @@ import commentsI from "../images/comment2.svg";
 import createdByI from "../images/by.svg";
 // import recurrentI from "../images/recurrent.svg";
 import recurrentI from "../images/arrows-rotate.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditedTask } from "./edited/edited-task";
-import { useAppDispatch } from "../utils/hooks";
+import { useAppDispatch, useAppSelector } from "../utils/hooks";
 import {
   changeCompleteTaskDate,
   changeTaskFollowed,
@@ -32,6 +32,10 @@ export const Task = ({ task, direction} : TaskProps) => {
   const myId = Cookies.get("id");
   const dispatch = useAppDispatch();
   const [edited, setEdited] = useState(false);
+  const editedId = useAppSelector((store) => store.editedTask.id)
+  useEffect(()=>{
+    if(editedId !== task.id) setEdited(false);
+  },[editedId])
   const open = () => {
     console.log("opening");
     if (edited) return;

@@ -3,9 +3,9 @@ import followGray from "../images/follow.svg";
 import divider from "../images/divider.svg";
 import commentsI from "../images/comment2.svg";
 import createdByI from "../images/by.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditedIdea } from "./edited/edited-idea";
-import { useAppDispatch } from "../utils/hooks";
+import { useAppDispatch, useAppSelector } from "../utils/hooks";
 import {
   changeIdeaFollowed,
   CHANGE_OPEN_IDEA,
@@ -27,6 +27,10 @@ export const Idea = ({ idea, direction, last } : IdeaProps) => {
   const myId = Cookies.get("id");
   const dispatch = useAppDispatch();
   const [edited, setEdited] = useState(false);
+  const editedId = useAppSelector((store) => store.editedIdea.id)
+  useEffect(()=>{
+    if(editedId !== idea.id) setEdited(false);
+  },[editedId])
   const open = () => {
     console.log("opening");
     if (edited) return;

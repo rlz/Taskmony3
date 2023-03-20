@@ -69,6 +69,7 @@ function Tasks({ directionId, directionName } : TasksProps) {
         <AddBtn
           label={"add a new task"}
           onClick={() => {
+            dispatch({ type: RESET_TASK })
             setNewTask(true);
             dispatch({
               type: CHANGE_TASK_DIRECTION,

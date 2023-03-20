@@ -67,7 +67,7 @@ function MyTasks() {
     <div className="flex w-full">
       <div className="w-3/4  p-3 flex flex-col overflow-hidden h-screen">
         <h1 className="font-bold text-3xl">My Tasks</h1>
-        <AddBtn label={"add a new task"} onClick={() => setNewTask(true)} />
+        <AddBtn label={"add a new task"} onClick={() => {dispatch({ type: RESET_TASK });setNewTask(true)}} />
         {newTask && (
           <EditedTask
             label={"new task"}

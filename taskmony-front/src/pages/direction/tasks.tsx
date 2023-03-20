@@ -30,6 +30,9 @@ function Tasks({ directionId, directionName } : TasksProps) {
   const future = searchParams.get("future");
   const [newTask, setNewTask] = useState(false);
   const task = useAppSelector((store) => store.editedTask);
+  useEffect(()=>{
+    if(task.id !== "") setNewTask(false);
+    },[task.id])
   let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
     (t) => t.deletedAt == null && t.direction?.id == directionId
   ).sort((a, b) => {
@@ -77,7 +80,7 @@ function Tasks({ directionId, directionName } : TasksProps) {
             });
           }}
         />
-        {newTask && (
+        {newTask && task.id === "" && (
           <EditedTask
             label={"new task"}
             direction={directionName}

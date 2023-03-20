@@ -29,6 +29,9 @@ function MyTasks() {
   const followed = searchParams.get("followed");
   const assignedByMe = searchParams.get("assignedByMe");
   const task = useAppSelector((store) => store.editedTask);
+  useEffect(()=>{
+    if(task.id !== "") setNewTask(false);
+    },[task.id])
   let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
     (i) => i.deletedAt == null && (i.createdBy.id == myId || i.assignee?.id == myId || i.subscribers.some((s) => s.id == myId))
   ).sort((a, b) => {
@@ -68,7 +71,7 @@ function MyTasks() {
       <div className="w-3/4  p-3 flex flex-col overflow-hidden h-screen">
         <h1 className="font-bold text-3xl">My Tasks</h1>
         <AddBtn label={"add a new task"} onClick={() => {dispatch({ type: RESET_TASK });setNewTask(true)}} />
-        {newTask && (
+        {newTask && task.id === "" && (
           <EditedTask
             label={"new task"}
             save={() => {

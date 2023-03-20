@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AddBtn } from "../../components/add-btn/add-btn";
 import { EditedIdea } from "../../components/edited/edited-idea";
@@ -23,6 +23,9 @@ function MyIdeas() {
   const chosenGeneration = searchParams.get("ideaCategory");
   const followed = searchParams.get("followed");
   const idea = useAppSelector((store) => store.editedIdea);
+  useEffect(()=>{
+    if(idea.id !== "") setNewIdea(false);
+    },[idea.id])
   let ideasToShow = useAppSelector((store) => store.ideas.items)
     .filter((i) => i.deletedAt == null)
     .sort((a, b) => {
@@ -63,7 +66,7 @@ function MyIdeas() {
       <div className="w-3/4  p-3 flex flex-col overflow-hidden h-screen">
         <h1 className="font-bold text-3xl">My Ideas</h1>
         <AddBtn label={"add a new idea"} onClick={() => {dispatch({ type: RESET_IDEA });setNewIdea(true)}} />
-        {newIdea && (
+        {newIdea && idea.id === "" && (
           <EditedIdea
             label={"new idea"}
             save={() => {

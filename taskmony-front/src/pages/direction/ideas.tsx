@@ -21,12 +21,16 @@ type IdeasProps = {
 }
 
 function Ideas({ directionId, directionName } : IdeasProps) {
+
   const [newIdea, setNewIdea] = useState(false);
   let [searchParams, setSearchParams] = useSearchParams();
   const createdBy = searchParams.getAll("createdBy");
   const chosenGeneration = searchParams.get("ideaCategory");
   const followed = searchParams.get("followed");
   const idea = useAppSelector((store) => store.editedIdea);
+  useEffect(()=>{
+  if(idea.id !== "") setNewIdea(false);
+  },[idea.id])
   let ideasToShow = useAppSelector((store) => store.ideas.items).filter(
     (i) => i.deletedAt == null && i.direction?.id == directionId
   ).sort((a, b) => {
@@ -76,7 +80,7 @@ function Ideas({ directionId, directionName } : IdeasProps) {
             });
           }}
         />
-        {newIdea && (
+        {newIdea && idea.id === "" && (
           <EditedIdea
             label={"new idea"}
             direction={directionName}

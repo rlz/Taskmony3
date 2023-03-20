@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { checkResponse, nowDate } from "../../utils/APIUtils";
+import { checkResponse, getAccessToken, nowDate } from "../../utils/APIUtils";
 import Cookies from 'js-cookie';
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
@@ -84,17 +84,17 @@ export function getTasks() {
   return function (dispatch: Dispatch) {
     console.log("getting tasks");
     dispatch({ type: GET_TASKS_REQUEST });
-    fetch(URL, {
+    getAccessToken.then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
+        Authorization: "Bearer " + cookie,
       },
 
       body: JSON.stringify({
         query: `{tasks{${tasksAllQuery}}}`,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         console.log(res);
@@ -121,12 +121,12 @@ export function addTask(task: TTask, direction: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_TASK_REQUEST });
     console.log("adding");
-    fetch(URL, {
+    getAccessToken.then((cookie)=>fetch(URL, {
       method: "POST",
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
+        Authorization: "Bearer " + cookie,
       },
       body: JSON.stringify({
         query: `mutation {
@@ -145,7 +145,7 @@ export function addTask(task: TTask, direction: string | null) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -171,12 +171,12 @@ export function addRepeatedTasks(task: TTask, direction: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_TASK_REQUEST });
     console.log("adding");
-    fetch(URL, {
+    getAccessToken.then((cookie)=>fetch(URL, {
       method: "POST",
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
+        Authorization: "Bearer " + cookie,
       },
       body: JSON.stringify({
         query: `mutation {
@@ -202,7 +202,7 @@ export function addRepeatedTasks(task: TTask, direction: string | null) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -229,7 +229,7 @@ export function changeCompleteTaskDate(taskId: string, date: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_COMPLETE_TASK_DATE_REQUEST });
     console.log("change complete date");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -244,7 +244,7 @@ export function changeCompleteTaskDate(taskId: string, date: string | null) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -271,7 +271,7 @@ export function changeTaskFollowed(taskId: string, markFollowed: boolean) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_TASK_FOLLOWED_REQUEST });
     console.log("change followed");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -284,7 +284,7 @@ export function changeTaskFollowed(taskId: string, markFollowed: boolean) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -310,7 +310,7 @@ export function changeTaskFollowed(taskId: string, markFollowed: boolean) {
 export function changeTaskDescription(taskId: string, description: string) {
   return function (dispatch: Dispatch) {
     console.log("change description");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -322,7 +322,7 @@ export function changeTaskDescription(taskId: string, description: string) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -347,7 +347,7 @@ export function changeTaskDescription(taskId: string, description: string) {
 export function changeTaskDetails(taskId: string, details: string | null) {
   return function (dispatch: Dispatch) {
     console.log("change details");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -359,7 +359,7 @@ export function changeTaskDetails(taskId: string, details: string | null) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -385,7 +385,7 @@ export function changeTaskDetails(taskId: string, details: string | null) {
 export function changeTaskDirection(taskId: string, direction: TDirection) {
   return function (dispatch: Dispatch) {
     console.log("change direction");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -397,7 +397,7 @@ export function changeTaskDirection(taskId: string, direction: TDirection) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -422,7 +422,7 @@ export function changeTaskDirection(taskId: string, direction: TDirection) {
 export function changeTaskAssignee(taskId: string, assignee: {id: string}) {
   return function (dispatch: Dispatch) {
     console.log("change assignee");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -434,7 +434,7 @@ export function changeTaskAssignee(taskId: string, assignee: {id: string}) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -464,7 +464,7 @@ export function changeTaskRepeatMode(
 ) {
   return function (dispatch: Dispatch) {
     console.log("change repeatMode");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -476,7 +476,7 @@ export function changeTaskRepeatMode(
       ${repeatMode == "WEEK" ? `,weekDays:${weekDays}` : ""}) 
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -501,7 +501,7 @@ export function changeTaskRepeatMode(
 export function changeTaskRepeatUntil(taskId: string, repeatUntil: string) {
   return function (dispatch: Dispatch) {
     console.log("change repeatUntil");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -513,7 +513,7 @@ export function changeTaskRepeatUntil(taskId: string, repeatUntil: string) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -538,7 +538,7 @@ export function changeTaskRepeatUntil(taskId: string, repeatUntil: string) {
 export function changeTaskStartAt(taskId: string, startAt: string) {
   return function (dispatch: Dispatch) {
     console.log("change startAt");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -550,7 +550,7 @@ export function changeTaskStartAt(taskId: string, startAt: string) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -578,7 +578,7 @@ export function deleteTask(taskId: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_TASK_REQUEST });
     console.log("delete task");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -591,7 +591,7 @@ export function deleteTask(taskId: string) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {

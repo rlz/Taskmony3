@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { checkResponse } from "../../utils/APIUtils";
+import { checkResponse, getAccessToken } from "../../utils/APIUtils";
 import Cookies from 'js-cookie';
 import { BASE_URL } from "../../utils/data";
 import { notificationsAllQuery } from "../../utils/queries";
@@ -59,11 +59,11 @@ export function getNotifications() {
   return function (dispatch: Dispatch) {
     dispatch({ type: GET_NOTIFICATIONS_REQUEST });
     console.log("getting notifications");
-    fetch(URL, {
+    getAccessToken.then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
+        Authorization: "Bearer " + cookie,
       },
       body: JSON.stringify({
         query: `{
@@ -98,7 +98,7 @@ export function getNotifications() {
           }
         }`,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {

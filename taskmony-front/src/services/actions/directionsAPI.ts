@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { checkResponse } from "../../utils/APIUtils";
+import { checkResponse, getAccessToken } from "../../utils/APIUtils";
 import Cookies from 'js-cookie';
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
@@ -40,17 +40,17 @@ export function getDirections() {
   return function (dispatch: Dispatch) {
     console.log("getting directions");
     dispatch({ type: GET_DIRECTIONS_REQUEST });
-    fetch(URL, {
+    getAccessToken.then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
+        Authorization: "Bearer " + cookie,
       },
 
       body: JSON.stringify({
         query: directionsAllQuery,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         console.log(res);
@@ -77,7 +77,7 @@ export function addDirection(name: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_DIRECTION_REQUEST });
     console.log("adding");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -103,7 +103,7 @@ export function addDirection(name: string) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -129,7 +129,7 @@ export function deleteDirection(directionId: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_DIRECTION_REQUEST });
     console.log("deleting direction");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -142,7 +142,7 @@ export function deleteDirection(directionId: string) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -168,7 +168,7 @@ export function addUser(directionId: string, user: {id: string, displayName: str
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("adding user");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -181,7 +181,7 @@ export function addUser(directionId: string, user: {id: string, displayName: str
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res && !res.errors) {
@@ -207,7 +207,7 @@ export function removeUser(directionId: string, user: {id: string}) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("removing user");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -220,7 +220,7 @@ export function removeUser(directionId: string, user: {id: string}) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res && !res.errors) {
@@ -247,7 +247,7 @@ export function changeDetails(details: string, directionId: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_DIRECTION_DETAILS_REQUEST });
     console.log("adding");
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -260,7 +260,7 @@ export function changeDetails(details: string, directionId: string) {
     }
     `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {

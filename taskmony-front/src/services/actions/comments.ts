@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { checkResponse } from "../../utils/APIUtils";
+import { checkResponse, getAccessToken } from "../../utils/APIUtils";
 import Cookies from 'js-cookie';
 import { BASE_URL } from "../../utils/data";
 import { useAppSelector } from "../../utils/hooks";
@@ -15,7 +15,7 @@ export function sendTaskComment(taskId: string, text: string) {
   return function (dispatch: Dispatch) {
     console.log("sending_comment");
     dispatch({ type: SEND_COMMENT_REQUEST });
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,7 +32,7 @@ export function sendTaskComment(taskId: string, text: string) {
     }
         `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         console.log(res);
@@ -61,7 +61,7 @@ export function sendIdeaComment(ideaId: string, text: string) {
   return function (dispatch: Dispatch) {
     console.log("sending_comment");
     dispatch({ type: SEND_COMMENT_REQUEST });
-    fetch(URL, {
+   getAccessToken.then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -78,7 +78,7 @@ export function sendIdeaComment(ideaId: string, text: string) {
     }
         `,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         console.log(res);

@@ -1,4 +1,4 @@
-import { checkResponse } from "../../utils/APIUtils";
+import { checkResponse, getAccessToken } from "../../utils/APIUtils";
 import { BASE_URL } from "../../utils/data";
 import Cookies from 'js-cookie';
 import { refreshToken } from "./auth/refreshToken";
@@ -19,11 +19,11 @@ export const USERS_RESET = "USERS_RESET";
 export function getUserInfo() {
   return function (dispatch: any) {
     dispatch({ type: USER_INFO_REQUEST });
-    fetch(URL, {
+    getAccessToken.then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
+        Authorization: "Bearer " + cookie,
       },
 
       body: JSON.stringify({
@@ -32,7 +32,7 @@ export function getUserInfo() {
           email
         }}`,
       }),
-    })
+    }))
       .then((data) => {
         if (data.status == 401 || data.status == 403) {
           dispatch(refreshToken());
@@ -65,11 +65,11 @@ export function getUser(login: string) {
   return function (dispatch: any) {
     dispatch({ type: USERS_REQUEST });
     console.log("getting user");
-    fetch(URL, {
+    getAccessToken.then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
+        Authorization: "Bearer " + cookie,
       },
 
       body: JSON.stringify({
@@ -78,7 +78,7 @@ export function getUser(login: string) {
           id
         }}`,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -115,18 +115,18 @@ export const CHANGE_USER_PASSWORD_FAILED = "CHANGE_USER_PASSWORD_FAILED";
 export function changeUserPassword(oldPassword: string,newPassword: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_USER_PASSWORD_REQUEST });
-    fetch(URL, {
+    getAccessToken.then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
+        Authorization: "Bearer " + cookie,
       },
       body: JSON.stringify({
         query: `mutation {
           userSetPassword(oldPassword:"${oldPassword}",newPassword:"${newPassword}") 
         }`,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -149,18 +149,18 @@ export function changeUserPassword(oldPassword: string,newPassword: string) {
 export function changeUserName(name: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_USER_NAME_REQUEST });
-    fetch(URL, {
+    getAccessToken.then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
+        Authorization: "Bearer " + cookie,
       },
       body: JSON.stringify({
         query: `mutation {
           userSetDisplayName(displayName:"${name}") 
         }`,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -184,18 +184,18 @@ export function changeUserName(name: string) {
 export function changeUserEmail(email: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_USER_EMAIL_REQUEST });
-    fetch(URL, {
+    getAccessToken.then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
+        Authorization: "Bearer " + cookie,
       },
       body: JSON.stringify({
         query: `mutation {
           userSetEmail(email:"${email}") 
         }`,
       }),
-    })
+    }))
       .then(checkResponse)
       .then((res) => {
         if (res) {

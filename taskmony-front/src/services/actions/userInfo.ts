@@ -19,7 +19,7 @@ export const USERS_RESET = "USERS_RESET";
 export function getUserInfo() {
   return function (dispatch: any) {
     dispatch({ type: USER_INFO_REQUEST });
-    getAccessToken.then((cookie)=>fetch(URL, {
+    getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export function getUser(login: string) {
   return function (dispatch: any) {
     dispatch({ type: USERS_REQUEST });
     console.log("getting user");
-    getAccessToken.then((cookie)=>fetch(URL, {
+    getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -115,7 +115,7 @@ export const CHANGE_USER_PASSWORD_FAILED = "CHANGE_USER_PASSWORD_FAILED";
 export function changeUserPassword(oldPassword: string,newPassword: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_USER_PASSWORD_REQUEST });
-    getAccessToken.then((cookie)=>fetch(URL, {
+    getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -149,7 +149,7 @@ export function changeUserPassword(oldPassword: string,newPassword: string) {
 export function changeUserName(name: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_USER_NAME_REQUEST });
-    getAccessToken.then((cookie)=>fetch(URL, {
+    getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -184,7 +184,7 @@ export function changeUserName(name: string) {
 export function changeUserEmail(email: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_USER_EMAIL_REQUEST });
-    getAccessToken.then((cookie)=>fetch(URL, {
+    getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

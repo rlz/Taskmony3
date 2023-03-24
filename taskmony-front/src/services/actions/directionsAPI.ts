@@ -40,7 +40,7 @@ export function getDirections() {
   return function (dispatch: Dispatch) {
     console.log("getting directions");
     dispatch({ type: GET_DIRECTIONS_REQUEST });
-    getAccessToken.then((cookie)=>fetch(URL, {
+    getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -77,7 +77,7 @@ export function addDirection(name: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_DIRECTION_REQUEST });
     console.log("adding");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -129,7 +129,7 @@ export function deleteDirection(directionId: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_DIRECTION_REQUEST });
     console.log("deleting direction");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -168,7 +168,7 @@ export function addUser(directionId: string, user: {id: string, displayName: str
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("adding user");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -207,7 +207,7 @@ export function removeUser(directionId: string, user: {id: string}) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
     console.log("removing user");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -247,7 +247,7 @@ export function changeDetails(details: string, directionId: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_DIRECTION_DETAILS_REQUEST });
     console.log("adding");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {

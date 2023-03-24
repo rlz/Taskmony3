@@ -15,7 +15,7 @@ const checkToken = async() => {
   }
 }
 
-export const getAccessToken = new Promise(async (resolve,reject) => {
+export const getAccessToken = () => new Promise(async (resolve,reject) => {
   const currentToken = await checkToken();
   console.log(currentToken);
   if(currentToken !== undefined) resolve(currentToken);

@@ -59,7 +59,7 @@ export function getNotifications() {
   return function (dispatch: Dispatch) {
     dispatch({ type: GET_NOTIFICATIONS_REQUEST });
     console.log("getting notifications");
-    getAccessToken.then((cookie)=>fetch(URL, {
+    getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

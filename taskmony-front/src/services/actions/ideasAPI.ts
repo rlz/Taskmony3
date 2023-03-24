@@ -67,7 +67,7 @@ export function getIdeas() {
   return function (dispatch: Dispatch) {
     console.log("getting ideas");
     dispatch({ type: GET_IDEAS_REQUEST });
-    getAccessToken.then((cookie)=>fetch(URL, {
+    getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -104,7 +104,7 @@ export function addIdea(idea : TIdea, direction: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_IDEA_REQUEST });
     console.log("adding");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -154,7 +154,7 @@ export function changeIdeaFollowed(ideaId: string, markFollowed : boolean) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_IDEA_FOLLOWED_REQUEST });
     console.log("change followed");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -193,7 +193,7 @@ export function changeIdeaFollowed(ideaId: string, markFollowed : boolean) {
 export function changeIdeaDescription(ideaId: string, description: string) {
   return function (dispatch: Dispatch) {
     console.log("change description");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -230,7 +230,7 @@ export function changeIdeaDescription(ideaId: string, description: string) {
 export function changeIdeaDetails(ideaId: string, details: string | null) {
   return function (dispatch: Dispatch) {
     console.log("change details");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -267,7 +267,7 @@ export function changeIdeaDetails(ideaId: string, details: string | null) {
 export function changeIdeaDirection(ideaId: string, direction : TDirection) {
   return function (dispatch: Dispatch) {
     console.log("change direction");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -305,7 +305,7 @@ export function changeIdeaDirection(ideaId: string, direction : TDirection) {
 export function changeIdeaGeneration(ideaId: string, generation: string) {
   return function (dispatch: Dispatch) {
     console.log("change category");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -345,7 +345,7 @@ export function deleteIdea(ideaId: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_IDEA_REQUEST });
     console.log("delete idea");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {
@@ -385,7 +385,7 @@ export function reviewIdea(ideaId: string) {
   const date = nowDate();
   return function (dispatch: Dispatch) {
     console.log("review idea");
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
       headers: {

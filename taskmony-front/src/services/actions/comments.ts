@@ -15,7 +15,7 @@ export function sendTaskComment(taskId: string, text: string) {
   return function (dispatch: Dispatch) {
     console.log("sending_comment");
     dispatch({ type: SEND_COMMENT_REQUEST });
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export function sendIdeaComment(ideaId: string, text: string) {
   return function (dispatch: Dispatch) {
     console.log("sending_comment");
     dispatch({ type: SEND_COMMENT_REQUEST });
-   getAccessToken.then((cookie)=> fetch(URL, {
+   getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

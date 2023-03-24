@@ -38,7 +38,7 @@ const URL = BASE_URL + "/graphql";
 
 export function getDirections() {
   return function (dispatch: Dispatch) {
-    console.log("getting directions");
+    //console.log("getting directions");
     dispatch({ type: GET_DIRECTIONS_REQUEST });
     getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
@@ -53,7 +53,6 @@ export function getDirections() {
     }))
       .then(checkResponse)
       .then((res) => {
-        console.log(res);
         if (res) {
           dispatch({
             type: GET_DIRECTIONS_SUCCESS,
@@ -76,7 +75,7 @@ export function getDirections() {
 export function addDirection(name: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_DIRECTION_REQUEST });
-    console.log("adding");
+    //console.log("adding");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
@@ -128,7 +127,7 @@ export function deleteDirection(directionId: string) {
   const deletedDate = new Date().toISOString();
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_DIRECTION_REQUEST });
-    console.log("deleting direction");
+    //console.log("deleting direction");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
@@ -167,7 +166,7 @@ export function deleteDirection(directionId: string) {
 export function addUser(directionId: string, user: {id: string, displayName: string}) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
-    console.log("adding user");
+    //console.log("adding user");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
@@ -206,7 +205,7 @@ export function addUser(directionId: string, user: {id: string, displayName: str
 export function removeUser(directionId: string, user: {id: string}) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_USER_REQUEST });
-    console.log("removing user");
+    //console.log("removing user");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
@@ -246,7 +245,7 @@ export function removeUser(directionId: string, user: {id: string}) {
 export function changeDetails(details: string, directionId: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_DIRECTION_DETAILS_REQUEST });
-    console.log("adding");
+    //console.log("adding");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 

@@ -16,9 +16,9 @@ const checkToken = async() => {
 
 export const getAccessToken = () => new Promise(async (resolve,reject) => {
   const currentToken = await checkToken();
-  console.log("now token",currentToken);
+  // console.log("now token",currentToken);
   if(currentToken !== undefined) {resolve(currentToken);return;}
-  console.log("getting new token...")
+  // console.log("getting new token...")
   Cookies.set("accessToken","pending");
   fetch(URL, {
     method: "POST",

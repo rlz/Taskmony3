@@ -237,7 +237,6 @@ const Details = ({ fromDirection } : DetailsProps) => {
           option={task.direction?.name ? task.direction?.name : "none"}
           options={["none", ...directions.map((dir) => dir.name)]}
           onChange={(index : number) => {
-            console.log(index);
             const payload = index == 0 ? null : directions[index - 1];
             dispatch({ type: CHANGE_TASK_DIRECTION, payload: payload });
             if (task.id && payload) dispatch(changeTaskDirection(task.id, payload));
@@ -251,9 +250,7 @@ const Details = ({ fromDirection } : DetailsProps) => {
           options={members.map((m) => m.displayName)}
           option={task.assignee?.displayName ? task.assignee?.displayName : "undefined"}
           onChange={(index : number) => {
-            console.log(index);
             const payload = members[index];
-            console.log(payload);
             dispatch({ type: CHANGE_TASK_ASSIGNEE, payload: payload });
             if (task.id) dispatch(changeTaskAssignee(task.id, payload));
           }}
@@ -333,7 +330,6 @@ const Details = ({ fromDirection } : DetailsProps) => {
             after={"week(s)"}
             value={task.repeatEvery}
             onChange={(value  : string) => {
-              console.log(value);
               dispatch({ type: CHANGE_TASK_REPEAT_EVERY, payload: value });
               if (task.id)
                 dispatch(
@@ -382,8 +378,9 @@ const Comments = () => {
 
   return (
     <>
-      {comments?.map((comment) => (
+      {comments?.map((comment,index) => (
         <Comment
+          key={index}
           text={comment.text}
           author={comment.createdBy.displayName}
           time={comment.createdAt}

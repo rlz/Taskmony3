@@ -28,7 +28,6 @@ export function login(login: string, password: string) {
         else return data;
       })
       .then((res) => {
-        console.log(res);
         if (res) {
           Cookies.set("accessToken", res.accessToken, {
             expires: 1 / 48,

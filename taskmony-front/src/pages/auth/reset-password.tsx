@@ -29,7 +29,7 @@ export const ResetPassword = () => {
 
   useEffect(() => {
     if (!success) return;
-    console.log("reseting was successful");
+    //console.log("reseting was successful");
     //go to changing password page
     navigate("/login");
   }, [success]);

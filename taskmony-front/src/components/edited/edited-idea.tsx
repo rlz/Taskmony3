@@ -185,7 +185,6 @@ const Details = ({ fromDirection }: DetailsProps) => {
         }
         options={categories}
         onChange={(index: number) => {
-          console.log(index);
           const payload = categories[index];
           dispatch({ type: CHANGE_IDEA_GENERATION, payload: payload });
           if (idea.id) dispatch(changeIdeaGeneration(idea.id, payload));
@@ -198,7 +197,6 @@ const Details = ({ fromDirection }: DetailsProps) => {
           option={idea.direction?.name ? idea.direction?.name : "none"}
           options={["none", ...directions.map((dir) => dir.name)]}
           onChange={(index: number) => {
-            console.log(index);
             const payload = index === 0 ? null : directions[index - 1];
             dispatch({ type: CHANGE_IDEA_DIRECTION, payload: payload });
             if (idea.id && payload)
@@ -225,8 +223,9 @@ const Comments = () => {
 
   return (
     <>
-      {comments?.map((comment) => (
+      {comments?.map((comment,index) => (
         <Comment
+        key={index}
           text={comment.text}
           author={comment.createdBy.displayName}
           time={comment.createdAt}

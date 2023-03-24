@@ -23,9 +23,8 @@ export const AddDirectionModal = ({ close }: ModalPropsT) => {
   };
   useEffect(() => {
     if (name == "") return; //TODO
-    console.log(loading, success);
     if (!loading && success) {
-      console.log("new dir added!");
+      //console.log("new dir added!");
       close();
     }
   }, [loading, success]);

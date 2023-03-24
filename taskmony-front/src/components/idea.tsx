@@ -32,7 +32,7 @@ export const Idea = ({ idea, direction, last } : IdeaProps) => {
     if(editedId !== idea.id) setEdited(false);
   },[editedId])
   const open = () => {
-    console.log("opening");
+    //console.log("opening");
     if (edited) return;
     setEdited(true);
     dispatch({ type: CHANGE_OPEN_IDEA, idea: idea });
@@ -44,7 +44,6 @@ export const Idea = ({ idea, direction, last } : IdeaProps) => {
     setEdited(false);
   };
   const deleteThisIdea = (idea : TIdea) => {
-    console.log(idea);
     dispatch(deleteIdea(idea.id));
     dispatch({ type: RESET_IDEA });
     setEdited(false);
@@ -55,7 +54,6 @@ export const Idea = ({ idea, direction, last } : IdeaProps) => {
     return false;
   };
   const changeFollowed = (markFollowed : boolean) => {
-    console.log("following", markFollowed);
     dispatch(changeIdeaFollowed(idea.id, markFollowed));
   };
   const review = () => {
@@ -188,7 +186,7 @@ export const IdeaDetails = ({
   textColor,
 }: IdeaDetailsProps) => {
   return (
-    <div className={`flex flex-nowrap gap-1 mr-1  ${!icon ? "ml-5" : "ml-1"}`}>
+    <div className={`flex flex-nowrap gap-1 ml-1  ${icon !== undefined ? "mr-5" : "mr-1"}`}>
       {icon && <img src={icon}></img>}
       <span
         className={

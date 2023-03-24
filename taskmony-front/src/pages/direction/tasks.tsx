@@ -46,7 +46,7 @@ function Tasks({ directionId, directionName } : TasksProps) {
     tasksToShow = tasksToShow.filter((i) => createdBy.includes(i.createdBy.id));
   }
   if (!future || future == "0"){
-    console.log("show no future");
+    //console.log("show no future");
     tasksToShow = tasksToShow.filter(
       (i) => i.startAt < new Date().toISOString()
     );
@@ -55,7 +55,7 @@ function Tasks({ directionId, directionName } : TasksProps) {
     (d) => d.id == directionId
   )[0];
   useEffect(() => {
-    console.log(tasksToShow);
+    //console.log(tasksToShow);
   }, [tasksToShow]);
   const dispatch = useAppDispatch();
   const addANewTask = (direction: string) => {
@@ -85,7 +85,7 @@ function Tasks({ directionId, directionName } : TasksProps) {
             label={"new task"}
             direction={directionName}
             save={() => {
-              console.log("saving a new task");
+              //console.log("saving a new task");
               setNewTask(false);
               addANewTask(directionId);
             }}

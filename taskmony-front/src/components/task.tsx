@@ -19,37 +19,36 @@ import {
   openTask,
   RESET_TASK,
 } from "../services/actions/tasksAPI";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { nowDate } from "../utils/APIUtils";
 import { TTask } from "../utils/types";
 
 type TaskProps = {
- task: TTask;
- direction?: string;
+  task: TTask;
+  direction?: string;
 };
 
-export const Task = ({ task, direction} : TaskProps) => {
+export const Task = ({ task, direction }: TaskProps) => {
   const myId = Cookies.get("id");
   const dispatch = useAppDispatch();
   const [edited, setEdited] = useState(false);
-  const editedId = useAppSelector((store) => store.editedTask.id)
-  useEffect(()=>{
-    if(editedId !== task.id) setEdited(false);
-  },[editedId])
+  const editedId = useAppSelector((store) => store.editedTask.id);
+  useEffect(() => {
+    if (editedId !== task.id) setEdited(false);
+  }, [editedId]);
   const open = () => {
-    console.log("opening");
+    //console.log("opening");
     if (edited) return;
     setEdited(true);
     dispatch({ type: CHANGE_OPEN_TASK, task: task });
   };
-  const save = (task : TTask) => {
+  const save = (task: TTask) => {
     if (!edited) return;
     dispatch({ type: CHANGE_TASKS, task: task });
     dispatch({ type: RESET_TASK });
     setEdited(false);
   };
-  const deleteThisTask = (task : TTask) => {
-    console.log(task);
+  const deleteThisTask = (task: TTask) => {
     dispatch(deleteTask(task.id));
     dispatch({ type: RESET_TASK });
     setEdited(false);
@@ -59,13 +58,11 @@ export const Task = ({ task, direction} : TaskProps) => {
     if (task.subscribers.some((s) => s.id == myId)) return true;
     return false;
   };
-  const changeCheck = (markComplete : boolean) => {
-    console.log("marking", markComplete);
+  const changeCheck = (markComplete: boolean) => {
     if (markComplete) dispatch(changeCompleteTaskDate(task.id, nowDate()));
     else dispatch(changeCompleteTaskDate(task.id, null));
   };
-  const changeFollowed = (markFollowed  : boolean) => {
-    console.log("following", markFollowed);
+  const changeFollowed = (markFollowed: boolean) => {
     dispatch(changeTaskFollowed(task.id, markFollowed));
   };
 
@@ -82,6 +79,8 @@ export const Task = ({ task, direction} : TaskProps) => {
         <TaskUnedited
           label={task.description}
           checked={!!task.completedAt}
+          date={task.startAt}
+          assignee={task.assignee}
           changeCheck={changeCheck}
           changeFollowed={changeFollowed}
           followed={direction || isFollowed() ? isFollowed() : undefined}
@@ -103,6 +102,11 @@ type TaskUneditedProps = {
   direction?: string;
   changeCheck: Function;
   changeFollowed: Function;
+  assignee: {
+    displayName: string;
+    id: string;
+  };
+  date: string;
 };
 
 export const TaskUnedited = ({
@@ -115,6 +119,8 @@ export const TaskUnedited = ({
   direction,
   changeCheck,
   changeFollowed,
+  assignee,
+  date,
 }: TaskUneditedProps) => {
   return (
     <div className="uneditedTask w-full bg-white rounded-lg drop-shadow-sm cursor-pointer">
@@ -154,6 +160,13 @@ export const TaskUnedited = ({
             hasBorder
           />
         }
+        {date > new Date().toISOString() && <TaskDetails label={date.slice(0,10)} hasBorder />}
+        {assignee && (
+          <TaskDetails
+            label={`assignee: ${assignee.displayName}`}
+            hasBorder
+          />
+        )}
         {<TaskDetails label={direction} textColor="text-yellow-500" />}
       </div>
     </div>
@@ -174,7 +187,7 @@ export const TaskDetails = ({
   textColor,
 }: TaskDetailsProps) => {
   return (
-    <div className={`flex flex-nowrap gap-1 mr-1  ${!icon ? "ml-5" : "ml-1"}`}>
+    <div className={`flex flex-nowrap gap-1 ml-1  ${icon !== undefined ? "mr-5" : "mr-1"}`}>
       {icon && <img src={icon}></img>}
       <span
         className={

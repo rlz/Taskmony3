@@ -82,7 +82,7 @@ export function openTask(id: string) {
 
 export function getTasks() {
   return function (dispatch: Dispatch) {
-    console.log("getting tasks");
+    //console.log("getting tasks");
     dispatch({ type: GET_TASKS_REQUEST });
     getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
@@ -97,7 +97,6 @@ export function getTasks() {
     }))
       .then(checkResponse)
       .then((res) => {
-        console.log(res);
         if (res) {
           dispatch({
             type: GET_TASKS_SUCCESS,
@@ -120,7 +119,7 @@ export function getTasks() {
 export function addTask(task: TTask, direction: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_TASK_REQUEST });
-    console.log("adding");
+    //console.log("adding");
     getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
 
@@ -170,7 +169,7 @@ export function addTask(task: TTask, direction: string | null) {
 export function addRepeatedTasks(task: TTask, direction: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_TASK_REQUEST });
-    console.log("adding");
+    //console.log("adding");
     getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
 
@@ -228,7 +227,7 @@ export function addRepeatedTasks(task: TTask, direction: string | null) {
 export function changeCompleteTaskDate(taskId: string, date: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_COMPLETE_TASK_DATE_REQUEST });
-    console.log("change complete date");
+    //console.log("change complete date");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
@@ -270,7 +269,7 @@ export function changeCompleteTaskDate(taskId: string, date: string | null) {
 export function changeTaskFollowed(taskId: string, markFollowed: boolean) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_TASK_FOLLOWED_REQUEST });
-    console.log("change followed");
+    //console.log("change followed");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 
@@ -309,7 +308,7 @@ export function changeTaskFollowed(taskId: string, markFollowed: boolean) {
 }
 export function changeTaskDescription(taskId: string, description: string) {
   return function (dispatch: Dispatch) {
-    console.log("change description");
+    //console.log("change description");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
@@ -346,7 +345,7 @@ export function changeTaskDescription(taskId: string, description: string) {
 }
 export function changeTaskDetails(taskId: string, details: string | null) {
   return function (dispatch: Dispatch) {
-    console.log("change details");
+    //console.log("change details");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
@@ -384,7 +383,7 @@ export function changeTaskDetails(taskId: string, details: string | null) {
 }
 export function changeTaskDirection(taskId: string, direction: TDirection) {
   return function (dispatch: Dispatch) {
-    console.log("change direction");
+    //console.log("change direction");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
@@ -421,7 +420,7 @@ export function changeTaskDirection(taskId: string, direction: TDirection) {
 }
 export function changeTaskAssignee(taskId: string, assignee: {id: string}) {
   return function (dispatch: Dispatch) {
-    console.log("change assignee");
+    //console.log("change assignee");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
@@ -463,7 +462,7 @@ export function changeTaskRepeatMode(
   weekDays: Array<string>
 ) {
   return function (dispatch: Dispatch) {
-    console.log("change repeatMode");
+    //console.log("change repeatMode");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
@@ -500,7 +499,7 @@ export function changeTaskRepeatMode(
 }
 export function changeTaskRepeatUntil(taskId: string, repeatUntil: string) {
   return function (dispatch: Dispatch) {
-    console.log("change repeatUntil");
+    //console.log("change repeatUntil");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
@@ -537,7 +536,7 @@ export function changeTaskRepeatUntil(taskId: string, repeatUntil: string) {
 }
 export function changeTaskStartAt(taskId: string, startAt: string) {
   return function (dispatch: Dispatch) {
-    console.log("change startAt");
+    //console.log("change startAt");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
       headers: {
@@ -577,7 +576,7 @@ export function deleteTask(taskId: string) {
   const date = nowDate();
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_TASK_REQUEST });
-    console.log("delete task");
+    //console.log("delete task");
    getAccessToken().then((cookie)=> fetch(URL, {
       method: "POST",
 

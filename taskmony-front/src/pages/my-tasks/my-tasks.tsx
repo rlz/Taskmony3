@@ -47,7 +47,7 @@ function MyTasks() {
         (chosenDirection.includes("unassigned") && !i.direction)
     );
     if (!future || future == "0"){
-      console.log("show no future");
+      //console.log("show no future");
       tasksToShow = tasksToShow.filter(
         (i) => i.startAt < new Date().toISOString()
       );
@@ -75,7 +75,7 @@ function MyTasks() {
           <EditedTask
             label={"new task"}
             save={() => {
-              console.log("saving a new task");
+              //console.log("saving a new task");
               setNewTask(false);
               addANewTask();
             }}

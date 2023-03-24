@@ -53,7 +53,7 @@ export function getUserInfo() {
         }
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
         dispatch({
           type: USER_INFO_FAILED,
         });
@@ -64,7 +64,7 @@ export function getUserInfo() {
 export function getUser(login: string) {
   return function (dispatch: any) {
     dispatch({ type: USERS_REQUEST });
-    console.log("getting user");
+    //console.log("getting user");
     getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
@@ -82,7 +82,6 @@ export function getUser(login: string) {
       .then(checkResponse)
       .then((res) => {
         if (res) {
-          console.log(res);
           dispatch({
             type: USERS_SUCCESS,
             users: res?.data?.users,
@@ -94,7 +93,7 @@ export function getUser(login: string) {
         }
       })
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
         dispatch({
           type: USERS_FAILED,
         });

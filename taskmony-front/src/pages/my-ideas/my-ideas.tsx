@@ -29,7 +29,7 @@ function MyIdeas() {
   let ideasToShow = useAppSelector((store) => store.ideas.items)
     .filter((i) => i.deletedAt == null)
     .sort((a, b) => {
-      console.log("sorting")
+      //console.log("sorting")
       if(!a.reviewedAt && b.reviewedAt) return -1
       else if(!b.reviewedAt && a.reviewedAt) return 1
       else if(!b.reviewedAt && !a.reviewedAt) return 0
@@ -70,7 +70,7 @@ function MyIdeas() {
           <EditedIdea
             label={"new idea"}
             save={() => {
-              console.log("saving a new idea");
+              //console.log("saving a new idea");
               setNewIdea(false);
               addANewIdea();
             }}

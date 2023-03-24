@@ -58,7 +58,7 @@ type TDirectionNotification = {
 export function getNotifications() {
   return function (dispatch: Dispatch) {
     dispatch({ type: GET_NOTIFICATIONS_REQUEST });
-    console.log("getting notifications");
+    //console.log("getting notifications");
     getAccessToken().then((cookie)=>fetch(URL, {
       method: "POST",
       headers: {
@@ -124,7 +124,6 @@ export function getNotifications() {
               });
             }).flat();
           const notifications = [...tasksNotifications,...directionsNotifications,...ideasNotifications].sort((a,b) => (a.modifiedAt < b.modifiedAt) ? 1 : ((b.modifiedAt < a.modifiedAt) ? -1 : 0))
-          console.log(notifications);
           dispatch({
             type: GET_NOTIFICATIONS_SUCCESS,
             notifications: notifications,
@@ -136,7 +135,7 @@ export function getNotifications() {
         }
       })
       .catch((error) => {
-        console.log(error)
+        //console.log(error)
         dispatch({
           type: GET_NOTIFICATIONS_FAILED,
         });

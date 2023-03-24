@@ -20,7 +20,7 @@ export const Login = () => {
 
   useEffect(() => {
     if (!success || isFirst) return;
-    console.log("logging was successful");
+    //console.log("logging was successful");
     //go to home page
     navigate("/");
   }, [success]);
@@ -29,7 +29,7 @@ export const Login = () => {
     setPasswordVisible(!passwordVisible);
   };
   const loginUser = () => {
-    console.log("login" + email + password);
+    //console.log("login" + email + password);
     dispatch(login(email, password));
   };
   return (

@@ -26,7 +26,7 @@ export const ForgotPassword = () => {
 
   useEffect(() => {
     if (!success) return;
-    console.log("reseting was successful");
+    //console.log("reseting was successful");
     //go to changing password page
     navigate("/reset-password");
   }, [success]);

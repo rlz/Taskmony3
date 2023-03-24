@@ -22,7 +22,7 @@ export const Register = () => {
 
   useEffect(() => {
     if (!success) return;
-    console.log("registration was successful");
+    //console.log("registration was successful");
     //go to home page
     navigate("/login");
   }, [success]);
@@ -31,7 +31,7 @@ export const Register = () => {
     setPasswordVisible(!passwordVisible);
   };
   const registerUser = () => {
-    console.log("registering" + email + password + name + login);
+    //console.log("registering" + email + password + name + login);
     dispatch(register(email, password, name,login));
   };
 

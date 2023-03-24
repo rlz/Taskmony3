@@ -34,7 +34,7 @@ function Ideas({ directionId, directionName } : IdeasProps) {
   let ideasToShow = useAppSelector((store) => store.ideas.items).filter(
     (i) => i.deletedAt == null && i.direction?.id == directionId
   ).sort((a, b) => {
-    console.log("sorting")
+    //console.log("sorting")
     if(!a.reviewedAt && b.reviewedAt) return -1
     else if(!b.reviewedAt && a.reviewedAt) return 1
     else if(!b.reviewedAt && !a.reviewedAt) return 0
@@ -85,7 +85,7 @@ function Ideas({ directionId, directionName } : IdeasProps) {
             label={"new idea"}
             direction={directionName}
             save={() => {
-              console.log("saving a new idea");
+              //console.log("saving a new idea");
               setNewIdea(false);
               addANewIdea(directionId);
             }}

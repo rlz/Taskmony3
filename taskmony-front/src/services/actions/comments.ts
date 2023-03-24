@@ -35,7 +35,6 @@ export function sendTaskComment(taskId: string, text: string) {
     }))
       .then(checkResponse)
       .then((res) => {
-        console.log(res);
         if (res) {
           dispatch({
             type: SEND_COMMENT_SUCCESS,
@@ -81,7 +80,6 @@ export function sendIdeaComment(ideaId: string, text: string) {
     }))
       .then(checkResponse)
       .then((res) => {
-        console.log(res);
         if (res) {
           dispatch({
             type: SEND_COMMENT_SUCCESS,
@@ -89,7 +87,6 @@ export function sendIdeaComment(ideaId: string, text: string) {
             id: ideaId,
           });
         } else {
-          console.log(res);
           dispatch({
             type: SEND_COMMENT_FAILED,
           });

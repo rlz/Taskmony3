@@ -7,7 +7,6 @@ const URL = BASE_URL + "/api/account/token/refresh";
 
 const checkToken = async() => {
   const currentToken = Cookies.get("accessToken");
-  console.log(currentToken);
   if(currentToken === "pending") {
      window.setTimeout(()=>{const currentToken = checkToken()}, 100); 
   } else {
@@ -17,8 +16,9 @@ const checkToken = async() => {
 
 export const getAccessToken = () => new Promise(async (resolve,reject) => {
   const currentToken = await checkToken();
-  console.log(currentToken);
-  if(currentToken !== undefined) resolve(currentToken);
+  console.log("now token",currentToken);
+  if(currentToken !== undefined) {resolve(currentToken);return;}
+  console.log("getting new token...")
   Cookies.set("accessToken","pending");
   fetch(URL, {
     method: "POST",

@@ -8,7 +8,7 @@ public class Description : ValueOf<string, Description>
 {
     protected override void Validate()
     {
-        if (string.IsNullOrEmpty(Value))
+        if (string.IsNullOrWhiteSpace(Value))
         {
             throw new DomainException(ValidationErrors.InvalidDescription);
         }

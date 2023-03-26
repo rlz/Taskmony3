@@ -103,23 +103,17 @@ public class TaskService : ITaskService
     public async Task<IEnumerable<Guid>> AddRecurringTaskAsync(Task task, RepeatMode repeatMode, int repeatEvery,
         WeekDay? weekDays, DateTime repeatUntil)
     {
-        if (task is { RepeatMode: RepeatMode.Week, WeekDays: null })
-        {
-            throw new DomainException(ValidationErrors.WeekDaysAreRequired);
-        }
+        ValidateRepeatMode(repeatMode, weekDays, task.StartAt, repeatUntil, repeatEvery);
 
         await ValidateAssignee(task);
 
-        if (task.StartAt > repeatUntil)
+        if (task.DirectionId is not null &&
+            !await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, task.CreatedById))
         {
-            throw new DomainException(ValidationErrors.RepeatUntilIsBeforeStartAt);
+            throw new DomainException(DirectionErrors.NotFound);
         }
 
-        if (task.DirectionId is not null && task.AssigneeId is null)
-        {
-            task.AssigneeId = task.CreatedById;
-            task.AssignedById = task.CreatedById;
-        }
+        SetAssigneeAndAssigner(task);
 
         var tasks = CreateRecurringTaskInstances(task, repeatMode, repeatEvery, weekDays, repeatUntil);
 
@@ -915,6 +909,11 @@ public class TaskService : ITaskService
         if (repeatEvery is null)
         {
             throw new DomainException(ValidationErrors.RepeatEveryIsRequired);
+        }
+
+        if (repeatEvery <= 0)
+        {
+            throw new DomainException(ValidationErrors.InvalidRepeatEvery);
         }
 
         if (repeatMode == RepeatMode.Week && weekDays is null)

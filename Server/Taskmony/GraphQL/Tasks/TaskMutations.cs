@@ -42,7 +42,7 @@ public class TaskMutations
             StartAt = timeConverter.StringToDateTimeUtc(startAt),
             RepeatMode = repeatMode,
             RepeatEvery = repeatEvery,
-            WeekDays = weekDays?.Aggregate((current, weekDay) => current | weekDay),
+            WeekDays = weekDays != null && weekDays.Count() > 0 ? weekDays.Aggregate((current, weekDay) => current | weekDay) : null,
             RepeatUntil = repeatUntilUtc
         };
 
@@ -147,7 +147,7 @@ public class TaskMutations
     {
         DateTime? repeatUntilUtc = repeatUntil == null ? null : timeConverter.StringToDateTimeUtc(repeatUntil);
         DateTime? startAtUtc = startAt == null ? null : timeConverter.StringToDateTimeUtc(startAt);
-        var weekDayFlags = weekDays?.Aggregate((current, weekDay) => current | weekDay);
+        WeekDay? weekDayFlags = weekDays != null && weekDays.Count() > 0 ? weekDays.Aggregate((current, weekDay) => current | weekDay) : null;
 
         if (groupId is not null)
         {

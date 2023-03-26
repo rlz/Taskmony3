@@ -48,9 +48,6 @@ public static class ValidationErrors
     public static ErrorDetails InvalidRepeatMode =>
         new("Repeat mode is invalid", "INVALID_REPEAT_MODE");
 
-    public static ErrorDetails TaskIdOrGroupIdIsRequired =>
-        new("Either task id or group id must be specified", "TASK_ID_OR_GROUP_ID_IS_REQUIRED");
-
     public static ErrorDetails EndBeforeStart =>
         new("End date must not be before start date", "END_BEFORE_START");
 
@@ -74,4 +71,7 @@ public static class ValidationErrors
 
     public static ErrorDetails RepeatUntilIsBeforeStartAt =>
         new("Repeat until date must be after start at date", "REPEAT_UNTIL_IS_BEFORE_START_AT");
+
+    public static ErrorDetails InvalidRepeatEvery =>
+        new("Repeat every must be positive", "INVALID_REPEAT_EVERY");
 }

@@ -175,7 +175,7 @@ export function addRepeatedTasks(task: TTask, direction: string | null) {
       ${
         direction
           ? `,directionId:"${direction}"`
-          : task.direction
+          : task.direction?.id
           ? `,directionId:"${task.direction?.id}"`
           : ""
       }

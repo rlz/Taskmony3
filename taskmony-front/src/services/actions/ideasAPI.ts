@@ -373,7 +373,7 @@ export function deleteIdea(ideaId: string) {
 }
 
 export function reviewIdea(ideaId: string) {
-  const date = nowDate();
+  const date = new Date().toISOString();
   return function (dispatch: Dispatch) {
     //console.log("review idea");
    getAccessToken().then((cookie)=> fetch(URL, {

@@ -52,9 +52,9 @@ export const Login = () => {
           />
           {error && <p className="text-red-400">{error}</p>
           }
-          <NavLink to="/forgot-password">
+          {/* <NavLink to="/forgot-password">
             <p className="mt-2">forgot your password?</p>
-          </NavLink>
+          </NavLink> */}
           <div className="mt-10">
             <Btn label={"sign in"} onClick={loginUser} />
           </div>

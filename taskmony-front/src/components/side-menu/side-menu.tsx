@@ -9,21 +9,27 @@ import addCircle from "../../images/add_circle.svg";
 import menuOpen from "../../images/menu-open.svg";
 import menuClose from "../../images/menu-close.svg";
 import MenuItem from "./menu-item";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Profile } from "./profile";
 import { ShortMenuItem } from "./short-menu-item";
 import { AddBtn2 } from "../add-btn/add-btn2";
 import { ProfileMenuModal } from "../profile-menu-modal/profile-menu-modal";
 import { AddDirectionModal } from "../add-direction-modal/add-direction-modal";
 import { useAppSelector } from "../../utils/hooks";
+import { useMediaQuery } from 'react-responsive';
 
 export const SideMenu = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
+  const isSmallScreen = useMediaQuery({ query: '(max-width: 975px)' })
   const toggleOpen = () => setIsOpen(!isOpen);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState<boolean>(false);
   const [openNewDirection, setOpenNewDirection] = useState(false);
+  useEffect(()=>{
+    if(isOpen) setIsOpen(!isSmallScreen);
+    if(!isOpen && !isSmallScreen) setIsOpen(true);
+  },[isSmallScreen])
   return (
-    <div className={`${isOpen ? "w-1/6" : ""} border border-grey-60 h-full`}>
+    <div className={`${isOpen  && !isSmallScreen ? "w-1/4 lg:w-1/5 xl:w-1/6 " : ""} ${isOpen && isSmallScreen ? "absolute top-0 left-0 z-30" : ""} border border-grey-60 h-full bg-slate-50`}>
       {openNewDirection && (
         <AddDirectionModal close={() => setOpenNewDirection(false)} />
       )}

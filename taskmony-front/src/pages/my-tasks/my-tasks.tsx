@@ -68,7 +68,7 @@ function MyTasks() {
   const tasks = tasksToShow.map((task) => <Task task={task} key={task.id} />);
   return (
     <div className="flex w-full">
-      <div className="w-3/4  p-3 flex flex-col overflow-hidden h-screen">
+      <div className="w-full  p-3 flex flex-col overflow-hidden h-screen">
         <h1 className="font-bold text-3xl">My Tasks</h1>
         <AddBtn label={"add a new task"} onClick={() => {dispatch({ type: RESET_TASK });setNewTask(true)}} />
         {newTask && task.id === "" && (
@@ -94,7 +94,7 @@ function MyTasks() {
 function Filter() {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   return (
-    <div className="w-1/5 mt-12">
+    <div className="w-1/5 mt-12 filter">
       <FilterByTaskType />
       <hr />
       <FilterByDirection />

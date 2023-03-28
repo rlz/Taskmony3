@@ -54,6 +54,7 @@ export const EditedIdea = ({
         <div className="flex  gap-2">
           <input
             className={"font-semibold text-sm focus:outline-none underline"}
+            id="description"
             placeholder={undefined}
             value={idea.description}
             onChange={(e) =>

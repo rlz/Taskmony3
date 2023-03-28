@@ -72,14 +72,6 @@ export const CHANGE_TASKS = "CHANGE_TASKS";
 
 const URL = BASE_URL + "/graphql";
 
-export function openTask(id: string) {
-  const tasks = useAppSelector((store) => store.tasks.items);
-  const task = tasks.filter((task) => task.id == id)[0];
-  return function (dispatch: Dispatch) {
-    dispatch({ type: GET_TASKS_REQUEST, task: task });
-  };
-}
-
 export function getTasks() {
   return function (dispatch: Dispatch) {
     //console.log("getting tasks");

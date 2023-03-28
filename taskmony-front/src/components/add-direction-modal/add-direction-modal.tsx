@@ -20,14 +20,8 @@ export const AddDirectionModal = ({ close }: ModalPropsT) => {
   const dispatch = useAppDispatch();
   const addNewDirection = () => {
     dispatch(addDirection(name));
+    close();
   };
-  useEffect(() => {
-    if (name == "") return; //TODO
-    if (!loading && success) {
-      //console.log("new dir added!");
-      close();
-    }
-  }, [loading, success]);
   return (
     <>
       <div className="w-full h-full absolute top-0 left-0 opacity-50 bg-black z-20">

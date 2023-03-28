@@ -3,7 +3,8 @@ const password = "Password123!";
 const baseUrl = "http://localhost:3000";
 
 describe("ideas tests", () => {
-  const ideaName = `test${new Date()}`;
+  const date = `${new Date()}`;
+  const ideaName = `New Idea`+date;
   beforeEach(() => {
     cy.visit(baseUrl + "/login");
     if (cy.contains("Sign in")) {
@@ -25,8 +26,8 @@ describe("ideas tests", () => {
   it("can add idea", function () {
     
     cy.get("div").contains("add a new idea").click();
-    cy.get('input[placeholder="idea name"]').type(`${ideaName}{enter}`);
-    cy.get("div").contains("add a idea").click();
+    cy.get('input[id="description"]').type(`${date}{enter}`);
+    cy.get("div").contains("add an idea").click();
     cy.contains(ideaName);
     cy.get("div").contains("add a idea").should("not.exist");
   });

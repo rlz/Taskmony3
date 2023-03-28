@@ -45,7 +45,7 @@ export const ArchivedTasks = () => {
   }
   return (
     <div className="flex w-full">
-      <div className="w-3/4 m-3 ml-0">
+      <div className="w-full m-3 ml-0">
         {chosenTasks.map((task, index) => (
           <ArchivedItem
             label={task.description}
@@ -62,7 +62,7 @@ export const ArchivedTasks = () => {
 
 function Filter() {
   return (
-    <div className="w-1/5 mt-4">
+    <div className="w-1/5 mt-4 filter">
       <FilterByArchivedTaskType />
       <hr />
       <FilterByDate type="deletion" />

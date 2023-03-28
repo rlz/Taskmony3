@@ -68,7 +68,7 @@ function Tasks({ directionId, directionName } : TasksProps) {
   ));
   return (
     <div className="flex w-full">
-      <div className="w-3/4  m-3">
+      <div className="w-full  m-3">
         <AddBtn
           label={"add a new task"}
           onClick={() => {
@@ -105,7 +105,7 @@ type FilterProps = {
 }
 function Filter({ directionId } : FilterProps) {
   return (
-    <div className="w-1/5 mt-4">
+    <div className="w-1/5 mt-4 filter">
       <FilterByCreator id={directionId} />
       <hr />
       <FilterByFuture />

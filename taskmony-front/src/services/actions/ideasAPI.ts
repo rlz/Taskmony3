@@ -55,14 +55,6 @@ export const CHANGE_IDEAS = "CHANGE_IDEAS";
 
 const URL = BASE_URL + "/graphql";
 
-export function openIdea(id: string) {
-  const ideas = useAppSelector((store) => store.ideas.items);
-  const idea = ideas.filter((idea) => idea.id == id)[0];
-  return function (dispatch: Dispatch) {
-    dispatch({ type: GET_IDEAS_REQUEST, idea: idea });
-  };
-}
-
 export function getIdeas() {
   return function (dispatch: Dispatch) {
     //console.log("getting ideas");

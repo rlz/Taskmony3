@@ -87,7 +87,6 @@ function Home() {
         <NotificationsBtn
           onClick={() => {
             setOpenNotif(true);
-            console.log(openNotif);
           }}
         />
       )}

@@ -16,7 +16,6 @@ import {
   CHANGE_OPEN_TASK,
   CHANGE_TASKS,
   deleteTask,
-  openTask,
   RESET_TASK,
 } from "../services/actions/tasksAPI";
 import Cookies from "js-cookie";

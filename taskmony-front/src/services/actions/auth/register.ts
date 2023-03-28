@@ -30,7 +30,6 @@ export function register(email: string, password: string, displayName: string, l
       else return data;
     })
       .then((res) => {
-        console.log(res);
         if (res) {
           Cookies.set("accessToken", res.accessToken, {
             expires: 1/48,

@@ -26,7 +26,7 @@ export const ArchivedDirections = () => {
   }
   return (
     <div className="flex w-full">
-      <div className="w-3/4  m-3 ml-0">
+      <div className="w-full  m-3 ml-0">
         {chosenDirections.map((dir) => (
           <ArchivedItem label={dir.name} date={dir.deletedAt} key={dir.id} />
         ))}
@@ -38,7 +38,7 @@ export const ArchivedDirections = () => {
 
 function Filter() {
   return (
-    <div className="w-1/5 mt-4">
+    <div className="w-1/5 mt-4 filter">
       <FilterByDate type="deletion" />
     </div>
   );

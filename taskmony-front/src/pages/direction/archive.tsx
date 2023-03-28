@@ -14,12 +14,12 @@ type ArchiveProps = {
 }
 
 export const Archive = ({ directionId } : ArchiveProps) => {
-  const location = useLocation();
+  const loc = useLocation();
   const navigate = useNavigate();
   let [searchParams, setSearchParams] = useSearchParams();
   const tasksType = searchParams.get("archiveType");
-  const type = location.pathname.split("/")[3];
-  const archiveType = location.pathname.split("/")[4];
+  const type = loc.pathname.split("/")[3];
+  const archiveType = loc.pathname.split("/")[4];
   const tasks = useAppSelector((store) => store.tasks.items).filter(
     (i) => (tasksType == "deleted" ? i.deletedAt != null : i.completedAt != null) && i.direction?.id == directionId
   );

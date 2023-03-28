@@ -10,8 +10,8 @@ import { ArchivedIdeas } from "./archived-ideas";
 import { ArchivedTasks } from "./archived-tasks";
 
 function Archive() {
-  const location = useLocation();
-  const type = location.pathname.split("/").pop();
+  const loc = useLocation();
+  const type = loc.pathname.split("/").pop();
   const renderSwitch = (type?: string) => {
     switch (type) {
       case "tasks":

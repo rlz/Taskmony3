@@ -4,12 +4,14 @@ import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import Cookies from 'js-cookie';
 import { useState } from "react";
 import { RESET_COUNT } from "../../services/actions/notifications";
+import { useMediaQuery } from "react-responsive";
 
 type NotificationsModalPropsT = {
   close: Function;
 };
 
 export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
+  const isSmallScreen = useMediaQuery({ query: '(max-width: 975px)' })
   const dispatch = useAppDispatch();
   const notifications = useAppSelector(
     (store) => store.notifications.notifications
@@ -21,7 +23,6 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
     const lastNotification = notifications[0];
     Cookies.set("lastNotification", lastNotification.id);
     dispatch({ type: RESET_COUNT });
-    console.log(Cookies.get("lastNotification"));
   };
 
   const notificationsItems = notifications.map((notif) => {
@@ -96,7 +97,7 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
     );
   });
   return (
-    <div className={`w-1/3 ${newCount < 5 && !showOld?"max-h-3/4" : "h-3/4"} overflow-y-hidden absolute top-0 right-0 m-4 p-3 mt-0 bg-slate-50 rounded-lg drop-shadow-lg `}>
+    <div className={`${isSmallScreen?"w-full":"w-1/3 m-4 p-3 mt-0"} ${newCount < 5 && !showOld?"max-h-3/4" : "h-3/4"} overflow-y-hidden absolute top-0 right-0 bg-slate-50 rounded-lg drop-shadow-lg `}>
       <img
         src={deleteI}
         className="cursor-pointer mr-0 ml-auto"

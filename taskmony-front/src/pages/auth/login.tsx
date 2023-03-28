@@ -8,7 +8,7 @@ import { Input } from "./input";
 import { login } from "../../services/actions/auth/login";
 
 export const Login = () => {
-  const navigate = useNavigate();
+  const nav = useNavigate();
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -22,7 +22,7 @@ export const Login = () => {
     if (!success || isFirst) return;
     //console.log("logging was successful");
     //go to home page
-    navigate("/");
+    nav("/");
   }, [success]);
 
   const togglePasswordVisibility = () => {

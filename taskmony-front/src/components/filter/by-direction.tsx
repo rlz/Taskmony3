@@ -44,7 +44,6 @@ export const FilterByDirection = () => {
               checked={dir.includes(direction.name)}
               onChange={(value: string, label: string) => {
                 if (value) {
-                  console.log(dir);
                   setDir([...dir, label]);
                 } else {
                   setDir(dir.filter(el=>el!=label));

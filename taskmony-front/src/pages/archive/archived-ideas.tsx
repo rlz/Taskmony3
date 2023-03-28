@@ -34,7 +34,7 @@ export const ArchivedIdeas = () => {
   );
   return (
     <div className="flex w-full">
-      <div className="w-3/4    m-3 ml-0">
+      <div className="w-full    m-3 ml-0">
       {chosenIdeas.map((idea,index)=><ArchivedItem             
       label={idea.description}
             date={idea.deletedAt}
@@ -48,7 +48,7 @@ export const ArchivedIdeas = () => {
 
 function Filter() {
   return (
-    <div className="w-1/5 mt-4">
+    <div className="w-1/5 mt-4 filter">
       <FilterByDate type="deletion" />
       <hr />
       <FilterByDirection />

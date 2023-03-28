@@ -80,6 +80,7 @@ export const EditedTask = ({
           ></img>}
           <input
             className={`font-semibold text-sm focus:outline-none underline`}
+            id="description"
             placeholder={undefined}
             value={task.description}
             onChange={(e) =>

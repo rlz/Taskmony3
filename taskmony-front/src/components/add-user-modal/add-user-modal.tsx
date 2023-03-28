@@ -27,8 +27,8 @@ export const AddUserModal = ({ close }: ModalPropsT) => {
   useEffect(() => {
     if (error && !isFirst) setErrorMessage("cannot add this user");
   }, [error]);
-  const location = useLocation();
-  const directionId = location.pathname.split("/")[2];
+  const loc = useLocation();
+  const directionId = loc.pathname.split("/")[2];
   return (
     <>
       <div className="w-full h-full absolute top-0 left-0 opacity-50 bg-black z-30"></div>

@@ -14,11 +14,11 @@ import { ArchivedTasks } from "../archive/archived-tasks";
 import { ArchivedIdeas } from "../archive/archived-ideas";
 
 function Direction() {
-  const location = useLocation();
+  const loc = useLocation();
   const navigate = useNavigate();
-  const type = location.pathname.split("/")[3];
-  const directionId = location.pathname.split("/")[2];
-  const archiveType = location.pathname.split("/")[4];
+  const type = loc.pathname.split("/")[3];
+  const directionId = loc.pathname.split("/")[2];
+  const archiveType = loc.pathname.split("/")[4];
   const directions = useAppSelector((store) => store.directions.items);
   const direction = directions.filter((dir) => dir.id == directionId)[0];
   const renderSwitch = (type?: string) => {

@@ -3,7 +3,8 @@ const password = "Password123!";
 const baseUrl = "http://localhost:3000";
 
 describe("task tests", () => {
-  const taskName = `test${new Date()}`;
+  const date = `${new Date()}`;
+  const taskName = `New task`+date;
   beforeEach(() => {
     cy.visit(baseUrl + "/login");
     if (cy.contains("Sign in")) {
@@ -22,7 +23,7 @@ describe("task tests", () => {
   it("can add task", function () {
     
     cy.get("div").contains("add a new task").click();
-    cy.get('input[placeholder="task name"]').type(`${taskName}{enter}`);
+    cy.get('input[id="description"]').type(`${date}{enter}`);
     cy.get("div").contains("add a task").click();
     cy.contains(taskName);
     cy.get("div").contains("add a task").should("not.exist");

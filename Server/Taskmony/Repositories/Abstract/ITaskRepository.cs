@@ -27,7 +27,7 @@ public interface ITaskRepository
 
     Task<IEnumerable<Models.Task>> GetTasksByGroupIdAsync(Guid groupId);
 
-    Task<IEnumerable<Models.Task>> GetByDirectionIdAsync(Guid directionId);
+    Task<IEnumerable<Models.Task>> GetByDirectionIdAndAssigneeIdAsync(Guid directionId, Guid assigneeId);
 
     Task AddAsync(Models.Task task);
 

@@ -1,5 +1,6 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
+using Taskmony.Models;
 using Taskmony.Models.Enums;
 using Taskmony.Repositories.Abstract;
 using Taskmony.Services.Abstract;
@@ -14,14 +15,17 @@ public class TaskService : ITaskService
     private readonly IDirectionRepository _directionRepository;
     private readonly INotificationService _notificationService;
     private readonly ITimeConverter _timeConverter;
+    private readonly IAssignmentRepository _assignmentRepository;
 
     public TaskService(ITaskRepository taskRepository, IDirectionRepository directionRepository,
-        INotificationService notificationService, ITimeConverter timeConverter)
+        IAssignmentRepository assignmentRepository, INotificationService notificationService,
+        ITimeConverter timeConverter)
     {
         _taskRepository = taskRepository;
         _directionRepository = directionRepository;
         _notificationService = notificationService;
         _timeConverter = timeConverter;
+        _assignmentRepository = assignmentRepository;
     }
 
     public async Task<IEnumerable<Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId, int? offset,
@@ -70,9 +74,9 @@ public class TaskService : ITaskService
             throw new DomainException(DirectionErrors.NotFound);
         }
 
-        await ValidateAssignee(task);
+        await ValidateAssignee(task, task.Assignment);
 
-        SetAssigneeAndAssigner(task);
+        SetAssignment(task);
 
         await _taskRepository.AddAsync(task);
 
@@ -86,17 +90,15 @@ public class TaskService : ITaskService
         return task;
     }
 
-    private void SetAssigneeAndAssigner(Task task)
+    private void SetAssignment(Task task)
     {
-        if (task.DirectionId is not null && task.AssigneeId is null)
+        if (task.DirectionId is not null && task.Assignment is null)
         {
-            task.AssigneeId = task.CreatedById;
-            task.AssignedById = task.CreatedById;
-        }
-
-        if (task.AssigneeId is not null)
-        {
-            task.AssignedById = task.CreatedById;
+            task.Assignment = new Assignment
+            {
+                AssigneeId = task.CreatedById,
+                AssignedById = task.CreatedById,
+            };
         }
     }
 
@@ -105,7 +107,7 @@ public class TaskService : ITaskService
     {
         ValidateRepeatMode(repeatMode, weekDays, task.StartAt, repeatUntil, repeatEvery);
 
-        await ValidateAssignee(task);
+        await ValidateAssignee(task, task.Assignment);
 
         if (task.DirectionId is not null &&
             !await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, task.CreatedById))
@@ -113,7 +115,7 @@ public class TaskService : ITaskService
             throw new DomainException(DirectionErrors.NotFound);
         }
 
-        SetAssigneeAndAssigner(task);
+        SetAssignment(task);
 
         var tasks = CreateRecurringTaskInstances(task, repeatMode, repeatEvery, weekDays, repeatUntil);
 
@@ -124,8 +126,9 @@ public class TaskService : ITaskService
             return Array.Empty<Guid>();
         }
 
-        await _notificationService.NotifyDirectionEntityAddedAsync(task, task.CreatedAt, task.CreatedById);
-
+        await _notificationService.NotifyDirectionEntityAddedAsync(
+            tasks.First(t => t.StartAt == tasks.Min(x => x.StartAt)), task.CreatedAt, task.CreatedById);
+        
         return tasks.Select(t => t.Id);
     }
 
@@ -151,12 +154,12 @@ public class TaskService : ITaskService
 
         foreach (var day in Enum.GetValues(typeof(WeekDay)))
         {
-            if (!weekDays.HasFlag((WeekDay)day))
+            if (!weekDays.HasFlag((WeekDay) day))
             {
                 continue;
             }
 
-            var startAt = GetNextWeekday(initialStartAt, WeekDayToDayOfWeek((WeekDay)day));
+            var startAt = GetNextWeekday(initialStartAt, WeekDayToDayOfWeek((WeekDay) day));
 
             // Assuming that even if there is no fitting date on the current week, we start from the current week
             if (startAt > initialStartAt && startAt.DayOfWeek <= initialStartAt.DayOfWeek)
@@ -171,8 +174,10 @@ public class TaskService : ITaskService
                 CreatedById = task.CreatedById,
                 CreatedAt = task.CreatedAt,
                 StartAt = startAt,
-                AssigneeId = task.AssigneeId,
-                AssignedById = task.AssignedById,
+                Assignment = task.Assignment is null
+                    ? null
+                    : new Assignment
+                        {AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById},
                 DirectionId = task.DirectionId,
                 RepeatMode = task.RepeatMode,
                 RepeatEvery = task.RepeatEvery,
@@ -204,7 +209,7 @@ public class TaskService : ITaskService
 
     private static DateTime GetNextWeekday(DateTime start, DayOfWeek day)
     {
-        return start.AddDays(((int)day - (int)start.DayOfWeek + 7) % 7);
+        return start.AddDays(((int) day - (int) start.DayOfWeek + 7) % 7);
     }
 
     private List<Task> GenerateTasks(Task task, DateTime repeatUntil, RepeatMode repeatMode, int repeatEvery)
@@ -221,8 +226,10 @@ public class TaskService : ITaskService
                 CreatedById = task.CreatedById,
                 CreatedAt = task.CreatedAt,
                 StartAt = nextStartAt,
-                AssigneeId = task.AssigneeId,
-                AssignedById = task.AssignedById,
+                Assignment = task.Assignment is null
+                    ? null
+                    : new Assignment
+                        {AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById},
                 DirectionId = task.DirectionId,
                 RepeatMode = task.RepeatMode,
                 RepeatEvery = task.RepeatEvery,
@@ -422,21 +429,20 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.NotFound);
         }
 
-        var oldAssigneeId = task.AssigneeId;
+        var oldAssigneeId = task.Assignment?.AssigneeId;
 
-        tasks.ForEach(t => t.AssigneeId = assigneeId);
-
-        await ValidateAssignee(task);
-
-        if (assigneeId is not null)
-        {
-            tasks.ForEach(t => t.AssignedById = currentUserId);
-        }
-
-        if (!await _taskRepository.SaveChangesAsync())
+        if (assigneeId == oldAssigneeId)
         {
             return Array.Empty<Guid>();
         }
+
+        var newAssignment = assigneeId is not null
+            ? new Assignment {AssigneeId = assigneeId.Value, AssignedById = currentUserId}
+            : null;
+
+        await ValidateAssignee(task, newAssignment);
+
+        await _assignmentRepository.UpdateAssignmentAsync(tasks, newAssignment);
 
         await _notificationService.NotifyTaskAssigneeUpdatedAsync(task, oldAssigneeId, currentUserId, null);
 
@@ -449,20 +455,20 @@ public class TaskService : ITaskService
 
         ValidateTaskToUpdate(task);
 
-        var oldAssigneeId = task.AssigneeId;
-        task.AssigneeId = assigneeId;
+        var oldAssigneeId = task.Assignment?.AssigneeId;
 
-        await ValidateAssignee(task);
-
-        if (assigneeId is not null)
-        {
-            task.AssignedById = currentUserId;
-        }
-
-        if (!await _taskRepository.SaveChangesAsync())
+        if (assigneeId == oldAssigneeId)
         {
             return null;
         }
+
+        var newAssignment = assigneeId is not null
+            ? new Assignment {AssigneeId = assigneeId.Value, AssignedById = currentUserId}
+            : null;
+
+        await ValidateAssignee(task, newAssignment);
+
+        await _assignmentRepository.UpdateAssignmentAsync(task, newAssignment);
 
         await _notificationService.NotifyTaskAssigneeUpdatedAsync(task, oldAssigneeId, currentUserId, null);
 
@@ -496,14 +502,15 @@ public class TaskService : ITaskService
             CreatedById = task.CreatedById,
             Description = Description.From(task.Description!.Value),
             Details = task.Details,
-            AssigneeId = task.AssigneeId,
+            Assignment = task.Assignment is null
+                ? null
+                : new Assignment {AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById},
             DirectionId = task.DirectionId,
             StartAt = startAtUtc,
             RepeatMode = task.RepeatMode,
             RepeatEvery = task.RepeatEvery,
             WeekDays = task.WeekDays,
             RepeatUntil = task.RepeatUntil,
-            AssignedById = task.AssignedById,
             CreatedAt = task.CreatedAt
         };
 
@@ -679,14 +686,16 @@ public class TaskService : ITaskService
                 CreatedById = task.CreatedById,
                 Description = Description.From(task.Description!.Value),
                 Details = task.Details,
-                AssigneeId = task.AssigneeId,
+                Assignment = task.Assignment is null
+                    ? null
+                    : new Assignment
+                        {AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById},
                 DirectionId = task.DirectionId,
                 StartAt = newStartAt,
                 RepeatMode = task.RepeatMode,
                 RepeatEvery = task.RepeatEvery,
                 WeekDays = task.WeekDays,
                 RepeatUntil = task.RepeatUntil,
-                AssignedById = task.AssignedById,
                 CreatedAt = task.CreatedAt
             };
 
@@ -790,8 +799,10 @@ public class TaskService : ITaskService
                 CreatedById = task.CreatedById,
                 Description = Description.From(task.Description!.Value),
                 Details = task.Details,
-                AssigneeId = task.AssigneeId,
-                AssignedById = task.AssignedById,
+                Assignment = task.Assignment is null
+                    ? null
+                    : new Assignment
+                        {AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById},
                 DirectionId = task.DirectionId,
                 // Add one day to the last task start date to avoid creating a new task with the same start date
                 StartAt = tasks.Select(t => t.StartAt).Max()!.Value.AddDays(1),
@@ -823,16 +834,9 @@ public class TaskService : ITaskService
 
     public async Task<bool> RemoveAssigneeFromDirectionTasksAsync(Guid assigneeId, Guid directionId)
     {
-        var tasks = await _taskRepository.GetByDirectionIdAsync(directionId);
+        var tasks = await _taskRepository.GetByDirectionIdAndAssigneeIdAsync(directionId, assigneeId);
 
-        foreach (var task in tasks)
-        {
-            if (task.AssigneeId == assigneeId)
-            {
-                task.AssigneeId = null;
-                task.AssignedById = null;
-            }
-        }
+        tasks.ToList().ForEach(t => t.Assignment = null);
 
         return await _taskRepository.SaveChangesAsync();
     }
@@ -940,7 +944,7 @@ public class TaskService : ITaskService
 
     private void ValidateTaskToUpdate(Task task)
     {
-        ValidateTasksToUpdate(new List<Task> { task });
+        ValidateTasksToUpdate(new List<Task> {task});
     }
 
     private void ValidateTasksToUpdate(List<Task> tasks)
@@ -951,15 +955,15 @@ public class TaskService : ITaskService
         }
     }
 
-    private async System.Threading.Tasks.Task ValidateAssignee(Task task)
+    private async System.Threading.Tasks.Task ValidateAssignee(Task task, Assignment? assignment)
     {
-        if (task.AssigneeId is not null && task.DirectionId is null)
+        if (task.DirectionId is null && assignment is not null)
         {
             throw new DomainException(TaskErrors.AssignPrivateTask);
         }
 
-        if (task.AssigneeId is not null && task.DirectionId is not null &&
-            !await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, task.AssigneeId.Value))
+        if (assignment is not null && task.DirectionId is not null &&
+            !await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, assignment.AssigneeId))
         {
             throw new DomainException(DirectionErrors.MemberNotFound);
         }

@@ -64,6 +64,7 @@ builder.Services.AddTransient<INotificationRepository, NotificationRepository>()
 builder.Services.AddTransient<IIdeaRepository, IdeaRepository>();
 builder.Services.AddTransient<IDirectionRepository, DirectionRepository>();
 builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddTransient<IAssignmentRepository, AssignmentRepository>();
 
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
@@ -111,6 +112,7 @@ builder.Services
     .AddTypeConverter<StringToGuidConverter>()
     .AddTypeConverter<GuidToStringConverter>()
     .AddTypeConverter<ValueObjectToStringConverter>()
+    .AddTypeConverter<WeekDaysToWeekDayConverter>()
     .AddTypeConverter<DateTimeToStringConverter>();
 
 var app = builder.Build();

@@ -1,3 +1,4 @@
+using Taskmony.Models;
 using Taskmony.Models.Enums;
 using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
@@ -17,10 +18,18 @@ public class TaskMutations
             CreatedById = currentUserId,
             Description = Description.From(description),
             Details = details,
-            AssigneeId = assigneeId,
             DirectionId = directionId,
             StartAt = timeConverter.StringToDateTimeUtc(startAt)
         };
+
+        if (assigneeId.HasValue)
+        {
+            task.Assignment = new Assignment
+            {
+                AssigneeId = assigneeId.Value,
+                AssignedById = currentUserId
+            };
+        }
 
         return await taskService.AddTaskAsync(task);
     }
@@ -28,7 +37,7 @@ public class TaskMutations
     public async Task<IEnumerable<Guid>?> TasksGenerate([Service] ITaskService taskService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, string description,
         string? details, Guid? assigneeId, Guid? directionId, string startAt, RepeatMode repeatMode,
-        int repeatEvery, WeekDay[]? weekDays, string repeatUntil)
+        int repeatEvery, [GraphQLType<ListType<NonNullType<EnumType<WeekDay>>>>] WeekDay? weekDays, string repeatUntil)
     {
         var repeatUntilUtc = timeConverter.StringToDateTimeUtc(repeatUntil);
 
@@ -37,14 +46,22 @@ public class TaskMutations
             CreatedById = currentUserId,
             Description = Description.From(description),
             Details = details,
-            AssigneeId = assigneeId,
             DirectionId = directionId,
             StartAt = timeConverter.StringToDateTimeUtc(startAt),
             RepeatMode = repeatMode,
             RepeatEvery = repeatEvery,
-            WeekDays = weekDays != null && weekDays.Count() > 0 ? weekDays.Aggregate((current, weekDay) => current | weekDay) : null,
+            WeekDays = weekDays,
             RepeatUntil = repeatUntilUtc
         };
+
+        if (assigneeId.HasValue)
+        {
+            task.Assignment = new Assignment
+            {
+                AssigneeId = assigneeId.Value,
+                AssignedById = currentUserId
+            };
+        }
 
         return await taskService.AddRecurringTaskAsync(task, repeatMode, repeatEvery, task.WeekDays, repeatUntilUtc);
     }
@@ -143,19 +160,19 @@ public class TaskMutations
 
     public async Task<IEnumerable<Guid>?> TaskSetRepeatMode([Service] ITaskService taskService,
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid taskId, 
-        Guid? groupId, RepeatMode? repeatMode, WeekDay[]? weekDays, string? startAt, string? repeatUntil, int? repeatEvery)
+        Guid? groupId, RepeatMode? repeatMode, [GraphQLType<ListType<NonNullType<EnumType<WeekDay>>>>] WeekDay? weekDays, 
+        string? startAt, string? repeatUntil, int? repeatEvery)
     {
         DateTime? repeatUntilUtc = repeatUntil == null ? null : timeConverter.StringToDateTimeUtc(repeatUntil);
         DateTime? startAtUtc = startAt == null ? null : timeConverter.StringToDateTimeUtc(startAt);
-        WeekDay? weekDayFlags = weekDays != null && weekDays.Count() > 0 ? weekDays.Aggregate((current, weekDay) => current | weekDay) : null;
 
         if (groupId is not null)
         {
-            return await taskService.SetRecurringTaskRepeatModeAsync(taskId, groupId.Value, repeatMode, weekDayFlags,
+            return await taskService.SetRecurringTaskRepeatModeAsync(taskId, groupId.Value, repeatMode, weekDays,
                 startAtUtc, repeatUntilUtc, repeatEvery, currentUserId);
         }
 
-        return await taskService.SetTaskRepeatModeAsync(taskId, repeatMode, weekDayFlags, repeatUntilUtc,
+        return await taskService.SetTaskRepeatModeAsync(taskId, repeatMode, weekDays, repeatUntilUtc,
             startAtUtc, repeatEvery, currentUserId);
     }
 

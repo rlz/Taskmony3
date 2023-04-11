@@ -26,13 +26,7 @@ public class Task : DirectionEntity
 
     public DeletedAt? DeletedAt { get; set; }
 
-    public User? Assignee { get; set; }
-
-    public Guid? AssigneeId { get; set; }
-
-    public User? AssignedBy { get; set; }
-
-    public Guid? AssignedById { get; set; }
+    public Assignment? Assignment { get; set; }
 
     public RepeatMode? RepeatMode { get; set; }
 

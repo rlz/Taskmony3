@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
+using Taskmony.Models;
 using Task = Taskmony.Models.Task;
 
 namespace Taskmony.Data.Configurations;
@@ -21,6 +22,10 @@ public class TaskConfiguration : IEntityTypeConfiguration<Task>
         builder.Property(t => t.StartAt)
             .HasDefaultValueSql("now()")
             .IsRequired();
+
+        builder.HasOne(t => t.Assignment)
+            .WithOne(a => a.Task)
+            .HasForeignKey<Assignment>(a => a.TaskId);
 
         builder.OwnsOne(t => t.Description, b =>
         {

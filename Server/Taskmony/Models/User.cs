@@ -30,7 +30,12 @@ public class User : Entity, IActionItem
     /// <summary>
     /// Tasks assigned to the user
     /// </summary>
-    public ICollection<Task>? AssignedTasks { get; set; }
+    public ICollection<Assignment>? AssignedTo { get; set; }
+
+    /// <summary>
+    /// Tasks assigned by the user
+    /// </summary>
+    public ICollection<Assignment>? AssignedBy { get; set; }
 
     public ICollection<Idea>? Ideas { get; set; }
 

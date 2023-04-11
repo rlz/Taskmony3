@@ -16,9 +16,8 @@ public class TaskType : ObjectType<Task>
 {
     protected override void Configure(IObjectTypeDescriptor<Task> descriptor)
     {
-        descriptor.Field(t => t.AssigneeId).Ignore();
         descriptor.Field(t => t.CreatedById).Ignore();
-        descriptor.Field(t => t.AssignedById).Ignore();
+        descriptor.Field(t => t.Assignment).Ignore();
         descriptor.Field(t => t.DirectionId).Ignore();
         descriptor.Field(t => t.Subscriptions).Ignore();
         descriptor.Field(t => t.ActionItemType).Ignore();
@@ -42,12 +41,6 @@ public class TaskType : ObjectType<Task>
             .Type<UserType>()
             .ResolveWith<Resolvers>(r => r.GetCreatedBy(default!, default!));
 
-        descriptor.Field(t => t.Assignee)
-            .ResolveWith<Resolvers>(r => r.GetAssignee(default!, default!));
-        
-        descriptor.Field(t => t.AssignedBy)
-            .ResolveWith<Resolvers>(r => r.GetAssignedBy(default!, default!));
-
         descriptor.Field(t => t.Comments)
             .Type<ListType<NonNullType<CommentType>>>()
             .Argument("offset", a => a.Type<IntType>())
@@ -55,12 +48,19 @@ public class TaskType : ObjectType<Task>
             .ResolveWith<Resolvers>(r => r.GetComments(default!, default!, default!, default, default));
 
         //Extension
-        descriptor
-            .Field("subscribers")
+        descriptor.Field("subscribers")
             .Type<ListType<NonNullType<UserType>>>()
             .Argument("offset", a => a.Type<IntType>())
             .Argument("limit", a => a.Type<IntType>())
             .ResolveWith<Resolvers>(r => r.GetSubscribers(default!, default!, default!, default!, default, default));
+
+        descriptor.Field("assignee")
+            .Type<UserType>()
+            .ResolveWith<Resolvers>(r => r.GetAssignee(default!, default!, default!));
+
+        descriptor.Field("assignedBy")
+            .Type<UserType>()
+            .ResolveWith<Resolvers>(r => r.GetAssignedBy(default!, default!, default!));
 
         descriptor.Field(i => i.Notifications)
             .Type<ListType<NonNullType<NotificationType>>>()
@@ -77,24 +77,30 @@ public class TaskType : ObjectType<Task>
             return await userById.LoadAsync(task.CreatedById);
         }
 
-        public async Task<User?> GetAssignee([Parent] Task task, UserByIdDataLoader userById)
+        public async Task<User?> GetAssignee([Parent] Task task, AssignmentByTaskIdDataLoader assignmentByTaskId, 
+            UserByIdDataLoader userById)
         {
-            if (task.AssigneeId is null)
+            var assignment = await assignmentByTaskId.LoadAsync(task.Id);
+
+            if (assignment is null)
             {
                 return null;
             }
 
-            return await userById.LoadAsync(task.AssigneeId.Value);
+            return await userById.LoadAsync(assignment.AssigneeId);
         }
         
-        public async Task<User?> GetAssignedBy([Parent] Task task, UserByIdDataLoader userById)
+        public async Task<User?> GetAssignedBy([Parent] Task task, AssignmentByTaskIdDataLoader assignmentByTaskId, 
+            UserByIdDataLoader userById)
         {
-            if (task.AssignedById is null)
+            var assignment = await assignmentByTaskId.LoadAsync(task.Id);
+
+            if (assignment is null)
             {
                 return null;
             }
 
-            return await userById.LoadAsync(task.AssignedById.Value);
+            return await userById.LoadAsync(assignment.AssignedById);
         }
 
         public async Task<Direction?> GetDirection([Parent] Task task, DirectionByIdDataLoader directionById)

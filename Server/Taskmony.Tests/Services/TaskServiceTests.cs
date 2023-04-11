@@ -1,6 +1,7 @@
 ﻿using Moq;
 using Taskmony.Errors;
 using Taskmony.Exceptions;
+using Taskmony.Models;
 using Taskmony.Models.Enums;
 using Taskmony.Repositories.Abstract;
 using Taskmony.Services;
@@ -14,6 +15,7 @@ public class TaskServiceTests
 {
     private readonly Mock<ITaskRepository> _mockTasksRepository;
     private readonly Mock<IDirectionRepository> _mockDirectionRepository;
+    private readonly Mock<IAssignmentRepository> _mockAssignmentRepository;
     private readonly TaskService _taskService;
     private readonly TimeConverter _timeConverter;
 
@@ -21,10 +23,11 @@ public class TaskServiceTests
     {
         _mockTasksRepository = new Mock<ITaskRepository>();
         _mockDirectionRepository = new Mock<IDirectionRepository>();
+        _mockAssignmentRepository = new Mock<IAssignmentRepository>();
         _timeConverter = new TimeConverter();
 
         _taskService = new TaskService(_mockTasksRepository.Object, _mockDirectionRepository.Object,
-            new Mock<INotificationService>().Object, _timeConverter);
+            _mockAssignmentRepository.Object, new Mock<INotificationService>().Object, _timeConverter);
     }
 
     [Fact]
@@ -202,7 +205,7 @@ public class TaskServiceTests
     }
 
     [Fact]
-    public async Task AddTaskAsync_SetsAssigneeIfDirectionIsPresent()
+    public async Task AddTaskAsync_SetsAssignmentIfDirectionIsPresent()
     {
         var userId = Guid.NewGuid();
         var directionId = Guid.NewGuid();
@@ -216,8 +219,9 @@ public class TaskServiceTests
         var result = await _taskService.AddTaskAsync(task);
 
         Assert.NotNull(result);
-        Assert.Equal(userId, result.AssigneeId);
-        Assert.Equal(userId, result.AssignedById);
+        Assert.NotNull(result.Assignment);
+        Assert.Equal(userId, result.Assignment.AssigneeId);
+        Assert.Equal(userId, result.Assignment.AssignedById);
 
         _mockDirectionRepository.Verify(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.CreatedById),
             Times.Once);
@@ -226,7 +230,7 @@ public class TaskServiceTests
     }
 
     [Fact]
-    public async Task AddRecurringTaskAsync_SetsAssigneeIfDirectionIsPresent()
+    public async Task AddRecurringTaskAsync_SetsAssignmentIfDirectionIsPresent()
     {
         var userId = Guid.NewGuid();
         var directionId = Guid.NewGuid();
@@ -241,14 +245,18 @@ public class TaskServiceTests
             task.WeekDays, task.RepeatUntil!.Value);
 
         Assert.NotNull(result);
-        Assert.Equal(userId, task.AssigneeId);
-        Assert.Equal(userId, task.AssignedById);
+        Assert.NotNull(task.Assignment);
+        Assert.Equal(userId, task.Assignment.AssigneeId);
+        Assert.Equal(userId, task.Assignment.AssignedById);
 
         _mockDirectionRepository
             .Verify(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.CreatedById), Times.Once);
         _mockTasksRepository
             .Verify(r => r.AddRangeAsync(It.Is<IEnumerable<Models.Task>>(
-                t => t.All(x => x.AssigneeId == userId && x.AssignedById == userId))), Times.Once);
+                    t => t.All(x =>
+                        x.Assignment != null && x.Assignment.AssigneeId == userId &&
+                        x.Assignment.AssignedById == userId))),
+                Times.Once);
         _mockTasksRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
     }
 
@@ -263,19 +271,20 @@ public class TaskServiceTests
         _mockTasksRepository.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
         _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.CreatedById))
             .ReturnsAsync(true);
-        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.AssigneeId!.Value))
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, assigneeId))
             .ReturnsAsync(true);
 
         var result = await _taskService.AddTaskAsync(task);
 
         Assert.NotNull(result);
-        Assert.Equal(assigneeId, result.AssigneeId);
-        Assert.Equal(userId, result.AssignedById);
+        Assert.NotNull(result.Assignment);
+        Assert.Equal(assigneeId, result.Assignment.AssigneeId);
+        Assert.Equal(userId, result.Assignment.AssignedById);
         Assert.Equal(directionId, result.DirectionId);
 
         _mockDirectionRepository.Verify(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.CreatedById),
             Times.Once);
-        _mockDirectionRepository.Verify(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.AssigneeId!.Value),
+        _mockDirectionRepository.Verify(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, assigneeId),
             Times.Once);
         _mockTasksRepository.Verify(r => r.AddAsync(task), Times.Once);
         _mockTasksRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
@@ -292,24 +301,27 @@ public class TaskServiceTests
         _mockTasksRepository.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
         _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.CreatedById))
             .ReturnsAsync(true);
-        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.AssigneeId!.Value))
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, assigneeId))
             .ReturnsAsync(true);
 
         var result = await _taskService.AddRecurringTaskAsync(task, task.RepeatMode!.Value, task.RepeatEvery!.Value,
             task.WeekDays, task.RepeatUntil!.Value);
 
         Assert.NotNull(result);
-        Assert.Equal(assigneeId, task.AssigneeId);
-        Assert.Equal(userId, task.AssignedById);
+        Assert.NotNull(task.Assignment);
+        Assert.Equal(assigneeId, task.Assignment.AssigneeId);
+        Assert.Equal(userId, task.Assignment.AssignedById);
         Assert.Equal(directionId, task.DirectionId);
 
         _mockDirectionRepository.Verify(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.CreatedById),
             Times.Once);
-        _mockDirectionRepository.Verify(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.AssigneeId!.Value),
+        _mockDirectionRepository.Verify(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, assigneeId),
             Times.Once);
         _mockTasksRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
         _mockTasksRepository.Verify(r => r.AddRangeAsync(It.Is<IEnumerable<Models.Task>>(
-            t => t.All(x => x.AssigneeId == assigneeId && x.AssignedById == userId && x.DirectionId == directionId)
+            t => t.All(x =>
+                x.Assignment != null && x.Assignment.AssigneeId == assigneeId && x.Assignment.AssignedById == userId &&
+                x.DirectionId == directionId)
         )), Times.Once);
     }
 
@@ -487,6 +499,148 @@ public class TaskServiceTests
             t => t.Count() == expectedNumberOfTasks
         )), Times.Once);
         _mockTasksRepository.Verify(r => r.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task SetTaskAssigneeAsync_WhenOldAssigneeIsNull()
+    {
+        var userId = Guid.NewGuid();
+        var assigneeId = Guid.NewGuid();
+        var directionId = Guid.NewGuid();
+        var task = TaskFixture.GetTask(userId, directionId);
+
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, userId)).ReturnsAsync(true);
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, assigneeId)).ReturnsAsync(true);
+        _mockTasksRepository.Setup(r => r.GetByIdAsync(task.Id)).ReturnsAsync(task);
+
+        var result = await _taskService.SetTaskAssigneeAsync(task.Id, assigneeId, userId);
+
+        Assert.NotNull(result);
+
+        _mockTasksRepository.Verify(r => r.SaveChangesAsync(), Times.Never);
+        _mockAssignmentRepository.Verify(r => r.UpdateAssignmentAsync(task, It.Is<Assignment>(
+            a => a.AssigneeId == assigneeId && a.AssignedById == userId
+        )), Times.Once);
+    }
+
+    [Fact]
+    public async Task SetTaskAssigneeAsync_ReturnsNullWhenSameAssignee()
+    {
+        var userId = Guid.NewGuid();
+        var assigneeId = Guid.NewGuid();
+        var directionId = Guid.NewGuid();
+        var task = TaskFixture.GetTask(userId, directionId, assigneeId, userId);
+
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, userId)).ReturnsAsync(true);
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, assigneeId)).ReturnsAsync(true);
+        _mockTasksRepository.Setup(r => r.GetByIdAsync(task.Id)).ReturnsAsync(task);
+
+        var result = await _taskService.SetTaskAssigneeAsync(task.Id, assigneeId, userId);
+
+        Assert.Null(result);
+
+        _mockTasksRepository.Verify(r => r.SaveChangesAsync(), Times.Never);
+        _mockAssignmentRepository.Verify(r => r.UpdateAssignmentAsync(task, It.IsAny<Assignment>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task SetTaskAssigneeAsync_WhenOldAssigneeIsNotNull()
+    {
+        var userId = Guid.NewGuid();
+        var oldAssigneeId = Guid.NewGuid();
+        var assigneeId = Guid.NewGuid();
+        var directionId = Guid.NewGuid();
+        var task = TaskFixture.GetTask(userId, directionId, oldAssigneeId, userId);
+
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, userId)).ReturnsAsync(true);
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, assigneeId)).ReturnsAsync(true);
+        _mockTasksRepository.Setup(r => r.GetByIdAsync(task.Id)).ReturnsAsync(task);
+
+        var result = await _taskService.SetTaskAssigneeAsync(task.Id, assigneeId, userId);
+
+        Assert.NotNull(result);
+
+        _mockAssignmentRepository.Verify(r => r.UpdateAssignmentAsync(task, It.Is<Assignment>(
+            a => a.AssigneeId == assigneeId && a.AssignedById == userId
+        )), Times.Once);
+    }
+
+    [Fact]
+    public async Task SetTaskAssigneeAsync_SetToNull()
+    {
+        var userId = Guid.NewGuid();
+        var assigneeId = Guid.NewGuid();
+        var directionId = Guid.NewGuid();
+        var task = TaskFixture.GetTask(userId, directionId, assigneeId, userId);
+
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, userId)).ReturnsAsync(true);
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, assigneeId)).ReturnsAsync(true);
+        _mockTasksRepository.Setup(r => r.GetByIdAsync(task.Id)).ReturnsAsync(task);
+
+        var result = await _taskService.SetTaskAssigneeAsync(task.Id, null, userId);
+
+        Assert.NotNull(result);
+
+        _mockAssignmentRepository.Verify(r => r.UpdateAssignmentAsync(task, It.Is<Assignment?>(a => a == null)),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task SetTaskAssigneeAsync_ThrowsWhenUserIsNotMemberOfDirection()
+    {
+        var userId = Guid.NewGuid();
+        var assigneeId = Guid.NewGuid();
+        var directionId = Guid.NewGuid();
+        var task = TaskFixture.GetTask(userId, directionId);
+
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, userId)).ReturnsAsync(false);
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, assigneeId)).ReturnsAsync(true);
+        _mockTasksRepository.Setup(r => r.GetByIdAsync(task.Id)).ReturnsAsync(task);
+
+        var exception =
+            await Assert.ThrowsAsync<DomainException>(() =>
+                _taskService.SetTaskAssigneeAsync(task.Id, assigneeId, userId));
+
+        Assert.Equivalent(GeneralErrors.Forbidden, exception.Error);
+
+        _mockAssignmentRepository.Verify(r => r.UpdateAssignmentAsync(task, It.IsAny<Assignment>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task SetTaskAssigneeAsync_ThrowsWhenAssigneeIsNotMemberOfDirection()
+    {
+        var userId = Guid.NewGuid();
+        var assigneeId = Guid.NewGuid();
+        var directionId = Guid.NewGuid();
+        var task = TaskFixture.GetTask(userId, directionId);
+
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, userId)).ReturnsAsync(true);
+        _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(directionId, assigneeId)).ReturnsAsync(false);
+        _mockTasksRepository.Setup(r => r.GetByIdAsync(task.Id)).ReturnsAsync(task);
+
+        var exception =
+            await Assert.ThrowsAsync<DomainException>(() =>
+                _taskService.SetTaskAssigneeAsync(task.Id, assigneeId, userId));
+
+        Assert.Equivalent(DirectionErrors.MemberNotFound, exception.Error);
+
+        _mockAssignmentRepository.Verify(r => r.UpdateAssignmentAsync(task, It.IsAny<Assignment>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task SetTaskAssigneeAsync_ThrowsOnTaskWithNoDirection()
+    {
+        var userId = Guid.NewGuid();
+        var assigneeId = Guid.NewGuid();
+        var task = TaskFixture.GetTask(userId);
+
+        _mockTasksRepository.Setup(r => r.GetByIdAsync(task.Id)).ReturnsAsync(task);
+
+        var exception =
+            await Assert.ThrowsAsync<DomainException>(() =>
+                _taskService.SetTaskAssigneeAsync(task.Id, assigneeId, userId));
+
+        Assert.Equivalent(TaskErrors.AssignPrivateTask, exception.Error);
     }
 
     [Fact]

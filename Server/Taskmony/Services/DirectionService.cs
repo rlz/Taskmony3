@@ -133,6 +133,8 @@ public class DirectionService : IDirectionService
 
         direction.DeletedAt = deletedAt;
 
+        // TODO: delete tasks and ideas
+
         return await _directionRepository.SaveChangesAsync() ? direction.Id : null;
     }
 

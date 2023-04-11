@@ -37,9 +37,9 @@ public class NotificationService : INotificationService
     public async Task<bool> NotifyTaskAssigneeUpdatedAsync(Task task, Guid? oldAssigneeId, Guid modifiedById,
         DateTime? modifiedAt)
     {
-        if (task.AssigneeId is null)
+        if (task.Assignment is null)
         {
-            return await NotifyDirectionEntityUpdatedAsync(task, nameof(Task.AssigneeId), oldAssigneeId?.ToString(),
+            return await NotifyDirectionEntityUpdatedAsync(task, nameof(Task.Assignment.AssigneeId), oldAssigneeId?.ToString(),
                 null, modifiedById);
         }
 
@@ -48,17 +48,7 @@ public class NotificationService : INotificationService
             return false;
         }
 
-        return await NotifyTaskAssignedAsync(task, task.AssigneeId.Value, modifiedById, modifiedAt);
-    }
-
-    private async Task<bool> NotifyTaskAssignedAsync(Task task, Guid modifiedById, DateTime? modifiedAt)
-    {
-        if (task.AssigneeId is not null && await ShouldNotifyAsync(task.DirectionId, modifiedById))
-        {
-            return await NotifyTaskAssignedAsync(task, modifiedById, modifiedAt);
-        }
-
-        return false;
+        return await NotifyTaskAssignedAsync(task, task.Assignment.AssigneeId, modifiedById, modifiedAt);
     }
 
     private async Task<bool> NotifyTaskAssignedAsync(Task task, Guid assigneeId, Guid modifiedById,
@@ -84,9 +74,9 @@ public class NotificationService : INotificationService
             return false;
         }
 
-        if (entity is Task task && task.AssigneeId is not null)
+        if (entity is Task task && task.Assignment is not null)
         {
-            await NotifyTaskAssignedAsync(task, task.AssigneeId.Value, task.CreatedById, task.CreatedAt);
+            await NotifyTaskAssignedAsync(task, task.Assignment.AssigneeId, task.Assignment.AssignedById, task.CreatedAt);
         }
 
         return await NotifyItemAddedAsync(NotifiableType.Direction, entity.DirectionId!.Value,

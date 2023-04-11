@@ -23,9 +23,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(t => t.CreatedById)
             .IsRequired();
 
-        builder.HasMany(u => u.AssignedTasks)
-            .WithOne(t => t.Assignee)
-            .HasForeignKey(t => t.AssigneeId);
+        builder.HasMany(u => u.AssignedTo)
+            .WithOne(a => a.Assignee)
+            .HasForeignKey(a => a.AssigneeId)
+            .IsRequired();
+
+        builder.HasMany(u => u.AssignedBy)
+            .WithOne(a => a.AssignedBy)
+            .HasForeignKey(a => a.AssignedById)
+            .IsRequired();
 
         builder.HasMany(u => u.OwnDirections)
             .WithOne(d => d.CreatedBy)

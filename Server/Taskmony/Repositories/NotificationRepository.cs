@@ -56,9 +56,12 @@ public sealed class NotificationRepository : BaseRepository<Notification>, INoti
                 join t in Context.Tasks on n.NotifiableId equals t.Id
                 from s in Context.TaskSubscriptions.Where(s => s.TaskId == t.Id && n.ModifiedAt >= s.CreatedAt)
                     .DefaultIfEmpty() // left join on two columns
+                from a in Context.Assignments.Where(a => a.TaskId == t.Id).DefaultIfEmpty()
                 where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId &&
-                      (t.CreatedById == userId || s.UserId == userId || t.AssigneeId == userId ||
-                       t.AssignedById == userId)
+                      (t.CreatedById == userId || s.UserId == userId ||
+                       n.ActionItemType == ActionItemType.User && n.ActionItemId == userId ||
+                       a.AssigneeId == userId && a.CreatedAt <= n.ModifiedAt ||
+                       a.AssignedById == userId && a.CreatedAt <= n.ModifiedAt)
                 select n,
             // user is a creator or subscriber
             NotifiableType.Idea =>
@@ -67,14 +70,16 @@ public sealed class NotificationRepository : BaseRepository<Notification>, INoti
                 from s in Context.IdeaSubscriptions.Where(s => s.IdeaId == i.Id && n.ModifiedAt >= s.CreatedAt)
                     .DefaultIfEmpty()
                 where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId &&
-                      (i.CreatedById == userId || s.UserId == userId)
+                      (i.CreatedById == userId || s.UserId == userId ||
+                       n.ActionItemType == ActionItemType.User && n.ActionItemId == userId)
                 select n,
             // user is a member
             NotifiableType.Direction =>
                 from n in Context.Notifications
                 from m in Context.Memberships.Where(
                     m => n.NotifiableId == m.DirectionId && n.ModifiedAt >= m.CreatedAt)
-                where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId && m.UserId == userId
+                where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId &&
+                      (m.UserId == userId || n.ActionItemType == ActionItemType.User && n.ActionItemId == userId)
                 select n,
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };

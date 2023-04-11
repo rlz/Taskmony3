@@ -56,10 +56,18 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
         return query;
     }
 
+    public new async Task<Models.Task?> GetByIdAsync(Guid id)
+    {
+        return await Context.Tasks
+            .Include(t => t.Assignment)
+            .FirstOrDefaultAsync(t => t.Id == id);
+    }
+
     public async Task<IEnumerable<Models.Task>> GetActiveTasksAsync(Guid groupId)
     {
         return await Context.Tasks
             .Where(t => t.GroupId == groupId && t.CompletedAt == null && t.DeletedAt == null)
+            .Include(t => t.Assignment)
             .ToListAsync();
     }
 
@@ -68,8 +76,14 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
         return await Context.Tasks.Where(t => t.GroupId == groupId).ToListAsync();
     }
 
-    public async Task<IEnumerable<Models.Task>> GetByDirectionIdAsync(Guid directionId)
+    public async Task<IEnumerable<Models.Task>> GetByDirectionIdAndAssigneeIdAsync(Guid directionId, Guid assigneeId)
     {
-        return await Context.Tasks.Where(t => t.DirectionId == directionId).ToListAsync();
+        var query = from t in Context.Tasks
+                    join d in Context.Directions on t.DirectionId equals d.Id
+                    join a in Context.Assignments on t.Id equals a.TaskId
+                    where d.Id == directionId && a.AssigneeId == assigneeId
+                    select t;
+        
+        return await query.ToListAsync();
     }
 }

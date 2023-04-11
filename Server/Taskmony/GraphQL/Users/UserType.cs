@@ -6,7 +6,8 @@ public class UserType : ObjectType<User>
 {
     protected override void Configure(IObjectTypeDescriptor<User> descriptor)
     {
-        descriptor.Field(u => u.AssignedTasks).Ignore();
+        descriptor.Field(u => u.AssignedBy).Ignore();
+        descriptor.Field(u => u.AssignedTo).Ignore();
         descriptor.Field(u => u.CreatedAt).Ignore();
         descriptor.Field(u => u.OwnDirections).Ignore();
         descriptor.Field(u => u.Subscriptions).Ignore();

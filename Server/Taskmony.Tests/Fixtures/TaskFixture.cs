@@ -1,3 +1,4 @@
+using Taskmony.Models;
 using Taskmony.Models.Enums;
 using Taskmony.ValueObjects;
 using Task = Taskmony.Models.Task;
@@ -8,15 +9,26 @@ public static class TaskFixture
 {
     public static Task GetTask(Guid userId, Guid? directionId = null, Guid? assigneeId = null, Guid? assignerId = null)
     {
-        return new()
+        var task = new Task
         {
             Id = Guid.NewGuid(),
             Description = Description.From("Task"),
             CreatedById = userId,
             DirectionId = directionId,
-            AssigneeId = assigneeId,
-            AssignedById = assignerId
         };
+
+        if (assigneeId.HasValue)
+        {
+            task.Assignment = new Assignment
+            {
+                Id = Guid.NewGuid(),
+                AssigneeId = assigneeId.Value,
+                AssignedById = assignerId ?? userId,
+                TaskId = task.Id
+            };
+        }
+
+        return task;
     }
 
     public static Task GetCompletedTask(Guid userId, Guid? directionId = null, Guid? assigneeId = null, Guid? assignerId = null)
@@ -37,14 +49,12 @@ public static class TaskFixture
         DateTime? repeatUntil, WeekDay? weekDay, Guid? directionId = null, Guid? assigneeId = null, Guid? assignerId = null,
         Guid? groupId = null)
     {
-        return new()
+        var task = new Task
         {
             Id = Guid.NewGuid(),
             Description = Description.From("Recurring task"),
             CreatedById = userId,
             DirectionId = directionId,
-            AssigneeId = assigneeId,
-            AssignedById = assignerId,
             RepeatMode = repeatMode,
             RepeatEvery = repeatEvery,
             StartAt = startAt,
@@ -52,48 +62,83 @@ public static class TaskFixture
             WeekDays = weekDay,
             GroupId = groupId
         };
+
+        if (assigneeId.HasValue)
+        {
+            task.Assignment = new Assignment
+            {
+                Id = Guid.NewGuid(),
+                AssigneeId = assigneeId.Value,
+                AssignedById = assignerId ?? userId,
+                TaskId = task.Id
+            };
+        }
+
+        return task;
     }
 
     public static Task GetDailyRecurringTask(Guid userId, Guid? directionId = null, Guid? assigneeId = null, Guid? assignerId = null,
         Guid? groupId = null)
     {
-        return new()
+        var task = new Task
         {
             Id = Guid.NewGuid(),
             Description = Description.From("Daily recurring task"),
             CreatedById = userId,
             DirectionId = directionId,
-            AssigneeId = assigneeId,
-            AssignedById = assignerId,
             RepeatMode = RepeatMode.Day,
             RepeatEvery = 1,
             StartAt = DateTime.UtcNow.Date,
             RepeatUntil = DateTime.UtcNow.Date.AddDays(7),
             GroupId = groupId
         };
+
+        if (assigneeId.HasValue)
+        {
+            task.Assignment = new Assignment
+            {
+                Id = Guid.NewGuid(),
+                AssigneeId = assigneeId.Value,
+                AssignedById = assignerId ?? userId,
+                TaskId = task.Id
+            };
+        }
+
+        return task;
     }
 
-    public static List<Task> GetDailyRecurringTaskInstances(Guid userId, Guid? directionId = null, Guid? assigneeId = null, 
+    public static List<Task> GetDailyRecurringTaskInstances(Guid userId, Guid? directionId = null, Guid? assigneeId = null,
         Guid? assignerId = null, Guid? groupId = null)
     {
         var instances = new List<Task>();
 
         for (var i = 0; i < 7; i++)
         {
-            instances.Add(new()
+            var task = new Task
             {
                 Id = Guid.NewGuid(),
                 Description = Description.From("Daily recurring task"),
                 CreatedById = userId,
                 DirectionId = directionId,
-                AssigneeId = assigneeId,
-                AssignedById = assignerId,
                 RepeatMode = RepeatMode.Day,
                 RepeatEvery = 1,
                 StartAt = DateTime.UtcNow.Date.AddDays(i),
                 RepeatUntil = DateTime.UtcNow.Date.AddDays(7),
                 GroupId = groupId
-            });
+            };
+
+            if (assigneeId.HasValue)
+            {
+                task.Assignment = new Assignment
+                {
+                    Id = Guid.NewGuid(),
+                    AssigneeId = assigneeId.Value,
+                    AssignedById = assignerId ?? userId,
+                    TaskId = task.Id
+                };
+            }
+
+            instances.Add(task);
         }
 
         return instances;
@@ -107,28 +152,39 @@ public static class TaskFixture
         return task;
     }
 
-    public static List<Task> GetCompletedDailyRecurringTaskInstances(Guid userId, Guid? directionId = null, 
+    public static List<Task> GetCompletedDailyRecurringTaskInstances(Guid userId, Guid? directionId = null,
         Guid? assigneeId = null, Guid? assignerId = null, Guid? groupId = null)
     {
         var instances = new List<Task>();
 
         for (var i = 0; i < 7; i++)
         {
-            instances.Add(new()
+            var task = new Task
             {
                 Id = Guid.NewGuid(),
                 Description = Description.From("Daily recurring task"),
                 CreatedById = userId,
                 DirectionId = directionId,
-                AssigneeId = assigneeId,
-                AssignedById = assignerId,
                 RepeatMode = RepeatMode.Day,
                 RepeatEvery = 1,
                 StartAt = DateTime.UtcNow.Date.AddDays(i),
                 RepeatUntil = DateTime.UtcNow.Date.AddDays(7),
                 GroupId = groupId,
                 CompletedAt = CompletedAt.From(DateTime.UtcNow)
-            });
+            };
+
+            if (assigneeId.HasValue)
+            {
+                task.Assignment = new Assignment
+                {
+                    Id = Guid.NewGuid(),
+                    AssigneeId = assigneeId.Value,
+                    AssignedById = assignerId ?? userId,
+                    TaskId = task.Id
+                };
+            }
+
+            instances.Add(task);
         }
 
         return instances;
@@ -142,28 +198,39 @@ public static class TaskFixture
         return task;
     }
 
-    public static List<Task> GetDeletedDailyRecurringTaskInstances(Guid userId, Guid? directionId = null, 
+    public static List<Task> GetDeletedDailyRecurringTaskInstances(Guid userId, Guid? directionId = null,
         Guid? assigneeId = null, Guid? assignerId = null, Guid? groupId = null)
     {
         var instances = new List<Task>();
 
         for (var i = 0; i < 7; i++)
         {
-            instances.Add(new()
+            var task = new Task
             {
                 Id = Guid.NewGuid(),
                 Description = Description.From("Daily recurring task"),
                 CreatedById = userId,
                 DirectionId = directionId,
-                AssigneeId = assigneeId,
-                AssignedById = assignerId,
                 RepeatMode = RepeatMode.Day,
                 RepeatEvery = 1,
                 StartAt = DateTime.UtcNow.Date.AddDays(i),
                 RepeatUntil = DateTime.UtcNow.Date.AddDays(7),
                 GroupId = groupId,
                 DeletedAt = DeletedAt.From(DateTime.UtcNow)
-            });
+            };
+
+            if (assigneeId.HasValue)
+            {
+                task.Assignment = new Assignment
+                {
+                    Id = Guid.NewGuid(),
+                    AssigneeId = assigneeId.Value,
+                    AssignedById = assignerId ?? userId,
+                    TaskId = task.Id
+                };
+            }
+
+            instances.Add(task);
         }
 
         return instances;

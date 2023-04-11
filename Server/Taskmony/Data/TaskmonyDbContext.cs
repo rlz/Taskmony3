@@ -23,6 +23,8 @@ public class TaskmonyDbContext : DbContext
 
     public DbSet<Models.Task> Tasks => Set<Models.Task>();
 
+    public DbSet<Assignment> Assignments => Set<Assignment>();
+
     public DbSet<Notification> Notifications => Set<Notification>();
 
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
@@ -49,5 +51,7 @@ public class TaskmonyDbContext : DbContext
         modelBuilder.ApplyConfiguration(new NotificationConfiguration());
         modelBuilder.ApplyConfiguration(new SubscriptionConfiguration());
         modelBuilder.ApplyConfiguration(new CommentConfiguration());
+        modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
+        modelBuilder.ApplyConfiguration(new AssignmentConfiguration());
     }
 }

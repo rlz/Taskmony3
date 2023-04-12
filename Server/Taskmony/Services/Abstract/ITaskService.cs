@@ -1,3 +1,4 @@
+using Taskmony.Models;
 using Taskmony.Models.Enums;
 
 namespace Taskmony.Services.Abstract;
@@ -22,8 +23,7 @@ public interface ITaskService
 
     Task<Models.Task?> AddTaskAsync(Models.Task task);
 
-    Task<IEnumerable<Guid>> AddRecurringTaskAsync(Models.Task task, RepeatMode repeatMode,
-        int repeatEvery, WeekDay? weekDays, DateTime repeatUntil);
+    Task<IEnumerable<Guid>> AddRecurringTaskAsync(Models.Task task, RecurrencePattern recurrencePattern);
 
     Task<IEnumerable<Guid>> SetRecurringTaskDescriptionAsync(Guid taskId, Guid groupId, 
         string description, Guid currentUserId);

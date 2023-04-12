@@ -27,6 +27,10 @@ public class TaskConfiguration : IEntityTypeConfiguration<Task>
             .WithOne(a => a.Task)
             .HasForeignKey<Assignment>(a => a.TaskId);
 
+        builder.HasOne(t => t.RecurrencePattern)
+            .WithOne(r => r.Task)
+            .HasForeignKey<RecurrencePattern>(r => r.TaskId);
+
         builder.OwnsOne(t => t.Description, b =>
         {
             b.Property(l => l.Value)

@@ -32,7 +32,7 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
 
         query = AddPagination(query, offset, limit);
 
-        return await query.ToListAsync();
+        return await query.Include(t => t.RecurrencePattern).ToListAsync();
     }
 
     private IQueryable<Models.Task> AddPagination(IQueryable<Models.Task> query, int? offset, int? limit)
@@ -60,6 +60,7 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
     {
         return await Context.Tasks
             .Include(t => t.Assignment)
+            .Include(t => t.RecurrencePattern)
             .FirstOrDefaultAsync(t => t.Id == id);
     }
 
@@ -68,6 +69,7 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
         return await Context.Tasks
             .Where(t => t.GroupId == groupId && t.CompletedAt == null && t.DeletedAt == null)
             .Include(t => t.Assignment)
+            .Include(t => t.RecurrencePattern)
             .ToListAsync();
     }
 

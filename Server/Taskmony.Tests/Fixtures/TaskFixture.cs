@@ -55,13 +55,21 @@ public static class TaskFixture
             Description = Description.From("Recurring task"),
             CreatedById = userId,
             DirectionId = directionId,
-            RepeatMode = repeatMode,
-            RepeatEvery = repeatEvery,
             StartAt = startAt,
-            RepeatUntil = repeatUntil,
-            WeekDays = weekDay,
             GroupId = groupId
         };
+
+        if (repeatMode != null && repeatEvery != null && repeatUntil != null)
+        {
+            task.RecurrencePattern = new RecurrencePattern
+            {
+                Id = Guid.NewGuid(),
+                RepeatMode = repeatMode.Value,
+                RepeatEvery = repeatEvery.Value,
+                RepeatUntil = repeatUntil.Value,
+                WeekDays = weekDay
+            };
+        }
 
         if (assigneeId.HasValue)
         {
@@ -86,10 +94,14 @@ public static class TaskFixture
             Description = Description.From("Daily recurring task"),
             CreatedById = userId,
             DirectionId = directionId,
-            RepeatMode = RepeatMode.Day,
-            RepeatEvery = 1,
             StartAt = DateTime.UtcNow.Date,
-            RepeatUntil = DateTime.UtcNow.Date.AddDays(7),
+            RecurrencePattern = new RecurrencePattern
+            {
+                Id = Guid.NewGuid(),
+                RepeatMode = RepeatMode.Day,
+                RepeatEvery = 1,
+                RepeatUntil = DateTime.UtcNow.Date.AddDays(7)
+            },
             GroupId = groupId
         };
 
@@ -120,10 +132,14 @@ public static class TaskFixture
                 Description = Description.From("Daily recurring task"),
                 CreatedById = userId,
                 DirectionId = directionId,
-                RepeatMode = RepeatMode.Day,
-                RepeatEvery = 1,
                 StartAt = DateTime.UtcNow.Date.AddDays(i),
-                RepeatUntil = DateTime.UtcNow.Date.AddDays(7),
+                RecurrencePattern = new RecurrencePattern
+                {
+                    Id = Guid.NewGuid(),
+                    RepeatMode = RepeatMode.Day,
+                    RepeatEvery = 1,
+                    RepeatUntil = DateTime.UtcNow.Date.AddDays(7)
+                },
                 GroupId = groupId
             };
 
@@ -165,10 +181,14 @@ public static class TaskFixture
                 Description = Description.From("Daily recurring task"),
                 CreatedById = userId,
                 DirectionId = directionId,
-                RepeatMode = RepeatMode.Day,
-                RepeatEvery = 1,
                 StartAt = DateTime.UtcNow.Date.AddDays(i),
-                RepeatUntil = DateTime.UtcNow.Date.AddDays(7),
+                RecurrencePattern = new RecurrencePattern
+                {
+                    Id = Guid.NewGuid(),
+                    RepeatMode = RepeatMode.Day,
+                    RepeatEvery = 1,
+                    RepeatUntil = DateTime.UtcNow.Date.AddDays(7)
+                },
                 GroupId = groupId,
                 CompletedAt = CompletedAt.From(DateTime.UtcNow)
             };
@@ -211,10 +231,14 @@ public static class TaskFixture
                 Description = Description.From("Daily recurring task"),
                 CreatedById = userId,
                 DirectionId = directionId,
-                RepeatMode = RepeatMode.Day,
-                RepeatEvery = 1,
                 StartAt = DateTime.UtcNow.Date.AddDays(i),
-                RepeatUntil = DateTime.UtcNow.Date.AddDays(7),
+                RecurrencePattern = new RecurrencePattern
+                {
+                    Id = Guid.NewGuid(),
+                    RepeatMode = RepeatMode.Day,
+                    RepeatEvery = 1,
+                    RepeatUntil = DateTime.UtcNow.Date.AddDays(7)
+                },
                 GroupId = groupId,
                 DeletedAt = DeletedAt.From(DateTime.UtcNow)
             };

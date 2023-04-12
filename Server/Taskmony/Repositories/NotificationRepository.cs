@@ -59,7 +59,6 @@ public sealed class NotificationRepository : BaseRepository<Notification>, INoti
                 from a in Context.Assignments.Where(a => a.TaskId == t.Id).DefaultIfEmpty()
                 where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId &&
                       (t.CreatedById == userId || s.UserId == userId ||
-                       n.ActionItemType == ActionItemType.User && n.ActionItemId == userId ||
                        a.AssigneeId == userId && a.CreatedAt <= n.ModifiedAt ||
                        a.AssignedById == userId && a.CreatedAt <= n.ModifiedAt)
                 select n,
@@ -70,16 +69,14 @@ public sealed class NotificationRepository : BaseRepository<Notification>, INoti
                 from s in Context.IdeaSubscriptions.Where(s => s.IdeaId == i.Id && n.ModifiedAt >= s.CreatedAt)
                     .DefaultIfEmpty()
                 where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId &&
-                      (i.CreatedById == userId || s.UserId == userId ||
-                       n.ActionItemType == ActionItemType.User && n.ActionItemId == userId)
+                      (i.CreatedById == userId || s.UserId == userId)
                 select n,
             // user is a member
             NotifiableType.Direction =>
                 from n in Context.Notifications
                 from m in Context.Memberships.Where(
                     m => n.NotifiableId == m.DirectionId && n.ModifiedAt >= m.CreatedAt)
-                where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId &&
-                      (m.UserId == userId || n.ActionItemType == ActionItemType.User && n.ActionItemId == userId)
+                where notifiableIds.Contains(n.NotifiableId) && n.ModifiedById != userId && m.UserId == userId
                 select n,
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };

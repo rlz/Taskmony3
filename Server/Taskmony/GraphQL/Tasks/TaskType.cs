@@ -21,18 +21,14 @@ public class TaskType : ObjectType<Task>
         descriptor.Field(t => t.DirectionId).Ignore();
         descriptor.Field(t => t.Subscriptions).Ignore();
         descriptor.Field(t => t.ActionItemType).Ignore();
+        descriptor.Field(t => t.RecurrencePattern).Ignore();
 
         descriptor.Field(t => t.CompletedAt).Type<StringType>();
         descriptor.Field(t => t.Description).Type<StringType>();
         descriptor.Field(t => t.CreatedAt).Type<StringType>();
         descriptor.Field(t => t.DeletedAt).Type<StringType>();
         descriptor.Field(t => t.StartAt).Type<StringType>();
-        descriptor.Field(t => t.RepeatUntil).Type<StringType>();
         descriptor.Field(t => t.GroupId).Type<IdType>();
-
-        descriptor.Field(t => t.WeekDays)
-            .Type<ListType<NonNullType<EnumType<WeekDay>>>>()
-            .ResolveWith<Resolvers>(r => r.GetWeekDays(default!));
 
         descriptor.Field(t => t.Direction)
             .ResolveWith<Resolvers>(r => r.GetDirection(default!, default!));
@@ -62,6 +58,22 @@ public class TaskType : ObjectType<Task>
             .Type<UserType>()
             .ResolveWith<Resolvers>(r => r.GetAssignedBy(default!, default!, default!));
 
+        descriptor.Field("repeatUntil")
+            .Type<StringType>()
+            .ResolveWith<Resolvers>(r => r.GetRepeatUntil(default!));
+
+        descriptor.Field("repeatEvery")
+            .Type<IntType>()
+            .ResolveWith<Resolvers>(r => r.GetRepeatEvery(default!));
+
+        descriptor.Field("repeatMode")
+            .Type<EnumType<RepeatMode>>()
+            .ResolveWith<Resolvers>(r => r.GetRepeatMode(default!));
+
+        descriptor.Field("weekDays")
+            .Type<ListType<NonNullType<EnumType<WeekDay>>>>()
+            .ResolveWith<Resolvers>(r => r.GetWeekDays(default!));
+
         descriptor.Field(i => i.Notifications)
             .Type<ListType<NonNullType<NotificationType>>>()
             .Argument("start", a => a.Type<StringType>())
@@ -77,7 +89,7 @@ public class TaskType : ObjectType<Task>
             return await userById.LoadAsync(task.CreatedById);
         }
 
-        public async Task<User?> GetAssignee([Parent] Task task, AssignmentByTaskIdDataLoader assignmentByTaskId, 
+        public async Task<User?> GetAssignee([Parent] Task task, AssignmentByTaskIdDataLoader assignmentByTaskId,
             UserByIdDataLoader userById)
         {
             var assignment = await assignmentByTaskId.LoadAsync(task.Id);
@@ -89,8 +101,8 @@ public class TaskType : ObjectType<Task>
 
             return await userById.LoadAsync(assignment.AssigneeId);
         }
-        
-        public async Task<User?> GetAssignedBy([Parent] Task task, AssignmentByTaskIdDataLoader assignmentByTaskId, 
+
+        public async Task<User?> GetAssignedBy([Parent] Task task, AssignmentByTaskIdDataLoader assignmentByTaskId,
             UserByIdDataLoader userById)
         {
             var assignment = await assignmentByTaskId.LoadAsync(task.Id);
@@ -167,15 +179,45 @@ public class TaskType : ObjectType<Task>
 
         public IEnumerable<WeekDay>? GetWeekDays([Parent] Task task)
         {
-            if (task.WeekDays is null)
+            if (task.RecurrencePattern is null || task.RecurrencePattern.WeekDays is null)
             {
                 return null;
             }
 
             return Enum.GetValues(typeof(WeekDay))
                 .Cast<WeekDay>()
-                .Where(f => (f & task.WeekDays.Value) == f)
+                .Where(f => (f & task.RecurrencePattern.WeekDays.Value) == f)
                 .ToList();
+        }
+
+        public DateTime? GetRepeatUntil([Parent] Task task)
+        {
+            if (task.RecurrencePattern is null)
+            {
+                return null;
+            }
+
+            return task.RecurrencePattern.RepeatUntil;
+        }
+
+        public int? GetRepeatEvery([Parent] Task task)
+        {
+            if (task.RecurrencePattern is null)
+            {
+                return null;
+            }
+
+            return task.RecurrencePattern.RepeatEvery;
+        }
+
+        public RepeatMode? GetRepeatMode([Parent] Task task)
+        {
+            if (task.RecurrencePattern is null)
+            {
+                return null;
+            }
+
+            return task.RecurrencePattern.RepeatMode;
         }
     }
 }

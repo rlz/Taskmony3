@@ -28,13 +28,7 @@ public class Task : DirectionEntity
 
     public Assignment? Assignment { get; set; }
 
-    public RepeatMode? RepeatMode { get; set; }
-
-    public WeekDay? WeekDays { get; set; }
-
-    public int? RepeatEvery { get; set; }
-
-    public DateTime? RepeatUntil { get; set; }
+    public RecurrencePattern? RecurrencePattern { get; set; }
     
     public Guid? GroupId { get; set; }
 

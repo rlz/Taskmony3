@@ -149,12 +149,11 @@ public class TaskServiceTests
 
         _mockTasksRepository.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
 
-        var result = (await _taskService.AddRecurringTaskAsync(task, task.RepeatMode!.Value,
-            task.RepeatEvery!.Value, null, task.RepeatUntil!.Value)).ToList();
+        var result = (await _taskService.AddRecurringTaskAsync(task, task.RecurrencePattern!)).ToList();
 
         Assert.NotNull(result);
         Assert.NotEmpty(result);
-        Assert.Equal((task.RepeatUntil!.Value - task.StartAt!.Value).Days + 1, result.Count);
+        Assert.Equal((task.RecurrencePattern!.RepeatUntil - task.StartAt!.Value).Days + 1, result.Count);
         Assert.NotNull(task.GroupId);
 
         _mockTasksRepository
@@ -194,7 +193,7 @@ public class TaskServiceTests
             .ReturnsAsync(false);
 
         var exception = await Assert.ThrowsAsync<DomainException>(() => _taskService.AddRecurringTaskAsync(task,
-            task.RepeatMode!.Value, task.RepeatEvery!.Value, task.WeekDays, task.RepeatUntil!.Value));
+            task.RecurrencePattern!));
 
         Assert.Equivalent(DirectionErrors.NotFound, exception.Error);
 
@@ -241,8 +240,7 @@ public class TaskServiceTests
             .Setup(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, task.CreatedById))
             .ReturnsAsync(true);
 
-        var result = await _taskService.AddRecurringTaskAsync(task, task.RepeatMode!.Value, task.RepeatEvery!.Value,
-            task.WeekDays, task.RepeatUntil!.Value);
+        var result = await _taskService.AddRecurringTaskAsync(task, task.RecurrencePattern!);
 
         Assert.NotNull(result);
         Assert.NotNull(task.Assignment);
@@ -304,8 +302,7 @@ public class TaskServiceTests
         _mockDirectionRepository.Setup(r => r.AnyMemberWithIdAsync(task.DirectionId!.Value, assigneeId))
             .ReturnsAsync(true);
 
-        var result = await _taskService.AddRecurringTaskAsync(task, task.RepeatMode!.Value, task.RepeatEvery!.Value,
-            task.WeekDays, task.RepeatUntil!.Value);
+        var result = await _taskService.AddRecurringTaskAsync(task, task.RecurrencePattern!);
 
         Assert.NotNull(result);
         Assert.NotNull(task.Assignment);
@@ -362,7 +359,7 @@ public class TaskServiceTests
             .ReturnsAsync(false);
 
         var exception = await Assert.ThrowsAsync<DomainException>(() => _taskService.AddRecurringTaskAsync(task,
-            task.RepeatMode!.Value, task.RepeatEvery!.Value, task.WeekDays, task.RepeatUntil!.Value));
+            task.RecurrencePattern!));
 
         Assert.Equivalent(DirectionErrors.MemberNotFound, exception.Error);
 
@@ -395,7 +392,7 @@ public class TaskServiceTests
         var task = TaskFixture.GetDailyRecurringTask(userId, null, assigneeId);
 
         var exception = await Assert.ThrowsAsync<DomainException>(() => _taskService.AddRecurringTaskAsync(task,
-            task.RepeatMode!.Value, task.RepeatEvery!.Value, task.WeekDays, task.RepeatUntil!.Value));
+            task.RecurrencePattern!));
 
         Assert.Equivalent(TaskErrors.AssignPrivateTask, exception.Error);
 
@@ -410,7 +407,7 @@ public class TaskServiceTests
             DateTime.UtcNow.Date.AddDays(7), null);
 
         var exception = await Assert.ThrowsAsync<DomainException>(() => _taskService.AddRecurringTaskAsync(task,
-            task.RepeatMode!.Value, task.RepeatEvery!.Value, task.WeekDays, task.RepeatUntil!.Value));
+            task.RecurrencePattern!));
 
         Assert.Equivalent(ValidationErrors.WeekDaysAreRequired, exception.Error);
 
@@ -425,7 +422,7 @@ public class TaskServiceTests
             DateTime.UtcNow.Date, null);
 
         var exception = await Assert.ThrowsAsync<DomainException>(() => _taskService.AddRecurringTaskAsync(task,
-            task.RepeatMode!.Value, task.RepeatEvery!.Value, task.WeekDays, task.RepeatUntil!.Value));
+            task.RecurrencePattern!));
 
         Assert.Equivalent(ValidationErrors.RepeatUntilIsBeforeStartAt, exception.Error);
 
@@ -443,7 +440,7 @@ public class TaskServiceTests
             DateTime.UtcNow.Date, null);
 
         var exception = await Assert.ThrowsAsync<DomainException>(() => _taskService.AddRecurringTaskAsync(task,
-            task.RepeatMode!.Value, task.RepeatEvery!.Value, task.WeekDays, task.RepeatUntil!.Value));
+            task.RecurrencePattern!));
 
         Assert.Equivalent(ValidationErrors.InvalidRepeatEvery, exception.Error);
 
@@ -490,8 +487,7 @@ public class TaskServiceTests
 
         _mockTasksRepository.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
 
-        var result = await _taskService.AddRecurringTaskAsync(task, repeatMode, repeatEvery, weekDay,
-            _timeConverter.StringToDateTimeUtc(repeatUntil));
+        var result = await _taskService.AddRecurringTaskAsync(task, task.RecurrencePattern!);
 
         Assert.Equal(expectedNumberOfTasks, result.Count());
 

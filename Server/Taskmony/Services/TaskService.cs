@@ -102,10 +102,9 @@ public class TaskService : ITaskService
         }
     }
 
-    public async Task<IEnumerable<Guid>> AddRecurringTaskAsync(Task task, RepeatMode repeatMode, int repeatEvery,
-        WeekDay? weekDays, DateTime repeatUntil)
+    public async Task<IEnumerable<Guid>> AddRecurringTaskAsync(Task task, RecurrencePattern pattern)
     {
-        ValidateRepeatMode(repeatMode, weekDays, task.StartAt, repeatUntil, repeatEvery);
+        ValidateRepeatMode(pattern.RepeatMode, pattern.WeekDays, task.StartAt, pattern.RepeatUntil, pattern.RepeatEvery);
 
         await ValidateAssignee(task, task.Assignment);
 
@@ -117,7 +116,7 @@ public class TaskService : ITaskService
 
         SetAssignment(task);
 
-        var tasks = CreateRecurringTaskInstances(task, repeatMode, repeatEvery, weekDays, repeatUntil);
+        var tasks = CreateRecurringTaskInstances(task, pattern);
 
         await _taskRepository.AddRangeAsync(tasks);
 
@@ -128,22 +127,21 @@ public class TaskService : ITaskService
 
         await _notificationService.NotifyDirectionEntityAddedAsync(
             tasks.First(t => t.StartAt == tasks.Min(x => x.StartAt)), task.CreatedAt, task.CreatedById);
-        
+
         return tasks.Select(t => t.Id);
     }
 
-    private List<Task> CreateRecurringTaskInstances(Task task, RepeatMode repeatMode, int repeatEvery,
-        WeekDay? weekDays, DateTime repeatUntil)
+    private List<Task> CreateRecurringTaskInstances(Task task, RecurrencePattern pattern)
     {
         task.GroupId ??= Guid.NewGuid();
         task.CreatedAt ??= DateTime.UtcNow;
 
-        if (weekDays is null || repeatMode != RepeatMode.Week)
+        if (pattern.WeekDays is null || pattern.RepeatMode != RepeatMode.Week)
         {
-            return GenerateTasks(task, repeatUntil, repeatMode, repeatEvery);
+            return GenerateTasks(task, pattern.RepeatUntil, pattern.RepeatMode, pattern.WeekDays, pattern.RepeatEvery);
         }
 
-        return GenerateWeeklyTasks(task, repeatUntil, repeatMode, weekDays.Value, repeatEvery);
+        return GenerateWeeklyTasks(task, pattern.RepeatUntil, pattern.RepeatMode, pattern.WeekDays.Value, pattern.RepeatEvery);
     }
 
     private List<Task> GenerateWeeklyTasks(Task task, DateTime repeatUntil, RepeatMode repeatMode,
@@ -154,12 +152,12 @@ public class TaskService : ITaskService
 
         foreach (var day in Enum.GetValues(typeof(WeekDay)))
         {
-            if (!weekDays.HasFlag((WeekDay) day))
+            if (!weekDays.HasFlag((WeekDay)day))
             {
                 continue;
             }
 
-            var startAt = GetNextWeekday(initialStartAt, WeekDayToDayOfWeek((WeekDay) day));
+            var startAt = GetNextWeekday(initialStartAt, WeekDayToDayOfWeek((WeekDay)day));
 
             // Assuming that even if there is no fitting date on the current week, we start from the current week
             if (startAt > initialStartAt && startAt.DayOfWeek <= initialStartAt.DayOfWeek)
@@ -177,16 +175,19 @@ public class TaskService : ITaskService
                 Assignment = task.Assignment is null
                     ? null
                     : new Assignment
-                        {AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById},
+                    { AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById },
                 DirectionId = task.DirectionId,
-                RepeatMode = task.RepeatMode,
-                RepeatEvery = task.RepeatEvery,
-                WeekDays = task.WeekDays,
-                RepeatUntil = task.RepeatUntil,
+                RecurrencePattern = new RecurrencePattern
+                {
+                    RepeatMode = repeatMode,
+                    RepeatUntil = repeatUntil,
+                    RepeatEvery = repeatEvery,
+                    WeekDays = weekDays
+                },
                 GroupId = task.GroupId
             };
 
-            tasks.AddRange(GenerateTasks(task, repeatUntil, repeatMode, repeatEvery));
+            tasks.AddRange(GenerateTasks(task, repeatUntil, repeatMode, weekDays, repeatEvery));
         }
 
         return tasks;
@@ -209,13 +210,15 @@ public class TaskService : ITaskService
 
     private static DateTime GetNextWeekday(DateTime start, DayOfWeek day)
     {
-        return start.AddDays(((int) day - (int) start.DayOfWeek + 7) % 7);
+        return start.AddDays(((int)day - (int)start.DayOfWeek + 7) % 7);
     }
 
-    private List<Task> GenerateTasks(Task task, DateTime repeatUntil, RepeatMode repeatMode, int repeatEvery)
+    private List<Task> GenerateTasks(Task task, DateTime repeatUntil, RepeatMode repeatMode, WeekDay? weekDays, int repeatEvery)
     {
         var tasks = new List<Task>();
         var nextStartAt = task.StartAt!.Value;
+        var initialStartAt = task.StartAt.Value;
+        var repeatCount = 1;
 
         while (nextStartAt <= repeatUntil)
         {
@@ -229,29 +232,32 @@ public class TaskService : ITaskService
                 Assignment = task.Assignment is null
                     ? null
                     : new Assignment
-                        {AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById},
+                    { AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById },
                 DirectionId = task.DirectionId,
-                RepeatMode = task.RepeatMode,
-                RepeatEvery = task.RepeatEvery,
-                WeekDays = task.WeekDays,
-                RepeatUntil = task.RepeatUntil,
+                RecurrencePattern = new RecurrencePattern
+                {
+                    RepeatMode = repeatMode,
+                    RepeatUntil = repeatUntil,
+                    RepeatEvery = repeatEvery,
+                    WeekDays = weekDays
+                },
                 GroupId = task.GroupId
             });
 
-            nextStartAt = GetNextDateTime(nextStartAt, repeatMode, repeatEvery);
+            nextStartAt = GetNextDateTime(initialStartAt, repeatMode, repeatEvery, repeatCount++);
         }
 
         return tasks;
     }
 
-    private static DateTime GetNextDateTime(DateTime prev, RepeatMode repeatMode, int repeatEvery)
+    private static DateTime GetNextDateTime(DateTime initial, RepeatMode repeatMode, int repeatEvery, int repeatCount)
     {
         return repeatMode switch
         {
-            RepeatMode.Day => prev.AddDays(repeatEvery),
-            RepeatMode.Week => prev.AddDays(7 * repeatEvery),
-            RepeatMode.Month => prev.AddMonths(repeatEvery),
-            RepeatMode.Year => prev.AddYears(repeatEvery),
+            RepeatMode.Day => initial.AddDays(repeatEvery * repeatCount),
+            RepeatMode.Week => initial.AddDays(7 * repeatEvery * repeatCount),
+            RepeatMode.Month => initial.AddMonths(repeatEvery * repeatCount),
+            RepeatMode.Year => initial.AddYears(repeatEvery * repeatCount),
             _ => throw new DomainException(ValidationErrors.InvalidRepeatMode)
         };
     }
@@ -437,7 +443,7 @@ public class TaskService : ITaskService
         }
 
         var newAssignment = assigneeId is not null
-            ? new Assignment {AssigneeId = assigneeId.Value, AssignedById = currentUserId}
+            ? new Assignment { AssigneeId = assigneeId.Value, AssignedById = currentUserId }
             : null;
 
         await ValidateAssignee(task, newAssignment);
@@ -463,7 +469,7 @@ public class TaskService : ITaskService
         }
 
         var newAssignment = assigneeId is not null
-            ? new Assignment {AssigneeId = assigneeId.Value, AssignedById = currentUserId}
+            ? new Assignment { AssigneeId = assigneeId.Value, AssignedById = currentUserId }
             : null;
 
         await ValidateAssignee(task, newAssignment);
@@ -489,7 +495,9 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.NotFound);
         }
 
-        ValidateRepeatMode(task.RepeatMode, task.WeekDays, startAtUtc, task.RepeatUntil, task.RepeatEvery);
+        var pattern = task.RecurrencePattern!;
+
+        ValidateRepeatMode(pattern.RepeatMode, pattern.WeekDays, startAtUtc, pattern.RepeatUntil, pattern.RepeatEvery);
 
         var oldValue = _timeConverter.DateTimeToString(task.StartAt!.Value);
         var newValue = _timeConverter.DateTimeToString(startAtUtc);
@@ -504,18 +512,20 @@ public class TaskService : ITaskService
             Details = task.Details,
             Assignment = task.Assignment is null
                 ? null
-                : new Assignment {AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById},
+                : new Assignment { AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById },
             DirectionId = task.DirectionId,
             StartAt = startAtUtc,
-            RepeatMode = task.RepeatMode,
-            RepeatEvery = task.RepeatEvery,
-            WeekDays = task.WeekDays,
-            RepeatUntil = task.RepeatUntil,
+            RecurrencePattern = new RecurrencePattern
+            {
+                RepeatMode = pattern.RepeatMode,
+                RepeatEvery = pattern.RepeatEvery,
+                WeekDays = pattern.WeekDays,
+                RepeatUntil = pattern.RepeatUntil
+            },
             CreatedAt = task.CreatedAt
         };
 
-        var newTasks = CreateRecurringTaskInstances(taskToAdd, task.RepeatMode!.Value, task.RepeatEvery!.Value,
-            task.WeekDays, task.RepeatUntil!.Value);
+        var newTasks = CreateRecurringTaskInstances(taskToAdd, pattern);
 
         await _taskRepository.AddRangeAsync(newTasks);
 
@@ -577,6 +587,8 @@ public class TaskService : ITaskService
         var newValue = deletedAt?.Value;
 
         tasks.ForEach(t => t.DeletedAt = deletedAt);
+
+        //TODO: delete comments
 
         if (!await _taskRepository.SaveChangesAsync())
         {
@@ -680,6 +692,14 @@ public class TaskService : ITaskService
 
             _taskRepository.DeleteRange(tasks);
 
+            var pattern = new RecurrencePattern
+            {
+                RepeatMode = repeatMode.Value,
+                WeekDays = weekDays,
+                RepeatEvery = repeatEvery!.Value,
+                RepeatUntil = repeatUntil!.Value
+            };
+
             var taskToAdd = new Task
             {
                 GroupId = task.GroupId,
@@ -689,18 +709,13 @@ public class TaskService : ITaskService
                 Assignment = task.Assignment is null
                     ? null
                     : new Assignment
-                        {AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById},
+                    { AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById },
                 DirectionId = task.DirectionId,
                 StartAt = newStartAt,
-                RepeatMode = task.RepeatMode,
-                RepeatEvery = task.RepeatEvery,
-                WeekDays = task.WeekDays,
-                RepeatUntil = task.RepeatUntil,
                 CreatedAt = task.CreatedAt
             };
 
-            var newTasks = CreateRecurringTaskInstances(taskToAdd, repeatMode.Value, repeatEvery!.Value,
-                task.WeekDays, repeatUntil!.Value);
+            var newTasks = CreateRecurringTaskInstances(taskToAdd, pattern);
 
             await _taskRepository.AddRangeAsync(newTasks);
         }
@@ -710,8 +725,8 @@ public class TaskService : ITaskService
             return Array.Empty<Guid>();
         }
 
-        await _notificationService.NotifyDirectionEntityUpdatedAsync(task, nameof(Task.RepeatMode),
-            task.RepeatMode.ToString(), repeatMode?.ToString(), currentUserId);
+        await _notificationService.NotifyDirectionEntityUpdatedAsync(task, nameof(Task.RecurrencePattern.RepeatMode),
+            task.RecurrencePattern!.RepeatMode.ToString(), repeatMode?.ToString(), currentUserId);
 
         return (await _taskRepository.GetTasksByGroupIdAsync(groupId)).Select(t => t.Id);
     }
@@ -739,14 +754,16 @@ public class TaskService : ITaskService
 
         _taskRepository.Delete(task);
 
-        task.RepeatMode = repeatMode;
-        task.RepeatEvery = repeatEvery;
-        task.WeekDays = weekDays;
-        task.RepeatUntil = repeatUntil;
         task.StartAt = newStartAt;
+        task.RecurrencePattern = new RecurrencePattern
+        {
+            RepeatMode = repeatMode!.Value,
+            WeekDays = weekDays,
+            RepeatEvery = repeatEvery!.Value,
+            RepeatUntil = repeatUntil!.Value
+        };
 
-        var tasks = CreateRecurringTaskInstances(task, repeatMode!.Value, repeatEvery!.Value, weekDays,
-            repeatUntil!.Value);
+        var tasks = CreateRecurringTaskInstances(task, task.RecurrencePattern);
 
         await _taskRepository.AddRangeAsync(tasks);
 
@@ -755,7 +772,7 @@ public class TaskService : ITaskService
             return Array.Empty<Guid>();
         }
 
-        await _notificationService.NotifyDirectionEntityUpdatedAsync(task, nameof(Task.RepeatMode), null,
+        await _notificationService.NotifyDirectionEntityUpdatedAsync(task, nameof(Task.RecurrencePattern.RepeatMode), null,
             repeatMode.ToString(), currentUserId);
 
         return tasks.Select(t => t.Id);
@@ -775,14 +792,9 @@ public class TaskService : ITaskService
             throw new DomainException(TaskErrors.NotFound);
         }
 
-        if (task.StartAt > repeatUntil)
+        if (repeatUntil <= task.RecurrencePattern!.RepeatUntil)
         {
-            throw new DomainException(ValidationErrors.RepeatUntilIsBeforeStartAt);
-        }
-
-        if (repeatUntil <= task.RepeatUntil)
-        {
-            tasks.ForEach(t => t.RepeatUntil = repeatUntil);
+            tasks.ForEach(t => t.RecurrencePattern!.RepeatUntil = repeatUntil);
 
             var tasksToDelete = tasks.Where(t => t.StartAt > repeatUntil).ToList();
 
@@ -790,7 +802,7 @@ public class TaskService : ITaskService
         }
         else
         {
-            tasks.ForEach(t => t.RepeatUntil = repeatUntil);
+            tasks.ForEach(t => t.RecurrencePattern!.RepeatUntil = repeatUntil);
 
             var newTask = new Task
             {
@@ -802,18 +814,20 @@ public class TaskService : ITaskService
                 Assignment = task.Assignment is null
                     ? null
                     : new Assignment
-                        {AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById},
+                    { AssigneeId = task.Assignment.AssigneeId, AssignedById = task.Assignment.AssignedById },
                 DirectionId = task.DirectionId,
                 // Add one day to the last task start date to avoid creating a new task with the same start date
                 StartAt = tasks.Select(t => t.StartAt).Max()!.Value.AddDays(1),
-                RepeatMode = task.RepeatMode,
-                RepeatEvery = task.RepeatEvery,
-                WeekDays = task.WeekDays,
-                RepeatUntil = repeatUntil
+                RecurrencePattern = new RecurrencePattern
+                {
+                    RepeatMode = task.RecurrencePattern!.RepeatMode,
+                    RepeatEvery = task.RecurrencePattern.RepeatEvery,
+                    WeekDays = task.RecurrencePattern.WeekDays,
+                    RepeatUntil = repeatUntil
+                }
             };
 
-            var tasksToAdd = CreateRecurringTaskInstances(newTask, task.RepeatMode!.Value, task.RepeatEvery!.Value,
-                task.WeekDays, repeatUntil);
+            var tasksToAdd = CreateRecurringTaskInstances(newTask, newTask.RecurrencePattern);
 
             await _taskRepository.AddRangeAsync(tasksToAdd);
         }
@@ -823,11 +837,11 @@ public class TaskService : ITaskService
             return Array.Empty<Guid>();
         }
 
-        var oldValue = _timeConverter.DateTimeToString(task.RepeatUntil!.Value);
+        var oldValue = _timeConverter.DateTimeToString(task.RecurrencePattern.RepeatUntil);
         var newValue = _timeConverter.DateTimeToString(repeatUntil);
 
-        await _notificationService.NotifyDirectionEntityUpdatedAsync(task, nameof(Task.RepeatUntil), oldValue, newValue,
-            currentUserId);
+        await _notificationService.NotifyDirectionEntityUpdatedAsync(task, nameof(Task.RecurrencePattern.RepeatUntil), 
+            oldValue, newValue, currentUserId);
 
         return (await _taskRepository.GetTasksByGroupIdAsync(groupId)).Select(t => t.Id);
     }
@@ -944,7 +958,7 @@ public class TaskService : ITaskService
 
     private void ValidateTaskToUpdate(Task task)
     {
-        ValidateTasksToUpdate(new List<Task> {task});
+        ValidateTasksToUpdate(new List<Task> { task });
     }
 
     private void ValidateTasksToUpdate(List<Task> tasks)

@@ -25,6 +25,8 @@ public class TaskmonyDbContext : DbContext
 
     public DbSet<Assignment> Assignments => Set<Assignment>();
 
+    public DbSet<RecurrencePattern> RecurrencePatterns => Set<RecurrencePattern>();
+
     public DbSet<Notification> Notifications => Set<Notification>();
 
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
@@ -53,5 +55,6 @@ public class TaskmonyDbContext : DbContext
         modelBuilder.ApplyConfiguration(new CommentConfiguration());
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
         modelBuilder.ApplyConfiguration(new AssignmentConfiguration());
+        modelBuilder.ApplyConfiguration(new RecurrencePatternConfiguration());
     }
 }

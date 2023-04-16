@@ -67,7 +67,7 @@ closeModalRef.current = closeModal;
     if (event.key === "Enter") {
       console.log("Enter")
       if(idea.id && saveBtn.current) saveBtn.current.click();
-      else if (!idea.id && idea.description) closeModalRef.current();
+      else if (!idea.id) closeModalRef.current();
     }
     }
   useEffect(() => {

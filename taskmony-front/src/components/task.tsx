@@ -160,12 +160,13 @@ export const TaskUnedited = ({
           />
         }
         {date > new Date().toISOString() && <TaskDetails label={date.slice(0,10)} hasBorder />}
-        {assignee && (
+        {
           <TaskDetails
-            label={`assignee: ${assignee.displayName}`}
+            label={`assignee: ${assignee? assignee.displayName : "none"}`}
             hasBorder
+            textColor={assignee ? undefined : "text-red-500"}
           />
-        )}
+        }
         {<TaskDetails label={direction} textColor="text-yellow-500" />}
       </div>
     </div>
@@ -190,9 +191,7 @@ export const TaskDetails = ({
       {icon && <img src={icon}></img>}
       <span
         className={
-          "font-semibold inline whitespace-nowrap text-xs text-blue-500 mr-1 " +
-          textColor
-        }
+          `font-semibold inline whitespace-nowrap text-xs mr-1 ${textColor?textColor:"text-blue-500"}`}
       >
         {label}
       </span>

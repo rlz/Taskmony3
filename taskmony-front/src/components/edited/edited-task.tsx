@@ -86,7 +86,7 @@ closeModalRef.current = closeModal;
     if (event.key === "Enter") {
       console.log("Enter")
       if(task.id && saveBtn) {console.log("clicking");saveBtn.current.click();}
-      else if (!task.id && task.description) {console.log(task);closeModalRef.current()}
+      else if (!task.id) {console.log(task);closeModalRef.current()}
     }
     }
 
@@ -288,7 +288,7 @@ const Details = ({ fromDirection } : DetailsProps) => {
         <ItemPicker
           title={"assignee"}
           options={members.map((m) => m.displayName)}
-          option={task.assignee?.displayName ? task.assignee?.displayName : "undefined"}
+          option={task.assignee?.displayName ? task.assignee?.displayName : "none"}
           onChange={(index : number) => {
             const payload = members[index];
             dispatch({ type: CHANGE_TASK_ASSIGNEE, payload: payload });

@@ -51,7 +51,7 @@ function MyIdeas() {
   const dispatch = useAppDispatch();
   const addANewIdea = () => {
     dispatch(addIdea(idea, null));
-    dispatch({ type: RESET_IDEA });
+    // dispatch({ type: RESET_IDEA });
   };
   const ideas = ideasToShow.map((idea, i) => (
     <Idea

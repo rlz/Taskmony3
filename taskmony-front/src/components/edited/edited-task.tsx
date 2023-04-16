@@ -10,7 +10,7 @@ import recurrentI from "../../images/arrows-rotate.svg";
 import { AddBtn } from "./btn";
 import { Comment, CommentInput } from "./comment";
 import { ItemPicker } from "./item-picker";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import closeI from "../../images/delete2.svg";
 import deleteI from "../../images/delete3.svg";
 import add from "../../images/add-light.svg";
@@ -67,6 +67,35 @@ export const EditedTask = ({
 }: TaskProps) => {
   const task = useAppSelector((store) => store.editedTask);
   const dispatch = useAppDispatch();
+  const closeBtn = useRef(null);
+  const saveBtn = useRef(null);
+  const closeModal = () => {
+  if(task.description) {
+    console.log("closing...")
+    console.log(task);
+    save(task.details===""?{...task,details:null}:task)}
+  }
+const closeModalRef = useRef(closeModal);
+closeModalRef.current = closeModal;
+  const onKeyPress = (event: any) => {
+    if (event.key === "Escape") {
+      console.log("Escape")
+      if(task.id && saveBtn.current) {console.log("clicking");saveBtn.current.click()}
+      else if (!task.id && closeBtn.current) closeBtn.current.click();
+    }
+    if (event.key === "Enter") {
+      console.log("Enter")
+      if(task.id && saveBtn) {console.log("clicking");saveBtn.current.click();}
+      else if (!task.id && task.description) {console.log(task);closeModalRef.current()}
+    }
+    }
+
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyPress)
+    return () => {
+      document.removeEventListener('keydown', onKeyPress)
+    };
+}, []);
   return (
     <div className="editedTask w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
@@ -81,6 +110,7 @@ export const EditedTask = ({
           <input
             className={`font-semibold text-sm focus:outline-none underline`}
             id="description"
+            autoComplete="off"
             placeholder={undefined}
             value={task.description}
             onChange={(e) =>
@@ -88,6 +118,9 @@ export const EditedTask = ({
                 type: CHANGE_TASK_DESCRIPTION,
                 payload: e.target.value,
               })
+            }
+            onKeyDown={(e)=>
+              {if(e.key === "Enter" || e.key === "Escape") e.target.blur();}
             }
             onBlur={(e) => {
               if (task.id)
@@ -106,6 +139,7 @@ export const EditedTask = ({
         ) : (
           <img
             src={closeI}
+            ref={closeBtn}
             onClick={() => {
               if(close) close();
               dispatch({ type: RESET_TASK });
@@ -121,13 +155,14 @@ export const EditedTask = ({
         {task.description ? (!task.id ? (
           <BigBtn
             label={"add a task"}
-            onClick={() => save(task.details===""?{...task,details:null}:task)}
+            onClick={closeModal}
             color="blue"
           />
         ) : (
           <img
             src={arrowUp}
-            onClick={() => save(task.details===""?{...task,details:null}:task)}
+            onClick={closeModal}
+            ref={saveBtn}
             className={"closeBtn w-4 cursor-pointer mr-3 m-2"}
           ></img>
         )) :
@@ -158,6 +193,9 @@ const Description = () => {
       <textarea
         placeholder={undefined}
         value={description}
+        onKeyDown={(e)=>
+          {if(e.key === "Enter" || e.key === "Escape") e.target.blur();}
+        }
         onChange={(e) =>
           dispatch({ type: CHANGE_TASK_DETAILS, payload: e.target.value })
         }

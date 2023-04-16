@@ -4,7 +4,7 @@ import arrowUp from "../../images/arrow-up.svg";
 import { AddBtn } from "./btn";
 import { Comment, CommentInput } from "./comment";
 import { ItemPicker } from "./item-picker";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import closeI from "../../images/delete2.svg";
 import deleteI from "../../images/delete3.svg";
 import add from "../../images/add-light.svg";
@@ -48,6 +48,34 @@ export const EditedIdea = ({
 }: IdeaProps) => {
   const idea = useAppSelector((store) => store.editedIdea);
   const dispatch = useAppDispatch();
+  const closeBtn = useRef(null);
+  const saveBtn = useRef(null);
+  const closeModal = () => {
+  if(idea.description) {
+    console.log("closing...")
+    save(idea.details===""?{...idea,details:null}:idea)
+  }
+  }
+  const closeModalRef = useRef(closeModal);
+closeModalRef.current = closeModal;
+  const onKeyPress = (event: any) => {
+    if (event.key === "Escape") {
+      console.log("Escape")
+      if(idea.id && saveBtn.current) saveBtn.current.click()
+      else if (!idea.id && closeBtn) closeBtn.current.click();
+    }
+    if (event.key === "Enter") {
+      console.log("Enter")
+      if(idea.id && saveBtn.current) saveBtn.current.click();
+      else if (!idea.id && idea.description) closeModalRef.current();
+    }
+    }
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyPress)
+    return () => {
+      document.removeEventListener('keydown', onKeyPress)
+    };
+}, []);
   return (
     <div className="editedIdea w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
@@ -56,7 +84,11 @@ export const EditedIdea = ({
             className={"font-semibold text-sm focus:outline-none underline"}
             id="description"
             placeholder={undefined}
+            autoComplete="off"
             value={idea.description}
+            onKeyDown={(e)=>
+              {if(e.key === "Enter" || e.key === "Escape") e.target.blur();}
+            }
             onChange={(e) =>
               dispatch({
                 type: CHANGE_IDEA_DESCRIPTION,
@@ -82,6 +114,7 @@ export const EditedIdea = ({
           <img
             src={closeI}
             alt="close button"
+            ref={closeBtn}
             onClick={() => {
               if (close) close();
               dispatch({ type: RESET_IDEA });
@@ -97,12 +130,13 @@ export const EditedIdea = ({
       {idea.description ? (!idea.id ? (
           <BigBtn
             label={"add an idea"}
-            onClick={() => save(idea.details===""?{...idea,details:null}:idea)}
+            onClick={closeModal}
           />
         ) : (
           <img
             src={arrowUp}
-            onClick={() => save(idea.details===""?{...idea,details:null}:idea)}
+            ref={saveBtn}
+            onClick={closeModal}
             className={"closeBtn w-4 cursor-pointer mr-3 m-2"}
           ></img>
         )) :
@@ -133,6 +167,9 @@ const Description = () => {
       <textarea
         placeholder={undefined}
         value={description}
+        onKeyDown={(e)=>
+          {if(e.key === "Enter" || e.key === "Escape") e.target.blur();}
+        }
         onChange={(e) =>
           dispatch({ type: CHANGE_IDEA_DETAILS, payload: e.target.value })
         }

@@ -61,7 +61,7 @@ function Tasks({ directionId, directionName } : TasksProps) {
   const addANewTask = (direction: string) => {
     if (task.repeatMode) dispatch(addRepeatedTasks(task, direction));
     else dispatch(addTask(task, direction));
-    dispatch({ type: RESET_TASK });
+    // dispatch({ type: RESET_TASK });
   };
   const tasks = tasksToShow.map((task) => (
     <Task task={task} direction={directionName} key={task.id} />

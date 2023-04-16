@@ -56,7 +56,7 @@ function Ideas({ directionId, directionName } : IdeasProps) {
   )[0];
   const addANewIdea = (direction : string) => {
     dispatch(addIdea(idea, direction));
-    dispatch({ type: RESET_IDEA });
+    // dispatch({ type: RESET_IDEA });
   };
   const ideas = ideasToShow.map((idea, i) => (
     <Idea

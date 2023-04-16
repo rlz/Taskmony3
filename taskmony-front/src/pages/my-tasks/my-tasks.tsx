@@ -55,7 +55,7 @@ function MyTasks() {
     if (!followed || followed == "0") {
       tasksToShow = tasksToShow.filter((i) => (!i.subscribers.some((s) => s.id == myId)));
     }
-    if (!assignedByMe || assignedByMe == "0") {
+    if (!assignedByMe || assignedByMe == "0") {   
       tasksToShow = tasksToShow.filter((i) => (!(i.createdBy.id == myId && i.assignee && i.assignee.id != myId)));
     }
 
@@ -63,7 +63,7 @@ function MyTasks() {
   const addANewTask = () => {
     if (task.repeatMode) dispatch(addRepeatedTasks(task, null));
     else dispatch(addTask(task, null));
-    dispatch({ type: RESET_TASK });
+    // dispatch({ type: RESET_TASK });
   };
   const tasks = tasksToShow.map((task) => <Task task={task} key={task.id} />);
   return (

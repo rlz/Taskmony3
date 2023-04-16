@@ -108,10 +108,11 @@ closeModalRef.current = closeModal;
             }}
           ></img>}
           <input
-            className={`font-semibold text-sm focus:outline-none underline`}
+            className={`font-semibold text-sm focus:outline-none placeholder:font-thin placeholder:text-black decoration-slate-50`}
             id="description"
+            autoFocus
             autoComplete="off"
-            placeholder={undefined}
+            placeholder={"describe a task"}
             value={task.description}
             onChange={(e) =>
               dispatch({

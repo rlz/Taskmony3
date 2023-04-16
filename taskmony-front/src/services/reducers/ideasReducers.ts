@@ -174,7 +174,7 @@ export const ideasReducer = (
 };
 
 export const ideaInitialState: TIdea = {
-  description: "New Idea",
+  description: "",
   details: null,
   generation: "HOT",
   id: "",

@@ -171,7 +171,7 @@ export const tasksReducer = (
 
 export const taskInitialState: TTask = {
   id: "",
-  description: "New task",
+  description: "",
   completedAt: null,
   deletedAt: null,
   assignee: {

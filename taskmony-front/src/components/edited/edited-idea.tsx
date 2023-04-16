@@ -81,9 +81,10 @@ closeModalRef.current = closeModal;
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           <input
-            className={"font-semibold text-sm focus:outline-none underline"}
+            className={"font-semibold text-sm focus:outline-none placeholder:font-thin placeholder:text-black decoration-slate-50"}
             id="description"
-            placeholder={undefined}
+            autoFocus
+            placeholder={"describe an idea"}
             autoComplete="off"
             value={idea.description}
             onKeyDown={(e)=>

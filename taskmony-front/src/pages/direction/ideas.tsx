@@ -6,7 +6,7 @@ import {
 } from "../../components/filter/by-idea-category";
 import { Idea } from "../../components/idea";
 import { FilterDivider } from "../../components/filter/filter-divider";
-import { EditedIdea } from "../../components/edited/edited-idea";
+import { EditedIdea } from "../../components/edited/edited-idea/edited-idea";
 import {
   addIdea,
   CHANGE_IDEA_DIRECTION,

@@ -10,7 +10,7 @@ import postponeGray from "../images/circle-down-gray.svg";
 // import recurrentI from "../images/recurrent.svg";
 import recurrentI from "../images/arrows-rotate.svg";
 import { AddBtn } from "./add-btn/add-btn";
-import { EditedIdea } from "./edited/edited-idea";
+import { EditedIdea } from "./edited/edited-idea/edited-idea";
 import { useState } from "react";
 
 type Props = {

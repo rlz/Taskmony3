@@ -5,7 +5,7 @@ import arrowUp from "../../images/arrow-up.svg";
 import arrowDown from "../../images/arrow-down.svg";
 import { Task } from "../../components/task";
 import { FilterDivider } from "../../components/filter/filter-divider";
-import { EditedTask } from "../../components/edited/edited-task";
+import { EditedTask } from "../../components/edited/edited-task/edited-task";
 import {
   addRepeatedTasks,
   addTask,

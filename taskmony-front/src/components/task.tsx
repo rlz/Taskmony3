@@ -8,7 +8,7 @@ import createdByI from "../images/by.svg";
 // import recurrentI from "../images/recurrent.svg";
 import recurrentI from "../images/arrows-rotate.svg";
 import { useEffect, useState } from "react";
-import { EditedTask } from "./edited/edited-task";
+import { EditedTask } from "./edited/edited-task/edited-task";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
 import {
   changeCompleteTaskDate,

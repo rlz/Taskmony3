@@ -4,7 +4,7 @@ import divider from "../images/divider.svg";
 import commentsI from "../images/comment2.svg";
 import createdByI from "../images/by.svg";
 import { useEffect, useState } from "react";
-import { EditedIdea } from "./edited/edited-idea";
+import { EditedIdea } from "./edited/edited-idea/edited-idea";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
 import {
   changeIdeaFollowed,

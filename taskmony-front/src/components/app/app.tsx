@@ -31,6 +31,8 @@ import { refreshToken } from "../../services/actions/auth/refreshToken";
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { getIdeas } from "../../services/actions/ideasAPI";
+import { TaskPage } from "../../pages/task-page";
+import { IdeaPage } from "../../pages/idea-page";
 
 function App() {
   return (
@@ -44,7 +46,9 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/" element={<Home />}>
             <Route path="tasks" element={<MyTasks />} />
+            <Route path="task/:itemId" element={<TaskPage />} />
             <Route path="ideas" element={<MyIdeas />} />
+            <Route path="idea/:itemId" element={<IdeaPage />} />
             <Route path="archive/" element={<Navigate to="tasks" />} />
             <Route path="archive/:element" element={<Archive />} />
             <Route path="directions/:id/" element={<Navigate to="tasks" />} />

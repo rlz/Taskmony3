@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AddBtn } from "../../components/add-btn/add-btn";
-import { EditedIdea } from "../../components/edited/edited-idea";
+import { EditedIdea } from "../../components/edited/edited-idea/edited-idea";
 import { FilterByDirection } from "../../components/filter/by-direction";
 import {
   FilterByFollowed,

@@ -1,3 +1,4 @@
+using Taskmony.Auth;
 using Taskmony.DTOs;
 using Taskmony.Errors;
 using Taskmony.Exceptions;
@@ -12,11 +13,14 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly ITokenProvider _tokenProvider;
 
-    public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
+    public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher,
+        ITokenProvider tokenProvider)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
+        _tokenProvider = tokenProvider;
     }
 
     public async Task<bool> AddUserAsync(UserRegisterRequest request)
@@ -55,7 +59,7 @@ public class UserService : IUserService
 
         if (id is null && email is null && login is null)
         {
-            id = new[] {currentUserId};
+            id = new[] { currentUserId };
         }
 
         email = email?
@@ -136,9 +140,12 @@ public class UserService : IUserService
 
         user.Password = _passwordHasher.HashPassword(newPasswordValue);
 
-        // TODO: revoke refresh tokens
+        if (!await _userRepository.SaveChangesAsync())
+        {
+            return false;
+        }
 
-        return await _userRepository.SaveChangesAsync();
+        return await _tokenProvider.RevokeUserRefreshTokens(id);
     }
 
     public async Task<User> GetUserOrThrowAsync(Guid id)

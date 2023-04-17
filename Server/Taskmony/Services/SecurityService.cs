@@ -53,11 +53,7 @@ public class SecurityService : ISecurityService
 
     public async Task<bool> RevokeAllUserTokensAsync()
     {
-        var tokens = await _refreshTokenRepository.GetByUserIdAsync(_userIdentifierProvider.UserId);
-
-        tokens.ToList().ForEach(t => t.IsRevoked = true);
-
-        return await _refreshTokenRepository.SaveChangesAsync();
+       return await _tokenProvider.RevokeUserRefreshTokens(_userIdentifierProvider.UserId);
     }
 
     public async Task<bool> RevokeTokenAsync(string refreshToken)

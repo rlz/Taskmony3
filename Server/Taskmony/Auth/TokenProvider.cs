@@ -87,6 +87,15 @@ public class TokenProvider : ITokenProvider
         return await GenerateTokensAsync(user);
     }
 
+    public async Task<bool> RevokeUserRefreshTokens(Guid userId)
+    {
+        var refreshTokens = await _refreshTokenRepository.GetByUserIdAsync(userId);
+
+        refreshTokens.ToList().ForEach(token => token.IsRevoked = true);
+
+        return await _refreshTokenRepository.SaveChangesAsync();
+    }
+
     private async Task<(string accessToken, string refreshToken)> CreateNewTokensAsync(string accessToken, string refreshToken)
     {
         var storedRefreshToken = await _refreshTokenRepository.GetAsync(refreshToken);

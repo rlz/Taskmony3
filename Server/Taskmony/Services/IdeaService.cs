@@ -5,21 +5,24 @@ using Taskmony.Models.Enums;
 using Taskmony.Repositories.Abstract;
 using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
+using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Services;
 
 public class IdeaService : IIdeaService
 {
     private readonly IIdeaRepository _ideaRepository;
-    private readonly IDirectionRepository _directionReposiotry;
+    private readonly IDirectionRepository _directionRepository;
     private readonly INotificationService _notificationService;
     private readonly ITimeConverter _timeConverter;
+    private readonly ICommentRepository _commentRepository;
 
     public IdeaService(IIdeaRepository ideaRepository, IDirectionRepository directionRepository,
-        INotificationService notificationService, ITimeConverter timeConverter)
+        INotificationService notificationService, ITimeConverter timeConverter, ICommentRepository commentRepository)
     {
+        _commentRepository = commentRepository;
         _ideaRepository = ideaRepository;
-        _directionReposiotry = directionRepository;
+        _directionRepository = directionRepository;
         _notificationService = notificationService;
         _timeConverter = timeConverter;
     }
@@ -36,7 +39,7 @@ public class IdeaService : IIdeaService
             return await _ideaRepository.GetAsync(id, directionId, offset, limit, currentUserId);
         }
 
-        var userDirectionIds = await _directionReposiotry.GetUserDirectionIdsAsync(currentUserId);
+        var userDirectionIds = await _directionRepository.GetUserDirectionIdsAsync(currentUserId);
         var authorizedDirectionIds = userDirectionIds.Cast<Guid?>().Append(null);
 
         //If directionId is null return all ideas visible to the current user.
@@ -58,7 +61,7 @@ public class IdeaService : IIdeaService
     public async Task<Idea?> AddIdeaAsync(Idea idea)
     {
         if (idea.DirectionId is not null &&
-            !await _directionReposiotry.AnyMemberWithIdAsync(idea.DirectionId.Value, idea.CreatedById))
+            !await _directionRepository.AnyMemberWithIdAsync(idea.DirectionId.Value, idea.CreatedById))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
@@ -124,7 +127,7 @@ public class IdeaService : IIdeaService
         ValidateIdeaToUpdate(idea);
 
         if (directionId is not null &&
-            !await _directionReposiotry.AnyMemberWithIdAsync(directionId.Value, currentUserId))
+            !await _directionRepository.AnyMemberWithIdAsync(directionId.Value, currentUserId))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
@@ -169,6 +172,15 @@ public class IdeaService : IIdeaService
             return null;
         }
 
+        if (deletedAt is not null)
+        {
+            await _commentRepository.SoftDeleteIdeaCommentsAsync(new[] { idea.Id });
+        }
+        else if (oldValue is not null)
+        {
+            await _commentRepository.UndeleteIdeaCommentsAsync(new[] { idea.Id }, oldValue.Value);
+        }
+
         await _notificationService.NotifyDirectionEntityDeletedAtUpdatedAsync(idea, oldValue, newValue,
             currentUserId);
 
@@ -189,7 +201,8 @@ public class IdeaService : IIdeaService
             return null;
         }
 
-        await _notificationService.NotifyDirectionEntityUpdatedAsync(idea, nameof(Idea.Generation), oldValue?.ToString(),
+        await _notificationService.NotifyDirectionEntityUpdatedAsync(idea, nameof(Idea.Generation),
+            oldValue?.ToString(),
             generation.ToString(), currentUserId);
 
         return idea.Id;
@@ -203,7 +216,9 @@ public class IdeaService : IIdeaService
 
         ValidateIdeaToUpdate(idea);
 
-        var oldValue = idea.ReviewedAt;
+        var oldValue = idea.ReviewedAt != null ? _timeConverter.DateTimeToString(idea.ReviewedAt.Value) : null;
+        var newValue = reviewedAt != null ? _timeConverter.DateTimeToString(reviewedAt.Value) : null;
+
         idea.ReviewedAt = reviewedAt;
 
         if (!await _ideaRepository.SaveChangesAsync())
@@ -211,8 +226,8 @@ public class IdeaService : IIdeaService
             return null;
         }
 
-        await _notificationService.NotifyDirectionEntityUpdatedAsync(idea, nameof(Idea.ReviewedAt), oldValue?.Value.ToString(),
-            reviewedAt?.Value.ToString(), currentUserId);
+        await _notificationService.NotifyDirectionEntityUpdatedAsync(idea, nameof(Idea.ReviewedAt),
+            oldValue, newValue, currentUserId);
 
         return idea.Id;
     }
@@ -230,12 +245,22 @@ public class IdeaService : IIdeaService
         //belong to a direction where the current user is a member
         if (idea.CreatedById != currentUserId && idea.DirectionId == null ||
             idea.DirectionId != null &&
-            !await _directionReposiotry.AnyMemberWithIdAsync(idea.DirectionId.Value, currentUserId))
+            !await _directionRepository.AnyMemberWithIdAsync(idea.DirectionId.Value, currentUserId))
         {
             throw new DomainException(GeneralErrors.Forbidden);
         }
 
         return idea;
+    }
+
+    public async Task SoftDeleteDirectionIdeasAsync(Guid directionId)
+    {
+        await _ideaRepository.SoftDeleteDirectionIdeasAndCommentsAsync(directionId);
+    }
+
+    public async Task UndeleteDirectionIdeasAsync(Guid directionId, DateTime deletedAt)
+    {
+        await _ideaRepository.UndeleteDirectionIdeasAndComments(directionId, deletedAt);
     }
 
     private void ValidateIdeaToUpdate(Idea idea)

@@ -13,10 +13,12 @@ public class DirectionService : IDirectionService
     private readonly IUserService _userService;
     private readonly INotificationService _notificationService;
     private readonly ITaskService _taskService;
+    private readonly IIdeaService _ideaService;
 
     public DirectionService(IDirectionRepository directionRepository, IUserService userService,
-        INotificationService notificationService, ITaskService taskService)
+        INotificationService notificationService, ITaskService taskService, IIdeaService ideaService)
     {
+        _ideaService = ideaService;
         _directionRepository = directionRepository;
         _userService = userService;
         _notificationService = notificationService;
@@ -131,11 +133,26 @@ public class DirectionService : IDirectionService
             throw new DomainException(DirectionErrors.AlreadyDeleted);
         }
 
+        var oldDeletedAt = direction.DeletedAt;
         direction.DeletedAt = deletedAt;
 
-        // TODO: delete tasks and ideas
+        if (!await _directionRepository.SaveChangesAsync())
+        {
+            return null;
+        }
 
-        return await _directionRepository.SaveChangesAsync() ? direction.Id : null;
+        if (direction.DeletedAt != null)
+        {
+            await _taskService.SoftDeleteDirectionTasksAsync(direction.Id);
+            await _ideaService.SoftDeleteDirectionIdeasAsync(direction.Id);
+        }
+        else if (oldDeletedAt != null)
+        {
+            await _taskService.UndeleteDirectionTasksAsync(direction.Id, oldDeletedAt.Value);
+            await _ideaService.UndeleteDirectionIdeasAsync(direction.Id, oldDeletedAt.Value);
+        }
+
+        return direction.Id;
     }
 
     public async Task<Guid?> SetDirectionDetailsAsync(Guid id, string? details, Guid currentUserId)
@@ -188,6 +205,9 @@ public class DirectionService : IDirectionService
         }
 
         _directionRepository.Delete(direction);
+
+        await _ideaService.SoftDeleteDirectionIdeasAsync(direction.Id);
+        await _taskService.SoftDeleteDirectionTasksAsync(direction.Id);
 
         return await _directionRepository.SaveChangesAsync();
     }

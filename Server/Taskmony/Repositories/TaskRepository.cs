@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
 using Taskmony.Repositories.Abstract;
+using Taskmony.ValueObjects;
 
 namespace Taskmony.Repositories;
 
@@ -85,7 +86,43 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
                     join a in Context.Assignments on t.Id equals a.TaskId
                     where d.Id == directionId && a.AssigneeId == assigneeId
                     select t;
-        
+
         return await query.ToListAsync();
+    }
+
+    public async Task SoftDeleteDirectionTasksAndCommentsAsync(Guid directionId)
+    {
+        var now = DateTime.UtcNow;
+
+        var comments = from t in Context.Tasks
+                       where t.DirectionId == directionId && t.DeletedAt == null
+                       from c in Context.TaskComments.Where(c => c.TaskId == t.Id && c.DeletedAt == null)
+                       select c;
+
+        var tasks = from t in Context.Tasks
+                    where t.DirectionId == directionId && t.DeletedAt == null
+                    select t;
+
+        await tasks.ForEachAsync(t => t.DeletedAt = DeletedAt.From(now));
+        await comments.ForEachAsync(c => c.DeletedAt = DeletedAt.From(now));
+
+        await Context.SaveChangesAsync();
+    }
+
+    public async Task UndeleteDirectionTasksAndComments(Guid directionId, DateTime deletedAt)
+    {
+        var tasks = from t in Context.Tasks
+                    where t.DirectionId == directionId && t.DeletedAt != null && t.DeletedAt.Value >= deletedAt
+                    select t;
+
+        var comments = from t in Context.Tasks
+                       where t.DirectionId == directionId && t.DeletedAt != null && t.DeletedAt.Value >= deletedAt
+                       from c in Context.TaskComments.Where(c => c.TaskId == t.Id && c.DeletedAt != null && c.DeletedAt.Value >= deletedAt)
+                       select c;
+
+        await tasks.ForEachAsync(t => t.DeletedAt = null);
+        await comments.ForEachAsync(c => c.DeletedAt = null);
+
+        await Context.SaveChangesAsync();
     }
 }

@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
 using Taskmony.Models;
 using Taskmony.Repositories.Abstract;
+using Taskmony.ValueObjects;
+using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories;
 
@@ -55,5 +57,43 @@ public sealed class IdeaRepository : BaseRepository<Idea>, IIdeaRepository
         }
 
         return query;
+    }
+
+    public async Task SoftDeleteDirectionIdeasAndCommentsAsync(Guid directionId)
+    {
+        var now = DateTime.UtcNow;
+
+        var ideas = from i in Context.Ideas
+                    where i.DirectionId == directionId && i.DeletedAt == null
+                    select i;
+
+        var comments = from i in Context.Ideas
+                       where i.DirectionId == directionId && i.DeletedAt == null
+                       from c in Context.IdeaComments.Where(c => c.IdeaId == i.Id && c.DeletedAt == null)
+                       where i.DirectionId == directionId && i.DeletedAt == null
+                       select c;
+
+        await ideas.ForEachAsync(i => i.DeletedAt = DeletedAt.From(now));
+        await comments.ForEachAsync(c => c.DeletedAt = DeletedAt.From(now));
+
+        await Context.SaveChangesAsync();
+    }
+
+    public async Task UndeleteDirectionIdeasAndComments(Guid directionId, DateTime deletedAt)
+    {
+        var ideas = from i in Context.Ideas
+                    where i.DirectionId == directionId && i.DeletedAt != null && i.DeletedAt.Value >= deletedAt
+                    select i;
+
+        var comments = from i in Context.Ideas
+                       where i.DirectionId == directionId && i.DeletedAt != null && i.DeletedAt.Value >= deletedAt
+                       from c in Context.IdeaComments.Where(c => c.IdeaId == i.Id && c.DeletedAt != null && c.DeletedAt.Value >= deletedAt)
+                       where i.DirectionId == directionId && i.DeletedAt != null && i.DeletedAt.Value >= deletedAt
+                       select c;
+
+        await ideas.ForEachAsync(i => i.DeletedAt = null);
+        await comments.ForEachAsync(c => c.DeletedAt = null);
+
+        await Context.SaveChangesAsync();
     }
 }

@@ -29,6 +29,10 @@ public interface ITaskRepository
 
     Task<IEnumerable<Models.Task>> GetByDirectionIdAndAssigneeIdAsync(Guid directionId, Guid assigneeId);
 
+    Task SoftDeleteDirectionTasksAndCommentsAsync(Guid directionId);
+
+    Task UndeleteDirectionTasksAndComments(Guid directionId, DateTime deletedAt);
+
     Task AddAsync(Models.Task task);
 
     Task AddRangeAsync(IEnumerable<Models.Task> tasks);

@@ -14,5 +14,13 @@ public interface ICommentRepository
 
     Task AddAsync(Comment comment);
 
+    Task SoftDeleteTaskCommentsAsync(IEnumerable<Guid> taskIds);
+
+    Task SoftDeleteIdeaCommentsAsync(IEnumerable<Guid> ideaIds);
+
+    Task UndeleteTaskCommentsAsync(IEnumerable<Guid> taskIds, DateTime deletedAt);
+
+    Task UndeleteIdeaCommentsAsync(IEnumerable<Guid> ideaIds, DateTime deletedAt);
+
     Task<bool> SaveChangesAsync();
 }

@@ -16,16 +16,18 @@ public class TaskService : ITaskService
     private readonly INotificationService _notificationService;
     private readonly ITimeConverter _timeConverter;
     private readonly IAssignmentRepository _assignmentRepository;
+    private readonly ICommentRepository _commentRepository;
 
     public TaskService(ITaskRepository taskRepository, IDirectionRepository directionRepository,
         IAssignmentRepository assignmentRepository, INotificationService notificationService,
-        ITimeConverter timeConverter)
+        ITimeConverter timeConverter, ICommentRepository commentRepository)
     {
         _taskRepository = taskRepository;
         _directionRepository = directionRepository;
         _notificationService = notificationService;
         _timeConverter = timeConverter;
         _assignmentRepository = assignmentRepository;
+        _commentRepository = commentRepository;
     }
 
     public async Task<IEnumerable<Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId, int? offset,
@@ -588,11 +590,18 @@ public class TaskService : ITaskService
 
         tasks.ForEach(t => t.DeletedAt = deletedAt);
 
-        //TODO: delete comments
-
         if (!await _taskRepository.SaveChangesAsync())
         {
             return Array.Empty<Guid>();
+        }
+
+        if (deletedAt is not null)
+        {
+            await _commentRepository.SoftDeleteTaskCommentsAsync(tasks.Select(t => t.Id));
+        }
+        else if (oldValue is not null)
+        {
+            await _commentRepository.UndeleteIdeaCommentsAsync(tasks.Select(t => t.Id), oldValue.Value);
         }
 
         await _notificationService.NotifyDirectionEntityDeletedAtUpdatedAsync(task, oldValue, newValue,
@@ -620,6 +629,15 @@ public class TaskService : ITaskService
         if (!await _taskRepository.SaveChangesAsync())
         {
             return null;
+        }
+
+        if (deletedAt is not null)
+        {
+            await _commentRepository.SoftDeleteTaskCommentsAsync(new[] { task.Id });
+        }
+        else if (oldValue is not null)
+        {
+            await _commentRepository.UndeleteTaskCommentsAsync(new[] { task.Id }, oldValue.Value);
         }
 
         await _notificationService.NotifyDirectionEntityDeletedAtUpdatedAsync(task, oldValue, newValue,
@@ -840,7 +858,7 @@ public class TaskService : ITaskService
         var oldValue = _timeConverter.DateTimeToString(task.RecurrencePattern.RepeatUntil);
         var newValue = _timeConverter.DateTimeToString(repeatUntil);
 
-        await _notificationService.NotifyDirectionEntityUpdatedAsync(task, nameof(Task.RecurrencePattern.RepeatUntil), 
+        await _notificationService.NotifyDirectionEntityUpdatedAsync(task, nameof(Task.RecurrencePattern.RepeatUntil),
             oldValue, newValue, currentUserId);
 
         return (await _taskRepository.GetTasksByGroupIdAsync(groupId)).Select(t => t.Id);
@@ -853,6 +871,16 @@ public class TaskService : ITaskService
         tasks.ToList().ForEach(t => t.Assignment = null);
 
         return await _taskRepository.SaveChangesAsync();
+    }
+
+    public async System.Threading.Tasks.Task SoftDeleteDirectionTasksAsync(Guid directionId)
+    {
+        await _taskRepository.SoftDeleteDirectionTasksAndCommentsAsync(directionId);
+    }
+
+    public async System.Threading.Tasks.Task UndeleteDirectionTasksAsync(Guid directionId, DateTime deletedAt)
+    {
+        await _taskRepository.UndeleteDirectionTasksAndComments(directionId, deletedAt);
     }
 
     private async Task<List<Task>> GetTasksOrThrowAsync(Guid groupId, Guid currentUserId)

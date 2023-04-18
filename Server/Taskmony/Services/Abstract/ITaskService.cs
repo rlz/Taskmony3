@@ -1,5 +1,6 @@
 using Taskmony.Models;
 using Taskmony.Models.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Services.Abstract;
 
@@ -66,4 +67,8 @@ public interface ITaskService
     Task<IEnumerable<Guid>> SetRecurringTaskRepeatUntilAsync(Guid taskId, Guid groupId, DateTime repeatUntil, Guid currentUserId);
 
     Task<bool> RemoveAssigneeFromDirectionTasksAsync(Guid assigneeId, Guid directionId);
+
+    Task SoftDeleteDirectionTasksAsync(Guid directionId);
+
+    Task UndeleteDirectionTasksAsync(Guid directionId, DateTime deletedAt);
 }

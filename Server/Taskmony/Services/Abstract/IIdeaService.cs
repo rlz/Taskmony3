@@ -1,5 +1,6 @@
 using Taskmony.Models;
 using Taskmony.Models.Enums;
+using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Services.Abstract;
 
@@ -25,4 +26,8 @@ public interface IIdeaService
     Task<Guid?> SetIdeaGenerationAsync(Guid id, Generation generation, Guid currentUserId);
 
     Task<Guid?> SetIdeaReviewedAtAsync(Guid id, DateTime? reviewedAtUtc, Guid currentUserId);
+
+    Task SoftDeleteDirectionIdeasAsync(Guid directionId);
+
+    Task UndeleteDirectionIdeasAsync(Guid directionId, DateTime deletedAt);
 }

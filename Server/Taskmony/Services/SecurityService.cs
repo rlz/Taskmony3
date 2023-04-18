@@ -16,7 +16,7 @@ public class SecurityService : ISecurityService
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
 
-    public SecurityService(ITokenProvider tokenProvider, IUserRepository userRepository, 
+    public SecurityService(ITokenProvider tokenProvider, IUserRepository userRepository,
         IPasswordHasher passwordHasher, IRefreshTokenRepository refreshTokenRepository,
         IUserIdentifierProvider userIdentifierProvider)
     {
@@ -53,7 +53,7 @@ public class SecurityService : ISecurityService
 
     public async Task<bool> RevokeAllUserTokensAsync()
     {
-       return await _tokenProvider.RevokeUserRefreshTokens(_userIdentifierProvider.UserId);
+        return await _tokenProvider.RevokeUserRefreshTokens(_userIdentifierProvider.UserId);
     }
 
     public async Task<bool> RevokeTokenAsync(string refreshToken)

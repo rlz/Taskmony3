@@ -17,6 +17,7 @@ import {
   CHANGE_TASKS,
   deleteTask,
   RESET_TASK,
+  CHANGE_TASK,
 } from "../services/actions/tasksAPI";
 import Cookies from "js-cookie";
 import { nowDate } from "../utils/APIUtils";
@@ -43,12 +44,17 @@ export const Task = ({ task, direction }: TaskProps) => {
   };
   const save = (task: TTask) => {
     if (!edited) return;
-    dispatch({ type: CHANGE_TASKS, task: task });
+    dispatch({ type: CHANGE_TASK, task: task, id: task.id });
     dispatch({ type: RESET_TASK });
     setEdited(false);
   };
   const deleteThisTask = (task: TTask) => {
     dispatch(deleteTask(task.id));
+    dispatch({ type: RESET_TASK });
+    setEdited(false);
+  };
+  const deleteRepeatedTasks = (task: TTask) => {
+    dispatch(deleteTask(task.id, task.groupId));
     dispatch({ type: RESET_TASK });
     setEdited(false);
   };
@@ -71,6 +77,7 @@ export const Task = ({ task, direction }: TaskProps) => {
         <EditedTask
           save={save}
           deleteTask={deleteThisTask}
+          deleteTasks={deleteRepeatedTasks}
           direction={direction}
           changeCheck={changeCheck}
         />

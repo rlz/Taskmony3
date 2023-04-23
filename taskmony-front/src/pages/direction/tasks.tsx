@@ -63,8 +63,8 @@ function Tasks({ directionId, directionName } : TasksProps) {
     else dispatch(addTask(task, direction));
     // dispatch({ type: RESET_TASK });
   };
-  const tasks = tasksToShow.map((task) => (
-    <Task task={task} direction={directionName} key={task.id} />
+  const tasks = tasksToShow.map((task,index) => (
+    <Task task={task} direction={directionName} key={index} />
   ));
   return (
     <div className="flex w-full">

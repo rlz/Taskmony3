@@ -1,5 +1,6 @@
 export type TTask = {
   id: string;
+  groupId: string;
   description: string;
   completedAt: string | null;
   deletedAt: string | null;

@@ -1,4 +1,5 @@
 export const tasksAllQuery = `id
+    groupId
     description
     completedAt
     deletedAt
@@ -27,7 +28,7 @@ export const tasksAllQuery = `id
      createdAt
      createdBy { displayName } 
     }
-    repeatMode
+    repeatEvery
     repeatUntil
     weekDays`;
 

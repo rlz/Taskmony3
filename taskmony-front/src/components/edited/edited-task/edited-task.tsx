@@ -17,8 +17,14 @@ import { sendTaskComment } from "../../../services/actions/comments";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Comments } from "../comments/comments";
 import { Description } from "./description";
-import { Details } from "../edited-idea/idea-details";
+import { Details } from "./task-details";
 import { About } from "./about";
+import {
+  ChangeRepeatedModeModal,
+  ChangeRepeatedValueModal,
+  DeleteRepeatedValueModal,
+  RepeatedModal,
+} from "./repeated-modal";
 
 type TaskProps = {
   label?: string;
@@ -32,6 +38,7 @@ type TaskProps = {
   close?: Function;
   changeCheck: Function;
   deleteTask?: Function;
+  deleteTasks?: Function;
 };
 
 export const EditedTask = ({
@@ -39,11 +46,14 @@ export const EditedTask = ({
   save,
   close,
   deleteTask,
+  deleteTasks,
   followed,
   recurrent,
   changeCheck,
 }: TaskProps) => {
   const task = useAppSelector((store) => store.editedTask);
+  const [showModal, setShowModal] = useState(null);
+  const [description, setDescription] = useState<string>(task.description);
   const { pathname } = useLocation();
   const dispatch = useAppDispatch();
   const closeBtn = useRef(null);
@@ -54,6 +64,7 @@ export const EditedTask = ({
       console.log("closing...");
       console.log(task);
       save(task.details === "" ? { ...task, details: null } : task);
+
     }
   };
   const closeModalRef = useRef(closeModal);
@@ -67,6 +78,7 @@ export const EditedTask = ({
       } else if (!task.id && closeBtn.current) closeBtn.current.click();
     }
     if (event.key === "Enter") {
+      if (task.groupId && event.target.id == "description" || event.target.id == "details") return; 
       console.log("Enter");
       if (task.id && saveBtn) {
         console.log("clicking");
@@ -86,6 +98,19 @@ export const EditedTask = ({
   }, []);
   return (
     <div className="editedTask w-full bg-white rounded-lg drop-shadow-sm  pb-1">
+      {showModal === "DELETE_MODAL" && (
+        <DeleteRepeatedValueModal
+          deleteThis={() => {
+            setShowModal(null);
+            if (deleteTask) deleteTask(task);
+          }}
+          deleteAll={() => {
+            setShowModal(null);
+            if (deleteTasks) deleteTasks(task);
+          }}
+        />
+      )}
+      {showModal === "REPEAT_MODE_MODAL" && <ChangeRepeatedModeModal />}
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
           {task.id && (
@@ -97,20 +122,24 @@ export const EditedTask = ({
               }}
             ></img>
           )}
-        <Description/>
+          <Description description={description} setDescription={setDescription} closeBtnRef={saveBtn.current}/>
         </div>
         {task.id ? (
-                  <div className="relative z-30 flex gap-2">
+          <div className="relative z-30 flex gap-2">
             <img
               src={shareI}
-              onClick={() => {navigate(`/task/${task.id}`,{ state: { from: pathname } })
+              onClick={() => {
+                navigate(`/task/${task.id}`, { state: { from: pathname } });
               }}
               className={"shareBtn w-4 mt-1 mr-1 cursor-pointer"}
             />
             <img
               src={deleteI}
               onClick={() => {
-                if (deleteTask) deleteTask(task);
+                if (task.groupId) setShowModal("DELETE_MODAL");
+                else {
+                  if (deleteTask) deleteTask(task);
+                }
               }}
               className={"deleteBtn w-4 mt-1 mr-1 cursor-pointer"}
             />
@@ -129,9 +158,16 @@ export const EditedTask = ({
       </div>
       <About />
       <Details fromDirection={direction} />
-      {task.id && <Comments send={(input)=>{dispatch(sendTaskComment(task.id, input))}} comments={task.comments}/>}
+      {task.id && (
+        <Comments
+          send={(input) => {
+            dispatch(sendTaskComment(task.id, input));
+          }}
+          comments={task.comments}
+        />
+      )}
       <div className={"w-full flex justify-end"}>
-        {task.description ? (
+        {description ? (
           !task.id ? (
             <BigBtn label={"add a task"} onClick={closeModal} color="blue" />
           ) : (
@@ -155,5 +191,3 @@ export const EditedTask = ({
     </div>
   );
 };
-
-

@@ -1,9 +1,25 @@
-import { changeTaskAssignee, changeTaskDirection, changeTaskRepeatMode, changeTaskRepeatUntil, changeTaskStartAt, CHANGE_TASK_ASSIGNEE, CHANGE_TASK_DIRECTION, CHANGE_TASK_REPEAT_EVERY, CHANGE_TASK_REPEAT_MODE, CHANGE_TASK_REPEAT_UNTIL, CHANGE_TASK_REPEAT_WEEK_DAYS, CHANGE_TASK_START_DATE } from "../../../services/actions/tasksAPI";
+import { useState } from "react";
+import {
+  changeTaskAssignee,
+  changeTaskDirection,
+  changeTaskRepeatMode,
+  changeTaskRepeatUntil,
+  changeTaskStartAt,
+  CHANGE_TASK_ASSIGNEE,
+  CHANGE_TASK_DIRECTION,
+  CHANGE_TASK_REPEAT_EVERY,
+  CHANGE_TASK_REPEAT_MODE,
+  CHANGE_TASK_REPEAT_UNTIL,
+  CHANGE_TASK_REPEAT_WEEK_DAYS,
+  CHANGE_TASK_START_DATE,
+} from "../../../services/actions/tasksAPI";
 import { useAppDispatch, useAppSelector } from "../../../utils/hooks";
 import { DatePicker } from "../date-picker";
 import { ItemPicker } from "../item-picker";
 import { NumberPicker } from "../number-picker";
 import { WeekPicker } from "../week-picker";
+import { ChangeRepeatedValueModal } from "./repeated-modal";
+import { TDirection } from "../../../utils/types";
 
 type DetailsProps = { fromDirection?: string | null };
 export const Details = ({ fromDirection }: DetailsProps) => {
@@ -33,15 +49,43 @@ export const Details = ({ fromDirection }: DetailsProps) => {
     }
     return null;
   };
-  const defaultUntilDate = () => {
+  const defaultUntilDateWeekly = () => {
     const date = new Date(Date.now());
-    return new Date(date.setFullYear(date.getFullYear() + 1));
+    return new Date(date.setDate(date.getDate() + 7));
+    // return new Date(date.setFullYear(date.getFullYear() + 1));
+  };
+  const defaultUntilDateDaily = () => {
+    const date = new Date(Date.now());
+    return new Date(date.setDate(date.getDate() + 1));
+    // return new Date(date.setFullYear(date.getFullYear() + 1));
   };
   const members = directions.filter((d) => d.id == task.direction?.id)[0]
     ?.members;
-
+  const [showModal, setShowModal] = useState<string | null>(null);
   return (
     <div className={"gap flex justify-start pb-2 w-full ml-1"}>
+      {showModal && (
+        <ChangeRepeatedValueModal
+          changeThis={() => {
+            setShowModal(null);
+            if (showModal == "CHANGE_DIRECTION")
+              dispatch(changeTaskDirection(task.id, task.direction));
+            else if (showModal == "CHANGE_ASSIGNEE")
+              dispatch(changeTaskAssignee(task.id, task.assignee));
+          }}
+          changeAll={() => {
+            setShowModal(null);
+            if (showModal == "CHANGE_DIRECTION")
+              dispatch(
+                changeTaskDirection(task.id, task.direction, task.groupId)
+              );
+            else if (showModal == "CHANGE_ASSIGNEE")
+              dispatch(
+                changeTaskAssignee(task.id, task.assignee, task.groupId)
+              );
+          }}
+        />
+      )}
       {!fromDirection && (
         <ItemPicker
           title={"direction"}
@@ -50,7 +94,9 @@ export const Details = ({ fromDirection }: DetailsProps) => {
           onChange={(index: number) => {
             const payload = index == 0 ? null : directions[index - 1];
             dispatch({ type: CHANGE_TASK_DIRECTION, payload: payload });
-            if (task.id && payload)
+            if (task.groupId) {
+              setShowModal("CHANGE_DIRECTION");
+            } else if (task.id && payload)
               dispatch(changeTaskDirection(task.id, payload));
           }}
           hasBorder
@@ -66,7 +112,9 @@ export const Details = ({ fromDirection }: DetailsProps) => {
           onChange={(index: number) => {
             const payload = members[index];
             dispatch({ type: CHANGE_TASK_ASSIGNEE, payload: payload });
-            if (task.id) dispatch(changeTaskAssignee(task.id, payload));
+            if (task.groupId) {
+              setShowModal("CHANGE_ASSIGNEE");
+            } else if (task.id) dispatch(changeTaskAssignee(task.id, payload));
           }}
           hasBorder
           width="w-24"
@@ -90,15 +138,22 @@ export const Details = ({ fromDirection }: DetailsProps) => {
             type: CHANGE_TASK_REPEAT_MODE,
             payload: repeatModeTranslator(repeatOptions[index]),
           });
-          //when mode is weekly or daily
-          if (
-            repeatOptions[index] == "daily" ||
-            repeatOptions[index] == "custom"
-          ) {
+          //when mode is weekly
+          if (repeatOptions[index] == "custom") {
             dispatch({ type: CHANGE_TASK_REPEAT_EVERY, payload: 1 });
             dispatch({
               type: CHANGE_TASK_REPEAT_UNTIL,
-              payload: new Date(defaultUntilDate())
+              payload: new Date(defaultUntilDateWeekly())
+                .toISOString()
+                .substring(0, 10),
+            });
+          }
+          //when mode is daily
+          if (repeatOptions[index] == "daily") {
+            dispatch({ type: CHANGE_TASK_REPEAT_EVERY, payload: 1 });
+            dispatch({
+              type: CHANGE_TASK_REPEAT_UNTIL,
+              payload: new Date(defaultUntilDateDaily())
                 .toISOString()
                 .substring(0, 10),
             });
@@ -109,15 +164,34 @@ export const Details = ({ fromDirection }: DetailsProps) => {
               type: CHANGE_TASK_REPEAT_WEEK_DAYS,
               payload: ["MONDAY"],
             });
-          if (task.id)
-            dispatch(
-              changeTaskRepeatMode(
-                task.id,
-                repeatModeTranslator(repeatOptions[index]),
-                task.repeatEvery,
-                task.weekDays
-              )
-            );
+          console.log(task);
+          if (task.id) {
+            if (task.groupId)
+              dispatch(
+                changeTaskRepeatMode(
+                  task.id,
+                  repeatModeTranslator(repeatOptions[index]),
+                  task.repeatEvery,
+                  task.weekDays,
+                  task.repeatUntil ? task.repeatUntil : new Date(defaultUntilDateWeekly())
+                  .toISOString()
+                  .substring(0, 10),
+                  task.groupId
+                )
+              );
+            else
+              dispatch(
+                changeTaskRepeatMode(
+                  task.id,
+                  repeatModeTranslator(repeatOptions[index]),
+                  task.repeatEvery,
+                  task.weekDays,
+                  task.repeatUntil ? task.repeatUntil : new Date(defaultUntilDateWeekly())
+                  .toISOString()
+                  .substring(0, 10)
+                )
+              );
+          }
         }}
         hasBorder
       />
@@ -131,7 +205,17 @@ export const Details = ({ fromDirection }: DetailsProps) => {
           hasBorder
           onChange={(value: string) => {
             dispatch({ type: CHANGE_TASK_REPEAT_UNTIL, payload: value });
-            if (task.id) dispatch(changeTaskRepeatUntil(task.id, value));
+            if (task.id && task.groupId)
+              dispatch(
+                changeTaskRepeatMode(
+                  task.id,
+                  task.repeatMode,
+                  task.repeatEvery,
+                  task.weekDays,
+                  value,
+                  task.groupId
+                )
+              );
           }}
         />
       )}
@@ -145,13 +229,15 @@ export const Details = ({ fromDirection }: DetailsProps) => {
             value={task.repeatEvery}
             onChange={(value: string) => {
               dispatch({ type: CHANGE_TASK_REPEAT_EVERY, payload: value });
-              if (task.id)
+              if (task.id && task.groupId)
                 dispatch(
                   changeTaskRepeatMode(
                     task.id,
                     task.repeatMode,
                     value,
-                    task.weekDays
+                    task.repeatUntil,
+                    task.weekDays,
+                    task.groupId
                   )
                 );
             }}
@@ -161,15 +247,19 @@ export const Details = ({ fromDirection }: DetailsProps) => {
             value={task.weekDays}
             onChange={(value: Array<string>) => {
               dispatch({ type: CHANGE_TASK_REPEAT_WEEK_DAYS, payload: value });
-              if (task.id)
-                dispatch(
-                  changeTaskRepeatMode(
-                    task.id,
-                    task.repeatMode,
-                    task.repeatEvery,
-                    value
-                  )
-                );
+              if (task.id && task.groupId) {
+                if (task.groupId)
+                  dispatch(
+                    changeTaskRepeatMode(
+                      task.id,
+                      task.repeatMode,
+                      task.repeatEvery,
+                      value,
+                      task.repeatUntil,
+                      task.groupId
+                    )
+                  );
+              }
             }}
           />
         </>

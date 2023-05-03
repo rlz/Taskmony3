@@ -167,7 +167,7 @@ export const TaskUnedited = ({
           />
         }
         {date > new Date().toISOString() && <TaskDetails label={date.slice(0,10)} hasBorder />}
-        {
+        {assignee &&
           <TaskDetails
             label={`assignee: ${assignee? assignee.displayName : "none"}`}
             hasBorder

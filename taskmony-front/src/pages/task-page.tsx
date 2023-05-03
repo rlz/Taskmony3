@@ -1,6 +1,6 @@
 import backI from "../images/arrow-left.svg";
 import arrowUp from "../images/arrow-up.svg";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import arrowUpGray from "../images/arrow-up-gray.svg";
 import useIsFirstRender, { useAppDispatch, useAppSelector } from "../utils/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -52,6 +52,7 @@ const TaskInfo = ({
     const tasks = useAppSelector((store) => store.tasks.items);
     const myTasks = tasks.filter(i=> i.id == taskId)
     if(myTasks[0]) dispatch({type: CHANGE_OPEN_TASK, task: myTasks[0]});
+    const [description, setDescription] = useState(myTasks[0]?.description);
   const task = useAppSelector((store) => store.editedTask);
   const navigate = useNavigate();
   const closeBtn = useRef(null);
@@ -87,7 +88,7 @@ const TaskInfo = ({
   return (
     <div className="m-4 editedTask rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
-        <Description />
+        <Description description={description} setDescription={setDescription} closeBtnRef={undefined} />
       </div>
       <About />
       <Details fromDirection={direction} />

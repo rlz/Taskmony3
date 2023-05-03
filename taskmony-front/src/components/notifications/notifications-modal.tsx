@@ -49,8 +49,8 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
         notif.actionType === "ITEM_DELETED") &&
       notif.actionItem?.__typename != "User"
     ) {
-      label = `${notif.actionItem.__typename} “${
-        notif.actionItem.description
+      label = `${notif.actionItem?.__typename} “${
+        notif.actionItem?.description
       }” was 
       ${notif.actionType === "ITEM_ADDED" ? "added" : "deleted"}`;
       type = notif.actionType === "ITEM_ADDED" ? "itemAdded" : "itemDeleted";

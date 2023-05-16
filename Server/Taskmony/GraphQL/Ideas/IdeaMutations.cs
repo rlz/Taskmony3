@@ -1,7 +1,5 @@
-using Taskmony.Models;
-using Taskmony.Models.Enums;
+using Taskmony.Models.Ideas;
 using Taskmony.Services.Abstract;
-using Taskmony.ValueObjects;
 
 namespace Taskmony.GraphQL.Ideas;
 
@@ -11,16 +9,7 @@ public class IdeaMutations
     public async Task<Idea?> IdeaAdd([Service] IIdeaService ideaService, [GlobalState] Guid currentUserId,
         string description, string? details, Guid? directionId, Generation generation)
     {
-        var idea = new Idea
-        {
-            CreatedById = currentUserId,
-            Description = Description.From(description),
-            Details = details,
-            DirectionId = directionId,
-            Generation = generation
-        };
-
-        return await ideaService.AddIdeaAsync(idea);
+        return await ideaService.AddIdeaAsync(description, details, directionId, generation, currentUserId);
     }
 
     public async Task<Guid?> IdeaSetDescription([Service] IIdeaService ideaService,
@@ -59,7 +48,7 @@ public class IdeaMutations
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid ideaId, string? reviewedAt)
     {
         DateTime? reviewedAtUtc = reviewedAt is null ? null : timeConverter.StringToDateTimeUtc(reviewedAt);
-        
+
         return await ideaService.SetIdeaReviewedAtAsync(ideaId, reviewedAtUtc, currentUserId);
     }
 }

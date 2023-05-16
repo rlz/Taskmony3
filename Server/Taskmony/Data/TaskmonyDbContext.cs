@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data.Configurations;
-using Taskmony.Models;
 using Taskmony.Models.Comments;
+using Taskmony.Models.Directions;
+using Taskmony.Models.Ideas;
 using Taskmony.Models.Notifications;
 using Taskmony.Models.Subscriptions;
+using Taskmony.Models.Tasks;
+using Taskmony.Models.Users;
+using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.Data;
 
@@ -21,7 +25,7 @@ public class TaskmonyDbContext : DbContext
 
     public DbSet<Idea> Ideas => Set<Idea>();
 
-    public DbSet<Models.Task> Tasks => Set<Models.Task>();
+    public DbSet<Task> Tasks => Set<Task>();
 
     public DbSet<Assignment> Assignments => Set<Assignment>();
 

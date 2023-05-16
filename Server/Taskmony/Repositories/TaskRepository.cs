@@ -5,13 +5,13 @@ using Taskmony.ValueObjects;
 
 namespace Taskmony.Repositories;
 
-public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepository
+public sealed class TaskRepository : BaseRepository<Models.Tasks.Task>, ITaskRepository
 {
     public TaskRepository(IDbContextFactory<TaskmonyDbContext> contextFactory) : base(contextFactory)
     {
     }
 
-    public async Task<IEnumerable<Models.Task>> GetAsync(Guid[]? id, Guid?[] directionId, int? offset,
+    public async Task<IEnumerable<Models.Tasks.Task>> GetAsync(Guid[]? id, Guid?[] directionId, int? offset,
         int? limit, Guid userId)
     {
         var query = Context.Tasks.AsQueryable();
@@ -36,7 +36,7 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
         return await query.Include(t => t.RecurrencePattern).ToListAsync();
     }
 
-    private IQueryable<Models.Task> AddPagination(IQueryable<Models.Task> query, int? offset, int? limit)
+    private IQueryable<Models.Tasks.Task> AddPagination(IQueryable<Models.Tasks.Task> query, int? offset, int? limit)
     {
         if (offset is not null)
         {
@@ -57,7 +57,7 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
         return query;
     }
 
-    public new async Task<Models.Task?> GetByIdAsync(Guid id)
+    public new async Task<Models.Tasks.Task?> GetByIdAsync(Guid id)
     {
         return await Context.Tasks
             .Include(t => t.Assignment)
@@ -65,7 +65,7 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
             .FirstOrDefaultAsync(t => t.Id == id);
     }
 
-    public async Task<IEnumerable<Models.Task>> GetActiveTasksAsync(Guid groupId)
+    public async Task<IEnumerable<Models.Tasks.Task>> GetActiveTasksAsync(Guid groupId)
     {
         return await Context.Tasks
             .Where(t => t.GroupId == groupId && t.CompletedAt == null && t.DeletedAt == null)
@@ -74,12 +74,12 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Models.Task>> GetTasksByGroupIdAsync(Guid groupId)
+    public async Task<IEnumerable<Models.Tasks.Task>> GetTasksByGroupIdAsync(Guid groupId)
     {
         return await Context.Tasks.Where(t => t.GroupId == groupId).ToListAsync();
     }
 
-    public async Task<IEnumerable<Models.Task>> GetByDirectionIdAndAssigneeIdAsync(Guid directionId, Guid assigneeId)
+    public async Task<IEnumerable<Models.Tasks.Task>> GetByDirectionIdAndAssigneeIdAsync(Guid directionId, Guid assigneeId)
     {
         var query = from t in Context.Tasks
                     join d in Context.Directions on t.DirectionId equals d.Id
@@ -103,8 +103,8 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
                     where t.DirectionId == directionId && t.DeletedAt == null
                     select t;
 
-        await tasks.ForEachAsync(t => t.DeletedAt = DeletedAt.From(now));
-        await comments.ForEachAsync(c => c.DeletedAt = DeletedAt.From(now));
+        await tasks.ForEachAsync(t => t.UpdateDeletedAt(DeletedAt.From(now)));
+        await comments.ForEachAsync(c => c.UpdateDeletedAt(DeletedAt.From(now)));
 
         await Context.SaveChangesAsync();
     }
@@ -120,8 +120,8 @@ public sealed class TaskRepository : BaseRepository<Models.Task>, ITaskRepositor
                        from c in Context.TaskComments.Where(c => c.TaskId == t.Id && c.DeletedAt != null && c.DeletedAt.Value >= deletedAt)
                        select c;
 
-        await tasks.ForEachAsync(t => t.DeletedAt = null);
-        await comments.ForEachAsync(c => c.DeletedAt = null);
+        await tasks.ForEachAsync(t => t.UpdateDeletedAt(null));
+        await comments.ForEachAsync(c => c.UpdateDeletedAt(null));
 
         await Context.SaveChangesAsync();
     }

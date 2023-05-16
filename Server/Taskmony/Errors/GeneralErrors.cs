@@ -6,5 +6,5 @@ public static class GeneralErrors
         new("Internal server error", "INTERNAL_SERVER_ERROR");
 
     public static ErrorDetails Forbidden =>
-        new("User does not have access to this resorce", "FORBIDDEN");
+        new("User does not have access to this resource", "FORBIDDEN");
 }

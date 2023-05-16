@@ -1,6 +1,5 @@
 using Taskmony.Models.Comments;
 using Taskmony.Services.Abstract;
-using Taskmony.ValueObjects;
 
 namespace Taskmony.GraphQL.Comments;
 
@@ -10,27 +9,13 @@ public class CommentMutations
     public async Task<Comment?> TaskAddComment([Service] ICommentService commentService,
         [GlobalState] Guid currentUserId, Guid taskId, string text)
     {
-        var comment = new TaskComment
-        {
-            CreatedById = currentUserId,
-            Text = CommentText.From(text),
-            TaskId = taskId
-        };
-
-        return await commentService.AddComment(comment);
+        return await commentService.AddTaskComment(taskId, text, currentUserId);
     }
 
     public async Task<Comment?> IdeaAddComment([Service] ICommentService commentService,
         [GlobalState] Guid currentUserId, Guid ideaId, string text)
     {
-        var comment = new IdeaComment
-        {
-            CreatedById = currentUserId,
-            Text = CommentText.From(text),
-            IdeaId = ideaId
-        };
-
-        return await commentService.AddComment(comment);
+        return await commentService.AddIdeaComment(ideaId, text, currentUserId);
     }
 
     public async Task<Guid?> CommentSetText([Service] ICommentService commentService,

@@ -1,4 +1,4 @@
-using Taskmony.Models;
+using Taskmony.Models.Ideas;
 using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories.Abstract;

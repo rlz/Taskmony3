@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
-using Taskmony.Models;
+using Taskmony.Models.Tasks;
 using Taskmony.Repositories.Abstract;
-using Task = System.Threading.Tasks.Task;
+using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.Repositories;
 
@@ -17,7 +17,7 @@ public class AssignmentRepository : BaseRepository<Assignment>, IAssignmentRepos
         return await Context.Assignments.Where(a => taskIds.Contains(a.TaskId)).ToListAsync();
     }
 
-    public async Task UpdateAssignmentAsync(Models.Task task, Assignment? newAssignment)
+    public async Task<bool> UpdateAssignmentAsync(Task task, Assignment? newAssignment)
     {
         await using var transaction = await Context.Database.BeginTransactionAsync();
 
@@ -29,34 +29,38 @@ public class AssignmentRepository : BaseRepository<Assignment>, IAssignmentRepos
             await SaveChangesAsync();
         }
 
-        task.Assignment = newAssignment;
+        task.UpdateAssignment(newAssignment);
 
-        await SaveChangesAsync();
+        var anyChanges = await SaveChangesAsync();
 
         await transaction.CommitAsync();
+
+        return anyChanges;
     }
 
-    public async Task UpdateAssignmentAsync(IEnumerable<Models.Task> tasks, Assignment? newAssignment)
+    public async Task<bool> UpdateAssignmentAsync(IEnumerable<Task> tasks, Assignment? newAssignment)
     {
         await using var transaction = await Context.Database.BeginTransactionAsync();
 
         foreach (var task in tasks)
         {
             Context.Attach(task);
-            
+
             if (task.Assignment != null)
             {
                 Context.Remove(task.Assignment);
                 await SaveChangesAsync();
             }
 
-            task.Assignment = newAssignment is null
+            task.UpdateAssignment(newAssignment == null
                 ? null
-                : new Assignment {AssigneeId = newAssignment.AssigneeId, AssignedById = newAssignment.AssignedById};
+                : new Assignment(newAssignment.AssigneeId, newAssignment.AssignedById));
         }
 
-        await SaveChangesAsync();
+        var anyChanges = await SaveChangesAsync();
 
         await transaction.CommitAsync();
+
+        return anyChanges;
     }
 }

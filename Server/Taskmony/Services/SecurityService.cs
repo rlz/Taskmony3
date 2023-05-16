@@ -65,7 +65,7 @@ public class SecurityService : ISecurityService
             throw new DomainException(TokenErrors.InvalidToken);
         }
 
-        token.IsRevoked = true;
+        token.Revoke();
 
         return await _refreshTokenRepository.SaveChangesAsync();
     }

@@ -1,11 +1,11 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
-using Taskmony.Models;
-using Taskmony.Models.Enums;
+using Taskmony.Models.Directions;
+using Taskmony.Models.Ideas;
 using Taskmony.Models.Notifications;
 using Taskmony.Repositories.Abstract;
 using Taskmony.Services.Abstract;
-using Task = Taskmony.Models.Task;
+using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.Services;
 
@@ -39,7 +39,8 @@ public class NotificationService : INotificationService
     {
         if (task.Assignment is null)
         {
-            return await NotifyDirectionEntityUpdatedAsync(task, nameof(Task.Assignment.AssigneeId), oldAssigneeId?.ToString(),
+            return await NotifyDirectionEntityUpdatedAsync(task, nameof(Task.Assignment.AssigneeId),
+                oldAssigneeId?.ToString(),
                 null, modifiedById);
         }
 
@@ -54,16 +55,14 @@ public class NotificationService : INotificationService
     private async Task<bool> NotifyTaskAssignedAsync(Task task, Guid assigneeId, Guid modifiedById,
         DateTime? modifiedAt)
     {
-        return await CreateNotificationAsync(new Notification
-        {
-            NotifiableId = task.Id,
-            NotifiableType = NotifiableType.Task,
-            ActionItemId = assigneeId,
-            ActionItemType = ActionItemType.User,
-            ActionType = ActionType.TaskAssigned,
-            ModifiedById = modifiedById,
-            ModifiedAt = modifiedAt
-        });
+        return await CreateNotificationAsync(new Notification(
+            actionType: ActionType.TaskAssigned,
+            modifiedAt: modifiedAt,
+            modifiedById: modifiedById,
+            NotifiableType.Task,
+            notifiableId: task.Id,
+            actionItemType: ActionItemType.User,
+            actionItemId: assigneeId));
     }
 
     public async Task<bool> NotifyDirectionEntityAddedAsync(DirectionEntity entity, DateTime? createdAt,
@@ -76,7 +75,8 @@ public class NotificationService : INotificationService
 
         if (entity is Task task && task.Assignment is not null)
         {
-            await NotifyTaskAssignedAsync(task, task.Assignment.AssigneeId, task.Assignment.AssignedById, task.CreatedAt);
+            await NotifyTaskAssignedAsync(task, task.Assignment.AssigneeId, task.Assignment.AssignedById,
+                task.CreatedAt);
         }
 
         return await NotifyItemAddedAsync(NotifiableType.Direction, entity.DirectionId!.Value,
@@ -216,52 +216,45 @@ public class NotificationService : INotificationService
     private async Task<bool> NotifyItemUpdatedAsync(NotifiableType type, Guid notifiableId, Guid modifiedById,
         string field, string? oldValue, string? newValue)
     {
-        return await CreateNotificationAsync(new Notification
-        {
-            NotifiableId = notifiableId,
-            NotifiableType = type,
-            ModifiedById = modifiedById,
-            ActionType = ActionType.ItemUpdated,
-            Field = field,
-            OldValue = oldValue,
-            NewValue = newValue
-        });
+        return await CreateNotificationAsync(new Notification(
+            actionType: ActionType.ItemUpdated,
+            modifiedAt: DateTime.UtcNow,
+            notifiableId: notifiableId,
+            notifiableType: type,
+            modifiedById: modifiedById,
+            field: field,
+            oldValue: oldValue,
+            newValue: newValue));
     }
 
     private async Task<bool> NotifyItemAddedAsync(NotifiableType notifiableType, Guid notifiableId,
         ActionItemType itemType, Guid itemId, Guid modifiedById, DateTime? modifiedAtUtc)
     {
-        return await CreateNotificationAsync(new Notification
-        {
-            NotifiableId = notifiableId,
-            NotifiableType = notifiableType,
-            ActionType = ActionType.ItemAdded,
-            ActionItemId = itemId,
-            ActionItemType = itemType,
-            ModifiedAt = modifiedAtUtc,
-            ModifiedById = modifiedById
-        });
+        return await CreateNotificationAsync(new Notification(
+            actionType: ActionType.ItemAdded,
+            notifiableId: notifiableId,
+            notifiableType: notifiableType,
+            modifiedAt: modifiedAtUtc,
+            modifiedById: modifiedById,
+            actionItemId: itemId,
+            actionItemType: itemType));
     }
 
     private async Task<bool> NotifyItemRemovedAsync(NotifiableType notifiableType, Guid notifiableId,
         ActionItemType itemType, Guid itemId, Guid modifiedById, DateTime? modifiedAtUtc)
     {
-        return await CreateNotificationAsync(new Notification
-        {
-            NotifiableId = notifiableId,
-            NotifiableType = notifiableType,
-            ActionType = ActionType.ItemDeleted,
-            ActionItemId = itemId,
-            ActionItemType = itemType,
-            ModifiedAt = modifiedAtUtc,
-            ModifiedById = modifiedById
-        });
+        return await CreateNotificationAsync(new Notification(
+            actionType: ActionType.ItemDeleted,
+            notifiableId: notifiableId,
+            notifiableType: notifiableType,
+            modifiedAt: modifiedAtUtc,
+            modifiedById: modifiedById,
+            actionItemId: itemId,
+            actionItemType: itemType));
     }
 
     private async Task<bool> CreateNotificationAsync(Notification notification)
     {
-        notification.ModifiedAt ??= DateTime.UtcNow;
-
         await _notificationRepository.AddAsync(notification);
 
         return await _notificationRepository.SaveChangesAsync();

@@ -18,7 +18,8 @@ public class UserMutations
         return null;
     }
 
-    public async Task<Guid?> UserSetLogin([Service] IUserService userService, [GlobalState] Guid currentUserId, string login)
+    public async Task<Guid?> UserSetLogin([Service] IUserService userService, [GlobalState] Guid currentUserId,
+        string login)
     {
         if (await userService.SetLoginAsync(currentUserId, login, currentUserId))
         {
@@ -28,7 +29,8 @@ public class UserMutations
         return null;
     }
 
-    public async Task<Guid?> UserSetDisplayName([Service] IUserService userService, [GlobalState] Guid currentUserId, string displayName)
+    public async Task<Guid?> UserSetDisplayName([Service] IUserService userService, [GlobalState] Guid currentUserId,
+        string displayName)
     {
         if (await userService.SetDisplayNameAsync(currentUserId, displayName, currentUserId))
         {
@@ -38,7 +40,8 @@ public class UserMutations
         return null;
     }
 
-    public async Task<Guid?> UserSetEmail([Service] IUserService userService, [GlobalState] Guid currentUserId, string email)
+    public async Task<Guid?> UserSetEmail([Service] IUserService userService, [GlobalState] Guid currentUserId,
+        string email)
     {
         if (await userService.SetEmailAsync(currentUserId, email, currentUserId))
         {
@@ -48,7 +51,7 @@ public class UserMutations
         return null;
     }
 
-    public async Task<Guid?> UserSetPassword([Service] IUserService userService, [GlobalState] Guid currentUserId, 
+    public async Task<Guid?> UserSetPassword([Service] IUserService userService, [GlobalState] Guid currentUserId,
         string oldPassword, string newPassword)
     {
         if (await userService.SetPasswordAsync(currentUserId, oldPassword, newPassword, currentUserId))

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Taskmony.Models;
+using Taskmony.Models.Directions;
 
 namespace Taskmony.Data.Configurations;
 

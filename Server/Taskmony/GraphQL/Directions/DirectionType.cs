@@ -2,9 +2,9 @@ using HotChocolate.Resolvers;
 using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Notifications;
 using Taskmony.GraphQL.Users;
-using Taskmony.Models;
-using Taskmony.Models.Enums;
+using Taskmony.Models.Directions;
 using Taskmony.Models.Notifications;
+using Taskmony.Models.Users;
 using Taskmony.Services.Abstract;
 
 namespace Taskmony.GraphQL.Directions;

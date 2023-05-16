@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
-using Taskmony.Models;
+using Taskmony.Models.Ideas;
 using Taskmony.Repositories.Abstract;
 using Taskmony.ValueObjects;
 using Task = System.Threading.Tasks.Task;
@@ -73,8 +73,8 @@ public sealed class IdeaRepository : BaseRepository<Idea>, IIdeaRepository
                        where i.DirectionId == directionId && i.DeletedAt == null
                        select c;
 
-        await ideas.ForEachAsync(i => i.DeletedAt = DeletedAt.From(now));
-        await comments.ForEachAsync(c => c.DeletedAt = DeletedAt.From(now));
+        await ideas.ForEachAsync(i => i.UpdateDeletedAt(DeletedAt.From(now)));
+        await comments.ForEachAsync(c => c.UpdateDeletedAt(DeletedAt.From(now)));
 
         await Context.SaveChangesAsync();
     }
@@ -91,8 +91,8 @@ public sealed class IdeaRepository : BaseRepository<Idea>, IIdeaRepository
                        where i.DirectionId == directionId && i.DeletedAt != null && i.DeletedAt.Value >= deletedAt
                        select c;
 
-        await ideas.ForEachAsync(i => i.DeletedAt = null);
-        await comments.ForEachAsync(c => c.DeletedAt = null);
+        await ideas.ForEachAsync(i => i.UpdateDeletedAt(null));
+        await comments.ForEachAsync(c => c.UpdateDeletedAt(null));
 
         await Context.SaveChangesAsync();
     }

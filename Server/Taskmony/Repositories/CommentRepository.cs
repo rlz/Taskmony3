@@ -80,9 +80,7 @@ public sealed class CommentRepository : BaseRepository<Comment>, ICommentReposit
                        where taskIds.Contains(c.TaskId) && c.DeletedAt == null
                        select c;
 
-        await toDelete.ForEachAsync(c => c.DeletedAt = DeletedAt.From(DateTime.UtcNow));
-
-        await Context.SaveChangesAsync();
+        await SoftDeleteCommentsAsync(toDelete);
     }
 
     public async Task UndeleteTaskCommentsAsync(IEnumerable<Guid> taskIds, DateTime deletedAt)
@@ -91,9 +89,7 @@ public sealed class CommentRepository : BaseRepository<Comment>, ICommentReposit
                         where taskIds.Contains(c.TaskId) && c.DeletedAt != null && c.DeletedAt.Value >= deletedAt
                         select c;
 
-        await toRecover.ForEachAsync(c => c.DeletedAt = null);
-
-        await Context.SaveChangesAsync();
+        await UndeleteCommentsAsync(toRecover);
     }
 
     public async Task SoftDeleteIdeaCommentsAsync(IEnumerable<Guid> ideaIds)
@@ -102,9 +98,7 @@ public sealed class CommentRepository : BaseRepository<Comment>, ICommentReposit
                        where ideaIds.Contains(c.IdeaId) && c.DeletedAt == null
                        select c;
 
-        await toDelete.ForEachAsync(c => c.DeletedAt = DeletedAt.From(DateTime.UtcNow));
-
-        await Context.SaveChangesAsync();
+        await SoftDeleteCommentsAsync(toDelete);
     }
 
     public async Task UndeleteIdeaCommentsAsync(IEnumerable<Guid> ideaIds, DateTime deletedAt)
@@ -113,7 +107,19 @@ public sealed class CommentRepository : BaseRepository<Comment>, ICommentReposit
                         where ideaIds.Contains(c.IdeaId) && c.DeletedAt != null && c.DeletedAt.Value >= deletedAt
                         select c;
 
-        await toRecover.ForEachAsync(c => c.DeletedAt = null);
+        await UndeleteCommentsAsync(toRecover);
+    }
+    
+    private async Task SoftDeleteCommentsAsync(IQueryable<Comment> toDelete)
+    {
+        await toDelete.ForEachAsync(c => c.UpdateDeletedAt(DeletedAt.From(DateTime.UtcNow)));
+
+        await Context.SaveChangesAsync();
+    }
+    
+    private async Task UndeleteCommentsAsync(IQueryable<Comment> toRecover)
+    {
+        await toRecover.ForEachAsync(c => c.UpdateDeletedAt(null));
 
         await Context.SaveChangesAsync();
     }

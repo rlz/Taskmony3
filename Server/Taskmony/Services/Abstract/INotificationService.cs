@@ -1,15 +1,14 @@
-using Taskmony.Models;
-using Taskmony.Models.Enums;
+using Taskmony.Models.Directions;
 using Taskmony.Models.Notifications;
-using Task = Taskmony.Models.Task;
+using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.Services.Abstract;
 
 public interface INotificationService
 {
-    Task<IEnumerable<Notification>> GetNotificationsByNotifiableIdsAsync(NotifiableType type, Guid[] ids, 
+    Task<IEnumerable<Notification>> GetNotificationsByNotifiableIdsAsync(NotifiableType type, Guid[] ids,
         DateTime? start, DateTime? end, Guid currentUserId);
-    
+
     Task<bool> NotifyTaskAssigneeUpdatedAsync(Task task, Guid? oldAssigneeId, Guid modifiedById,
         DateTime? modifiedAt);
 
@@ -71,5 +70,5 @@ public interface INotificationService
         Guid modifiedById);
 
     Task<bool> NotifyDirectionMemberRemovedAsync(Guid directionId, Guid memberId, DateTime? modifiedAt,
-       Guid modifiedById);
+        Guid modifiedById);
 }

@@ -47,26 +47,22 @@ public class SubscriptionService : ISubscriptionService
 
         if (task.DeletedAt is not null)
         {
-            throw new DomainException(TaskErrors.SubscribeToDeletedTask);
+            throw new DomainException(SubscriptionErrors.SubscribeToDeletedEntity);
         }
 
         if (task.CompletedAt is not null)
         {
-            throw new DomainException(TaskErrors.SubscribeToCompletedTask);
+            throw new DomainException(SubscriptionErrors.SubscribeToCompletedTask);
         }
 
         var subscription = await _subscriptionRepository.GetByTaskAndUserAsync(taskId, currentUserId);
 
         if (subscription is not null)
         {
-            throw new DomainException(TaskErrors.AlreadySubscribedToTask);
+            throw new DomainException(SubscriptionErrors.AlreadySubscribed);
         }
 
-        _subscriptionRepository.Add(new TaskSubscription
-        {
-            TaskId = task.Id,
-            UserId = currentUserId
-        });
+        _subscriptionRepository.Add(new TaskSubscription(currentUserId, taskId));
 
         return await _subscriptionRepository.SaveChangesAsync();
     }
@@ -77,64 +73,44 @@ public class SubscriptionService : ISubscriptionService
 
         if (idea.DeletedAt is not null)
         {
-            throw new DomainException(IdeaErrors.SubscribeToDeletedIdea);
+            throw new DomainException(SubscriptionErrors.SubscribeToDeletedEntity);
         }
 
         var subscription = await _subscriptionRepository.GetByIdeaAndUserAsync(ideaId, currentUserId);
 
         if (subscription is not null)
         {
-            throw new DomainException(IdeaErrors.AlreadySubscribedToIdea);
+            throw new DomainException(SubscriptionErrors.AlreadySubscribed);
         }
 
-        _subscriptionRepository.Add(new IdeaSubscription
-        {
-            IdeaId = idea.Id,
-            UserId = currentUserId
-        });
+        _subscriptionRepository.Add(new IdeaSubscription(currentUserId, ideaId));
 
         return await _subscriptionRepository.SaveChangesAsync();
     }
 
     public async Task<bool> UnsubscribeFromTaskAsync(Guid taskId, Guid currentUserId)
     {
-        var taskSubscription = await GetTaskSubscriptionOrThrowAsync(taskId, currentUserId);
+        var taskSubscription = await _subscriptionRepository.GetByTaskAndUserAsync(taskId, currentUserId);
 
-        _subscriptionRepository.Delete(taskSubscription);
-
-        return await _subscriptionRepository.SaveChangesAsync();
+        return await UnsubscribeAsync(taskSubscription);
     }
 
     public async Task<bool> UnsubscribeFromIdeaAsync(Guid ideaId, Guid currentUserId)
     {
-        var ideaSubscription = await GetIdeaSubscriptionOrThrowAsync(ideaId, currentUserId);
+        var ideaSubscription = await _subscriptionRepository.GetByIdeaAndUserAsync(ideaId, currentUserId);
 
-        _subscriptionRepository.Delete(ideaSubscription);
+        return await UnsubscribeAsync(ideaSubscription);
+    }
+
+    private async Task<bool> UnsubscribeAsync(Subscription? subscription)
+    {
+        if (subscription is null)
+        {
+            throw new DomainException(SubscriptionErrors.NotFound);
+        }
+
+        _subscriptionRepository.Delete(subscription);
 
         return await _subscriptionRepository.SaveChangesAsync();
-    }
-
-    private async Task<TaskSubscription> GetTaskSubscriptionOrThrowAsync(Guid taskId, Guid userId)
-    {
-        var subscription = await _subscriptionRepository.GetByTaskAndUserAsync(taskId, userId);
-
-        if (subscription == null)
-        {
-            throw new DomainException(TaskErrors.SubscriptionNotFound);
-        }
-
-        return subscription;
-    }
-
-    private async Task<IdeaSubscription> GetIdeaSubscriptionOrThrowAsync(Guid ideaId, Guid userId)
-    {
-        var subscription = await _subscriptionRepository.GetByIdeaAndUserAsync(ideaId, userId);
-
-        if (subscription == null)
-        {
-            throw new DomainException(IdeaErrors.SubscriptionNotFound);
-        }
-
-        return subscription;
     }
 }

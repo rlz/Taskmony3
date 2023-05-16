@@ -54,9 +54,6 @@ public static class ValidationErrors
     public static ErrorDetails InvalidDateTimeFormat =>
         new("Invalid date time format", "INVALID_DATE_TIME_FORMAT");
 
-    public static ErrorDetails InvalidRepeatUntil =>
-        new("Repeat until must not be in the past", "INVALID_REPEAT_UNTIL");
-
     public static ErrorDetails RepeatUntilIsRequired =>
         new("Repeat until must be specified", "REPEAT_UNTIL_IS_REQUIRED");
 

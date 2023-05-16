@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
-using Taskmony.Models;
+using Taskmony.Models.Users;
 using Taskmony.Repositories.Abstract;
 using Taskmony.ValueObjects;
 

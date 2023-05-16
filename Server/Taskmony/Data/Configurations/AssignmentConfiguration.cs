@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
-using Taskmony.Models;
+using Taskmony.Models.Tasks;
 
 namespace Taskmony.Data.Configurations;
 

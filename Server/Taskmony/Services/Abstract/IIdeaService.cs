@@ -1,19 +1,19 @@
-using Taskmony.Models;
-using Taskmony.Models.Enums;
+using Taskmony.Models.Ideas;
 using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Services.Abstract;
 
 public interface IIdeaService
 {
-    Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[]? directionId,
-        int? offset, int? limit, Guid currentUserId);
-    
+    Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[]? directionId, int? offset, int? limit,
+        Guid currentUserId);
+
     Task<IEnumerable<Idea>> GetIdeaByIdsAsync(Guid[] ids);
 
     Task<Idea> GetIdeaOrThrowAsync(Guid id, Guid currentUserId);
 
-    Task<Idea?> AddIdeaAsync(Idea idea);
+    Task<Idea?> AddIdeaAsync(string description, string? details, Guid? directionId, Generation generation,
+        Guid currentUserId);
 
     Task<Guid?> SetIdeaDescriptionAsync(Guid id, string description, Guid currentUserId);
 

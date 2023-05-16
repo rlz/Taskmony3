@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Utilities;
-using Taskmony.Models.Enums;
+using Taskmony.Models.Tasks;
 
 namespace Taskmony.GraphQL.Converters;
 
@@ -13,14 +13,14 @@ public class WeekDaysToWeekDayConverter : IChangeTypeProvider
         {
             converter = input =>
             {
-                var weekDays = input as IEnumerable<WeekDay>;
-
-                if (weekDays is not null)
+                if (input is IEnumerable<WeekDay> weekDays)
                 {
-                    if (weekDays.Count() == 0)
+                    var enumerable = weekDays as WeekDay[] ?? weekDays.ToArray();
+                    
+                    if (!enumerable.Any())
                         return null;
 
-                    return weekDays.Aggregate((current, weekDay) => current | weekDay);
+                    return enumerable.Aggregate((current, weekDay) => current | weekDay);
                 }
 
                 return null;

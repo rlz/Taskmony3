@@ -1,4 +1,4 @@
-namespace Taskmony.Models.Enums;
+namespace Taskmony.Models.Ideas;
 
 public enum Generation : byte
 {

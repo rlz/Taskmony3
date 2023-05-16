@@ -5,13 +5,14 @@ namespace Taskmony.Services;
 
 public class UserIdentifierProvider : IUserIdentifierProvider
 {
-    private readonly IHttpContextAccessor httpContextAccessor;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public UserIdentifierProvider(IHttpContextAccessor httpContextAccessor)
     {
-        this.httpContextAccessor = httpContextAccessor;
+        _httpContextAccessor = httpContextAccessor;
     }
 
-    public Guid UserId => Guid.Parse(httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? throw new ArgumentException("User identifier claim is required", nameof(httpContextAccessor)));
+    public Guid UserId => Guid.Parse(_httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)
+                                     ?? throw new ArgumentException("User identifier claim is required",
+                                         nameof(_httpContextAccessor)));
 }

@@ -1,7 +1,10 @@
 using HotChocolate.Authorization;
 using HotChocolate.Resolvers;
-using Taskmony.Models;
+using Taskmony.Models.Directions;
+using Taskmony.Models.Ideas;
+using Taskmony.Models.Users;
 using Taskmony.Services.Abstract;
+using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.GraphQL;
 
@@ -15,7 +18,7 @@ public class Query
         return await userService.GetUsersAsync(id, email, login, offset, limit, currentUserId);
     }
 
-    public async Task<IEnumerable<Models.Task>?> GetTasks([Service] ITaskService taskService,
+    public async Task<IEnumerable<Task>?> GetTasks([Service] ITaskService taskService,
         [GlobalState] Guid currentUserId, Guid[]? id, Guid?[]? directionId, int? offset, int? limit)
     {
         return await taskService.GetTasksAsync(id, directionId, offset, limit, currentUserId);

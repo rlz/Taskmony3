@@ -1,4 +1,4 @@
-using Taskmony.Models;
+using Taskmony.Models.Directions;
 using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories.Abstract;

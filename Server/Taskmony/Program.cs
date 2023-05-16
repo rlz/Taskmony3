@@ -78,6 +78,7 @@ builder.Services.AddTransient<INotificationService, NotificationService>();
 builder.Services.AddTransient<IIdeaService, IdeaService>();
 builder.Services.AddTransient<IDirectionService, DirectionService>();
 builder.Services.AddTransient<IUserIdentifierProvider, UserIdentifierProvider>();
+builder.Services.AddTransient<IRecurringTaskGenerator, RecurringTaskGenerator>();
 
 builder.Services.AddHttpContextAccessor();
 

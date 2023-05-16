@@ -11,8 +11,8 @@ public class TimeConverter : ITimeConverter
 
     public DateTime StringToDateTimeUtc(string dateTimeUtc)
     {
-        if (!DateTime.TryParse(dateTimeUtc, CultureInfo.InvariantCulture, 
-            DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var dateTime))
+        if (!DateTime.TryParse(dateTimeUtc, CultureInfo.InvariantCulture,
+                DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var dateTime))
         {
             throw new DomainException(ValidationErrors.InvalidDateTimeFormat);
         }

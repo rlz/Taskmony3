@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Taskmony.Data;
-using Taskmony.Models;
+using Taskmony.Models.Directions;
 using Taskmony.Repositories.Abstract;
 using Task = System.Threading.Tasks.Task;
 

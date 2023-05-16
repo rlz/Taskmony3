@@ -1,7 +1,6 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
-using Taskmony.Models;
-using Taskmony.Models.Enums;
+using Taskmony.Models.Ideas;
 using Taskmony.Repositories.Abstract;
 using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
@@ -30,8 +29,8 @@ public class IdeaService : IIdeaService
     public async Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[]? directionId, int? offset,
         int? limit, Guid currentUserId)
     {
-        int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
-        int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
+        int? limitValue = limit == null ? null : Limit.From(limit.Value).Value;
+        int? offsetValue = offset == null ? null : Offset.From(offset.Value).Value;
 
         //If directionId is [null] return ideas created by the current user with direction id = null
         if (directionId?.Length == 1 && directionId.Contains(null))
@@ -58,9 +57,17 @@ public class IdeaService : IIdeaService
         return await _ideaRepository.GetByIdsAsync(ids);
     }
 
-    public async Task<Idea?> AddIdeaAsync(Idea idea)
+    public async Task<Idea?> AddIdeaAsync(string description, string? details, Guid? directionId, Generation generation,
+        Guid currentUserId)
     {
-        if (idea.DirectionId is not null &&
+        var idea = new Idea(
+            description: Description.From(description),
+            details: details,
+            createdById: currentUserId,
+            generation: generation,
+            directionId: directionId);
+
+        if (idea.DirectionId != null &&
             !await _directionRepository.AnyMemberWithIdAsync(idea.DirectionId.Value, idea.CreatedById))
         {
             throw new DomainException(DirectionErrors.NotFound);
@@ -84,10 +91,8 @@ public class IdeaService : IIdeaService
 
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
-        ValidateIdeaToUpdate(idea);
-
         var oldValue = idea.Description!.Value;
-        idea.Description = newDescription;
+        idea.UpdateDescription(newDescription);
 
         if (!await _ideaRepository.SaveChangesAsync())
         {
@@ -104,10 +109,8 @@ public class IdeaService : IIdeaService
     {
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
-        ValidateIdeaToUpdate(idea);
-
         var oldValue = idea.Details;
-        idea.Details = details;
+        idea.UpdateDetails(details);
 
         if (!await _ideaRepository.SaveChangesAsync())
         {
@@ -124,17 +127,14 @@ public class IdeaService : IIdeaService
     {
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
-        ValidateIdeaToUpdate(idea);
-
-        if (directionId is not null &&
+        if (directionId != null &&
             !await _directionRepository.AnyMemberWithIdAsync(directionId.Value, currentUserId))
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
 
         var oldDirectionId = idea.DirectionId;
-        idea.DirectionId = directionId;
-
+        idea.UpdateDirectionId(directionId);
 
         if (!await _ideaRepository.SaveChangesAsync())
         {
@@ -148,37 +148,27 @@ public class IdeaService : IIdeaService
 
     public async Task<Guid?> SetIdeaDeletedAtAsync(Guid id, DateTime? deletedAtUtc, Guid currentUserId)
     {
-        var deletedAt = deletedAtUtc is null ? null : DeletedAt.From(deletedAtUtc.Value);
+        var deletedAt = deletedAtUtc == null ? null : DeletedAt.From(deletedAtUtc.Value);
 
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
-
-        if (idea.DeletedAt is not null && deletedAtUtc is not null)
-        {
-            throw new DomainException(IdeaErrors.AlreadyDeleted);
-        }
-
-        if (deletedAtUtc is not null && deletedAtUtc > DateTime.UtcNow)
-        {
-            throw new DomainException(ValidationErrors.InvalidDeletedAt);
-        }
 
         var oldValue = idea.DeletedAt?.Value;
         var newValue = deletedAt?.Value;
 
-        idea.DeletedAt = deletedAt;
+        idea.UpdateDeletedAt(deletedAt);
 
         if (!await _ideaRepository.SaveChangesAsync())
         {
             return null;
         }
 
-        if (deletedAt is not null)
+        if (deletedAt != null)
         {
-            await _commentRepository.SoftDeleteIdeaCommentsAsync(new[] { idea.Id });
+            await _commentRepository.SoftDeleteIdeaCommentsAsync(new[] {idea.Id});
         }
-        else if (oldValue is not null)
+        else if (oldValue != null)
         {
-            await _commentRepository.UndeleteIdeaCommentsAsync(new[] { idea.Id }, oldValue.Value);
+            await _commentRepository.UndeleteIdeaCommentsAsync(new[] {idea.Id}, oldValue.Value);
         }
 
         await _notificationService.NotifyDirectionEntityDeletedAtUpdatedAsync(idea, oldValue, newValue,
@@ -191,10 +181,8 @@ public class IdeaService : IIdeaService
     {
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
-        ValidateIdeaToUpdate(idea);
-
         var oldValue = idea.Generation;
-        idea.Generation = generation;
+        idea.UpdateGeneration(generation);
 
         if (!await _ideaRepository.SaveChangesAsync())
         {
@@ -210,16 +198,14 @@ public class IdeaService : IIdeaService
 
     public async Task<Guid?> SetIdeaReviewedAtAsync(Guid id, DateTime? reviewedAtUtc, Guid currentUserId)
     {
-        var reviewedAt = reviewedAtUtc is null ? null : ReviewedAt.From(reviewedAtUtc.Value);
+        var reviewedAt = reviewedAtUtc == null ? null : ReviewedAt.From(reviewedAtUtc.Value);
 
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
-
-        ValidateIdeaToUpdate(idea);
 
         var oldValue = idea.ReviewedAt != null ? _timeConverter.DateTimeToString(idea.ReviewedAt.Value) : null;
         var newValue = reviewedAt != null ? _timeConverter.DateTimeToString(reviewedAt.Value) : null;
 
-        idea.ReviewedAt = reviewedAt;
+        idea.UpdateReviewedAt(reviewedAt);
 
         if (!await _ideaRepository.SaveChangesAsync())
         {
@@ -236,7 +222,7 @@ public class IdeaService : IIdeaService
     {
         var idea = await _ideaRepository.GetByIdAsync(id);
 
-        if (idea is null)
+        if (idea == null)
         {
             throw new DomainException(IdeaErrors.NotFound);
         }
@@ -261,13 +247,5 @@ public class IdeaService : IIdeaService
     public async Task UndeleteDirectionIdeasAsync(Guid directionId, DateTime deletedAt)
     {
         await _ideaRepository.UndeleteDirectionIdeasAndComments(directionId, deletedAt);
-    }
-
-    private void ValidateIdeaToUpdate(Idea idea)
-    {
-        if (idea.DeletedAt is not null)
-        {
-            throw new DomainException(IdeaErrors.UpdateDeletedIdea);
-        }
     }
 }

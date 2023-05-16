@@ -1,9 +1,8 @@
 using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Users;
-using Taskmony.Models;
 using Taskmony.Models.Comments;
-using Taskmony.Models.Enums;
 using Taskmony.Models.Notifications;
+using Taskmony.Models.Users;
 
 namespace Taskmony.GraphQL.Notifications;
 
@@ -53,14 +52,9 @@ public class NotificationType : ObjectType<Notification>
         {
             var concreteComment = await commentById.LoadAsync(id);
 
-            return new Comment
-            {
-                Id = concreteComment.Id,
-                CreatedAt = concreteComment.CreatedAt,
-                CreatedById = concreteComment.CreatedById,
-                Text = concreteComment.Text,
-                DeletedAt = concreteComment.DeletedAt,
-            };
+            // TODO: This is a workaround that needs to be fixed
+            return new Comment(concreteComment.Id, concreteComment.Text!, concreteComment.CreatedById,
+                concreteComment.CreatedAt, concreteComment.DeletedAt);
         }
 
         public async Task<User> GetModifiedBy([Parent] Notification notification, UserByIdDataLoader userById)

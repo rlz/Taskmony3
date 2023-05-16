@@ -3,10 +3,11 @@ using Taskmony.GraphQL.Comments;
 using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Notifications;
 using Taskmony.GraphQL.Users;
-using Taskmony.Models;
 using Taskmony.Models.Comments;
-using Taskmony.Models.Enums;
+using Taskmony.Models.Directions;
+using Taskmony.Models.Ideas;
 using Taskmony.Models.Notifications;
+using Taskmony.Models.Users;
 using Taskmony.Services.Abstract;
 
 namespace Taskmony.GraphQL.Ideas;

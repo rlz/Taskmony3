@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
-using Taskmony.Models;
+using Taskmony.Models.Directions;
+using Taskmony.Models.Users;
 
 namespace Taskmony.Data.Configurations;
 

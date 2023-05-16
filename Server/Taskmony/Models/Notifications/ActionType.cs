@@ -1,4 +1,4 @@
-namespace Taskmony.Models.Enums;
+namespace Taskmony.Models.Notifications;
 
 public enum ActionType : byte
 {

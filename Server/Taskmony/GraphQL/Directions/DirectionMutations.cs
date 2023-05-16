@@ -1,6 +1,5 @@
-using Taskmony.Models;
+using Taskmony.Models.Directions;
 using Taskmony.Services.Abstract;
-using Taskmony.ValueObjects;
 
 namespace Taskmony.GraphQL.Directions;
 
@@ -10,14 +9,7 @@ public class DirectionMutations
     public async Task<Direction?> DirectionAdd([Service] IDirectionService directionService,
         [GlobalState] Guid currentUserId, string name, string? details)
     {
-        var direction = new Direction
-        {
-            CreatedById = currentUserId,
-            Name = DirectionName.From(name),
-            Details = details
-        };
-
-        return await directionService.AddDirectionAsync(direction);
+        return await directionService.AddDirectionAsync(name, details, currentUserId);
     }
 
     public async Task<Guid?> DirectionSetName([Service] IDirectionService directionService,
@@ -48,7 +40,7 @@ public class DirectionMutations
         [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid directionId, string? deletedAt)
     {
         DateTime? deletedAtUtc = deletedAt is null ? null : timeConverter.StringToDateTimeUtc(deletedAt);
-        
+
         return await directionService.SetDirectionDeletedAtAsync(directionId, deletedAtUtc, currentUserId);
     }
 }

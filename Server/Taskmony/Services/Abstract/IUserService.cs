@@ -1,5 +1,5 @@
 using Taskmony.DTOs;
-using Taskmony.Models;
+using Taskmony.Models.Users;
 
 namespace Taskmony.Services.Abstract;
 

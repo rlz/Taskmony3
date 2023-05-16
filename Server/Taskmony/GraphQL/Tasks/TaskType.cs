@@ -3,12 +3,13 @@ using Taskmony.GraphQL.Comments;
 using Taskmony.GraphQL.DataLoaders;
 using Taskmony.GraphQL.Notifications;
 using Taskmony.GraphQL.Users;
-using Taskmony.Models;
 using Taskmony.Models.Comments;
-using Taskmony.Models.Enums;
+using Taskmony.Models.Directions;
 using Taskmony.Models.Notifications;
+using Taskmony.Models.Tasks;
+using Taskmony.Models.Users;
 using Taskmony.Services.Abstract;
-using Task = Taskmony.Models.Task;
+using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.GraphQL.Tasks;
 
@@ -94,7 +95,7 @@ public class TaskType : ObjectType<Task>
         {
             var assignment = await assignmentByTaskId.LoadAsync(task.Id);
 
-            if (assignment is null)
+            if (assignment == null)
             {
                 return null;
             }
@@ -107,7 +108,7 @@ public class TaskType : ObjectType<Task>
         {
             var assignment = await assignmentByTaskId.LoadAsync(task.Id);
 
-            if (assignment is null)
+            if (assignment == null)
             {
                 return null;
             }
@@ -136,7 +137,7 @@ public class TaskType : ObjectType<Task>
                     var comments = await scope.ServiceProvider.GetRequiredService<ICommentService>()
                         .GetCommentsByTaskIds(ids.ToArray(), offset, limit);
 
-                    return comments.ToLookup(c => ((TaskComment)c).TaskId);
+                    return comments.ToLookup(c => ((TaskComment) c).TaskId);
                 }, "CommentByTaskId"
             ).LoadAsync(task.Id);
         }
@@ -170,7 +171,8 @@ public class TaskType : ObjectType<Task>
                     await using var scope = serviceProvider.CreateAsyncScope();
 
                     var notifications = await scope.ServiceProvider.GetRequiredService<INotificationService>()
-                        .GetNotificationsByNotifiableIdsAsync(NotifiableType.Task, notifiableIds.ToArray(), startUtc, endUtc, currentUserId);
+                        .GetNotificationsByNotifiableIdsAsync(NotifiableType.Task, notifiableIds.ToArray(), startUtc,
+                            endUtc, currentUserId);
 
                     return notifications.ToLookup(n => n.NotifiableId);
                 }, "NotificationByTaskId"

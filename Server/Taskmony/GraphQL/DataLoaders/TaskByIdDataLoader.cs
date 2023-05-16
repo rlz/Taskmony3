@@ -1,5 +1,5 @@
 using Taskmony.Services.Abstract;
-using Task = Taskmony.Models.Task;
+using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.GraphQL.DataLoaders;
 

@@ -1,4 +1,4 @@
-using Taskmony.Models;
+using Taskmony.Models.Users;
 using Taskmony.ValueObjects;
 using Task = System.Threading.Tasks.Task;
 

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
-using Taskmony.Models;
-using Task = Taskmony.Models.Task;
+using Taskmony.Models.Tasks;
+using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.Data.Configurations;
 

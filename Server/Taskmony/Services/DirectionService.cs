@@ -1,6 +1,6 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
-using Taskmony.Models;
+using Taskmony.Models.Directions;
 using Taskmony.Repositories.Abstract;
 using Taskmony.Services.Abstract;
 using Taskmony.ValueObjects;
@@ -47,15 +47,14 @@ public class DirectionService : IDirectionService
         return await _directionRepository.GetByIdsAsync(ids);
     }
 
-    public async Task<Direction> AddDirectionAsync(Direction direction)
+    public async Task<Direction> AddDirectionAsync(string name, string? details, Guid currentUserId)
     {
+        var direction = new Direction(currentUserId, DirectionName.From(name), details);
+
         await _directionRepository.AddAsync(direction);
 
-        await _directionRepository.AddMemberAsync(new Membership
-        {
-            DirectionId = direction.Id,
-            UserId = direction.CreatedById
-        });
+        // Add creator as a member
+        await _directionRepository.AddMemberAsync(new Membership(direction.Id, direction.CreatedById));
 
         await _directionRepository.SaveChangesAsync();
 
@@ -66,7 +65,7 @@ public class DirectionService : IDirectionService
     {
         var direction = await GetDirectionOrThrowAsync(directionId, currentUserId);
 
-        ValidateDirectionToUpdate(direction);
+        direction.ValidateDirectionToUpdate();
 
         var user = await _userService.GetUserOrThrowAsync(memberId);
 
@@ -75,11 +74,7 @@ public class DirectionService : IDirectionService
             throw new DomainException(DirectionErrors.UserIsAlreadyMember);
         }
 
-        var membership = new Membership
-        {
-            DirectionId = direction.Id,
-            UserId = user.Id
-        };
+        var membership = new Membership(direction.Id, user.Id);
 
         await _directionRepository.AddMemberAsync(membership);
 
@@ -98,15 +93,11 @@ public class DirectionService : IDirectionService
     {
         var direction = await GetDirectionOrThrowAsync(directionId, currentUserId);
 
-        ValidateDirectionToUpdate(direction);
+        direction.ValidateDirectionToUpdate();
 
         var user = await _userService.GetUserOrThrowAsync(memberId);
 
-        _directionRepository.RemoveMember(new Membership
-        {
-            DirectionId = direction.Id,
-            UserId = user.Id
-        });
+        _directionRepository.RemoveMember(new Membership(direction.Id, user.Id));
 
         if (!await _directionRepository.SaveChangesAsync())
         {
@@ -124,17 +115,12 @@ public class DirectionService : IDirectionService
 
     public async Task<Guid?> SetDirectionDeletedAtAsync(Guid id, DateTime? deletedAtUtc, Guid currentUserId)
     {
-        var deletedAt = deletedAtUtc is not null ? DeletedAt.From(deletedAtUtc.Value) : null;
+        var deletedAt = deletedAtUtc != null ? DeletedAt.From(deletedAtUtc.Value) : null;
 
         var direction = await GetDirectionOrThrowAsync(id, currentUserId);
 
-        if (deletedAtUtc is not null && direction.DeletedAt is not null)
-        {
-            throw new DomainException(DirectionErrors.AlreadyDeleted);
-        }
-
         var oldDeletedAt = direction.DeletedAt;
-        direction.DeletedAt = deletedAt;
+        direction.UpdateDeletedAt(deletedAt);
 
         if (!await _directionRepository.SaveChangesAsync())
         {
@@ -159,10 +145,8 @@ public class DirectionService : IDirectionService
     {
         var direction = await GetDirectionOrThrowAsync(id, currentUserId);
 
-        ValidateDirectionToUpdate(direction);
-
         var oldValue = direction.Details;
-        direction.Details = details;
+        direction.UpdateDetails(details);
 
         if (!await _directionRepository.SaveChangesAsync())
         {
@@ -181,10 +165,8 @@ public class DirectionService : IDirectionService
 
         var direction = await GetDirectionOrThrowAsync(id, currentUserId);
 
-        ValidateDirectionToUpdate(direction);
-
         var oldValue = direction.Name!.Value;
-        direction.Name = newName;
+        direction.UpdateName(newName);
 
         if (!await _directionRepository.SaveChangesAsync())
         {
@@ -216,7 +198,7 @@ public class DirectionService : IDirectionService
     {
         var direction = await _directionRepository.GetByIdAsync(id);
 
-        if (direction is null)
+        if (direction == null)
         {
             throw new DomainException(DirectionErrors.NotFound);
         }
@@ -227,13 +209,5 @@ public class DirectionService : IDirectionService
         }
 
         return direction;
-    }
-
-    private void ValidateDirectionToUpdate(Direction direction)
-    {
-        if (direction.DeletedAt is not null)
-        {
-            throw new DomainException(DirectionErrors.UpdateDeletedDirection);
-        }
     }
 }

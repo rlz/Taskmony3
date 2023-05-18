@@ -5,7 +5,7 @@ using Taskmony.Models.Directions;
 using Taskmony.Models.Notifications;
 using Taskmony.Models.Subscriptions;
 using Taskmony.Models.Users;
-using Taskmony.ValueObjects;
+using Taskmony.Models.ValueObjects;
 
 namespace Taskmony.Models.Ideas;
 

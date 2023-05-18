@@ -2,7 +2,7 @@ using Taskmony.Errors;
 using Taskmony.Exceptions;
 using ValueOf;
 
-namespace Taskmony.ValueObjects;
+namespace Taskmony.Models.ValueObjects;
 
 public class Description : ValueOf<string, Description>
 {

@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Taskmony.Models.ValueObjects;
 using Taskmony.Services.Abstract;
-using Taskmony.ValueObjects;
 
 namespace Taskmony.Services;
 

@@ -1,9 +1,9 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models.Ideas;
+using Taskmony.Models.ValueObjects;
 using Taskmony.Repositories.Abstract;
 using Taskmony.Services.Abstract;
-using Taskmony.ValueObjects;
 using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Services;
@@ -26,8 +26,8 @@ public class IdeaService : IIdeaService
         _timeConverter = timeConverter;
     }
 
-    public async Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[]? directionId, int? offset,
-        int? limit, Guid currentUserId)
+    public async Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[]? directionId, bool? deleted,
+        DateTime? lastDeletedAt, int? offset, int? limit, Guid currentUserId)
     {
         int? limitValue = limit == null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset == null ? null : Offset.From(offset.Value).Value;
@@ -35,7 +35,14 @@ public class IdeaService : IIdeaService
         //If directionId is [null] return ideas created by the current user with direction id = null
         if (directionId?.Length == 1 && directionId.Contains(null))
         {
-            return await _ideaRepository.GetAsync(id, directionId, offset, limit, currentUserId);
+            return await _ideaRepository.GetAsync(
+                id: id,
+                directionId: directionId,
+                deleted: deleted ?? false,
+                lastDeletedAt: lastDeletedAt,
+                offset: offset,
+                limit: limit,
+                userId: currentUserId);
         }
 
         var userDirectionIds = await _directionRepository.GetUserDirectionIdsAsync(currentUserId);
@@ -49,7 +56,14 @@ public class IdeaService : IIdeaService
             ? authorizedDirectionIds.ToArray()
             : directionId.Intersect(authorizedDirectionIds).ToArray();
 
-        return await _ideaRepository.GetAsync(id, directionId, offsetValue, limitValue, currentUserId);
+        return await _ideaRepository.GetAsync(
+            id: id,
+            directionId: directionId,
+            deleted: deleted ?? false,
+            lastDeletedAt: lastDeletedAt,
+            offset: offsetValue,
+            limit: limitValue,
+            userId: currentUserId);
     }
 
     public async Task<IEnumerable<Idea>> GetIdeaByIdsAsync(Guid[] ids)

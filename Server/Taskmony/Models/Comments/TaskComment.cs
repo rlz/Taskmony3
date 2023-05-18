@@ -1,4 +1,4 @@
-using Taskmony.ValueObjects;
+using Taskmony.Models.ValueObjects;
 using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.Models.Comments;

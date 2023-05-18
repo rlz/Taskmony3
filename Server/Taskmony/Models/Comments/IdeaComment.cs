@@ -1,5 +1,5 @@
 using Taskmony.Models.Ideas;
-using Taskmony.ValueObjects;
+using Taskmony.Models.ValueObjects;
 
 namespace Taskmony.Models.Comments;
 

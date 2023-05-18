@@ -1,4 +1,4 @@
-using Taskmony.ValueObjects;
+using Taskmony.Models.ValueObjects;
 
 namespace Taskmony.Services.Abstract;
 

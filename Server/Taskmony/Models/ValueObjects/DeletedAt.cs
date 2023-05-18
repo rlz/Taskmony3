@@ -2,15 +2,15 @@ using Taskmony.Errors;
 using Taskmony.Exceptions;
 using ValueOf;
 
-namespace Taskmony.ValueObjects;
+namespace Taskmony.Models.ValueObjects;
 
-public class CompletedAt : ValueOf<DateTime, CompletedAt>
+public class DeletedAt : ValueOf<DateTime, DeletedAt>
 {
     protected override void Validate()
     {
         if (Value > DateTime.UtcNow)
         {
-            throw new DomainException(ValidationErrors.InvalidCompletedAt);
+            throw new DomainException(ValidationErrors.InvalidDeletedAt);
         }
     }
 }

@@ -1,9 +1,9 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models.Tasks;
+using Taskmony.Models.ValueObjects;
 using Taskmony.Repositories.Abstract;
 using Taskmony.Services.Abstract;
-using Taskmony.ValueObjects;
 using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.Services;
@@ -32,8 +32,8 @@ public class TaskService : ITaskService
         _recurringTaskGenerator = recurringTaskGenerator;
     }
 
-    public async Task<IEnumerable<Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId, int? offset,
-        int? limit, Guid currentUserId)
+    public async Task<IEnumerable<Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId, bool? completed, bool? deleted,
+        DateTime? lastCompletedAt, DateTime? lastDeletedAt, int? offset, int? limit, Guid currentUserId)
     {
         int? limitValue = limit == null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset == null ? null : Offset.From(offset.Value).Value;
@@ -42,8 +42,16 @@ public class TaskService : ITaskService
         //If directionId is [null] return tasks created by the current user with direction id = null
         if (directionId != null && directionId.Length == 1 && directionId.Contains(null))
         {
-            tasks = (await _taskRepository.GetAsync(id, directionId, offsetValue, limitValue, currentUserId))
-                .ToList();
+            tasks = (await _taskRepository.GetAsync(
+                id: id,
+                directionId: directionId,
+                completed: completed ?? false,
+                deleted: deleted ?? false,
+                lastCompletedAt: lastCompletedAt,
+                lastDeletedAt: lastDeletedAt,
+                offset: offsetValue,
+                limit: limitValue,
+                userId: currentUserId)).ToList();
         }
         else
         {
@@ -58,8 +66,16 @@ public class TaskService : ITaskService
                 ? authorizedDirectionIds.ToArray()
                 : directionId.Intersect(authorizedDirectionIds).ToArray();
 
-            tasks = (await _taskRepository.GetAsync(id, directionId, offsetValue, limitValue, currentUserId))
-                .ToList();
+            tasks = (await _taskRepository.GetAsync(
+                id: id,
+                directionId: directionId,
+                completed: completed ?? false,
+                deleted: deleted ?? false,
+                lastCompletedAt: lastCompletedAt,
+                lastDeletedAt: lastDeletedAt,
+                offset: offsetValue,
+                limit: limitValue,
+                userId: currentUserId)).ToList();
         }
 
         return tasks;
@@ -246,7 +262,8 @@ public class TaskService : ITaskService
     /// <returns>whether any changes were made</returns>
     private async Task<bool> UpdateTaskAsync(Task task)
     {
-        // Remove recurring instance task from the group when updating one instance only
+        // Remove recurring task instance from the group when updating one instance only
+        // to avoid further changes to this instance with the group 
         if (task.GroupId != null)
         {
             task.RemoveTaskFromGroup();
@@ -459,16 +476,17 @@ public class TaskService : ITaskService
 
         task.UpdateDeletedAt(deletedAt);
 
+        // TODO: delete task with comments in one transaction
         if (!await UpdateTaskAsync(task))
         {
             return null;
         }
 
-        if (deletedAt is not null)
+        if (deletedAt != null)
         {
             await _commentRepository.SoftDeleteTaskCommentsAsync(new[] {task.Id});
         }
-        else if (oldValue is not null)
+        else if (oldValue != null)
         {
             await _commentRepository.UndeleteTaskCommentsAsync(new[] {task.Id}, oldValue.Value);
         }

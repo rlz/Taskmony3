@@ -1,9 +1,9 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models.Directions;
+using Taskmony.Models.ValueObjects;
 using Taskmony.Repositories.Abstract;
 using Taskmony.Services.Abstract;
-using Taskmony.ValueObjects;
 
 namespace Taskmony.Services;
 
@@ -33,13 +33,19 @@ public class DirectionService : IDirectionService
         return await _directionRepository.GetMemberIdsAsync(directionIds, offsetValue, limitValue);
     }
 
-    public async Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, int? offset, int? limit,
-        Guid currentUserId)
+    public async Task<IEnumerable<Direction>> GetDirectionsAsync(Guid[]? id, bool? deleted, DateTime? lastDeletedAt,
+        int? offset, int? limit, Guid currentUserId)
     {
         int? limitValue = limit is null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset is null ? null : Offset.From(offset.Value).Value;
 
-        return await _directionRepository.GetAsync(id, offsetValue, limitValue, currentUserId);
+        return await _directionRepository.GetAsync(
+            id: id,
+            deleted: deleted ?? false,
+            lastDeletedAt: lastDeletedAt,
+            offset: offsetValue,
+            limit: limitValue,
+            userId: currentUserId);
     }
 
     public async Task<IEnumerable<Direction>> GetDirectionsByIdsAsync(Guid[] ids)

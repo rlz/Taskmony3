@@ -2,15 +2,15 @@ using Taskmony.Errors;
 using Taskmony.Exceptions;
 using ValueOf;
 
-namespace Taskmony.ValueObjects;
+namespace Taskmony.Models.ValueObjects;
 
-public class Offset : ValueOf<int, Offset>
+public class Limit : ValueOf<int, Limit>
 {
     protected override void Validate()
     {
         if (Value < 0)
         {
-            throw new DomainException(ValidationErrors.InvalidOffset);
+            throw new DomainException(ValidationErrors.InvalidLimit);
         }
     }
 }

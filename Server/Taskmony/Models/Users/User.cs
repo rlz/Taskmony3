@@ -6,7 +6,7 @@ using Taskmony.Models.Ideas;
 using Taskmony.Models.Notifications;
 using Taskmony.Models.Subscriptions;
 using Taskmony.Models.Tasks;
-using Taskmony.ValueObjects;
+using Taskmony.Models.ValueObjects;
 using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.Models.Users;

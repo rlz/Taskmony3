@@ -1,8 +1,8 @@
 using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models.Tasks;
+using Taskmony.Models.ValueObjects;
 using Taskmony.Services.Abstract;
-using Taskmony.ValueObjects;
 using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.Services;

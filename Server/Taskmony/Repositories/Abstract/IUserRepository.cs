@@ -1,5 +1,5 @@
 using Taskmony.Models.Users;
-using Taskmony.ValueObjects;
+using Taskmony.Models.ValueObjects;
 using Task = System.Threading.Tasks.Task;
 
 namespace Taskmony.Repositories.Abstract;

@@ -36,8 +36,6 @@ public class TokenProvider : ITokenProvider
             createdAt: DateTime.UtcNow,
             expiresAt: DateTime.UtcNow.AddMinutes(_options.RefreshTokenExpirationMinutes));
 
-        // TODO: encrypt refresh token
-
         await _refreshTokenRepository.AddAsync(refreshToken);
         await _refreshTokenRepository.SaveChangesAsync();
 

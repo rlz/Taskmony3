@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using HotChocolate.Utilities;
+using Taskmony.Models.ValueObjects;
 using Taskmony.Services.Abstract;
-using Taskmony.ValueObjects;
 using ValueOf;
 
 namespace Taskmony.GraphQL.Converters;

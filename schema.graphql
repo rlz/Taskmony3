@@ -4,6 +4,10 @@ type Query {
     directionId: [ID]
     offset: Int
     limit: Int
+    completed: Boolean
+    deleted: Boolean
+    lastCompletedAt: String
+    lastDeletedAt: String
   ): [Task!]
  
   ideas(
@@ -11,6 +15,8 @@ type Query {
     directionId: [ID]
     offset: Int
     limit: Int
+    deleted: Boolean
+    lastDeletedAt: String
   ): [Idea!]
 
   users(
@@ -25,6 +31,8 @@ type Query {
     id: [ID!] 
     offset: Int
     limit: Int
+    deleted: Boolean
+    lastDeletedAt: String
   ): [Direction!]
 }
 

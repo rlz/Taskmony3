@@ -10,12 +10,16 @@ public interface ITaskService
     /// </summary>
     /// <param name="id">an array of the user ids to filter by</param>
     /// <param name="directionId">an array of the direction ids to filter by</param>
+    /// <param name="lastDeletedAt">time of last deleted task</param>
     /// <param name="offset">offset of tasks sorted by creation date and id</param>
     /// <param name="limit">max number of the tasks sorted by creation date and id to return</param>
     /// <param name="currentUserId">id of the current user</param>
+    /// <param name="deleted">false by default</param>
+    /// <param name="lastCompletedAt">time of last completed task</param>
+    /// <param name="completed">false by default</param>
     /// <returns>current user tasks</returns>
-    Task<IEnumerable<Models.Tasks.Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId,
-        int? offset, int? limit, Guid currentUserId);
+    Task<IEnumerable<Models.Tasks.Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId, bool? completed, bool? deleted,
+        DateTime? lastCompletedAt, DateTime? lastDeletedAt, int? offset, int? limit, Guid currentUserId);
 
     Task<IEnumerable<Models.Tasks.Task>> GetTasksByIdsAsync(IEnumerable<Guid> ids);
 

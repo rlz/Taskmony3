@@ -2,7 +2,7 @@ using Taskmony.Errors;
 using Taskmony.Exceptions;
 using Taskmony.Models.Notifications;
 using Taskmony.Models.Users;
-using Taskmony.ValueObjects;
+using Taskmony.Models.ValueObjects;
 
 namespace Taskmony.Models.Comments;
 

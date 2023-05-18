@@ -5,8 +5,8 @@ namespace Taskmony.Services.Abstract;
 
 public interface IIdeaService
 {
-    Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[]? directionId, int? offset, int? limit,
-        Guid currentUserId);
+    Task<IEnumerable<Idea>> GetIdeasAsync(Guid[]? id, Guid?[]? directionId, bool? deleted, DateTime? lastDeletedAt,
+        int? offset, int? limit, Guid currentUserId);
 
     Task<IEnumerable<Idea>> GetIdeaByIdsAsync(Guid[] ids);
 

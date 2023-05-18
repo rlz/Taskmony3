@@ -2,15 +2,15 @@ using Taskmony.Errors;
 using Taskmony.Exceptions;
 using ValueOf;
 
-namespace Taskmony.ValueObjects;
+namespace Taskmony.Models.ValueObjects;
 
-public class DirectionName : ValueOf<string, DirectionName>
+public class CommentText : ValueOf<string, CommentText>
 {
     protected override void Validate()
     {
         if (string.IsNullOrEmpty(Value))
         {
-            throw new DomainException(ValidationErrors.InvalidDirectionName);
+            throw new DomainException(ValidationErrors.InvalidCommentText);
         }
     }
 }

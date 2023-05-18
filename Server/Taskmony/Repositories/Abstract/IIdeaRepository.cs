@@ -5,7 +5,7 @@ namespace Taskmony.Repositories.Abstract;
 
 public interface IIdeaRepository
 {
-    Task<IEnumerable<Idea>> GetAsync(Guid[]? id, Guid?[] directionId,
+    Task<IEnumerable<Idea>> GetAsync(Guid[]? id, Guid?[] directionId, bool deleted, DateTime? lastDeletedAt,
         int? offset, int? limit, Guid userId);
 
     Task<IEnumerable<Idea>> GetByIdsAsync(IEnumerable<Guid> ids);

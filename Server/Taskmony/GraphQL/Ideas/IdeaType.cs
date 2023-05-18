@@ -26,6 +26,7 @@ public class IdeaType : ObjectType<Idea>
         descriptor.Field(i => i.CreatedAt).Type<StringType>();
         descriptor.Field(i => i.DeletedAt).Type<StringType>();
         descriptor.Field(i => i.Generation).Type<EnumType<Generation>>();
+        descriptor.Field(i => i.Details).Type<StringType>();
 
         descriptor.Field(i => i.CreatedBy)
             .Type<UserType>()

@@ -25,6 +25,13 @@ public class IdeaConfiguration : IEntityTypeConfiguration<Idea>
                 .IsRequired();
         }).Navigation(i => i.Description).IsRequired();
         
+        builder.OwnsOne(i => i.Details, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Idea.Details))
+                .IsRequired();
+        });
+        
         builder.OwnsOne(i => i.DeletedAt, b =>
         {
             b.Property(l => l.Value)

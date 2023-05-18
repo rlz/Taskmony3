@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Quartz;
+using Quartz.Impl;
 using Taskmony.Auth;
 using Taskmony.Data;
 using Taskmony.Errors;
@@ -16,6 +18,7 @@ using Taskmony.GraphQL.Tasks;
 using Taskmony.GraphQL.Users;
 using Taskmony.Repositories;
 using Taskmony.Repositories.Abstract;
+using Taskmony.Schedulers;
 using Taskmony.Services;
 using Taskmony.Services.Abstract;
 
@@ -115,6 +118,21 @@ builder.Services
     .AddTypeConverter<ValueObjectToStringConverter>()
     .AddTypeConverter<WeekDaysToWeekDayConverter>()
     .AddTypeConverter<DateTimeToStringConverter>();
+
+builder.Services.Configure<DeleteRecordsJobOptions>(
+    builder.Configuration.GetSection("Scheduler:DeleteRecordsJob"));
+
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+});
+
+builder.Services.AddQuartzHostedService(options => { options.WaitForJobsToComplete = true; });
+
+builder.Services.AddTransient<ISchedulerFactory, StdSchedulerFactory>();
+builder.Services.AddSingleton<DeleteRecordsJob>();
+
+builder.Services.AddHostedService<QuartzScheduler>();
 
 var app = builder.Build();
 

@@ -43,6 +43,11 @@ public class Comment : Entity, IActionItem
 
     public void UpdateText(CommentText text)
     {
+        if (DeletedAt != null)
+        {
+            throw new DomainException(CommentErrors.UpdateDeletedComment);
+        }
+        
         Text = text;
     }
 

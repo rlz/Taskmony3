@@ -12,7 +12,7 @@ public class Direction : Entity
 {
     public DirectionName? Name { get; private set; }
 
-    public string? Details { get; private set; }
+    public Details? Details { get; private set; }
 
     public User? CreatedBy { get; private set; }
 
@@ -35,7 +35,7 @@ public class Direction : Entity
     {
     }
 
-    public Direction(Guid createdById, DirectionName name, string? details, DateTime? createdAt = null,
+    public Direction(Guid createdById, DirectionName name, Details details, DateTime? createdAt = null,
         DeletedAt? deletedAt = null)
     {
         CreatedById = createdById;
@@ -62,7 +62,7 @@ public class Direction : Entity
         Name = name;
     }
 
-    public void UpdateDetails(string? details)
+    public void UpdateDetails(Details details)
     {
         ValidateDirectionToUpdate();
 

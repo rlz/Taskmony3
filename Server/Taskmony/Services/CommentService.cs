@@ -50,6 +50,8 @@ public class CommentService : ICommentService
         var comment = new TaskComment(CommentText.From(text), currentUserId, taskId);
 
         var task = await _taskService.GetTaskOrThrowAsync(comment.TaskId, comment.CreatedById);
+        
+        task.ValidateTaskToUpdate();
 
         return await AddComment(comment, task);
     }
@@ -59,6 +61,8 @@ public class CommentService : ICommentService
         var comment = new IdeaComment(CommentText.From(text), currentUserId, ideaId);
 
         var idea = await _ideaService.GetIdeaOrThrowAsync(comment.IdeaId, comment.CreatedById);
+        
+        idea.ValidateIdeaToUpdate();
 
         return await AddComment(comment, idea);
     }

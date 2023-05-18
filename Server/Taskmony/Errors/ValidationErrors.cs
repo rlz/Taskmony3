@@ -16,7 +16,7 @@ public static class ValidationErrors
         new("Invalid email format", "INVALID_EMAIL");
 
     public static ErrorDetails InvalidDisplayName => new(
-        "Display name must contain minimum three and maximum fifty characters",
+        "Display name must contain minimum 3 and maximum 100 characters",
         "INVALID_DISPLAY_NAME");
 
     public static ErrorDetails InvalidOffset => new("Offset must not be negative", "INVALID_OFFSET");
@@ -24,7 +24,7 @@ public static class ValidationErrors
     public static ErrorDetails InvalidLimit => new("Limit must not be negative", "INVALID_LIMIT");
 
     public static ErrorDetails InvalidDescription =>
-        new("Description must not be empty", "INVALID_DESCRIPTION");
+        new("Description must be between 1 and 500 characters", "INVALID_DESCRIPTION");
 
     public static ErrorDetails InvalidDeletedAt =>
         new("Deletion date must not be in the future", "INVALID_DELETED_AT");
@@ -36,14 +36,14 @@ public static class ValidationErrors
         new("Review date must not be in the future", "INVALID_REVIEWED_AT");
 
     public static ErrorDetails InvalidCommentText =>
-        new("Comment text must not be empty", "INVALID_COMMENT_TEXT");
+        new("Comment text must be between 1 and 15000 characters", "INVALID_COMMENT_TEXT");
 
     public static ErrorDetails InvalidNotificationReadTime => new(
         "Notification read time must not be in the future",
         "INVALID_NOTIFICATION_READ_TIME");
 
     public static ErrorDetails InvalidDirectionName =>
-        new("Direction name must not be empty", "INVALID_DIRECTION_NAME");
+        new("Direction name must be between 1 and 120 characters", "INVALID_DIRECTION_NAME");
 
     public static ErrorDetails InvalidRepeatMode =>
         new("Repeat mode is invalid", "INVALID_REPEAT_MODE");
@@ -71,4 +71,7 @@ public static class ValidationErrors
 
     public static ErrorDetails InvalidRepeatEvery =>
         new("Repeat every must be positive", "INVALID_REPEAT_EVERY");
+
+    public static ErrorDetails InvalidDetails =>
+        new("Length of details must not be more than 16384 characters", "INVALID_DETAILS");
 }

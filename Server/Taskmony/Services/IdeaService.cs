@@ -76,7 +76,7 @@ public class IdeaService : IIdeaService
     {
         var idea = new Idea(
             description: Description.From(description),
-            details: details,
+            details: Details.From(details),
             createdById: currentUserId,
             generation: generation,
             directionId: directionId);
@@ -121,10 +121,11 @@ public class IdeaService : IIdeaService
 
     public async Task<Guid?> SetIdeaDetailsAsync(Guid id, string? details, Guid currentUserId)
     {
+        var newDetails = Details.From(details);
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
-        var oldValue = idea.Details;
-        idea.UpdateDetails(details);
+        var oldValue = idea.Details?.Value;
+        idea.UpdateDetails(newDetails);
 
         if (!await _ideaRepository.SaveChangesAsync())
         {

@@ -15,7 +15,7 @@ public class Idea : DirectionEntity
 
     public Description? Description { get; private set; }
 
-    public string? Details { get; private set; }
+    public Details? Details { get; private set; }
 
     public User? CreatedBy { get; private set; }
 
@@ -40,7 +40,7 @@ public class Idea : DirectionEntity
     {
     }
 
-    public Idea(Description description, string? details, Guid createdById, Generation generation, Guid? directionId,
+    public Idea(Description description, Details details, Guid createdById, Generation generation, Guid? directionId,
         ReviewedAt? reviewedAt = null, DateTime? createdAt = null, DeletedAt? deletedAt = null)
     {
         Description = description;
@@ -53,7 +53,7 @@ public class Idea : DirectionEntity
         DirectionId = directionId;
     }
 
-    private void ValidateIdeaToUpdate()
+    public void ValidateIdeaToUpdate()
     {
         if (DeletedAt != null)
         {
@@ -68,7 +68,7 @@ public class Idea : DirectionEntity
         Description = description;
     }
 
-    public void UpdateDetails(string? details)
+    public void UpdateDetails(Details details)
     {
         ValidateIdeaToUpdate();
 

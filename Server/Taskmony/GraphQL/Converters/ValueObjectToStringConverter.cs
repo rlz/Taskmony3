@@ -34,6 +34,7 @@ public class ValueObjectToStringConverter : IChangeTypeProvider
                     ValueOf<string, Email> email => email.ToString(),
                     ValueOf<string, Login> login => login.ToString(),
                     ValueOf<DateTime, ReviewedAt> reviewedAt => _timeConverter.DateTimeToString(reviewedAt.Value),
+                    ValueOf<string?, Details> details => details.ToString(),
                     _ => input
                 };
             };

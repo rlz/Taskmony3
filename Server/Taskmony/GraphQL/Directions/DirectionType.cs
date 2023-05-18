@@ -20,6 +20,7 @@ public class DirectionType : ObjectType<Direction>
         descriptor.Field(d => d.Name).Type<StringType>();
         descriptor.Field(d => d.CreatedAt).Type<StringType>();
         descriptor.Field(d => d.DeletedAt).Type<StringType>();
+        descriptor.Field(d => d.Details).Type<StringType>();
 
         descriptor.Field(d => d.CreatedBy)
             .Type<UserType>()

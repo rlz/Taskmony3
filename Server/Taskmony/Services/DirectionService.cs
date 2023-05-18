@@ -55,7 +55,7 @@ public class DirectionService : IDirectionService
 
     public async Task<Direction> AddDirectionAsync(string name, string? details, Guid currentUserId)
     {
-        var direction = new Direction(currentUserId, DirectionName.From(name), details);
+        var direction = new Direction(currentUserId, DirectionName.From(name), Details.From(details));
 
         await _directionRepository.AddAsync(direction);
 
@@ -149,10 +149,11 @@ public class DirectionService : IDirectionService
 
     public async Task<Guid?> SetDirectionDetailsAsync(Guid id, string? details, Guid currentUserId)
     {
+        var newDetails = Details.From(details);
         var direction = await GetDirectionOrThrowAsync(id, currentUserId);
 
-        var oldValue = direction.Details;
-        direction.UpdateDetails(details);
+        var oldValue = direction.Details?.Value;
+        direction.UpdateDetails(newDetails);
 
         if (!await _directionRepository.SaveChangesAsync())
         {

@@ -30,6 +30,7 @@ public class TaskType : ObjectType<Task>
         descriptor.Field(t => t.DeletedAt).Type<StringType>();
         descriptor.Field(t => t.StartAt).Type<StringType>();
         descriptor.Field(t => t.GroupId).Type<IdType>();
+        descriptor.Field(t => t.Details).Type<StringType>();
 
         descriptor.Field(t => t.Direction)
             .ResolveWith<Resolvers>(r => r.GetDirection(default!, default!));

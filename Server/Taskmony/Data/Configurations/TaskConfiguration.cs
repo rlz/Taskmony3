@@ -37,6 +37,13 @@ public class TaskConfiguration : IEntityTypeConfiguration<Task>
                 .HasColumnName(nameof(Task.Description))
                 .IsRequired();
         }).Navigation(t => t.Description).IsRequired();
+        
+        builder.OwnsOne(t => t.Details, b =>
+        {
+            b.Property(l => l.Value)
+                .HasColumnName(nameof(Task.Details))
+                .IsRequired();
+        });
 
         builder.OwnsOne(t => t.DeletedAt, b =>
         {

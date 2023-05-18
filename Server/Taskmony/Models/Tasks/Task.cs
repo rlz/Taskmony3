@@ -15,7 +15,7 @@ public class Task : DirectionEntity
 
     public Description? Description { get; private set; }
 
-    public string? Details { get; private set; }
+    public Details? Details { get; private set; }
 
     public User? CreatedBy { get; private set; }
 
@@ -46,7 +46,7 @@ public class Task : DirectionEntity
     {
     }
 
-    public Task(Description description, string? details, Guid createdById, DateTime? startAt, Assignment? assignment,
+    public Task(Description description, Details details, Guid createdById, DateTime? startAt, Assignment? assignment,
         Guid? directionId, DateTime? createdAt = null, CompletedAt? completedAt = null, DeletedAt? deletedAt = null)
     {
         Description = description;
@@ -65,7 +65,7 @@ public class Task : DirectionEntity
         }
     }
 
-    public Task(Description description, string? details, Guid createdById, DateTime? startAt, Assignment? assignment,
+    public Task(Description description, Details details, Guid createdById, DateTime? startAt, Assignment? assignment,
         Guid? directionId, RecurrencePattern? recurrencePattern, Guid? groupId, DateTime? createdAt = null,
         CompletedAt? completedAt = null, DeletedAt? deletedAt = null) : this(description, details, createdById, startAt,
         assignment, directionId, createdAt, completedAt, deletedAt)
@@ -74,7 +74,7 @@ public class Task : DirectionEntity
         GroupId = groupId;
     }
 
-    private void ValidateTaskToUpdate()
+    public void ValidateTaskToUpdate()
     {
         if (CompletedAt != null || DeletedAt != null)
         {
@@ -89,7 +89,7 @@ public class Task : DirectionEntity
         Description = description;
     }
 
-    public void UpdateDetails(string? details)
+    public void UpdateDetails(Details details)
     {
         ValidateTaskToUpdate();
 

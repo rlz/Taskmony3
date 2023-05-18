@@ -14,6 +14,9 @@ services:
       Authentication__Schemes__Bearer__Issuer: "https://localhost:7094;http://localhost:5098"
       Authentication__Schemes__Bearer__AccessTokenExpirationMinutes: 30
       Authentication__Schemes__Bearer__RefreshTokenExpirationDays: 43200
+      Scheduler__DeleteRecordsJob__CronExpression: "0 0 0 * * ?" # Every day at midnight
+      Scheduler__DeleteRecordsJob__DeleteAfterDays: 30
+      Scheduler__DeleteRecordsJob__Enabled: true 
     networks:
       - app-network
 

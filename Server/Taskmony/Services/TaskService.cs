@@ -91,7 +91,7 @@ public class TaskService : ITaskService
     {
         var task = new Task(
             description: Description.From(description),
-            details: details,
+            details: Details.From(details),
             createdById: currentUserId,
             startAt: startAtUtc,
             assignment: assigneeId != null
@@ -99,11 +99,7 @@ public class TaskService : ITaskService
                 : null,
             directionId: directionId);
 
-        if (task.DirectionId != null &&
-            !await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, task.CreatedById))
-        {
-            throw new DomainException(DirectionErrors.NotFound);
-        }
+        await ValidateTaskDirection(task, currentUserId);
 
         await ValidateAssignee(task, task.Assignment);
 
@@ -127,7 +123,7 @@ public class TaskService : ITaskService
 
         var task = new Task(
             description: Description.From(description),
-            details: details,
+            details: Details.From(details),
             createdById: currentUserId,
             startAt: startAtUtc,
             directionId: directionId,
@@ -142,13 +138,9 @@ public class TaskService : ITaskService
             throw new DomainException(ValidationErrors.RepeatUntilIsBeforeStartAt);
         }
 
-        await ValidateAssignee(task, task.Assignment);
+        await ValidateTaskDirection(task, currentUserId);
 
-        if (task.DirectionId is not null &&
-            !await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, task.CreatedById))
-        {
-            throw new DomainException(DirectionErrors.NotFound);
-        }
+        await ValidateAssignee(task, task.Assignment);
 
         var tasks = _recurringTaskGenerator.CreateRecurringTaskInstances(task, pattern);
 
@@ -204,12 +196,13 @@ public class TaskService : ITaskService
     public async Task<IEnumerable<Guid>> SetRecurringTaskDetailsAsync(Guid taskId, Guid groupId, string? details,
         Guid currentUserId)
     {
+        var newDetails = Details.From(details);
         var tasks = await GetActiveTasksOrThrowAsync(groupId, currentUserId);
         var task = GetTaskFromGroupOrThrow(tasks, groupId, taskId);
 
-        var oldValue = task.Details;
+        var oldValue = task.Details?.Value;
 
-        tasks.ForEach(t => t.UpdateDetails(details));
+        tasks.ForEach(t => t.UpdateDetails(Details.From(newDetails.Value)));
 
         if (!await _taskRepository.SaveChangesAsync())
         {
@@ -224,10 +217,11 @@ public class TaskService : ITaskService
 
     public async Task<Guid?> SetTaskDetailsAsync(Guid taskId, string? details, Guid currentUserId)
     {
+        var newDetails = Details.From(details);
         var task = await GetTaskOrThrowAsync(taskId, currentUserId);
 
-        var oldValue = task.Details;
-        task.UpdateDetails(details);
+        var oldValue = task.Details?.Value;
+        task.UpdateDetails(newDetails);
 
         return await UpdateTaskAsync(task, nameof(Task.Details), oldValue, details, currentUserId) ? task.Id : null;
     }
@@ -275,14 +269,10 @@ public class TaskService : ITaskService
     public async Task<IEnumerable<Guid>> SetRecurringTaskDirectionAsync(Guid taskId, Guid groupId, Guid? directionId,
         Guid currentUserId)
     {
-        if (directionId is not null &&
-            !await _directionRepository.AnyMemberWithIdAsync(directionId.Value, currentUserId))
-        {
-            throw new DomainException(DirectionErrors.NotFound);
-        }
-
         var tasks = await GetActiveTasksOrThrowAsync(groupId, currentUserId);
         var task = GetTaskFromGroupOrThrow(tasks, groupId, taskId);
+
+        await ValidateTaskDirection(task, currentUserId);
 
         var oldDirectionId = task.DirectionId;
 
@@ -300,13 +290,9 @@ public class TaskService : ITaskService
 
     public async Task<Guid?> SetTaskDirectionAsync(Guid taskId, Guid? directionId, Guid currentUserId)
     {
-        if (directionId is not null &&
-            !await _directionRepository.AnyMemberWithIdAsync(directionId.Value, currentUserId))
-        {
-            throw new DomainException(DirectionErrors.NotFound);
-        }
-
         var task = await GetTaskOrThrowAsync(taskId, currentUserId);
+
+        await ValidateTaskDirection(task, currentUserId);
 
         var oldDirectionId = task.DirectionId;
         task.UpdateDirectionId(directionId);
@@ -392,7 +378,8 @@ public class TaskService : ITaskService
 
         var taskToAdd = new Task(
             description: Description.From(task.Description!.Value),
-            details: task.Details, task.CreatedById,
+            details: Details.From(task.Details?.Value),
+            createdById: task.CreatedById,
             startAt: startAtUtc,
             assignment: task.Assignment == null
                 ? null
@@ -544,7 +531,7 @@ public class TaskService : ITaskService
 
             var taskToAdd = new Task(
                 description: Description.From(task.Description!.Value),
-                details: task.Details,
+                details: Details.From(task.Details?.Value),
                 createdById: task.CreatedById,
                 groupId: task.GroupId,
                 directionId: task.DirectionId,
@@ -631,7 +618,7 @@ public class TaskService : ITaskService
 
             var newTask = new Task(
                 description: Description.From(task.Description!.Value),
-                details: task.Details,
+                details: Details.From(task.Details?.Value),
                 createdById: task.CreatedById,
                 // Add one day to the last task start date to avoid creating a new task with the same start date
                 startAt: tasks.Select(t => t.StartAt).Max()!.Value.AddDays(1),
@@ -697,6 +684,22 @@ public class TaskService : ITaskService
         return task;
     }
 
+    private async System.Threading.Tasks.Task ValidateTaskDirection(Task task, Guid currentUserId)
+    {
+        if (task.DirectionId != null)
+        {
+            var direction = await _directionRepository.GetByIdAsync(task.DirectionId.Value);
+
+            if (direction == null ||
+                !await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, currentUserId))
+            {
+                throw new DomainException(DirectionErrors.NotFound);
+            }
+
+            direction.ValidateDirectionToUpdate();
+        }
+    }
+
     private async Task<List<Task>> GetTasksOrThrowAsync(Guid groupId, Guid currentUserId)
     {
         var tasks = (await _taskRepository.GetTasksByGroupIdAsync(groupId)).ToList();
@@ -752,8 +755,8 @@ public class TaskService : ITaskService
 
     private async Task<bool> UserHasAccess(Task task, Guid currentUserId)
     {
-        //Task should either be created by the current user or 
-        //belong to a direction where the current user is a member
+        // Task should either be created by the current user or 
+        // belong to a direction where the current user is a member
         return task.CreatedById == currentUserId && task.DirectionId == null ||
                task.DirectionId != null &&
                await _directionRepository.AnyMemberWithIdAsync(task.DirectionId.Value, currentUserId);

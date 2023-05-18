@@ -46,7 +46,7 @@ public class RecurringTaskGenerator : IRecurringTaskGenerator
 
             task = new Task(
                 description: Description.From(task.Description!.Value),
-                details: task.Details,
+                details: Details.From(task.Details?.Value),
                 createdById: task.CreatedById,
                 startAt: startAt,
                 assignment: task.Assignment != null
@@ -95,7 +95,7 @@ public class RecurringTaskGenerator : IRecurringTaskGenerator
         {
             tasks.Add(new Task(
                 description: Description.From(task.Description!.Value),
-                details: task.Details,
+                details: Details.From(task.Details?.Value),
                 createdById: task.CreatedById,
                 startAt: nextStartAt,
                 assignment: task.Assignment != null

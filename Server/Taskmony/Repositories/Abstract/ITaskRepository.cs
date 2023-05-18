@@ -15,7 +15,7 @@ public interface ITaskRepository
     /// <param name="lastCompletedAt">time of last completed task</param>
     /// <param name="completed">whether tasks are completed or not</param>
     /// <returns>user tasks</returns>
-    Task<IEnumerable<Models.Tasks.Task>> GetAsync(Guid[]? id, Guid?[] directionId, bool completed, bool deleted,
+    Task<IEnumerable<Models.Tasks.Task>> GetAsync(Guid[]? id, Guid?[] directionId, bool? completed, bool? deleted,
         DateTime? lastCompletedAt, DateTime? lastDeletedAt, int? offset, int? limit, Guid userId);
 
     Task<IEnumerable<Models.Tasks.Task>> GetByIdsAsync(IEnumerable<Guid> ids);

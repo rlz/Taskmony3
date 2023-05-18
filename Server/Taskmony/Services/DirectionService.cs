@@ -41,7 +41,7 @@ public class DirectionService : IDirectionService
 
         return await _directionRepository.GetAsync(
             id: id,
-            deleted: deleted ?? false,
+            deleted: deleted,
             lastDeletedAt: lastDeletedAt,
             offset: offsetValue,
             limit: limitValue,

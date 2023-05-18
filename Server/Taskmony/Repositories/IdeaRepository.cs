@@ -13,7 +13,7 @@ public sealed class IdeaRepository : BaseRepository<Idea>, IIdeaRepository
     {
     }
 
-    public async Task<IEnumerable<Idea>> GetAsync(Guid[]? id, Guid?[] directionId, bool deleted,
+    public async Task<IEnumerable<Idea>> GetAsync(Guid[]? id, Guid?[] directionId, bool? deleted,
         DateTime? lastDeletedAt, int? offset, int? limit, Guid userId)
     {
         var query = Context.Ideas.AsQueryable();
@@ -33,9 +33,12 @@ public sealed class IdeaRepository : BaseRepository<Idea>, IIdeaRepository
             query = query.Where(t => id.Contains(t.Id));
         }
 
-        query = deleted
-            ? query.Where(t => t.DeletedAt != null && (lastDeletedAt == null || t.DeletedAt.Value <= lastDeletedAt))
-            : query.Where(t => t.DeletedAt == null);
+        if (deleted != null)
+        {
+            query = deleted.Value
+                ? query.Where(t => t.DeletedAt != null && (lastDeletedAt == null || t.DeletedAt.Value <= lastDeletedAt))
+                : query.Where(t => t.DeletedAt == null);
+        }
 
         query = AddPagination(query, offset, limit);
 

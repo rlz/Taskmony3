@@ -12,7 +12,7 @@ public sealed class DirectionRepository : BaseRepository<Direction>, IDirectionR
     {
     }
 
-    public async Task<IEnumerable<Direction>> GetAsync(Guid[]? id, bool deleted, DateTime? lastDeletedAt, int? offset,
+    public async Task<IEnumerable<Direction>> GetAsync(Guid[]? id, bool? deleted, DateTime? lastDeletedAt, int? offset,
         int? limit, Guid userId)
     {
         var query = Context.Directions.AsQueryable();
@@ -21,9 +21,12 @@ public sealed class DirectionRepository : BaseRepository<Direction>, IDirectionR
             ? query.Where(d => d.Members!.Any(m => m.Id == userId))
             : query.Where(d => id.Contains(d.Id) && d.Members!.Any(m => m.Id == userId));
 
-        query = deleted
-            ? query.Where(d => d.DeletedAt != null && (lastDeletedAt == null || d.DeletedAt.Value <= lastDeletedAt))
-            : query.Where(d => d.DeletedAt == null);
+        if (deleted != null)
+        {
+            query = deleted.Value
+                ? query.Where(d => d.DeletedAt != null && (lastDeletedAt == null || d.DeletedAt.Value <= lastDeletedAt))
+                : query.Where(d => d.DeletedAt == null);
+        }
 
         query = AddPagination(query, offset, limit);
 

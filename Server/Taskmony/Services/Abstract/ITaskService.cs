@@ -6,7 +6,7 @@ namespace Taskmony.Services.Abstract;
 public interface ITaskService
 {
     /// <summary>
-    /// Gets current user tasks filtered by the given parameters
+    /// Gets current user tasks filtered by the given parameters. If both completed and deleted are null, returns all
     /// </summary>
     /// <param name="id">an array of the user ids to filter by</param>
     /// <param name="directionId">an array of the direction ids to filter by</param>
@@ -14,9 +14,9 @@ public interface ITaskService
     /// <param name="offset">offset of tasks sorted by creation date and id</param>
     /// <param name="limit">max number of the tasks sorted by creation date and id to return</param>
     /// <param name="currentUserId">id of the current user</param>
-    /// <param name="deleted">false by default</param>
+    /// <param name="deleted">whether tasks are deleted</param>
     /// <param name="lastCompletedAt">time of last completed task</param>
-    /// <param name="completed">false by default</param>
+    /// <param name="completed">whether tasks are completed</param>
     /// <returns>current user tasks</returns>
     Task<IEnumerable<Models.Tasks.Task>> GetTasksAsync(Guid[]? id, Guid?[]? directionId, bool? completed, bool? deleted,
         DateTime? lastCompletedAt, DateTime? lastDeletedAt, int? offset, int? limit, Guid currentUserId);

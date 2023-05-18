@@ -38,7 +38,7 @@ public class IdeaService : IIdeaService
             return await _ideaRepository.GetAsync(
                 id: id,
                 directionId: directionId,
-                deleted: deleted ?? false,
+                deleted: deleted,
                 lastDeletedAt: lastDeletedAt,
                 offset: offset,
                 limit: limit,
@@ -59,7 +59,7 @@ public class IdeaService : IIdeaService
         return await _ideaRepository.GetAsync(
             id: id,
             directionId: directionId,
-            deleted: deleted ?? false,
+            deleted: deleted,
             lastDeletedAt: lastDeletedAt,
             offset: offsetValue,
             limit: limitValue,

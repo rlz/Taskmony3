@@ -11,8 +11,8 @@ public sealed class TaskRepository : BaseRepository<Models.Tasks.Task>, ITaskRep
     {
     }
 
-    public async Task<IEnumerable<Models.Tasks.Task>> GetAsync(Guid[]? id, Guid?[] directionId, bool completed,
-        bool deleted, DateTime? lastCompletedAt, DateTime? lastDeletedAt, int? offset, int? limit, Guid userId)
+    public async Task<IEnumerable<Models.Tasks.Task>> GetAsync(Guid[]? id, Guid?[] directionId, bool? completed,
+        bool? deleted, DateTime? lastCompletedAt, DateTime? lastDeletedAt, int? offset, int? limit, Guid userId)
     {
         var query = Context.Tasks.AsQueryable();
 
@@ -31,13 +31,20 @@ public sealed class TaskRepository : BaseRepository<Models.Tasks.Task>, ITaskRep
             query = query.Where(t => id.Contains(t.Id));
         }
 
-        query = deleted
-            ? query.Where(t => t.DeletedAt != null && (lastDeletedAt == null || t.DeletedAt.Value <= lastDeletedAt))
-            : query.Where(t => t.DeletedAt == null);
+        if (deleted != null)
+        {
+            query = deleted.Value
+                ? query.Where(t => t.DeletedAt != null && (lastDeletedAt == null || t.DeletedAt.Value <= lastDeletedAt))
+                : query.Where(t => t.DeletedAt == null);
+        }
 
-        query = completed
-            ? query.Where(t => t.CompletedAt != null && (lastCompletedAt == null || t.CompletedAt.Value <= lastCompletedAt))
-            : query.Where(t => t.CompletedAt == null);
+        if (completed != null)
+        {
+            query = completed.Value
+                ? query.Where(t =>
+                    t.CompletedAt != null && (lastCompletedAt == null || t.CompletedAt.Value <= lastCompletedAt))
+                : query.Where(t => t.CompletedAt == null);
+        }
 
         query = AddPagination(query, offset, limit);
 

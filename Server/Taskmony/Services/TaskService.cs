@@ -45,8 +45,8 @@ public class TaskService : ITaskService
             tasks = (await _taskRepository.GetAsync(
                 id: id,
                 directionId: directionId,
-                completed: completed ?? false,
-                deleted: deleted ?? false,
+                completed: completed,
+                deleted: deleted,
                 lastCompletedAt: lastCompletedAt,
                 lastDeletedAt: lastDeletedAt,
                 offset: offsetValue,
@@ -69,8 +69,8 @@ public class TaskService : ITaskService
             tasks = (await _taskRepository.GetAsync(
                 id: id,
                 directionId: directionId,
-                completed: completed ?? false,
-                deleted: deleted ?? false,
+                completed: completed,
+                deleted: deleted,
                 lastCompletedAt: lastCompletedAt,
                 lastDeletedAt: lastDeletedAt,
                 offset: offsetValue,

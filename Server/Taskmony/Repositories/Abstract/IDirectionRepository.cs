@@ -7,7 +7,7 @@ public interface IDirectionRepository
 {
     Task<Direction?> GetByIdAsync(Guid id);
 
-    Task<IEnumerable<Direction>> GetAsync(Guid[]? id, bool deleted, DateTime? lastDeletedAt, int? offset, int? limit,
+    Task<IEnumerable<Direction>> GetAsync(Guid[]? id, bool? deleted, DateTime? lastDeletedAt, int? offset, int? limit,
         Guid userId);
 
     Task<IEnumerable<Guid>> GetUserDirectionIdsAsync(Guid userId);

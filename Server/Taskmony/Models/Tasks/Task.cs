@@ -162,7 +162,7 @@ public class Task : DirectionEntity
         RecurrencePattern = recurrencePattern;
     }
 
-    public void RemoveTaskFromGroup()
+    public void RemoveFromGroup()
     {
         GroupId = null;
         RecurrencePattern = null;

@@ -260,7 +260,7 @@ public class TaskService : ITaskService
         // to avoid further changes to this instance with the group 
         if (task.GroupId != null)
         {
-            task.RemoveTaskFromGroup();
+            task.RemoveFromGroup();
         }
 
         return await _taskRepository.SaveChangesAsync();

@@ -1,5 +1,6 @@
 using Taskmony.DTOs;
-using Taskmony.Models;
+using Taskmony.Models.Users;
+using Taskmony.Models.ValueObjects;
 
 namespace Taskmony.Tests.Fixtures;
 
@@ -16,15 +17,12 @@ public static class UserFixture
 
     public static UserRegisterRequest GetRegisterRequestWithInvalidLogin() =>
         new UserRegisterRequest("l", "Pa55word", "name", "a@a.a");
-    
+
     public static UserRegisterRequest GetRegisterRequestWithInvalidDisplayName() =>
         new UserRegisterRequest("login", "Pa55word", "n", "a@a");
 
-    public static User GetUserWithId(Guid otherUserId)
+    public static User GetUserWithId(Guid userId)
     {
-        return new User
-        {
-            Id = otherUserId,
-        };
+        return new User(userId, Login.From("login"), DisplayName.From("display name"), Email.From("a@a.a"), null);
     }
 }

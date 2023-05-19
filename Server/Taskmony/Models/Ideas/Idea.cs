@@ -48,9 +48,16 @@ public class Idea : DirectionEntity
         CreatedById = createdById;
         Generation = generation;
         ReviewedAt = reviewedAt;
-        CreatedAt = createdAt;
+        CreatedAt = createdAt ?? DateTime.UtcNow;
         DeletedAt = deletedAt;
         DirectionId = directionId;
+    }
+
+    public Idea(Guid id, Description description, Details details, Guid createdById, Generation generation,
+        Guid? directionId, ReviewedAt? reviewedAt = null, DateTime? createdAt = null, DeletedAt? deletedAt = null) :
+        this(description, details, createdById, generation, directionId, reviewedAt, createdAt, deletedAt)
+    {
+        Id = id;
     }
 
     public void ValidateIdeaToUpdate()
@@ -94,11 +101,15 @@ public class Idea : DirectionEntity
 
     public void UpdateGeneration(Generation generation)
     {
+        ValidateIdeaToUpdate();
+
         Generation = generation;
     }
 
     public void UpdateDirectionId(Guid? directionId)
     {
+        ValidateIdeaToUpdate();
+
         DirectionId = directionId;
     }
 }

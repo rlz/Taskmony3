@@ -8,7 +8,7 @@ public class CommentText : ValueOf<string, CommentText>
 {
     protected override void Validate()
     {
-        if (string.IsNullOrEmpty(Value) || Value.Length > 15000)
+        if (string.IsNullOrWhiteSpace(Value) || Value.Length > 15000)
         {
             throw new DomainException(ValidationErrors.InvalidCommentText);
         }

@@ -23,11 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers" />
-    <Folder Include="GraphQL" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Taskmony\Taskmony.csproj" />
   </ItemGroup>
 

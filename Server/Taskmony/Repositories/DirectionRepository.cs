@@ -126,10 +126,13 @@ public sealed class DirectionRepository : BaseRepository<Direction>, IDirectionR
         Context.Memberships.Remove(membership);
     }
 
-    public void HardDeleteSoftDeletedDirectionsWithChildren(DateTime deletedBeforeOrAt)
+    public async Task HardDeleteSoftDeletedDirectionsWithChildren(DateTime deletedBeforeOrAt)
     {
         // Tasks, ideas and comments are deleted with cascade
-        Context.Directions.RemoveRange(Context.Directions.Where(d =>
-            d.DeletedAt != null && d.DeletedAt.Value <= deletedBeforeOrAt));
+        await Context.Directions
+            .Where(d => d.DeletedAt != null && d.DeletedAt.Value <= deletedBeforeOrAt)
+            .ExecuteDeleteAsync();
+        // Context.Directions.RemoveRange(Context.Directions.Where(d =>
+        //     d.DeletedAt != null && d.DeletedAt.Value <= deletedBeforeOrAt));
     }
 }

@@ -98,10 +98,10 @@ public sealed class TaskRepository : BaseRepository<Models.Tasks.Task>, ITaskRep
         Guid assigneeId)
     {
         var query = from t in Context.Tasks
-            join d in Context.Directions on t.DirectionId equals d.Id
-            join a in Context.Assignments on t.Id equals a.TaskId
-            where d.Id == directionId && a.AssigneeId == assigneeId
-            select t;
+                    join d in Context.Directions on t.DirectionId equals d.Id
+                    join a in Context.Assignments on t.Id equals a.TaskId
+                    where d.Id == directionId && a.AssigneeId == assigneeId
+                    select t;
 
         return await query.ToListAsync();
     }
@@ -111,13 +111,13 @@ public sealed class TaskRepository : BaseRepository<Models.Tasks.Task>, ITaskRep
         var now = DateTime.UtcNow;
 
         var comments = from t in Context.Tasks
-            where t.DirectionId == directionId && t.DeletedAt == null
-            from c in Context.TaskComments.Where(c => c.TaskId == t.Id && c.DeletedAt == null)
-            select c;
+                       where t.DirectionId == directionId && t.DeletedAt == null
+                       from c in Context.TaskComments.Where(c => c.TaskId == t.Id && c.DeletedAt == null)
+                       select c;
 
         var tasks = from t in Context.Tasks
-            where t.DirectionId == directionId && t.DeletedAt == null
-            select t;
+                    where t.DirectionId == directionId && t.DeletedAt == null && t.CompletedAt == null
+                    select t;
 
         await tasks.ForEachAsync(t => t.UpdateDeletedAt(DeletedAt.From(now)));
         await comments.ForEachAsync(c => c.UpdateDeletedAt(DeletedAt.From(now)));
@@ -128,18 +128,26 @@ public sealed class TaskRepository : BaseRepository<Models.Tasks.Task>, ITaskRep
     public async Task UndeleteDirectionTasksAndComments(Guid directionId, DateTime deletedAt)
     {
         var tasks = from t in Context.Tasks
-            where t.DirectionId == directionId && t.DeletedAt != null && t.DeletedAt.Value >= deletedAt
-            select t;
+                    where t.DirectionId == directionId && t.DeletedAt != null && t.DeletedAt.Value >= deletedAt
+                    select t;
 
         var comments = from t in Context.Tasks
-            where t.DirectionId == directionId && t.DeletedAt != null && t.DeletedAt.Value >= deletedAt
-            from c in Context.TaskComments.Where(c =>
-                c.TaskId == t.Id && c.DeletedAt != null && c.DeletedAt.Value >= deletedAt)
-            select c;
+                       where t.DirectionId == directionId && t.DeletedAt != null && t.DeletedAt.Value >= deletedAt
+                       from c in Context.TaskComments.Where(c =>
+                           c.TaskId == t.Id && c.DeletedAt != null && c.DeletedAt.Value >= deletedAt)
+                       select c;
 
         await tasks.ForEachAsync(t => t.UpdateDeletedAt(null));
         await comments.ForEachAsync(c => c.UpdateDeletedAt(null));
 
         await Context.SaveChangesAsync();
+    }
+
+    public async Task HardDeleteSoftDeletedTasksWithChildren(DateTime deletedBeforeOrAt)
+    {
+        // Comments are deleted with cascade
+        await Context.Tasks
+            .Where(t => t.DeletedAt != null && t.DeletedAt.Value <= deletedBeforeOrAt)
+            .ExecuteDeleteAsync();
     }
 }

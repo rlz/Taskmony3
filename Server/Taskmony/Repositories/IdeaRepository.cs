@@ -71,14 +71,14 @@ public sealed class IdeaRepository : BaseRepository<Idea>, IIdeaRepository
         var now = DateTime.UtcNow;
 
         var ideas = from i in Context.Ideas
-            where i.DirectionId == directionId && i.DeletedAt == null
-            select i;
+                    where i.DirectionId == directionId && i.DeletedAt == null
+                    select i;
 
         var comments = from i in Context.Ideas
-            where i.DirectionId == directionId && i.DeletedAt == null
-            from c in Context.IdeaComments.Where(c => c.IdeaId == i.Id && c.DeletedAt == null)
-            where i.DirectionId == directionId && i.DeletedAt == null
-            select c;
+                       where i.DirectionId == directionId && i.DeletedAt == null
+                       from c in Context.IdeaComments.Where(c => c.IdeaId == i.Id && c.DeletedAt == null)
+                       where i.DirectionId == directionId && i.DeletedAt == null
+                       select c;
 
         await ideas.ForEachAsync(i => i.UpdateDeletedAt(DeletedAt.From(now)));
         await comments.ForEachAsync(c => c.UpdateDeletedAt(DeletedAt.From(now)));
@@ -89,19 +89,27 @@ public sealed class IdeaRepository : BaseRepository<Idea>, IIdeaRepository
     public async Task UndeleteDirectionIdeasAndComments(Guid directionId, DateTime deletedAt)
     {
         var ideas = from i in Context.Ideas
-            where i.DirectionId == directionId && i.DeletedAt != null && i.DeletedAt.Value >= deletedAt
-            select i;
+                    where i.DirectionId == directionId && i.DeletedAt != null && i.DeletedAt.Value >= deletedAt
+                    select i;
 
         var comments = from i in Context.Ideas
-            where i.DirectionId == directionId && i.DeletedAt != null && i.DeletedAt.Value >= deletedAt
-            from c in Context.IdeaComments.Where(c =>
-                c.IdeaId == i.Id && c.DeletedAt != null && c.DeletedAt.Value >= deletedAt)
-            where i.DirectionId == directionId && i.DeletedAt != null && i.DeletedAt.Value >= deletedAt
-            select c;
+                       where i.DirectionId == directionId && i.DeletedAt != null && i.DeletedAt.Value >= deletedAt
+                       from c in Context.IdeaComments.Where(c =>
+                           c.IdeaId == i.Id && c.DeletedAt != null && c.DeletedAt.Value >= deletedAt)
+                       where i.DirectionId == directionId && i.DeletedAt != null && i.DeletedAt.Value >= deletedAt
+                       select c;
 
         await ideas.ForEachAsync(i => i.UpdateDeletedAt(null));
         await comments.ForEachAsync(c => c.UpdateDeletedAt(null));
 
         await Context.SaveChangesAsync();
+    }
+
+    public async Task HardDeleteSoftDeletedIdeasWithChildren(DateTime deletedBeforeOrAt)
+    {
+        // Comments are deleted with cascade
+        await Context.Ideas
+            .Where(i => i.DeletedAt != null && i.DeletedAt.Value <= deletedBeforeOrAt)
+            .ExecuteDeleteAsync();
     }
 }

@@ -18,5 +18,7 @@ public interface IIdeaRepository
 
     Task AddAsync(Idea idea);
 
+    Task HardDeleteSoftDeletedIdeasWithChildren(DateTime deletedBeforeOrAt);
+
     Task<bool> SaveChangesAsync();
 }

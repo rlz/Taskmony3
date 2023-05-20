@@ -109,18 +109,25 @@ public sealed class CommentRepository : BaseRepository<Comment>, ICommentReposit
 
         await UndeleteCommentsAsync(toRecover);
     }
-    
+
     private async Task SoftDeleteCommentsAsync(IQueryable<Comment> toDelete)
     {
         await toDelete.ForEachAsync(c => c.UpdateDeletedAt(DeletedAt.From(DateTime.UtcNow)));
 
         await Context.SaveChangesAsync();
     }
-    
+
     private async Task UndeleteCommentsAsync(IQueryable<Comment> toRecover)
     {
         await toRecover.ForEachAsync(c => c.UpdateDeletedAt(null));
 
         await Context.SaveChangesAsync();
+    }
+
+    public async Task HardDeleteSoftDeletedComments(DateTime deletedBeforeOrAt)
+    {
+        await Context.Comments
+            .Where(c => c.DeletedAt != null && c.DeletedAt.Value <= deletedBeforeOrAt)
+            .ExecuteDeleteAsync();
     }
 }

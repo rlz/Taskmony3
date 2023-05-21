@@ -13,7 +13,7 @@ public class Password : ValueOf<string, Password>
 
     protected override void Validate()
     {
-        if (!EmailRegex.IsMatch(Value))
+        if (Value == null || !EmailRegex.IsMatch(Value))
         {
             throw new DomainException(ValidationErrors.InvalidPassword);
         }

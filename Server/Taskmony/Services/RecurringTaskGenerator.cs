@@ -12,9 +12,13 @@ public class RecurringTaskGenerator : IRecurringTaskGenerator
     public List<Task> CreateRecurringTaskInstances(Task task, RecurrencePattern pattern)
     {
         task.UpdateRecurrencePattern(pattern);
-        task.UpdateGroupId(Guid.NewGuid());
 
-        if (pattern.WeekDays is null || pattern.RepeatMode != RepeatMode.Week)
+        if (task.GroupId == null)
+        {
+            task.UpdateGroupId(Guid.NewGuid());
+        }
+
+        if (pattern.WeekDays == null || pattern.RepeatMode != RepeatMode.Week)
         {
             return GenerateTasks(task, pattern.RepeatUntil, pattern.RepeatMode, pattern.WeekDays, pattern.RepeatEvery);
         }
@@ -42,6 +46,11 @@ public class RecurringTaskGenerator : IRecurringTaskGenerator
             if (startAt > initialStartAt && startAt.DayOfWeek <= initialStartAt.DayOfWeek)
             {
                 startAt = startAt.AddDays(7 * (repeatEvery - 1));
+            }
+            
+            if (startAt > repeatUntil)
+            {
+                continue;
             }
 
             task = new Task(

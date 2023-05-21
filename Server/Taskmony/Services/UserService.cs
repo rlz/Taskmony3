@@ -119,10 +119,11 @@ public class UserService : IUserService
 
     public async Task<bool> SetPasswordAsync(Guid id, string oldPassword, string newPassword, Guid currentUserId)
     {
-        var newPasswordValue = Password.From(newPassword.Trim());
+        var newPasswordValue = Password.From(newPassword);
+        var oldPasswordValue = Password.From(oldPassword);
         var user = await GetUserOrThrowAsync(id);
 
-        if (!_passwordHasher.VerifyPassword(oldPassword, user.Password!))
+        if (!_passwordHasher.VerifyPassword(oldPasswordValue.Value, user.Password!))
         {
             throw new DomainException(UserErrors.WrongPassword);
         }

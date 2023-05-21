@@ -32,7 +32,7 @@ public class IdeaService : IIdeaService
         int? limitValue = limit == null ? null : Limit.From(limit.Value).Value;
         int? offsetValue = offset == null ? null : Offset.From(offset.Value).Value;
 
-        //If directionId is [null] return ideas created by the current user with direction id = null
+        // If directionId is [null] return ideas created by the current user with direction id = null
         if (directionId?.Length == 1 && directionId.Contains(null))
         {
             return await _ideaRepository.GetAsync(
@@ -48,9 +48,9 @@ public class IdeaService : IIdeaService
         var userDirectionIds = await _directionRepository.GetUserDirectionIdsAsync(currentUserId);
         var authorizedDirectionIds = userDirectionIds.Cast<Guid?>().Append(null);
 
-        //If directionId is null return all ideas visible to the current user.
-        //That includes ideas from all the directions where user is a member
-        //(user is a member of his own directions)
+        // If directionId is null return all ideas visible to the current user.
+        // That includes ideas from all the directions where user is a member
+        // (user is a member of his own directions)
 
         directionId = directionId == null
             ? authorizedDirectionIds.ToArray()
@@ -81,11 +81,7 @@ public class IdeaService : IIdeaService
             generation: generation,
             directionId: directionId);
 
-        if (idea.DirectionId != null &&
-            !await _directionRepository.AnyMemberWithIdAsync(idea.DirectionId.Value, idea.CreatedById))
-        {
-            throw new DomainException(DirectionErrors.NotFound);
-        }
+        await ValidateIdeaDirection(idea, currentUserId);
 
         await _ideaRepository.AddAsync(idea);
 
@@ -122,6 +118,7 @@ public class IdeaService : IIdeaService
     public async Task<Guid?> SetIdeaDetailsAsync(Guid id, string? details, Guid currentUserId)
     {
         var newDetails = Details.From(details);
+
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
         var oldValue = idea.Details?.Value;
@@ -142,14 +139,10 @@ public class IdeaService : IIdeaService
     {
         var idea = await GetIdeaOrThrowAsync(id, currentUserId);
 
-        if (directionId != null &&
-            !await _directionRepository.AnyMemberWithIdAsync(directionId.Value, currentUserId))
-        {
-            throw new DomainException(DirectionErrors.NotFound);
-        }
-
         var oldDirectionId = idea.DirectionId;
         idea.UpdateDirectionId(directionId);
+        
+        await ValidateIdeaDirection(idea, currentUserId);
 
         if (!await _ideaRepository.SaveChangesAsync())
         {
@@ -242,8 +235,8 @@ public class IdeaService : IIdeaService
             throw new DomainException(IdeaErrors.NotFound);
         }
 
-        //Idea should either be created by the current user or 
-        //belong to a direction where the current user is a member
+        // Idea should either be created by the current user or 
+        // belong to a direction where the current user is a member
         if (idea.CreatedById != currentUserId && idea.DirectionId == null ||
             idea.DirectionId != null &&
             !await _directionRepository.AnyMemberWithIdAsync(idea.DirectionId.Value, currentUserId))
@@ -252,6 +245,22 @@ public class IdeaService : IIdeaService
         }
 
         return idea;
+    }
+
+    private async Task ValidateIdeaDirection(Idea idea, Guid currentUserId)
+    {
+        if (idea.DirectionId != null)
+        {
+            var direction = await _directionRepository.GetByIdAsync(idea.DirectionId.Value);
+
+            if (direction == null ||
+                !await _directionRepository.AnyMemberWithIdAsync(idea.DirectionId.Value, currentUserId))
+            {
+                throw new DomainException(DirectionErrors.NotFound);
+            }
+
+            direction.ValidateDirectionToUpdate();
+        }
     }
 
     public async Task SoftDeleteDirectionIdeasAsync(Guid directionId)

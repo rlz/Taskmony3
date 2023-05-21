@@ -46,7 +46,7 @@ public class Task : DirectionEntity
     {
     }
 
-    public Task(Description description, Details details, Guid createdById, DateTime? startAt, Assignment? assignment,
+    public Task(Description description, Details details, Guid createdById, DateTime startAt, Assignment? assignment,
         Guid? directionId, DateTime? createdAt = null, CompletedAt? completedAt = null, DeletedAt? deletedAt = null)
     {
         Description = description;
@@ -59,19 +59,46 @@ public class Task : DirectionEntity
         CompletedAt = completedAt;
         DeletedAt = deletedAt;
 
+        if (assignment != null && directionId == null)
+        {
+            throw new DomainException(TaskErrors.AssignPrivateTask);
+        }
+
         if (directionId != null && assignment == null)
         {
             Assignment = new Assignment(createdById, createdById);
         }
     }
 
-    public Task(Description description, Details details, Guid createdById, DateTime? startAt, Assignment? assignment,
+    public Task(Guid id, Description description, Details details, Guid createdById, DateTime startAt,
+        Assignment? assignment, Guid? directionId, DateTime? createdAt = null, CompletedAt? completedAt = null,
+        DeletedAt? deletedAt = null) : this(description, details, createdById, startAt, assignment, directionId,
+        createdAt, completedAt, deletedAt)
+    {
+        Id = id;
+    }
+
+    public Task(Description description, Details details, Guid createdById, DateTime startAt, Assignment? assignment,
         Guid? directionId, RecurrencePattern? recurrencePattern, Guid? groupId, DateTime? createdAt = null,
         CompletedAt? completedAt = null, DeletedAt? deletedAt = null) : this(description, details, createdById, startAt,
         assignment, directionId, createdAt, completedAt, deletedAt)
     {
         RecurrencePattern = recurrencePattern;
         GroupId = groupId;
+
+        if (recurrencePattern != null)
+        {
+            ValidateRecurrenceInterval(startAt, recurrencePattern.RepeatUntil);
+        }
+    }
+
+    public Task(Guid id, Description description, Details details, Guid createdById, DateTime startAt,
+        Assignment? assignment, Guid? directionId, RecurrencePattern? recurrencePattern, Guid? groupId,
+        DateTime? createdAt = null, CompletedAt? completedAt = null, DeletedAt? deletedAt = null) : this(description,
+        details, createdById, startAt, assignment, directionId, recurrencePattern, groupId, createdAt, completedAt,
+        deletedAt)
+    {
+        Id = id;
     }
 
     public void ValidateTaskToUpdate()
@@ -100,9 +127,9 @@ public class Task : DirectionEntity
     {
         ValidateTaskToUpdate();
 
-        if (RecurrencePattern != null && startAt > RecurrencePattern.RepeatUntil)
+        if (RecurrencePattern != null)
         {
-            throw new DomainException(ValidationErrors.EndBeforeStart);
+            ValidateRecurrenceInterval(startAt, RecurrencePattern.RepeatUntil);
         }
 
         StartAt = startAt;
@@ -159,6 +186,11 @@ public class Task : DirectionEntity
     {
         ValidateTaskToUpdate();
 
+        if (recurrencePattern != null)
+        {
+            ValidateRecurrenceInterval(StartAt!.Value, recurrencePattern.RepeatUntil);
+        }
+
         RecurrencePattern = recurrencePattern;
     }
 
@@ -173,5 +205,13 @@ public class Task : DirectionEntity
         ValidateTaskToUpdate();
 
         DirectionId = directionId;
+    }
+
+    private void ValidateRecurrenceInterval(DateTime startAt, DateTime repeatUntil)
+    {
+        if (startAt > repeatUntil)
+        {
+            throw new DomainException(ValidationErrors.RepeatUntilIsBeforeStartAt);
+        }
     }
 }

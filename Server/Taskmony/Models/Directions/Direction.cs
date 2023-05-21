@@ -45,6 +45,12 @@ public class Direction : Entity
         DeletedAt = deletedAt;
     }
 
+    public Direction(Guid id, Guid createdById, DirectionName name, Details details, DateTime? createdAt = null,
+        DeletedAt? deletedAt = null) : this(createdById, name, details, createdAt, deletedAt)
+    {
+        Id = id;
+    }
+
     public void UpdateDeletedAt(DeletedAt? deletedAt)
     {
         if (deletedAt != null && DeletedAt != null)

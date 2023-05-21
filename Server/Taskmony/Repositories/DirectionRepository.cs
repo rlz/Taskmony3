@@ -132,7 +132,5 @@ public sealed class DirectionRepository : BaseRepository<Direction>, IDirectionR
         await Context.Directions
             .Where(d => d.DeletedAt != null && d.DeletedAt.Value <= deletedBeforeOrAt)
             .ExecuteDeleteAsync();
-        // Context.Directions.RemoveRange(Context.Directions.Where(d =>
-        //     d.DeletedAt != null && d.DeletedAt.Value <= deletedBeforeOrAt));
     }
 }

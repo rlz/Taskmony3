@@ -193,10 +193,9 @@ public class DirectionService : IDirectionService
             return false;
         }
 
+        // Hard delete direction without members
+        // Tasks and ideas will be deleted by cascade
         _directionRepository.Delete(direction);
-
-        await _ideaService.SoftDeleteDirectionIdeasAsync(direction.Id);
-        await _taskService.SoftDeleteDirectionTasksAsync(direction.Id);
 
         return await _directionRepository.SaveChangesAsync();
     }

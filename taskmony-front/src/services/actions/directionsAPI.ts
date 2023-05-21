@@ -1,8 +1,7 @@
 import { Dispatch } from "redux";
-import { checkResponse, getAccessToken } from "../../utils/APIUtils";
+import { checkResponse, getAccessToken } from "../../utils/api-utils";
 import Cookies from 'js-cookie';
-import { BASE_URL } from "../../utils/data";
-import { useAppSelector } from "../../utils/hooks";
+import { BASE_URL } from "../../utils/base-api-url";
 import { directionsAllQuery } from "../../utils/queries";
 export const GET_DIRECTIONS_REQUEST = "GET_DIRECTIONS_REQUEST";
 export const GET_DIRECTIONS_SUCCESS = "GET_DIRECTIONS_SUCCESS";

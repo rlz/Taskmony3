@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
-import { checkResponse } from "../../../utils/APIUtils";
+import { checkResponse } from "../../../utils/api-utils";
 import Cookies from 'js-cookie';
-import { BASE_URL } from "../../../utils/data";
+import { BASE_URL } from "../../../utils/base-api-url";
 
 export const REFRESH_TOKEN_REQUEST = "REFRESH_TOKEN_REQUEST";
 export const REFRESH_TOKEN_SUCCESS = "REFRESH_TOKEN_SUCCESS";

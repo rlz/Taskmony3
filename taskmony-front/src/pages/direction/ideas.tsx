@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
-import { AddBtn } from "../../components/add-btn/add-btn";
+import { AddBtn } from "../../components/other-components/buttons/add-btn";
 import {
-  FilterByFollowed,
   FilterByIdeaCategory,
-} from "../../components/filter/by-idea-category";
-import { Idea } from "../../components/idea";
-import { FilterDivider } from "../../components/filter/filter-divider";
-import { EditedIdea } from "../../components/edited/edited-idea/edited-idea";
+} from "../../components/other-components/filter/by-idea-category";
+import { Idea } from "../../components/task-idea/idea/idea";
+import { OpenIdea } from "../../components/task-idea/idea/open-idea/open-idea";
 import {
   addIdea,
   CHANGE_IDEA_DIRECTION,
   RESET_IDEA,
 } from "../../services/actions/ideasAPI";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
-import { FilterByCreator } from "../../components/filter/by-creator";
+import { FilterByCreator } from "../../components/other-components/filter/by-creator";
 import { useSearchParams } from "react-router-dom";
 
 type IdeasProps = {
@@ -23,21 +21,20 @@ type IdeasProps = {
 function Ideas({ directionId, directionName } : IdeasProps) {
 
   const [newIdea, setNewIdea] = useState(false);
-  let [searchParams, setSearchParams] = useSearchParams();
+  let [searchParams] = useSearchParams();
   const createdBy = searchParams.getAll("createdBy");
   const chosenGeneration = searchParams.get("ideaCategory");
-  const followed = searchParams.get("followed");
   const idea = useAppSelector((store) => store.editedIdea);
   useEffect(()=>{
   if(idea.id !== "") setNewIdea(false);
   },[idea.id])
   let ideasToShow = useAppSelector((store) => store.ideas.items).filter(
-    (i) => i.deletedAt == null && i.direction?.id == directionId
+    (i) => i.deletedAt == null && i.direction?.id === directionId
   ).sort((a, b) => {
     //console.log("sorting")
-    if(!a.reviewedAt && b.reviewedAt) return -1
-    else if(!b.reviewedAt && a.reviewedAt) return 1
-    else if(!b.reviewedAt && !a.reviewedAt) return 0
+    if(b.reviewedAt == null && a.reviewedAt == null) return 0
+    else if(a.reviewedAt == null) return -1
+    else if(b.reviewedAt == null) return 1
     else {return b.reviewedAt < a.reviewedAt?1:-1 }
   });;
 
@@ -52,7 +49,7 @@ function Ideas({ directionId, directionName } : IdeasProps) {
 
   const dispatch = useAppDispatch();
   const direction = useAppSelector((store) => store.directions.items).filter(
-    (d) => d.id == directionId
+    (d) => d.id === directionId
   )[0];
   const addANewIdea = (direction : string) => {
     dispatch(addIdea(idea, direction));
@@ -81,7 +78,7 @@ function Ideas({ directionId, directionName } : IdeasProps) {
           }}
         />
         {newIdea && idea.id === "" && (
-          <EditedIdea
+          <OpenIdea
             label={"new idea"}
             direction={directionName}
             save={() => {

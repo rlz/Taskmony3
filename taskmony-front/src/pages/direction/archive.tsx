@@ -1,12 +1,8 @@
-import { useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { ArchivedItem } from "../../components/archived-item";
-import { FilterByDate } from "../../components/filter/by-date";
-import { FilterByDirection } from "../../components/filter/by-direction";
-import { FilterByArchivedTaskType } from "../../components/filter/by-task-type";
-import { FilterDivider } from "../../components/filter/filter-divider";
-import { FilterItem } from "../../components/filter/filter-item";
-import { Idea } from "../../components/idea";
+import { ArchivedItem } from "../../components/task-idea/archived-item";
+import { FilterByDate } from "../../components/other-components/filter/by-date";
+import { FilterByArchivedTaskType } from "../../components/other-components/filter/by-task-type";
+import { FilterItem } from "../../components/other-components/filter/filter-item";
 import { useAppSelector } from "../../utils/hooks";
 
 type ArchiveProps = {
@@ -31,11 +27,11 @@ export const Archive = ({ directionId } : ArchiveProps) => {
   const endDate = searchParams.get("endDate");
   if(startDate){
     items = items.filter(
-      (i) => i.deletedAt > startDate)
+      (i) => i.deletedAt == null || i.deletedAt > startDate)
   }
   if(endDate){
     items = items.filter(
-      (i) => i.deletedAt < endDate)
+      (i) => i.deletedAt == null || i.deletedAt < endDate)
   }
   return (
     <div className="flex w-full">

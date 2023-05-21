@@ -1,9 +1,8 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { TaskmonyTitle } from "../../components/taskmony-title";
-import deleteI from "../../images/delete.svg";
+import { TaskmonyTitle } from "../../components/other-components/taskmony-title";
 import { Btn } from "./btn";
 import { Input } from "./input";
-import React, { useState, useEffect, FormEvent } from "react";
+import React from "react";
 import { resetPassword } from "../../services/actions/auth/resetPassword";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 
@@ -11,12 +10,12 @@ export const ForgotPassword = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [email, setEmail] = React.useState<string>("");
-  const loading = useAppSelector(
-    (store) => store.resetPassword.reset_password_loading
-  );
-  const error = useAppSelector(
-    (store) => store.resetPassword.reset_password_error
-  );
+  // const loading = useAppSelector(
+  //   (store) => store.resetPassword.reset_password_loading
+  // );
+  // const error = useAppSelector(
+  //   (store) => store.resetPassword.reset_password_error
+  // );
   const success = useAppSelector(
     (store) => store.resetPassword.reset_password_success
   );

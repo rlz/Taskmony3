@@ -1,7 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import React, { FormEvent, useEffect, useState } from "react";
-import { TaskmonyTitle } from "../../components/taskmony-title";
-import deleteI from "../../images/delete.svg";
+import React, { useEffect, useState } from "react";
+import { TaskmonyTitle } from "../../components/other-components/taskmony-title";
 import useIsFirstRender, { useAppDispatch, useAppSelector } from "../../utils/hooks";
 import { Btn } from "./btn";
 import { Input } from "./input";
@@ -12,8 +11,8 @@ export const Login = () => {
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
-  const loading = useAppSelector((store) => store.auth.login_loading);
+  // const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
+  // const loading = useAppSelector((store) => store.auth.login_loading);
   const error = useAppSelector((store) => store.auth.login_error);
   const success = useAppSelector((store) => store.auth.login_success);
   const isFirst = useIsFirstRender();
@@ -25,9 +24,9 @@ export const Login = () => {
     nav("/");
   }, [success]);
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+  // const togglePasswordVisibility = () => {
+  //   setPasswordVisible(!passwordVisible);
+  // };
   const loginUser = () => {
     //console.log("login" + email + password);
     dispatch(login(email, password));

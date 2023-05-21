@@ -1,8 +1,7 @@
 import { Dispatch } from "redux";
-import { checkResponse, getAccessToken, nowDate } from "../../utils/APIUtils";
+import { checkResponse, getAccessToken, nowDate } from "../../utils/api-utils";
 import Cookies from 'js-cookie';
-import { BASE_URL } from "../../utils/data";
-import { useAppSelector } from "../../utils/hooks";
+import { BASE_URL } from "../../utils/base-api-url";
 import { ideasAllQuery } from "../../utils/queries";
 import { TDirection, TIdea } from "../../utils/types";
 export const GET_IDEAS_REQUEST = "GET_IDEAS_REQUEST";

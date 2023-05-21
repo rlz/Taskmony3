@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { NavLink, useLoaderData, useLocation } from "react-router-dom";
-import { AddBtn } from "../../components/add-btn/add-btn";
+import { AddBtn } from "../../components/buttons/add-btn";
 import { FilterDivider } from "../../components/filter/filter-divider";
 import { FilterItem } from "../../components/filter/filter-item";
 
-import { Idea } from "../../components/idea";
+import { Idea } from "../../components/idea/idea";
 import { ArchivedDirections } from "./archived-directions";
 import { ArchivedIdeas } from "./archived-ideas";
 import { ArchivedTasks } from "./archived-tasks";

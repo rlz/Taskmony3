@@ -28,7 +28,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "pretty": "prettier --write \"./**/*.{js,ts,tsx,jsx,json, css}\""
+    "pretty": "prettier --write \"./**/*.{js,ts,tsx,jsx,json, css}\"",
+    "lint": "eslint src --ext .ts,.tsx"
   },
   "eslintConfig": {
     "extends": [

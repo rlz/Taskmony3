@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
-import { AddBtn } from "../../components/add-btn/add-btn";
-import { FilterItem } from "../../components/filter/filter-item";
-import arrowUp from "../../images/arrow-up.svg";
-import arrowDown from "../../images/arrow-down.svg";
-import { Task } from "../../components/task";
-import { FilterDivider } from "../../components/filter/filter-divider";
-import { EditedTask } from "../../components/edited/edited-task/edited-task";
+import { AddBtn } from "../../components/other-components/buttons/add-btn";
+import { Task } from "../../components/task-idea/task/task";
+import { EditedTask } from "../../components/task-idea/task/open-task/open-task";
 import {
   addRepeatedTasks,
   addTask,
@@ -13,12 +9,10 @@ import {
   RESET_TASK,
 } from "../../services/actions/tasksAPI";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
-import { FilterByCreator } from "../../components/filter/by-creator";
+import { FilterByCreator } from "../../components/other-components/filter/by-creator";
 import {
-  FilterByArchivedTaskType,
   FilterByFuture,
-  FilterByTaskType,
-} from "../../components/filter/by-task-type";
+} from "../../components/other-components/filter/by-task-type";
 import { useSearchParams } from "react-router-dom";
 
 type TasksProps = {
@@ -26,7 +20,7 @@ type TasksProps = {
 }
   
 function Tasks({ directionId, directionName } : TasksProps) {
-  let [searchParams, setSearchParams] = useSearchParams();
+  let [searchParams] = useSearchParams();
   const future = searchParams.get("future");
   const [newTask, setNewTask] = useState(false);
   const task = useAppSelector((store) => store.editedTask);
@@ -34,7 +28,7 @@ function Tasks({ directionId, directionName } : TasksProps) {
     if(task.id !== "") setNewTask(false);
     },[task.id])
   let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
-    (t) => t.deletedAt == null && t.direction?.id == directionId
+    (t) => t.deletedAt == null && t.direction?.id === directionId
   ).sort((a, b) => {
     if(!a.completedAt && b.completedAt) return -1
     else if(!b.completedAt && a.completedAt) return 1
@@ -45,14 +39,14 @@ function Tasks({ directionId, directionName } : TasksProps) {
   if (createdBy.length > 0) {
     tasksToShow = tasksToShow.filter((i) => createdBy.includes(i.createdBy.id));
   }
-  if (!future || future == "0"){
+  if (!future || future === "0"){
     //console.log("show no future");
     tasksToShow = tasksToShow.filter(
       (i) => i.startAt < new Date().toISOString()
     );
   }
   const direction = useAppSelector((store) => store.directions.items).filter(
-    (d) => d.id == directionId
+    (d) => d.id === directionId
   )[0];
   useEffect(() => {
     //console.log(tasksToShow);

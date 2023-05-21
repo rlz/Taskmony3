@@ -1,8 +1,7 @@
 import { Dispatch } from "redux";
-import { checkResponse, getAccessToken, nowDate } from "../../utils/APIUtils";
+import { checkResponse, getAccessToken, nowDate } from "../../utils/api-utils";
 import Cookies from "js-cookie";
-import { BASE_URL } from "../../utils/data";
-import { useAppSelector } from "../../utils/hooks";
+import { BASE_URL } from "../../utils/base-api-url";
 import { tasksAllQuery } from "../../utils/queries";
 import { TDirection, TTask } from "../../utils/types";
 export const GET_TASKS_REQUEST = "GET_TASKS_REQUEST";
@@ -62,8 +61,8 @@ export const CHANGE_TASKS_DESCRIPTION_SUCCESS =
 export const CHANGE_TASKS_DIRECTION_SUCCESS = "CHANGE_TASKS_DIRECTION_SUCCESS";
 export const CHANGE_TASKS_DETAILS_SUCCESS = "CHANGE_TASKS_DETAILS_SUCCESS";
 export const CHANGE_TASKS_ASSIGNEE_SUCCESS = "CHANGE_TASKS_ASSIGNEE_SUCCESS";
-export const CHANGE_TASKS_START_DATE_SUCCESS =
-  "CHANGE_TASKS_START_DATE_SUCCESS";
+export const CHANGE_TASK_START_DATE_SUCCESS =
+  "CHANGE_TASK_START_DATE_SUCCESS";
 export const CHANGE_TASK_REPEAT_MODE_FROM_NONE_SUCCESS =
   "CHANGE_TASK_REPEAT_MODE_FROM_NONE_SUCCESS";
 export const CHANGE_TASK_REPEAT_MODE_FROM_REPEATED_SUCCESS =
@@ -541,26 +540,26 @@ export function changeTaskAssignee(
   };
 }
 
-function getGroupId(id: string) {
-  return getAccessToken()
-    .then((cookie) =>
-      fetch(URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + Cookies.get("accessToken"),
-        },
-        body: JSON.stringify({
-          query: `{tasks(id:"${id}") {id,groupId}}
-  `,
-        }),
-      })
-    )
-    .then(checkResponse)
-    .then((res) => {
-      return res.data.tasks[0].groupId;
-    });
-}
+// function getGroupId(id: string) {
+//   return getAccessToken()
+//     .then((cookie) =>
+//       fetch(URL, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: "Bearer " + Cookies.get("accessToken"),
+//         },
+//         body: JSON.stringify({
+//           query: `{tasks(id:"${id}") {id,groupId}}
+//   `,
+//         }),
+//       })
+//     )
+//     .then(checkResponse)
+//     .then((res) => {
+//       return res.data.tasks[0].groupId;
+//     });
+// }
 
 function getTasksById(ids: Array<string>) {
   return getAccessToken()
@@ -613,7 +612,7 @@ export function changeTaskRepeatMode(
           ? ""
           : `,repeatEvery:${repeatEvery ? repeatEvery : 1},repeatUntil:"${repeatUntil}"`
       }
-      ${repeatMode == "WEEK" ? `,weekDays:[${weekDays ? weekDays : `MONDAY`}]` : ""}) }
+      ${repeatMode === "WEEK" ? `,weekDays:[${weekDays ? weekDays : `MONDAY`}]` : ""}) }
     `,
           }),
         })

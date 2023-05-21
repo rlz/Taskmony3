@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { SideMenu } from "../side-menu/side-menu";
+import { useEffect, useState } from "react";
+import { SideMenu } from "../other-components/side-menu/side-menu";
 import {
   BrowserRouter,
   Routes,
   Route,
-  Link,
   Navigate,
   Outlet,
   useNavigate,
 } from "react-router-dom";
-import MyTasks from "../../pages/my-tasks/my-tasks";
-import MyIdeas from "../../pages/my-ideas/my-ideas";
+import MyTasks from "../../pages/my-tasks";
+import MyIdeas from "../../pages/my-ideas";
 import Archive from "../../pages/archive/archive";
-import ErrorPage from "../../pages/error-page/error-page";
 import { Login } from "../../pages/auth/login";
 import Direction from "../../pages/direction/direction";
-import { NotificationsBtn } from "../notifications/notifications-btn";
-import { NotificationsModal } from "../notifications/notifications-modal";
-import { AddDirectionModal } from "../add-direction-modal/add-direction-modal";
+import { NotificationsBtn } from "../other-components/notifications/notifications-btn";
+import { NotificationsModal } from "../other-components/notifications/notifications-modal";
 import { ForgotPassword } from "../../pages/auth/forgot-password";
 import { Register } from "../../pages/auth/register";
 import { ResetPassword } from "../../pages/auth/reset-password";
@@ -27,7 +24,6 @@ import { getDirections } from "../../services/actions/directionsAPI";
 import { getUserInfo } from "../../services/actions/userInfo";
 import { getNotifications } from "../../services/actions/notifications";
 import Cookies from 'js-cookie';
-import { refreshToken } from "../../services/actions/auth/refreshToken";
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { getIdeas } from "../../services/actions/ideasAPI";

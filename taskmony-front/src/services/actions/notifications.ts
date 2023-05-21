@@ -1,7 +1,6 @@
 import { Dispatch } from "redux";
-import { checkResponse, getAccessToken } from "../../utils/APIUtils";
-import Cookies from 'js-cookie';
-import { BASE_URL } from "../../utils/data";
+import { checkResponse, getAccessToken } from "../../utils/api-utils";
+import { BASE_URL } from "../../utils/base-api-url";
 import { notificationsAllQuery } from "../../utils/queries";
 export const GET_NOTIFICATIONS_REQUEST = "GET_NOTIFICATIONS_REQUEST";
 export const GET_NOTIFICATIONS_SUCCESS = "GET_NOTIFICATIONS_SUCCESS";

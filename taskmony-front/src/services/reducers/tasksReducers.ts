@@ -1,6 +1,4 @@
-import { iteratorSymbol } from "immer/dist/internal";
-import { isTemplateSpan } from "typescript";
-import { nowDate } from "../../utils/APIUtils";
+import { nowDate } from "../../utils/api-utils";
 import { TTask } from "../../utils/types";
 import { SEND_COMMENT_SUCCESS } from "../actions/comments";
 import {
@@ -11,32 +9,22 @@ import {
   CHANGE_COMPLETE_TASK_DATE_SUCCESS,
   CHANGE_OPEN_TASK,
   CHANGE_TASK,
-  CHANGE_TASKS,
   CHANGE_TASKS_ASSIGNEE_SUCCESS,
   CHANGE_TASKS_DESCRIPTION_SUCCESS,
   CHANGE_TASKS_DETAILS_SUCCESS,
   CHANGE_TASKS_DIRECTION_SUCCESS,
   CHANGE_TASK_ASSIGNEE,
-  CHANGE_TASK_ASSIGNEE_SUCCESS,
   CHANGE_TASK_DESCRIPTION,
-  CHANGE_TASK_DESCRIPTION_SUCCESS,
   CHANGE_TASK_DETAILS,
-  CHANGE_TASK_DETAILS_SUCCESS,
   CHANGE_TASK_DIRECTION,
-  CHANGE_TASK_DIRECTION_SUCCESS,
   CHANGE_TASK_FOLLOWED_SUCCESS,
   CHANGE_TASK_GROUP_ID,
   CHANGE_TASK_REPEAT_EVERY,
-  CHANGE_TASK_REPEAT_EVERY_SUCCESS,
   CHANGE_TASK_REPEAT_MODE,
   CHANGE_TASK_REPEAT_MODE_FROM_NONE_SUCCESS,
-  CHANGE_TASK_REPEAT_MODE_SUCCESS,
   CHANGE_TASK_REPEAT_UNTIL,
-  CHANGE_TASK_REPEAT_UNTIL_SUCCESS,
   CHANGE_TASK_REPEAT_WEEK_DAYS,
-  CHANGE_TASK_REPEAT_WEEK_DAYS_SUCCESS,
   CHANGE_TASK_START_DATE,
-  CHANGE_TASK_START_DATE_SUCCESS,
   DELETE_TASKS_SUCCESS,
   DELETE_TASK_SUCCESS,
   GET_TASKS_FAILED,
@@ -65,16 +53,47 @@ export const tasksInitialState = {
 export const tasksReducer = (
   state: TTasksState = tasksInitialState,
   action:
-    | { type: typeof GET_TASKS_SUCCESS; items: Array<TTask> }
+    | { type: typeof GET_TASKS_SUCCESS | typeof ADD_TASKS; items: Array<TTask> }
     | { type: typeof DELETE_TASK_SUCCESS; taskId: string; date: string }
     | { type: typeof DELETE_TASKS_SUCCESS; groupId: string; date: string }
-    | { type: typeof CHANGE_TASK_REPEAT_MODE_SUCCESS; taskId: string, payload: string, groupId: string }
-    | { type: typeof CHANGE_TASKS_DESCRIPTION_SUCCESS; groupId: string; payload: string }
-    | { type: typeof CHANGE_TASKS_DETAILS_SUCCESS; groupId: string; payload: string }
-    | { type: typeof CHANGE_TASKS_DIRECTION_SUCCESS; groupId: string; payload: {id:string,name:string} }
-    | { type: typeof CHANGE_TASKS_ASSIGNEE_SUCCESS; groupId: string; payload: {id:string,displayName:string} }
+    | {
+        type: typeof CHANGE_TASKS_DESCRIPTION_SUCCESS;
+        groupId: string;
+        payload: string;
+      }
+      | {
+        type: typeof REMOVE_TASK;
+        id: string;
+      }
+      | {
+        type: typeof CHANGE_TASK_REPEAT_MODE_FROM_NONE_SUCCESS;
+        groupId: string;
+        taskId: string;
+        payload: string;
+      }
+      
+      | {
+        type: typeof REMOVE_TASKS;
+        groupId: string;
+        except: string;
+      }
+    | {
+        type: typeof CHANGE_TASKS_DETAILS_SUCCESS;
+        groupId: string;
+        payload: string;
+      }
+    | {
+        type: typeof CHANGE_TASKS_DIRECTION_SUCCESS;
+        groupId: string;
+        payload: { id: string; name: string };
+      }
+    | {
+        type: typeof CHANGE_TASKS_ASSIGNEE_SUCCESS;
+        groupId: string;
+        payload: { id: string; displayName: string };
+      }
     | { type: typeof ADD_TASK_SUCCESS; task: TTask }
-    | { type: typeof CHANGE_TASK; task: TTask, id: string }
+    | { type: typeof CHANGE_TASK; task: TTask; id: string }
     | {
         type: typeof CHANGE_COMPLETE_TASK_DATE_SUCCESS;
         taskId: string;
@@ -112,7 +131,7 @@ export const tasksReducer = (
     case ADD_TASKS: {
       return {
         ...state,
-        items: [...action.items.reverse(),...state.items],
+        items: [...action.items.reverse(), ...state.items],
       };
     }
     case GET_TASKS_FAILED: {
@@ -127,23 +146,21 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.id ? {...action.task} : item
+          item.id === action.id ? { ...action.task } : item
         ),
       };
     }
     case REMOVE_TASK: {
       return {
         ...state,
-        items: state.items.filter((item) =>
-          item.id != action.id 
-        ),
+        items: state.items.filter((item) => item.id !== action.id),
       };
     }
     case REMOVE_TASKS: {
       return {
         ...state,
-        items: state.items.filter((item) =>
-          item.groupId != action.groupId || item.id == action.except
+        items: state.items.filter(
+          (item) => item.groupId !== action.groupId || item.id === action.except
         ),
       };
     }
@@ -151,7 +168,7 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.taskId
+          item.id === action.taskId
             ? { ...item, completedAt: action.date }
             : item
         ),
@@ -161,12 +178,12 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.taskId
+          item.id === action.taskId
             ? {
                 ...item,
                 subscribers: action.followed
                   ? [...item.subscribers, { id: action.userId }]
-                  : item.subscribers.filter((s) => s.id != action.userId),
+                  : item.subscribers.filter((s) => s.id !== action.userId),
               }
             : item
         ),
@@ -198,7 +215,7 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.taskId ? { ...item, deletedAt: action.date } : item
+          item.id === action.taskId ? { ...item, deletedAt: action.date } : item
         ),
       };
     }
@@ -206,7 +223,9 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.groupId == action.groupId ? { ...item, deletedAt: action.date } : item
+          item.groupId === action.groupId
+            ? { ...item, deletedAt: action.date }
+            : item
         ),
       };
     }
@@ -214,7 +233,9 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.taskId ? { ...item, groupId: action.groupId, repeatMode:action.payload } : item
+          item.id === action.taskId
+            ? { ...item, groupId: action.groupId, repeatMode: action.payload }
+            : item
         ),
       };
     }
@@ -222,7 +243,9 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.groupId == action.groupId ? { ...item, description: action.payload } : item
+          item.groupId === action.groupId
+            ? { ...item, description: action.payload }
+            : item
         ),
       };
     }
@@ -230,7 +253,9 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.groupId == action.groupId ? { ...item, details: action.payload } : item
+          item.groupId === action.groupId
+            ? { ...item, details: action.payload }
+            : item
         ),
       };
     }
@@ -238,7 +263,9 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.groupId == action.groupId ? { ...item, direction: action.payload } : item
+          item.groupId === action.groupId
+            ? { ...item, direction: action.payload }
+            : item
         ),
       };
     }
@@ -246,7 +273,9 @@ export const tasksReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.groupId == action.groupId ? { ...item, assignee: action.payload } : item
+          item.groupId === action.groupId
+            ? { ...item, assignee: action.payload }
+            : item
         ),
       };
     }
@@ -258,7 +287,7 @@ export const tasksReducer = (
 
 export const taskInitialState: TTask = {
   id: "",
-  groupId:"",
+  groupId: "",
   description: "",
   completedAt: null,
   deletedAt: null,
@@ -366,7 +395,7 @@ export const editTaskReducer = (
       return { ...state, groupId: action.payload };
     }
     case CHANGE_COMPLETE_TASK_DATE_SUCCESS: {
-      if (action.taskId == state.id)
+      if (action.taskId === state.id)
         return { ...state, completedAt: action.date };
       return state;
     }

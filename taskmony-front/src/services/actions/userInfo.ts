@@ -1,9 +1,7 @@
-import { checkResponse, getAccessToken } from "../../utils/APIUtils";
-import { BASE_URL } from "../../utils/data";
-import Cookies from 'js-cookie';
+import { checkResponse, getAccessToken } from "../../utils/api-utils";
+import { BASE_URL } from "../../utils/base-api-url";
 import { refreshToken } from "./auth/refreshToken";
-import { AnyAction, Dispatch } from "redux";
-import { userAllQuery } from "../../utils/queries";
+import { Dispatch } from "redux";
 
 const URL = BASE_URL + "/graphql";
 
@@ -34,7 +32,7 @@ export function getUserInfo() {
       }),
     }))
       .then((data) => {
-        if (data.status == 401 || data.status == 403) {
+        if (data.status === 401 || data.status === 403) {
           dispatch(refreshToken());
           return false;
         }

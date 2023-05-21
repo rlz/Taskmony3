@@ -1,6 +1,3 @@
-import { iteratorSymbol } from "immer/dist/internal";
-import { isTemplateSpan } from "typescript";
-import { nowDate } from "../../utils/APIUtils";
 import { TIdea } from "../../utils/types";
 import { SEND_COMMENT_SUCCESS } from "../actions/comments";
 import {
@@ -11,11 +8,8 @@ import {
   CHANGE_OPEN_IDEA,
   CHANGE_IDEAS,
   CHANGE_IDEA_DESCRIPTION,
-  CHANGE_IDEA_DESCRIPTION_SUCCESS,
   CHANGE_IDEA_DETAILS,
-  CHANGE_IDEA_DETAILS_SUCCESS,
   CHANGE_IDEA_DIRECTION,
-  CHANGE_IDEA_DIRECTION_SUCCESS,
   CHANGE_IDEA_FOLLOWED_SUCCESS,
   DELETE_IDEA_SUCCESS,
   GET_IDEAS_FAILED,
@@ -100,7 +94,7 @@ export const ideasReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.idea.id ? action.idea : item
+          item.id === action.idea.id ? action.idea : item
         ),
       };
     }
@@ -108,7 +102,7 @@ export const ideasReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.ideaId
+          item.id === action.ideaId
             ? { ...item, completedAt: action.date }
             : item
         ),
@@ -118,7 +112,7 @@ export const ideasReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.ideaId ? { ...item, reviewedAt: action.date } : item
+          item.id === action.ideaId ? { ...item, reviewedAt: action.date } : item
         ),
       };
     }
@@ -126,12 +120,12 @@ export const ideasReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.ideaId
+          item.id === action.ideaId
             ? {
                 ...item,
                 subscribers: action.followed
                   ? [...item.subscribers, { id: action.userId }]
-                  : item.subscribers.filter((s) => s.id != action.userId),
+                  : item.subscribers.filter((s) => s.id !== action.userId),
               }
             : item
         ),
@@ -163,7 +157,7 @@ export const ideasReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.ideaId ? { ...item, deletedAt: action.date } : item
+          item.id === action.ideaId ? { ...item, deletedAt: action.date } : item
         ),
       };
     }

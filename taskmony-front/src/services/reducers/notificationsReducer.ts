@@ -49,7 +49,7 @@ export const notificationsReducer = (
       let lastNotif = Cookies.get("lastNotification");
       let lastOldIndex = 0;
       action.notifications.map((notif, index) => {
-        if (notif.id == lastNotif) lastOldIndex = index;
+        if (notif.id === lastNotif) lastOldIndex = index;
       });
       return {
         ...state,

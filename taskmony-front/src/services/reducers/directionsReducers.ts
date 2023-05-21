@@ -1,6 +1,5 @@
-import { iteratorSymbol } from "immer/dist/internal";
-import { isTemplateSpan } from "typescript";
-import { TDirection, TTask } from "../../utils/types";
+
+import { TDirection } from "../../utils/types";
 import {
   ADD_DIRECTION_FAILED,
   ADD_DIRECTION_REQUEST,
@@ -153,7 +152,7 @@ export const directionsReducer = (
     case REMOVE_DIRECTION: {
       return {
         ...state,
-        items: state.items.filter((item) => item.id != action.directionId),
+        items: state.items.filter((item) => item.id !== action.directionId),
       };
     }
     case ADD_USER_REQUEST: {
@@ -166,7 +165,7 @@ export const directionsReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.directionId
+          item.id === action.directionId
             ? { ...item, members: [...item.members, action.user] }
             : item
         ),
@@ -193,7 +192,7 @@ export const directionsReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.directionId
+          item.id === action.directionId
             ? { ...item, deletedAt: action.deletedAt }
             : item
         ),
@@ -218,10 +217,10 @@ export const directionsReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.directionId
+          item.id === action.directionId
             ? {
                 ...item,
-                members: item.members.filter((mem) => mem.id != action.user.id),
+                members: item.members.filter((mem) => mem.id !== action.user.id),
               }
             : item
         ),
@@ -246,7 +245,7 @@ export const directionsReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id == action.directionId
+          item.id === action.directionId
             ? { ...item, details: action.details }
             : item
         ),

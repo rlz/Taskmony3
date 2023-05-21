@@ -1,12 +1,8 @@
-import { useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
-import { ArchivedItem } from "../../components/archived-item";
-import { FilterByDate } from "../../components/filter/by-date";
-import { FilterByDirection } from "../../components/filter/by-direction";
-import { FilterByArchivedTaskType } from "../../components/filter/by-task-type";
-import { FilterDivider } from "../../components/filter/filter-divider";
-import { FilterItem } from "../../components/filter/filter-item";
-import { Idea } from "../../components/idea";
+import { useSearchParams } from "react-router-dom";
+import { ArchivedItem } from "../../components/task-idea/archived-item";
+import { FilterByDate } from "../../components/other-components/filter/by-date";
+import { FilterByDirection } from "../../components/other-components/filter/by-direction";
+import { FilterByArchivedTaskType } from "../../components/other-components/filter/by-task-type";
 import { useAppSelector } from "../../utils/hooks";
 
 export const ArchivedTasks = () => {

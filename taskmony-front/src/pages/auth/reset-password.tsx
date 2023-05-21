@@ -1,10 +1,9 @@
 import { NavLink } from "react-router-dom";
-import deleteI from "../../images/delete.svg";
 import { Btn } from "./btn";
 import { Input } from "./input";
-import { TaskmonyTitle } from "../../components/taskmony-title";
-import React, { useState, useEffect, FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { TaskmonyTitle } from "../../components/other-components/taskmony-title";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { changePassword } from "../../services/actions/auth/resetPassword";
 import { useAppDispatch, useAppSelector } from "../../utils/hooks";
 
@@ -13,10 +12,10 @@ export const ResetPassword = () => {
   const dispatch = useAppDispatch();
   const [password, setPassword] = React.useState<string>("");
   const [code, setCode] = React.useState<string>("");
-  const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
-  const loading = useAppSelector(
-    (store) => store.resetPassword.change_password_loading
-  );
+  // const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
+  // const loading = useAppSelector(
+  //   (store) => store.resetPassword.change_password_loading
+  // );
   const error = useAppSelector(
     (store) => store.resetPassword.change_password_error
   );

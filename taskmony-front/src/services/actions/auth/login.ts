@@ -1,5 +1,5 @@
-import { checkResponse, getErrorMessages } from "../../../utils/APIUtils";
-import { BASE_URL } from "../../../utils/data";
+import { getErrorMessages } from "../../../utils/api-utils";
+import { BASE_URL } from "../../../utils/base-api-url";
 import Cookies from "js-cookie";
 import { Dispatch } from "redux";
 
@@ -24,7 +24,7 @@ export function login(login: string, password: string) {
     })
       .then(async (res) => {
         let data = await res.json();      
-        if (res.status != 200) throw new Error(getErrorMessages(data));
+        if (res.status !== 200) throw new Error(getErrorMessages(data));
         else return data;
       })
       .then((res) => {

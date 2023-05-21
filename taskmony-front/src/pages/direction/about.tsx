@@ -1,9 +1,8 @@
 import deleteI from "../../images/delete.svg";
-import edit from "../../images/edit.svg";
-import { AddBtn2 } from "../../components/add-btn/add-btn2";
-import { FilterDivider } from "../../components/filter/filter-divider";
+import { AddBtn2 } from "../../components/other-components/buttons/add-btn2";
+import { FilterDivider } from "../../components/other-components/filter/filter-divider";
 import { useEffect, useState } from "react";
-import { AddUserModal } from "../../components/add-user-modal/add-user-modal";
+import { AddUserModal } from "../../components/other-components/modals/add-user-modal";
 import useIsFirstRender, {
   useAppDispatch,
   useAppSelector,
@@ -25,7 +24,7 @@ export const About = ({ directionId } : AboutProps) => {
   const dispatch = useAppDispatch();
   const myId = Cookies.get("id");
   const directions = useAppSelector((store) => store.directions.items);
-  const direction = directions.filter((d) => d.id == directionId)[0];
+  const direction = directions.filter((d) => d.id === directionId)[0];
   const [about, setAbout] = useState("");
   const users = direction?.members;
   const navigate = useNavigate();
@@ -54,7 +53,7 @@ export const About = ({ directionId } : AboutProps) => {
       return;
     }
     //remove yourself
-    dispatch(removeUser(directionId, { id: myId }));
+    if (myId) dispatch(removeUser(directionId, { id: myId }));
     //remove from list
     dispatch({
       type: REMOVE_DIRECTION,
@@ -94,7 +93,7 @@ export const About = ({ directionId } : AboutProps) => {
       {isOpen && (
         <>
           {users?.map((user) =>
-            myId == user.id ? null : (
+            myId === user.id ? null : (
               <User
                 label={user.displayName}
                 key={user.id}
@@ -128,7 +127,7 @@ export const User = ({ label, onClick }: UserPropsT) => {
     >
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
-          <img src={deleteI} className="cursor-pointer"></img>
+          <img src={deleteI} alt="" className="cursor-pointer"></img>
           <span className={"font-semibold text-sm"}>{label}</span>
         </div>
       </div>

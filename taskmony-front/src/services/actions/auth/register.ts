@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
-import { checkResponse, getErrorMessages } from "../../../utils/APIUtils";
+import { getErrorMessages } from "../../../utils/api-utils";
 import Cookies from 'js-cookie';
-import { BASE_URL } from "../../../utils/data";
+import { BASE_URL } from "../../../utils/base-api-url";
 
 export const REGISTER_REQUEST = "REGISTER_REQUEST";
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
@@ -26,7 +26,7 @@ export function register(email: string, password: string, displayName: string, l
     })
     .then(async (res) => {
       let data = await res.json();      
-      if (res.status != 200) throw new Error(getErrorMessages(data));
+      if (res.status !== 200) throw new Error(getErrorMessages(data));
       else return data;
     })
       .then((res) => {

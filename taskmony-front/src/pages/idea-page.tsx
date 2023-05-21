@@ -1,13 +1,11 @@
 import backI from "../images/arrow-left.svg";
-import arrowUp from "../images/arrow-up.svg";
 import { useEffect, useRef } from "react";
-import arrowUpGray from "../images/arrow-up-gray.svg";
 import useIsFirstRender, { useAppDispatch, useAppSelector } from "../utils/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Description } from "../components/edited/edited-idea/description";
-import { About } from "../components/edited/edited-idea/about";
-import { Details } from "../components/edited/edited-idea/idea-details";
-import { Comments } from "../components/edited/comments/comments";
+import { Description } from "../components/task-idea/idea/open-idea/description";
+import { About } from "../components/task-idea/idea/open-idea/about";
+import { Details } from "../components/task-idea/idea/open-idea/idea-details";
+import { Comments } from "../components/task-idea/open-items-components/comments/comments";
 import { sendIdeaComment } from "../services/actions/comments";
 import { CHANGE_OPEN_IDEA } from "../services/actions/ideasAPI";
 
@@ -18,7 +16,7 @@ export const IdeaPage = () => {
  
   return (
     <>
-      <img src={backI} className={`w-4 m-5 cursor-pointer ${!from?'invisible':''}`} onClick={() => {if(from) navigate(from)}}/>
+      <img src={backI} alt="" className={`w-4 m-5 cursor-pointer ${!from?'invisible':''}`} onClick={() => {if(from) navigate(from)}}/>
       <IdeaInfo save={undefined} />
     </>
   );
@@ -32,7 +30,7 @@ type IdeaProps = {
   recurrent?: boolean;
   createdBy?: string;
   direction?: string;
-  save: Function;
+  save?: Function;
   close?: Function;
   changeCheck?: Function;
   deleteIdea?: Function;
@@ -50,11 +48,9 @@ const IdeaInfo = ({
     const isFirst = useIsFirstRender();
     const ideaId = location.pathname.split("/")[2];
     const ideas = useAppSelector((store) => store.ideas.items);
-    const myIdeas = ideas.filter(i=> i.id == ideaId)
+    const myIdeas = ideas.filter(i=> i.id === ideaId)
     if(myIdeas[0]) dispatch({type: CHANGE_OPEN_IDEA, idea: myIdeas[0]});
   const idea = useAppSelector((store) => store.editedIdea);
-  const navigate = useNavigate();
-  const closeBtn = useRef(null);
   const saveBtn = useRef(null);
   const onKeyPress = (event: any) => {
     if (event.key === "Escape") {
@@ -73,7 +69,7 @@ const IdeaInfo = ({
       document.removeEventListener("keydown", onKeyPress);
     };
   }, []);
-  if(isFirst && idea.id == "")
+  if(isFirst && idea.id === "")
   return(
     <div className="flex items-center justify-center mt-8">
     </div>
@@ -93,7 +89,7 @@ const IdeaInfo = ({
       <Details fromDirection={direction} />
       {idea.id && (
         <Comments
-          send={(input) => {
+          send={(input : string) => {
             dispatch(sendIdeaComment(idea.id, input));
           }}
           comments={idea.comments}

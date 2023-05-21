@@ -44,11 +44,7 @@ export type TIdea = {
       id: string;
       displayName: string;
      }
-    comments: Array<{
-     text: string;
-     createdAt: string;
-     createdBy: { displayName: string; } 
-    }>
+    comments: Array<TComment>
 }
 export type TDirection = {
   id: string;

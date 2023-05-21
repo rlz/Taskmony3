@@ -1,8 +1,7 @@
 import { Dispatch } from "redux";
-import { checkResponse, getAccessToken } from "../../utils/APIUtils";
+import { checkResponse, getAccessToken } from "../../utils/api-utils";
 import Cookies from 'js-cookie';
-import { BASE_URL } from "../../utils/data";
-import { useAppSelector } from "../../utils/hooks";
+import { BASE_URL } from "../../utils/base-api-url";
 
 export const SEND_COMMENT_REQUEST = "SEND_COMMENT_REQUEST";
 export const SEND_COMMENT_SUCCESS = "SEND_COMMENT_SUCCESS";

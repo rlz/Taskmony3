@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   NavLink,
-  useLoaderData,
   useLocation,
   useNavigate,
 } from "react-router-dom";
@@ -10,17 +9,14 @@ import { Archive } from "./archive";
 import { About } from "./about";
 import Ideas from "./ideas";
 import Tasks from "./tasks";
-import { ArchivedTasks } from "../archive/archived-tasks";
-import { ArchivedIdeas } from "../archive/archived-ideas";
 
 function Direction() {
   const loc = useLocation();
   const navigate = useNavigate();
   const type = loc.pathname.split("/")[3];
   const directionId = loc.pathname.split("/")[2];
-  const archiveType = loc.pathname.split("/")[4];
   const directions = useAppSelector((store) => store.directions.items);
-  const direction = directions.filter((dir) => dir.id == directionId)[0];
+  const direction = directions.filter((dir) => dir.id === directionId)[0];
   const renderSwitch = (type?: string) => {
     switch (type) {
       case "about":
@@ -78,30 +74,30 @@ const MenuItem = ({ link, label }: MenuItemT) => {
     </NavLink>
   );
 };
-type BigMenuItemT = {
-  link: string;
-  label: string;
-  items : Array<MenuItemT>;
-};
+// type BigMenuItemT = {
+//   link: string;
+//   label: string;
+//   items : Array<MenuItemT>;
+// };
 
-const BigMenuItem = ({ link, label, items } : BigMenuItemT) => {
-  const activeStyle = "underline underline-offset-8 text-blue-500";
-  const unactiveStyle = "text-gray-300";
-  return (
-    <div>
-      <NavLink
-        to={link}
-        className={({ isActive }) => (isActive ? activeStyle : unactiveStyle)}
-      >
-        <p className={`font-semibold text-sm`}>{label}</p>
-      </NavLink>
-      <div className="flex gap-6 mt-2">
-        {items.map((item) => (
-          <MenuItem link={item.link} label={item.label} />
-        ))}
-      </div>
-    </div>
-  );
-};
+// const BigMenuItem = ({ link, label, items } : BigMenuItemT) => {
+//   const activeStyle = "underline underline-offset-8 text-blue-500";
+//   const unactiveStyle = "text-gray-300";
+//   return (
+//     <div>
+//       <NavLink
+//         to={link}
+//         className={({ isActive }) => (isActive ? activeStyle : unactiveStyle)}
+//       >
+//         <p className={`font-semibold text-sm`}>{label}</p>
+//       </NavLink>
+//       <div className="flex gap-6 mt-2">
+//         {items.map((item) => (
+//           <MenuItem link={item.link} label={item.label} />
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
 
 export default Direction;

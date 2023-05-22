@@ -143,7 +143,7 @@ public sealed class TaskRepository : BaseRepository<Models.Tasks.Task>, ITaskRep
         await Context.SaveChangesAsync();
     }
 
-    public async Task HardDeleteSoftDeletedTasksWithChildren(DateTime deletedBeforeOrAt)
+    public async Task HardDeleteSoftDeletedTasksWithChildrenAsync(DateTime deletedBeforeOrAt)
     {
         // Comments are deleted with cascade
         await Context.Tasks

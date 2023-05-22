@@ -22,7 +22,7 @@ public interface ICommentRepository
 
     Task UndeleteIdeaCommentsAsync(IEnumerable<Guid> ideaIds, DateTime deletedAt);
 
-    Task HardDeleteSoftDeletedComments(DateTime deletedBeforeOrAt);
+    Task HardDeleteSoftDeletedCommentsAsync(DateTime deletedBeforeOrAt);
 
     Task<bool> SaveChangesAsync();
 }

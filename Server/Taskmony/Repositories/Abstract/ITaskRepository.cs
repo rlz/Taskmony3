@@ -45,7 +45,7 @@ public interface ITaskRepository
 
     void Delete(Models.Tasks.Task task);
 
-    Task HardDeleteSoftDeletedTasksWithChildren(DateTime deletedBeforeOrAt);
+    Task HardDeleteSoftDeletedTasksWithChildrenAsync(DateTime deletedBeforeOrAt);
 
     Task<bool> SaveChangesAsync();
 }

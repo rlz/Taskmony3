@@ -124,7 +124,7 @@ public sealed class CommentRepository : BaseRepository<Comment>, ICommentReposit
         await Context.SaveChangesAsync();
     }
 
-    public async Task HardDeleteSoftDeletedComments(DateTime deletedBeforeOrAt)
+    public async Task HardDeleteSoftDeletedCommentsAsync(DateTime deletedBeforeOrAt)
     {
         await Context.Comments
             .Where(c => c.DeletedAt != null && c.DeletedAt.Value <= deletedBeforeOrAt)

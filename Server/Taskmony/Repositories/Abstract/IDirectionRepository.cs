@@ -30,7 +30,5 @@ public interface IDirectionRepository
 
     void Delete(Direction direction);
 
-    Task HardDeleteSoftDeletedDirectionsWithChildren(DateTime deletedBeforeOrAt);
-
     Task<bool> SaveChangesAsync();
 }

@@ -32,9 +32,9 @@ public class DeleteRecordsJob : IJob
 
         var deletedBeforeOrAt = DateTime.UtcNow.AddDays(-_options.DeleteAfterDays.GetValueOrDefault(30));
 
-        await _directionRepository.HardDeleteSoftDeletedDirectionsWithChildren(deletedBeforeOrAt);
-        await _taskRepository.HardDeleteSoftDeletedTasksWithChildren(deletedBeforeOrAt);
-        await _ideaRepository.HardDeleteSoftDeletedIdeasWithChildren(deletedBeforeOrAt);
-        await _commentRepository.HardDeleteSoftDeletedComments(deletedBeforeOrAt);
+        // Directions are not deleted to keep completed tasks
+        await _taskRepository.HardDeleteSoftDeletedTasksWithChildrenAsync(deletedBeforeOrAt);
+        await _ideaRepository.HardDeleteSoftDeletedIdeasWithChildrenAsync(deletedBeforeOrAt);
+        await _commentRepository.HardDeleteSoftDeletedCommentsAsync(deletedBeforeOrAt);
     }
 }

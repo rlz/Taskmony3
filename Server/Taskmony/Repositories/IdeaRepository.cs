@@ -105,7 +105,7 @@ public sealed class IdeaRepository : BaseRepository<Idea>, IIdeaRepository
         await Context.SaveChangesAsync();
     }
 
-    public async Task HardDeleteSoftDeletedIdeasWithChildren(DateTime deletedBeforeOrAt)
+    public async Task HardDeleteSoftDeletedIdeasWithChildrenAsync(DateTime deletedBeforeOrAt)
     {
         // Comments are deleted with cascade
         await Context.Ideas

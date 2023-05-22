@@ -125,12 +125,4 @@ public sealed class DirectionRepository : BaseRepository<Direction>, IDirectionR
     {
         Context.Memberships.Remove(membership);
     }
-
-    public async Task HardDeleteSoftDeletedDirectionsWithChildren(DateTime deletedBeforeOrAt)
-    {
-        // Tasks, ideas and comments are deleted with cascade
-        await Context.Directions
-            .Where(d => d.DeletedAt != null && d.DeletedAt.Value <= deletedBeforeOrAt)
-            .ExecuteDeleteAsync();
-    }
 }

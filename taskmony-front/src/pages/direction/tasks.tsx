@@ -30,7 +30,10 @@ function Tasks({ directionId, directionName } : TasksProps) {
     },[task.id])
   let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
     (t) => t.deletedAt == null && t.direction?.id === directionId
-  ).sort((a, b) => {
+  )
+  .sort((a,b)=>{
+    return a.startAt.slice(0,10).localeCompare(b.startAt.slice(0,10))})
+  .sort((a, b) => {
     if(!a.completedAt && b.completedAt) return -1
     else if(!b.completedAt && a.completedAt) return 1
     else if(!b.completedAt && !a.completedAt) return 0

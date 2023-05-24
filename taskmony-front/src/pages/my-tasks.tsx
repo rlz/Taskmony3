@@ -27,9 +27,12 @@ function MyTasks() {
   useEffect(()=>{
     if(task.id !== "") setNewTask(false);
     },[task.id])
-  let tasksToShow = useAppSelector((store) => store.tasks.items).sort((a,b)=>a).filter(
+  let tasksToShow = useAppSelector((store) => store.tasks.items).filter(
     (i) => i.deletedAt == null && (i.createdBy.id === myId || i.assignee?.id === myId || i.subscribers.some((s) => s.id === myId))
-  ).sort((a, b) => {
+  )
+  .sort((a,b)=>{
+    return a.startAt.slice(0,10).localeCompare(b.startAt.slice(0,10))})
+  .sort((a, b) => {
     if(!a.completedAt && b.completedAt) return -1
     else if(!b.completedAt && a.completedAt) return 1
     else if(!b.completedAt && !a.completedAt) return 0

@@ -60,6 +60,7 @@ export const About = ({ directionId } : AboutProps) => {
       directionId: directionId,
     });
     //do to start page
+    navigate("/")
   };
   const deleteThisDirection = () => {
     //setDeletedAt

@@ -14,10 +14,12 @@ export const ArchivedTasks = () => {
   let tasks = useAppSelector((store) => store.tasks.items);
   let chosenTasks;
   if (archiveType == "deleted") {
-    chosenTasks = tasks.filter((i) => i.deletedAt != null);
+    chosenTasks = tasks.filter((i) => i.deletedAt != null).sort((a,b)=>{
+      return b.deletedAt.localeCompare(a.deletedAt)});
   }
   else{
-    chosenTasks = tasks.filter((i) => i.completedAt != null);  
+    chosenTasks = tasks.filter((i) => i.completedAt != null).sort((a,b)=>{
+      return b.completedAt.localeCompare(a.completedAt)});  
   }
   if (chosenDirection.length > 0)
   chosenTasks = chosenTasks.filter(

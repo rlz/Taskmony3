@@ -18,10 +18,11 @@ export const Archive = ({ directionId } : ArchiveProps) => {
   const archiveType = loc.pathname.split("/")[4];
   const tasks = useAppSelector((store) => store.tasks.items).filter(
     (i) => (tasksType == "deleted" ? i.deletedAt != null : i.completedAt != null) && i.direction?.id == directionId
-  );
+  ).sort((a,b)=>{
+    return tasksType == "deleted"?b.deletedAt.localeCompare(a.deletedAt):b.completedAt.localeCompare(a.completedAt)});;
   const ideas = useAppSelector((store) => store.ideas.items).filter(
     (i) => i.deletedAt != null && i.direction?.id == directionId
-  );
+  ).sort((a,b)=>b.deletedAt.localeCompare(a.deletedAt));
   let items = archiveType === "tasks"? tasks : ideas;
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
@@ -39,7 +40,7 @@ export const Archive = ({ directionId } : ArchiveProps) => {
         {items.map((task) => (
           <ArchivedItem
             label={task.description}
-            date={task.deletedAt}
+            date={tasksType == "completed"?task.completedAt : task.deletedAt}
             direction={task.direction?.name}
             key={task.id}
           />

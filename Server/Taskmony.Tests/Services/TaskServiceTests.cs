@@ -787,9 +787,6 @@ public class TaskServiceTests
         var result = await _taskService.SetTaskAssigneeAsync(task.Id, assigneeId, userId);
 
         Assert.NotNull(result);
-        Assert.NotNull(task.Assignment);
-        Assert.Equal(assigneeId, task.Assignment!.AssigneeId);
-        Assert.Equal(userId, task.Assignment!.AssignedById);
 
         _mockDirectionRepository.Verify(r => r.AnyMemberWithIdAsync(direction.Id, userId), Times.Once);
         _mockDirectionRepository.Verify(r => r.AnyMemberWithIdAsync(direction.Id, assigneeId), Times.Once);
@@ -817,7 +814,6 @@ public class TaskServiceTests
         var result = await _taskService.SetTaskAssigneeAsync(task.Id, null, userId);
 
         Assert.NotNull(result);
-        Assert.Null(task.Assignment);
 
         _mockAssignmentRepository.Verify(r => r.UpdateAssignmentAsync(task, null), Times.Once);
     }

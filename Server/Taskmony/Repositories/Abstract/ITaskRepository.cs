@@ -31,7 +31,7 @@ public interface ITaskRepository
 
     Task<IEnumerable<Models.Tasks.Task>> GetTasksByGroupIdAsync(Guid groupId);
 
-    Task<IEnumerable<Models.Tasks.Task>> GetByDirectionIdAndAssigneeIdAsync(Guid directionId, Guid assigneeId);
+    Task DeleteUserAssignmentsInDirectionAsync(Guid directionId, Guid assigneeId);
 
     Task SoftDeleteDirectionTasksAndCommentsAsync(Guid directionId);
 
@@ -42,9 +42,7 @@ public interface ITaskRepository
     Task AddRangeAsync(IEnumerable<Models.Tasks.Task> tasks);
 
     void DeleteRange(IEnumerable<Models.Tasks.Task> tasks);
-
-    void Delete(Models.Tasks.Task task);
-
+    
     Task HardDeleteSoftDeletedTasksWithChildrenAsync(DateTime deletedBeforeOrAt);
 
     Task<bool> SaveChangesAsync();

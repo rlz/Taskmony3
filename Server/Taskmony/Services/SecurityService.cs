@@ -51,9 +51,9 @@ public class SecurityService : ISecurityService
         return new RefreshTokenResponse(accessToken, refreshToken);
     }
 
-    public async Task<bool> RevokeAllUserTokensAsync()
+    public async Task RevokeAllUserTokensAsync()
     {
-        return await _tokenProvider.RevokeUserRefreshTokens(_userIdentifierProvider.UserId);
+        await _tokenProvider.RevokeUserRefreshTokens(_userIdentifierProvider.UserId);
     }
 
     public async Task<bool> RevokeTokenAsync(string refreshToken)

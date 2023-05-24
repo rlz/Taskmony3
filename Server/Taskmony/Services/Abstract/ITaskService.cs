@@ -73,7 +73,7 @@ public interface ITaskService
     Task<IEnumerable<Guid>> SetRecurringTaskRepeatUntilAsync(Guid taskId, Guid groupId, DateTime repeatUntil,
         Guid currentUserId);
 
-    Task<bool> RemoveAssigneeFromDirectionTasksAsync(Guid assigneeId, Guid directionId);
+    Task RemoveAssigneeFromDirectionTasksAsync(Guid assigneeId, Guid directionId);
 
     Task SoftDeleteDirectionTasksAsync(Guid directionId);
 

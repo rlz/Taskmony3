@@ -135,7 +135,9 @@ public class UserService : IUserService
             return false;
         }
 
-        return await _tokenProvider.RevokeUserRefreshTokens(id);
+        await _tokenProvider.RevokeUserRefreshTokens(id);
+
+        return true;
     }
 
     public async Task<User> GetUserOrThrowAsync(Guid id)

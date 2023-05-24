@@ -27,7 +27,9 @@ public class AccountController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult> Register([FromBody] UserRegisterRequest request)
     {
-        return Ok(await _userService.AddUserAsync(request));
+        await _userService.AddUserAsync(request);
+
+        return NoContent();
     }
 
     [HttpPost("token/refresh")]
@@ -40,13 +42,17 @@ public class AccountController : ControllerBase
     [HttpPost("token/revoke")]
     public async Task<ActionResult> RevokeToken([FromBody] RevokeTokenRequest request)
     {
-        return Ok(await _securityService.RevokeTokenAsync(request.RefreshToken));
+        await _securityService.RevokeTokenAsync(request.RefreshToken);
+
+        return NoContent();
     }
 
     [Authorize]
     [HttpPost("token/revoke/all")]
     public async Task<ActionResult> RevokeToken()
     {
-        return Ok(await _securityService.RevokeAllUserTokensAsync());
+        await _securityService.RevokeAllUserTokensAsync();
+
+        return NoContent();
     }
 }

@@ -94,16 +94,16 @@ public sealed class TaskRepository : BaseRepository<Models.Tasks.Task>, ITaskRep
         return await Context.Tasks.Where(t => t.GroupId == groupId).ToListAsync();
     }
 
-    public async Task<IEnumerable<Models.Tasks.Task>> GetByDirectionIdAndAssigneeIdAsync(Guid directionId,
+    public async Task DeleteUserAssignmentsInDirectionAsync(Guid directionId,
         Guid assigneeId)
     {
-        var query = from t in Context.Tasks
-                    join d in Context.Directions on t.DirectionId equals d.Id
-                    join a in Context.Assignments on t.Id equals a.TaskId
-                    where d.Id == directionId && a.AssigneeId == assigneeId
-                    select t;
+        var toDelete = from t in Context.Tasks
+                       where t.DirectionId == directionId && t.DeletedAt == null && t.CompletedAt == null
+                       join a in Context.Assignments on t.Id equals a.TaskId
+                       where a.AssigneeId == assigneeId
+                       select a;
 
-        return await query.ToListAsync();
+        await toDelete.ExecuteDeleteAsync();
     }
 
     public async Task SoftDeleteDirectionTasksAndCommentsAsync(Guid directionId)

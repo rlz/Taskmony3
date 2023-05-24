@@ -19,6 +19,7 @@ public class AssignmentRepository : BaseRepository<Assignment>, IAssignmentRepos
 
     public async Task<bool> UpdateAssignmentAsync(Task task, Assignment? newAssignment)
     {
+        var anyChanges = false;
         await using var transaction = await Context.Database.BeginTransactionAsync();
 
         Context.Attach(task);
@@ -26,12 +27,17 @@ public class AssignmentRepository : BaseRepository<Assignment>, IAssignmentRepos
         if (task.Assignment != null)
         {
             Context.Remove(task.Assignment);
-            await SaveChangesAsync();
+            anyChanges = await SaveChangesAsync();
         }
 
         task.UpdateAssignment(newAssignment);
 
-        var anyChanges = await SaveChangesAsync();
+        if (task.GroupId != null)
+        {
+            task.RemoveFromGroup();
+        }
+
+        anyChanges |= await SaveChangesAsync();
 
         await transaction.CommitAsync();
 
@@ -40,6 +46,7 @@ public class AssignmentRepository : BaseRepository<Assignment>, IAssignmentRepos
 
     public async Task<bool> UpdateAssignmentAsync(IEnumerable<Task> tasks, Assignment? newAssignment)
     {
+        var anyChanges = false;
         await using var transaction = await Context.Database.BeginTransactionAsync();
 
         foreach (var task in tasks)
@@ -49,7 +56,7 @@ public class AssignmentRepository : BaseRepository<Assignment>, IAssignmentRepos
             if (task.Assignment != null)
             {
                 Context.Remove(task.Assignment);
-                await SaveChangesAsync();
+                anyChanges = await SaveChangesAsync();
             }
 
             task.UpdateAssignment(newAssignment == null
@@ -57,7 +64,7 @@ public class AssignmentRepository : BaseRepository<Assignment>, IAssignmentRepos
                 : new Assignment(newAssignment.AssigneeId, newAssignment.AssignedById));
         }
 
-        var anyChanges = await SaveChangesAsync();
+        anyChanges |= await SaveChangesAsync();
 
         await transaction.CommitAsync();
 

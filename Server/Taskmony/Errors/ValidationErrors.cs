@@ -74,4 +74,12 @@ public static class ValidationErrors
 
     public static ErrorDetails InvalidDetails =>
         new("Length of details must not be more than 16384 characters", "INVALID_DETAILS");
+
+    public static ErrorDetails RepeatUntilIsTooFarForDailyAndWeekly => new(
+        "Repeat until date must not be more than 3 years in the future for daily or weekly tasks", 
+        "REPEAT_UNTIL_IS_TOO_FAR");
+
+    public static ErrorDetails RepeatUntilIsTooFarForMonthlyAndYearly => new(
+        "Repeat until date must not be more than 100 years in the future for monthly or yearly tasks", 
+        "REPEAT_UNTIL_IS_TOO_FAR");
 }

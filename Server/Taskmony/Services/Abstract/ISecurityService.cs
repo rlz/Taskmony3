@@ -10,5 +10,5 @@ public interface ISecurityService
 
     Task<bool> RevokeTokenAsync(string refreshToken);
 
-    Task<bool> RevokeAllUserTokensAsync();
+    Task RevokeAllUserTokensAsync();
 }

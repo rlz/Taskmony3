@@ -268,7 +268,7 @@ public class TaskService : ITaskService
         var task = GetTaskFromGroupOrThrow(tasks, groupId, taskId);
 
         task.UpdateDirectionId(directionId);
-        
+
         await ValidateTaskDirection(task, currentUserId);
 
         var oldDirectionId = task.DirectionId;
@@ -288,10 +288,10 @@ public class TaskService : ITaskService
     public async Task<Guid?> SetTaskDirectionAsync(Guid taskId, Guid? directionId, Guid currentUserId)
     {
         var task = await GetTaskOrThrowAsync(taskId, currentUserId);
-        
+
         var oldDirectionId = task.DirectionId;
         task.UpdateDirectionId(directionId);
-        
+
         await ValidateTaskDirection(task, currentUserId);
 
         if (!await UpdateTaskAsync(task))
@@ -321,8 +321,6 @@ public class TaskService : ITaskService
 
         await ValidateAssignee(task, newAssignment);
         
-        task.UpdateAssignment(newAssignment);
-
         await _assignmentRepository.UpdateAssignmentAsync(tasks, newAssignment);
 
         await _notificationService.NotifyTaskAssigneeUpdatedAsync(task, oldAssigneeId, currentUserId, null);
@@ -342,18 +340,14 @@ public class TaskService : ITaskService
         }
 
         var newAssignment = assigneeId != null ? new Assignment(assigneeId.Value, currentUserId) : null;
-        
+
         await ValidateAssignee(task, newAssignment);
-        
-        task.UpdateAssignment(newAssignment);
 
         if (!await _assignmentRepository.UpdateAssignmentAsync(task, newAssignment))
         {
             return null;
         }
-
-        await UpdateTaskAsync(task);
-
+        
         await _notificationService.NotifyTaskAssigneeUpdatedAsync(task, oldAssigneeId, currentUserId, null);
 
         return task.Id;
@@ -567,7 +561,7 @@ public class TaskService : ITaskService
             return await SetRecurringTaskRepeatModeAsync(taskId, task.GroupId.Value, repeatMode, weekDays, startAt,
                 repeatUntil, repeatEvery, currentUserId);
         }
-        
+
         task.UpdateStartAt(newStartAt);
         task.UpdateRecurrencePattern(pattern);
         task.UpdateGroupId(Guid.NewGuid());
@@ -628,7 +622,7 @@ public class TaskService : ITaskService
                 createdAt: task.CreatedAt);
 
             var tasksToAdd = _recurringTaskGenerator.CreateRecurringTaskInstances(newTask, newTask.RecurrencePattern!);
-            
+
             // Remove duplicate task
             tasksToAdd.RemoveAll(t => t.StartAt == lastStartAt);
 
@@ -649,13 +643,9 @@ public class TaskService : ITaskService
         return (await _taskRepository.GetTasksByGroupIdAsync(groupId)).Select(t => t.Id);
     }
 
-    public async Task<bool> RemoveAssigneeFromDirectionTasksAsync(Guid assigneeId, Guid directionId)
+    public async System.Threading.Tasks.Task RemoveAssigneeFromDirectionTasksAsync(Guid assigneeId, Guid directionId)
     {
-        var tasks = await _taskRepository.GetByDirectionIdAndAssigneeIdAsync(directionId, assigneeId);
-
-        tasks.ToList().ForEach(t => t.UpdateAssignment(null));
-
-        return await _taskRepository.SaveChangesAsync();
+        await _taskRepository.DeleteUserAssignmentsInDirectionAsync(directionId, assigneeId);
     }
 
     public async System.Threading.Tasks.Task SoftDeleteDirectionTasksAsync(Guid directionId)

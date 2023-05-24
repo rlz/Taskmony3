@@ -192,8 +192,6 @@ public class UserServiceTests
         _mockUserRepository.Setup(r => r.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(user);
         _mockUserRepository.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
-        _mockTokenProvider.Setup(p => p.RevokeUserRefreshTokens(userId))
-            .ReturnsAsync(true);
 
         var result = await _userService.SetPasswordAsync(userId, oldPassword, password, userId);
 
@@ -223,8 +221,6 @@ public class UserServiceTests
         _mockUserRepository.Setup(r => r.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(user);
         _mockUserRepository.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
-        _mockTokenProvider.Setup(p => p.RevokeUserRefreshTokens(userId))
-            .ReturnsAsync(true);
 
         var exception = await Assert.ThrowsAsync<DomainException>(() =>
             _userService.SetPasswordAsync(userId, oldPassword, password, userId));
@@ -244,8 +240,6 @@ public class UserServiceTests
         _mockUserRepository.Setup(r => r.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(user);
         _mockUserRepository.Setup(r => r.SaveChangesAsync()).ReturnsAsync(true);
-        _mockTokenProvider.Setup(p => p.RevokeUserRefreshTokens(userId))
-            .ReturnsAsync(true);
 
         var exception = await Assert.ThrowsAsync<DomainException>(() =>
             _userService.SetPasswordAsync(userId, "oldP@55word", password, userId));

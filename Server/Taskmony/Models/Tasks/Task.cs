@@ -88,7 +88,7 @@ public class Task : DirectionEntity
 
         if (recurrencePattern != null)
         {
-            ValidateRecurrenceInterval(startAt, recurrencePattern.RepeatUntil);
+            ValidateRecurrenceInterval(recurrencePattern.RepeatMode, startAt, recurrencePattern.RepeatUntil);
         }
     }
 
@@ -129,7 +129,7 @@ public class Task : DirectionEntity
 
         if (RecurrencePattern != null)
         {
-            ValidateRecurrenceInterval(startAt, RecurrencePattern.RepeatUntil);
+            ValidateRecurrenceInterval(RecurrencePattern.RepeatMode, startAt, RecurrencePattern.RepeatUntil);
         }
 
         StartAt = startAt;
@@ -188,7 +188,7 @@ public class Task : DirectionEntity
 
         if (recurrencePattern != null)
         {
-            ValidateRecurrenceInterval(StartAt!.Value, recurrencePattern.RepeatUntil);
+            ValidateRecurrenceInterval(recurrencePattern.RepeatMode, StartAt!.Value, recurrencePattern.RepeatUntil);
         }
 
         RecurrencePattern = recurrencePattern;
@@ -207,11 +207,21 @@ public class Task : DirectionEntity
         DirectionId = directionId;
     }
 
-    private void ValidateRecurrenceInterval(DateTime startAt, DateTime repeatUntil)
+    private void ValidateRecurrenceInterval(RepeatMode repeatMode, DateTime startAt, DateTime repeatUntil)
     {
         if (startAt > repeatUntil)
         {
             throw new DomainException(ValidationErrors.RepeatUntilIsBeforeStartAt);
+        }
+
+        if ((repeatMode == RepeatMode.Day || repeatMode == RepeatMode.Week) && startAt.AddYears(3) < repeatUntil)
+        {
+            throw new DomainException(ValidationErrors.RepeatUntilIsTooFarForDailyAndWeekly);
+        }
+
+        if ((repeatMode == RepeatMode.Month || repeatMode == RepeatMode.Year) && startAt.AddYears(100) < repeatUntil)
+        {
+            throw new DomainException(ValidationErrors.RepeatUntilIsTooFarForMonthlyAndYearly);
         }
     }
 }

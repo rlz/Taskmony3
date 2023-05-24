@@ -27,14 +27,14 @@ public class ValueObjectToStringConverter : IChangeTypeProvider
                 {
                     ValueOf<DateTime, DeletedAt> deletedAt => _timeConverter.DateTimeToString(deletedAt.Value),
                     ValueOf<DateTime, CompletedAt> completedAt => _timeConverter.DateTimeToString(completedAt.Value),
-                    ValueOf<string, Description> description => description.ToString(),
-                    ValueOf<string, CommentText> commentText => commentText.ToString(),
-                    ValueOf<string, DirectionName> directionName => directionName.ToString(),
-                    ValueOf<string, DisplayName> displayName => displayName.ToString(),
-                    ValueOf<string, Email> email => email.ToString(),
-                    ValueOf<string, Login> login => login.ToString(),
+                    ValueOf<string, Description> description => description.Value,
+                    ValueOf<string, CommentText> commentText => commentText.Value,
+                    ValueOf<string, DirectionName> directionName => directionName.Value,
+                    ValueOf<string, DisplayName> displayName => displayName.Value,
+                    ValueOf<string, Email> email => email.Value,
+                    ValueOf<string, Login> login => login.Value,
                     ValueOf<DateTime, ReviewedAt> reviewedAt => _timeConverter.DateTimeToString(reviewedAt.Value),
-                    ValueOf<string?, Details> details => details.ToString(),
+                    ValueOf<string?, Details> details => details?.Value,
                     _ => input
                 };
             };

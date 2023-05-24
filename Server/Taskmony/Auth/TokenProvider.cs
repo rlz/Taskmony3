@@ -65,13 +65,13 @@ public class TokenProvider : ITokenProvider
         return await GenerateTokensAsync(user);
     }
 
-    public async Task<bool> RevokeUserRefreshTokens(Guid userId)
+    public async Task RevokeUserRefreshTokens(Guid userId)
     {
         var refreshTokens = await _refreshTokenRepository.GetByUserIdAsync(userId);
 
         refreshTokens.ToList().ForEach(token => token.Revoke());
 
-        return await _refreshTokenRepository.SaveChangesAsync();
+        await _refreshTokenRepository.SaveChangesAsync();
     }
 
     private JwtSecurityToken GenerateJwt(User user)

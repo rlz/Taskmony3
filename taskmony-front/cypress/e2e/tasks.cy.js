@@ -1,6 +1,6 @@
 const email = "tom123";
 const password = "Password123!";
-const baseUrl = "http://localhost:3000";
+const baseUrl = "http://taskmony.ru/";
 
 describe("task tests", () => {
   const date = `${new Date()}`;
@@ -15,7 +15,7 @@ describe("task tests", () => {
     }
   });
 
-  it("should be on main page", function () {
+  it("correct authorization", function () {
     cy.contains("tom123");
     cy.contains("My tasks");
   });
@@ -42,6 +42,9 @@ describe("task tests", () => {
     cy.visit(baseUrl);
     cy.get("div").get('[class^=uneditedTask]').contains(`${taskName}123`).should("exist");
   });
+  it("can add a comment", function () {
+
+  });
   it("can delete a task", function () {
     cy.get("div").get('[class^=uneditedTask]').contains(`${taskName}123`).click();
     cy.get("div").get('[class^=editedTask]').as("taskContainer")
@@ -51,6 +54,15 @@ describe("task tests", () => {
     cy.visit(baseUrl);
     cy.get("div").get('[class^=uneditedTask]').contains(`${taskName}123`).should("not.exist");
   });
+  it("can add a repeated task", function () {
+
+  });
+  it("can add a future task", function () {
+
+  });
+
+
+
 
   
 });

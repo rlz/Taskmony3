@@ -52,7 +52,7 @@ export function getDirections() {
     }))
       .then(checkResponse)
       .then((res) => {
-        if (res) {
+        if (!res.errors) {
           dispatch({
             type: GET_DIRECTIONS_SUCCESS,
             items: res.data.directions,

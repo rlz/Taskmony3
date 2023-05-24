@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AddBtn } from "../../components/other-components/buttons/add-btn";
 import { Task } from "../../components/task-idea/task/task";
-import { EditedTask } from "../../components/task-idea/task/open-task/open-task";
+import { EditedTask, OpenTask } from "../../components/task-idea/task/open-task/open-task";
 import {
   addRepeatedTasks,
   addTask,
@@ -14,6 +14,7 @@ import {
   FilterByFuture,
 } from "../../components/other-components/filter/by-task-type";
 import { useSearchParams } from "react-router-dom";
+import { FilterByAssignee } from "../../components/other-components/filter/by-assignee";
 
 type TasksProps = {
   directionId: string; directionName: string
@@ -36,8 +37,12 @@ function Tasks({ directionId, directionName } : TasksProps) {
     else return 0
   });
   const createdBy = searchParams.getAll("createdBy");
+  const assignedTo = searchParams.getAll("assignedTo");
   if (createdBy.length > 0) {
     tasksToShow = tasksToShow.filter((i) => createdBy.includes(i.createdBy.id));
+  }
+  if (assignedTo.length > 0) {
+    tasksToShow = tasksToShow.filter((i) => assignedTo.includes(i.assignee?.id));
   }
   if (!future || future === "0"){
     //console.log("show no future");
@@ -75,7 +80,7 @@ function Tasks({ directionId, directionName } : TasksProps) {
           }}
         />
         {newTask && task.id === "" && (
-          <EditedTask
+          <OpenTask
             label={"new task"}
             direction={directionName}
             save={() => {
@@ -101,6 +106,8 @@ function Filter({ directionId } : FilterProps) {
   return (
     <div className="w-1/5 mt-4 filter">
       <FilterByCreator id={directionId} />
+      <hr />
+      <FilterByAssignee id={directionId} />
       <hr />
       <FilterByFuture />
     </div>

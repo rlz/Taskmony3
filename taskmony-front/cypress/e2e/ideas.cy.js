@@ -4,7 +4,7 @@ const baseUrl = "http://localhost:3000";
 
 describe("ideas tests", () => {
   const date = `${new Date()}`;
-  const ideaName = `New Idea`+date;
+  const ideaName = `New idea`+date;
   beforeEach(() => {
     cy.visit(baseUrl + "/login");
     if (cy.contains("Sign in")) {
@@ -18,7 +18,7 @@ describe("ideas tests", () => {
     cy.visit(baseUrl + "/ideas");
   });
 
-  it("should be on ideas page", function () {
+  it("correct authorization", function () {
     cy.contains("tom123");
     cy.contains("My ideas");
   });
@@ -29,7 +29,7 @@ describe("ideas tests", () => {
     cy.get('input[id="description"]').type(`${date}{enter}`);
     cy.get("div").contains("add an idea").click();
     cy.contains(ideaName);
-    cy.get("div").contains("add a idea").should("not.exist");
+    cy.get("div").contains("add an idea").should("not.exist");
   });
 
   it("can edit a idea", function () {
@@ -44,6 +44,9 @@ describe("ideas tests", () => {
     cy.get("div").get('[class^=uneditedIdea]').contains(`${ideaName}123`).should("exist");
     cy.visit(baseUrl + "/ideas");
     cy.get("div").get('[class^=uneditedIdea]').contains(`${ideaName}123`).should("exist");
+  });
+  it("can add a comment", function () {
+
   });
   it("can delete a idea", function () {
     cy.get("div").get('[class^=uneditedIdea]').contains(`${ideaName}123`).click();

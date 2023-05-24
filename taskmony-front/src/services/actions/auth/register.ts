@@ -24,19 +24,18 @@ export function register(email: string, password: string, displayName: string, l
         login: login,
       }),
     })
-    .then(async (res) => {
-      let data = await res.json();      
-      if (res.status !== 200) throw new Error(getErrorMessages(data));
-      else return data;
+    .then(async (res) => {     
+      if (res.status === 204) return res
+      else{let data = await res.json(); throw new Error(getErrorMessages(data));}
     })
       .then((res) => {
         if (res) {
-          Cookies.set("accessToken", res.accessToken, {
-            expires: 1/48,
-          });
-          Cookies.set("refreshToken", res.refreshToken, {
-            expires: 30,
-          });
+          // Cookies.set("accessToken", res.accessToken, {
+          //   expires: 1/48,
+          // });
+          // Cookies.set("refreshToken", res.refreshToken, {
+          //   expires: 30,
+          // });
           dispatch({
             type: REGISTER_SUCCESS,
           });

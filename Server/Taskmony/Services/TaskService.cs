@@ -507,10 +507,12 @@ public class TaskService : ITaskService
     {
         var tasks = await GetActiveTasksOrThrowAsync(groupId, currentUserId);
         var task = GetTaskFromGroupOrThrow(tasks, groupId, taskId);
+        var oldValue = task.RecurrencePattern?.RepeatMode;
 
-        if (repeatMode is null)
+        if (repeatMode == null)
         {
-            _taskRepository.DeleteRange(tasks);
+            task.RemoveFromGroup();
+            _taskRepository.DeleteRange(tasks.Where(t => t.Id != task.Id));
         }
         else
         {
@@ -543,7 +545,7 @@ public class TaskService : ITaskService
         }
 
         await _notificationService.NotifyDirectionEntityUpdatedAsync(task, nameof(Task.RecurrencePattern.RepeatMode),
-            task.RecurrencePattern!.RepeatMode.ToString(), repeatMode?.ToString(), currentUserId);
+            oldValue?.ToString(), repeatMode?.ToString(), currentUserId);
 
         return (await _taskRepository.GetTasksByGroupIdAsync(groupId)).Select(t => t.Id);
     }
@@ -569,6 +571,7 @@ public class TaskService : ITaskService
         var tasks = _recurringTaskGenerator.CreateRecurringTaskInstances(task, pattern);
 
         // Remove duplicate task
+        task.UpdateStartAt(tasks.Min(t => t.StartAt!.Value));
         tasks.RemoveAll(t => t.StartAt == task.StartAt);
 
         await _taskRepository.AddRangeAsync(tasks);

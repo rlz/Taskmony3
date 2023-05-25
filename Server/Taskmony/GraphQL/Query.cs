@@ -23,44 +23,53 @@ public class Query
     }
 
     public async Task<IEnumerable<Task>?> GetTasks([Service] ITaskService taskService,
-        [GlobalState] Guid currentUserId, Guid[]? id, Guid?[]? directionId, bool? completed, bool? deleted,
-        DateTime? lastCompletedAt, DateTime? lastDeletedAt, int? offset, int? limit)
+        [GlobalState] Guid currentUserId, [Service] ITimeConverter timeConverter, Guid[]? id, Guid?[]? directionId,
+        bool? completed, bool? deleted, string? lastCompletedAt, string? lastDeletedAt, int? offset, int? limit)
     {
+        DateTime? lastCompletedAtUtc =
+            lastCompletedAt == null ? null : timeConverter.StringToDateTimeUtc(lastCompletedAt);
+        DateTime? lastDeletedAtUtc = lastDeletedAt == null ? null : timeConverter.StringToDateTimeUtc(lastDeletedAt);
+
         return await taskService.GetTasksAsync(
             id: id,
             directionId: directionId,
             completed: completed,
             deleted: deleted,
-            lastCompletedAt: lastCompletedAt,
-            lastDeletedAt: lastDeletedAt,
+            lastCompletedAt: lastCompletedAtUtc,
+            lastDeletedAt: lastDeletedAtUtc,
             offset: offset,
             limit: limit,
             currentUserId: currentUserId);
     }
 
     public async Task<IEnumerable<Idea>?> GetIdeas([Service] IIdeaService ideaService,
-        [GlobalState] Guid currentUserId, Guid[]? id, Guid?[]? directionId, bool? deleted, DateTime? lastDeletedAt,
-        int? offset, int? limit)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid[]? id, Guid?[]? directionId,
+        bool? deleted, string? lastDeletedAt, int? offset, int? limit)
     {
+        DateTime? lastDeletedAtUtc = lastDeletedAt == null ? null : timeConverter.StringToDateTimeUtc(lastDeletedAt);
+
         return await ideaService.GetIdeasAsync(
-            id: id, 
-            directionId: directionId, 
-            deleted: deleted, 
-            lastDeletedAt: lastDeletedAt, 
-            offset: offset, 
-            limit: limit, 
+            id: id,
+            directionId: directionId,
+            deleted: deleted,
+            lastDeletedAt: lastDeletedAtUtc,
+            offset: offset,
+            limit: limit,
             currentUserId: currentUserId);
     }
 
     public async Task<IEnumerable<Direction>?> GetDirections([Service] IDirectionService directionService,
-        [GlobalState] Guid currentUserId, Guid[]? id, bool? deleted, DateTime? lastDeletedAt, int? offset, int? limit)
+        [Service] ITimeConverter timeConverter, [GlobalState] Guid currentUserId, Guid[]? id, bool? deleted,
+        string? lastDeletedAt, int? offset, int? limit)
     {
+        DateTime? lastDeletedAtUtc = lastDeletedAt == null ? null : timeConverter.StringToDateTimeUtc(lastDeletedAt);
+
         return await directionService.GetDirectionsAsync(
-            id: id, 
-            deleted: deleted, 
-            lastDeletedAt: lastDeletedAt, 
-            offset: offset, 
-            limit: limit, 
+            id: id,
+            deleted: deleted,
+            lastDeletedAt: lastDeletedAtUtc,
+            offset: offset,
+            limit: limit,
             currentUserId: currentUserId);
     }
 }

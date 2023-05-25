@@ -66,7 +66,7 @@ function MyTasks() {
   const tasks = tasksToShow.map((task) => <Task task={task} key={task.id} />);
   return (
     <div className="flex w-full">
-      <div className="w-full  p-3 flex flex-col overflow-hidden h-screen">
+      <div className="w-full  p-3 flex flex-col overflow-hidden h-screen mainBody">
         <h1 className="font-bold text-3xl">My Tasks</h1>
         <AddBtn label={"add a new task"} onClick={() => {dispatch({ type: RESET_TASK });setNewTask(true)}} />
         {newTask && task.id === "" && (

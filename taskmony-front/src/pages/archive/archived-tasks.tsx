@@ -42,8 +42,8 @@ export const ArchivedTasks = () => {
     }
   }
   return (
-    <div className="flex w-full">
-      <div className="w-full m-3 ml-0">
+    <div className="flex w-full ">
+      <div className="w-full m-3 ml-0 h-full overflow-scroll mainBody">
         {chosenTasks.map((task, index) => (
           <ArchivedItem
             label={task.description}

@@ -36,7 +36,7 @@ export const Archive = ({ directionId } : ArchiveProps) => {
   }
   return (
     <div className="flex w-full">
-      <div className="w-3/4 m-3 ml-0">
+      <div className="w-3/4 m-3 ml-0 mainBody">
         {items.map((task) => (
           <ArchivedItem
             label={task.description}
@@ -61,7 +61,7 @@ function Filter({ archiveType, directionId } : FilterProps) {
     navigate(`/directions/${directionId}/archive/${type}`);
   };
   return (
-    <div className="w-1/5 mt-4">
+    <div className="w-1/5 mt-4 filter">
       <>
         <FilterItem
           label="tasks"

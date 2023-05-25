@@ -21,7 +21,7 @@ export const ArchivedDirections = () => {
   }
   return (
     <div className="flex w-full">
-      <div className="w-full  m-3 ml-0">
+      <div className="w-full  m-3 ml-0 mainBody">
         {chosenDirections.map((dir) => (
           <ArchivedItem label={dir.name} date={dir.deletedAt} key={dir.id} />
         ))}

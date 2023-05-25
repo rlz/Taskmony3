@@ -30,7 +30,7 @@ export const ArchivedIdeas = () => {
   );
   return (
     <div className="flex w-full">
-      <div className="w-full    m-3 ml-0">
+      <div className="w-full    m-3 ml-0 mainBody">
       {chosenIdeas.map((idea,index)=><ArchivedItem             
       label={idea.description}
             date={idea.deletedAt}

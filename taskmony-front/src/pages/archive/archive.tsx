@@ -24,7 +24,7 @@ function Archive() {
   };
 
   return (
-    <div className="p-3 w-full">
+    <div className="flex flex-col p-3 w-full">
       <h1 className="font-bold text-3xl">Archive</h1>
       <Menu />
       {renderSwitch(type)}

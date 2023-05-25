@@ -10,13 +10,20 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scrollbar-color: rgb(203 213 225) rgb(248 250 252);
+  scrollbar-width: thin;
 }
+
+
 @media (max-width: 640px) {
   html{
     font-size: 75%;
   }
   .filter{
-    display: none;
+  display: none;
+  }
+  .mainBody{
+    width: 85vw;
   }
 }
 

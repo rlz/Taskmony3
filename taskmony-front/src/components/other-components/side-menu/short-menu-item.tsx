@@ -12,10 +12,14 @@ export const ShortMenuItem = ({ to, name, icon, isActive }: MenuItemProps) => {
     <div className={"gap-4 flex m-4"}>
       {to ? (
         <Link to={to}>
-          <img src={icon} alt=""></img>
+          <div className="w-8">
+          <img src={icon} alt="" ></img>
+          </div>
         </Link>
       ) : (
-        <img src={icon} alt=""></img>
+        <div className="w-8">
+        <img src={icon} alt="" className="w-max"></img>
+        </div>
       )}
     </div>
   );

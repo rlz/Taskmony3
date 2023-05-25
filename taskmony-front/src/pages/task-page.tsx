@@ -7,6 +7,7 @@ import { About } from "../components/task-idea/task/open-task/about";
 import { Details } from "../components/task-idea/task/open-task/task-details";
 import { sendTaskComment } from "../services/actions/comments";
 import { CHANGE_OPEN_TASK } from "../services/actions/tasksAPI";
+import { Comments } from "../components/task-idea/open-items-components/comments/comments";
 
 export const TaskPage = () => {
     const location = useLocation();

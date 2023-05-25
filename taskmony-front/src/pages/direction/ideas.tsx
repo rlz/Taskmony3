@@ -65,7 +65,7 @@ function Ideas({ directionId, directionName } : IdeasProps) {
   ));
   return (
     <div className="flex w-full">
-      <div className="w-full  m-3">
+      <div className="w-full  m-3 mainBody">
         <AddBtn
           label={"add a new idea"}
           onClick={() => {

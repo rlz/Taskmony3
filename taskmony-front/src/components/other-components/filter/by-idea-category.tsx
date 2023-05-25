@@ -22,6 +22,7 @@ export const FilterByFollowed = () => {
 
 export const FilterByIdeaCategory = () => {
   const [category, setCategory] = useQueryParam("ideaCategory", StringParam);
+  if(!category) setCategory("HOT")
   const [isOpen, setIsOpen] = useState<boolean>(true);
   return (
     <>

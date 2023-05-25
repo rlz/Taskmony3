@@ -70,7 +70,7 @@ function Tasks({ directionId, directionName } : TasksProps) {
   ));
   return (
     <div className="flex w-full">
-      <div className="w-full  m-3">
+      <div className="w-full  m-3 mainBody">
         <AddBtn
           label={"add a new task"}
           onClick={() => {

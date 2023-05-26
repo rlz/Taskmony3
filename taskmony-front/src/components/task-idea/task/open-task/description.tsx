@@ -25,7 +25,7 @@ export const Description = ({description,setDescription,closeBtnRef}) => {
       )}
       <input
         className={
-          "bg-slate-500 bg-opacity-0 font-semibold text-sm focus:outline-none placeholder:font-thin placeholder:text-black decoration-slate-50"
+          "w-full bg-slate-500 bg-opacity-0 font-semibold text-sm focus:outline-none placeholder:font-thin placeholder:text-black decoration-slate-50"
         }
         id="description"
         autoFocus

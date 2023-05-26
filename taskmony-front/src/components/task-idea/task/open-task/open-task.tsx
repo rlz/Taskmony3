@@ -110,8 +110,8 @@ export const OpenTask = ({
         />
       )}
       {showModal === "REPEAT_MODE_MODAL" && <ChangeRepeatedModeModal />}
-      <div className={"gap-4 flex justify-between p-2 mb"}>
-        <div className="flex  gap-2">
+      <div className={"flex gap-2 p-2"}>
+        <div className="flex gap-2 w-full">
           {task.id && (
             <img
             alt=""

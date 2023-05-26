@@ -1,6 +1,5 @@
 import { Dispatch } from "redux";
 import { getErrorMessages } from "../../../utils/api-utils";
-import Cookies from 'js-cookie';
 import { BASE_URL } from "../../../utils/base-api-url";
 
 export const REGISTER_REQUEST = "REGISTER_REQUEST";

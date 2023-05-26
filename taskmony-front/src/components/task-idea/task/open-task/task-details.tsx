@@ -58,10 +58,6 @@ export const Details = ({ fromDirection }: DetailsProps) => {
     return new Date(date.setDate(date.getDate() + 1));
     // return new Date(date.setFullYear(date.getFullYear() + 1));
   };
-  const yearFromNow = () => {
-    const date = new Date(Date.now());
-    return new Date(date.setFullYear(date.getFullYear() + 1)) 
-  }
   const members = directions.filter((d) => d.id == task.direction?.id)[0]
     ?.members;
   const [showModal, setShowModal] = useState<string | null>(null);
@@ -203,7 +199,7 @@ export const Details = ({ fromDirection }: DetailsProps) => {
           title={"until"}
           min={new Date(task.startAt)}
           date={
-            task.repeatUntil ? new Date(task.repeatUntil) : defaultUntilDateWeekly()
+            task.repeatUntil ? new Date(task.repeatUntil) : defaultUntilDate()
           }
           hasBorder
           onChange={(value: string) => {

@@ -24,6 +24,7 @@ function MyTasks() {
   const followed = searchParams.get("followed");
   const assignedByMe = searchParams.get("assignedByMe");
   const task = useAppSelector((store) => store.editedTask);
+  const today = new Date().toISOString().slice(0,10);
   useEffect(()=>{
     if(task.id !== "") setNewTask(false);
     },[task.id])
@@ -31,6 +32,10 @@ function MyTasks() {
     (i) => i.deletedAt == null && (i.createdBy.id === myId || i.assignee?.id === myId || i.subscribers.some((s) => s.id === myId))
   )
   .sort((a,b)=>{
+    let aDate = a.startAt.slice(0,10);
+    let bDate = b.startAt.slice(0,10);
+    if (aDate === today && bDate !== today) return -1
+    if (bDate === today && aDate !== today) return 1
     return a.startAt.slice(0,10).localeCompare(b.startAt.slice(0,10))})
   .sort((a, b) => {
     if(!a.completedAt && b.completedAt) return -1
@@ -51,7 +56,8 @@ function MyTasks() {
       );
     }
     if (!followed || followed === "0") {
-      tasksToShow = tasksToShow.filter((i) => (!i.subscribers.some((s) => s.id === myId)));
+      tasksToShow = tasksToShow.filter((i) => 
+      (!(i.subscribers.some((s) => s.id === myId) && i.createdBy.id !== myId)));
     }
     if (!assignedByMe || assignedByMe === "0") {   
       tasksToShow = tasksToShow.filter((i) => (!(i.createdBy.id === myId && i.assignee && i.assignee.id !== myId)));

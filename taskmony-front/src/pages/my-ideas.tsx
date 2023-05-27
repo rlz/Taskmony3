@@ -26,6 +26,7 @@ function MyIdeas() {
     },[idea.id])
   let ideasToShow = useAppSelector((store) => store.ideas.items)
     .filter((i) => i.deletedAt == null)
+    .filter((i) => i.createdBy.id === myId || i.subscribers.some((s) => s.id === myId))
     .sort((a, b) => {
       //console.log("sorting")
       if(b.reviewedAt == null && a.reviewedAt == null) return 0
@@ -43,7 +44,8 @@ function MyIdeas() {
     ideasToShow = ideasToShow.filter((i) => i.generation === chosenGeneration);
   }
   if (!followed || followed === "0") {
-    ideasToShow = ideasToShow.filter((i) => (!i.subscribers.some((s) => s.id === myId)));
+    ideasToShow = ideasToShow.filter((i) => 
+    (!(i.subscribers.some((s) => s.id === myId) && i.createdBy.id !== myId)));
   }
 
   const dispatch = useAppDispatch();

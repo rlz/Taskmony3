@@ -96,7 +96,7 @@ export const OpenTask = ({
     };
   }, []);
   return (
-    <div className="editedTask w-full bg-white rounded-lg drop-shadow-sm  pb-1">
+    <div className="editedTask w-full bg-white rounded-lg drop-shadow-sm  pb-1 mt-4">
       {showModal === "DELETE_MODAL" && (
         <DeleteRepeatedValueModal
           deleteThis={() => {
@@ -110,8 +110,8 @@ export const OpenTask = ({
         />
       )}
       {showModal === "REPEAT_MODE_MODAL" && <ChangeRepeatedModeModal />}
-      <div className={"gap-4 flex justify-between p-2 mb"}>
-        <div className="flex  gap-2">
+      <div className={"gap-4 flex p-2 mb"}>
+        <div className="flex w-full gap-2">
           {task.id && (
             <img
             alt=""

@@ -78,7 +78,7 @@ export const ClosedTask = ({
             hasBorder
           />
         }
-        {date > new Date().toISOString() && <TaskDetails label={date.slice(0,10)} hasBorder />}
+        {date.slice(0,10) > new Date().toISOString().slice(0,10) && <TaskDetails label={date.slice(0,10)} hasBorder />}
         {assignee &&
           <TaskDetails
             label={`assignee: ${assignee? assignee.displayName : "none"}`}

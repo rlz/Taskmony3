@@ -27,34 +27,29 @@ export type TTask = {
 
 export type TIdea = {
   id: string;
-    description: string;
-    deletedAt: string | null;
-    reviewedAt: string | null;
-    subscribers: 
-    Array<{
-        id: string;
-    }>;
-    details?: string | null;
-    direction: 
-    { name: string; 
-      id: string;
-     }
-    generation: string;
-    createdBy: { 
-      id: string;
-      displayName: string;
-     }
-    comments: Array<TComment>
-}
+  description: string;
+  deletedAt: string | null;
+  reviewedAt: string | null;
+  subscribers: Array<{
+    id: string;
+  }>;
+  details?: string | null;
+  direction: { name: string; id: string };
+  generation: string;
+  createdBy: {
+    id: string;
+    displayName: string;
+  };
+  comments: Array<TComment>;
+};
 export type TDirection = {
   id: string;
   name: string;
   details: string;
-  members:
-  Array<{
-  displayName: string;
-  id: string;
-  }>
+  members: Array<{
+    displayName: string;
+    id: string;
+  }>;
   deletedAt: string;
 };
 
@@ -62,11 +57,11 @@ export type TComment = {
   text: string;
   createdAt: string;
   createdBy: { displayName: string };
-}
+};
 
 export type TNotification = {
   type: string;
-  direction: {id: string, name: string};
+  direction: { id: string; name: string };
   name: string;
   actionItem: {
     __typename: string;
@@ -75,18 +70,17 @@ export type TNotification = {
     description?: string;
     details?: string;
     text?: string;
-    }
+  };
   actionType: string;
   field: string;
   id: string;
   modifiedAt: string;
-  modifiedBy: { displayName: string; };
+  modifiedBy: { displayName: string };
   newValue: string;
-  oldValue: string; 
+  oldValue: string;
 };
 
 export type TUser = {
   displayName: string;
   id: string;
-}
-
+};

@@ -1,6 +1,6 @@
 import { getErrorMessages } from "../../../utils/api-utils";
 import { BASE_URL } from "../../../utils/base-api-url";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { Dispatch } from "redux";
 
 export const LOGOUT_REQUEST = "LOGOUT_REQUEST";
@@ -21,11 +21,11 @@ export function logout() {
         token: Cookies.get("refreshToken"),
       }),
     })
-    .then(async (res) => {
-      let data = await res.json();      
-      if (res.status !== 200) throw new Error(getErrorMessages(data));
-      else return data;
-    })
+      .then(async (res) => {
+        let data = await res.json();
+        if (res.status !== 200) throw new Error(getErrorMessages(data));
+        else return data;
+      })
       .then((res) => {
         if (res) {
           dispatch({
@@ -40,7 +40,7 @@ export function logout() {
       .catch((error) => {
         dispatch({
           type: LOGOUT_FAILED,
-          error: error.message
+          error: error.message,
         });
       });
   };

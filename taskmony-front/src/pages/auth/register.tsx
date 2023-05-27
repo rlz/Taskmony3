@@ -31,7 +31,7 @@ export const Register = () => {
   // };
   const registerUser = () => {
     //console.log("registering" + email + password + name + login);
-    dispatch(register(email, password, name,login));
+    dispatch(register(email, password, name, login));
   };
 
   return (
@@ -46,7 +46,7 @@ export const Register = () => {
             value={name}
             onChange={setName}
           />
-           <Input
+          <Input
             label={"login"}
             type={"text"}
             value={login}
@@ -64,8 +64,7 @@ export const Register = () => {
             value={password}
             onChange={setPassword}
           />
-          {error && <p className="text-red-400">{error}</p>
-          }
+          {error && <p className="text-red-400">{error}</p>}
           <div className="mt-10">
             <Btn label={"sign up"} onClick={registerUser} />
           </div>

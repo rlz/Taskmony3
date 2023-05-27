@@ -2,11 +2,7 @@ import { useState } from "react";
 import { useAppSelector } from "../../../utils/hooks";
 import { FilterDivider } from "./filter-divider";
 import { FilterItem } from "./filter-item";
-import {
-  useQueryParam,
-  ArrayParam,
-  withDefault,
-} from "use-query-params";
+import { useQueryParam, ArrayParam, withDefault } from "use-query-params";
 
 export const FilterByDirection = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -33,7 +29,7 @@ export const FilterByDirection = () => {
               if (value) {
                 setDir([...dir, "unassigned"]);
               } else {
-                setDir(dir.filter(el=>el!="unassigned"));
+                setDir(dir.filter((el) => el != "unassigned"));
               }
             }}
           />
@@ -46,7 +42,7 @@ export const FilterByDirection = () => {
                 if (value) {
                   setDir([...dir, label]);
                 } else {
-                  setDir(dir.filter(el=>el!=label));
+                  setDir(dir.filter((el) => el != label));
                 }
               }}
             />

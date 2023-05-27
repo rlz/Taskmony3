@@ -26,7 +26,11 @@ type CommentInputProps = {
   send: Function;
 };
 
-export const CommentInput = ({ commentValue, changeComment, send } : CommentInputProps) => {
+export const CommentInput = ({
+  commentValue,
+  changeComment,
+  send,
+}: CommentInputProps) => {
   return (
     <div className={`bg-slate-100 m-2 p-2 rounded-lg text-gray-800`}>
       <textarea

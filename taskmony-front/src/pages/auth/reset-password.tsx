@@ -51,8 +51,7 @@ export const ResetPassword = () => {
             value={code}
             onChange={setCode}
           />
-          {error && <p className="text-red-400">{error}</p>
-          }
+          {error && <p className="text-red-400">{error}</p>}
           <p className="mt-2">
             remembered your password?{" "}
             <NavLink to="/login" className="font-semibold underline">

@@ -1,4 +1,9 @@
-import { changeIdeaDirection, changeIdeaGeneration, CHANGE_IDEA_DIRECTION, CHANGE_IDEA_GENERATION } from "../../../../services/actions/ideasAPI";
+import {
+  changeIdeaDirection,
+  changeIdeaGeneration,
+  CHANGE_IDEA_DIRECTION,
+  CHANGE_IDEA_GENERATION,
+} from "../../../../services/actions/ideasAPI";
 import { useAppDispatch, useAppSelector } from "../../../../utils/hooks";
 import { ItemPicker } from "../../open-items-components/item-picker";
 

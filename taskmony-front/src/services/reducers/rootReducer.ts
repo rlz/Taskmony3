@@ -15,5 +15,5 @@ export const rootReducer = combineReducers({
   auth: authReducer,
   resetPassword: resetPasswordReducer,
   userInfo: userInfoReducer,
-  notifications : notificationsReducer
+  notifications: notificationsReducer,
 });

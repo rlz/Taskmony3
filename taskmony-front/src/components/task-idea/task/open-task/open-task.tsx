@@ -63,7 +63,6 @@ export const OpenTask = ({
       console.log("closing...");
       console.log(task);
       save(task.details === "" ? { ...task, details: null } : task);
-
     }
   };
   const closeModalRef = useRef(closeModal);
@@ -77,7 +76,11 @@ export const OpenTask = ({
       } else if (!task.id && closeBtn.current) closeBtn.current.click();
     }
     if (event.key === "Enter") {
-      if (task.groupId && event.target.id == "description" || event.target.id == "details") return; 
+      if (
+        (task.groupId && event.target.id == "description") ||
+        event.target.id == "details"
+      )
+        return;
       console.log("Enter");
       if (task.id && saveBtn) {
         console.log("clicking");
@@ -114,7 +117,7 @@ export const OpenTask = ({
         <div className="flex w-full gap-2">
           {task.id && (
             <img
-            alt=""
+              alt=""
               src={task.completedAt ? yes : no}
               onClick={(e) => {
                 e.stopPropagation();
@@ -122,7 +125,11 @@ export const OpenTask = ({
               }}
             ></img>
           )}
-          <Description description={description} setDescription={setDescription} closeBtnRef={saveBtn.current}/>
+          <Description
+            description={description}
+            setDescription={setDescription}
+            closeBtnRef={saveBtn.current}
+          />
         </div>
         {task.id ? (
           <div className="relative z-30 flex gap-2">

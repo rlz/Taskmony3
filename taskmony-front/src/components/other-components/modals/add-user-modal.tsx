@@ -35,7 +35,10 @@ export const AddUserModal = ({ close }: ModalPropsT) => {
         <img
           src={deleteI}
           className="cursor-pointer mr-0 ml-auto"
-          onClick={(e) => {close(); dispatch({type:USERS_RESET});}}
+          onClick={(e) => {
+            close();
+            dispatch({ type: USERS_RESET });
+          }}
           alt=""
         ></img>
         <h2 className="font-bold text-3xl mt-0 pt-0">Add a new user</h2>
@@ -49,16 +52,16 @@ export const AddUserModal = ({ close }: ModalPropsT) => {
 
 type InputPropsT = {
   directionId: string;
-  close:Function
+  close: Function;
 };
 
-const Input = ({ directionId,close }: InputPropsT) => {
+const Input = ({ directionId, close }: InputPropsT) => {
   const dispatch = useAppDispatch();
   const [value, setValue] = useState("");
   const foundUsers = useAppSelector((store) => store.userInfo.users);
-  const addNewUser = (user : TUser) => {
+  const addNewUser = (user: TUser) => {
     dispatch(addUser(directionId, user));
-    dispatch({type:USERS_RESET});
+    dispatch({ type: USERS_RESET });
     close();
   };
   return (
@@ -75,7 +78,7 @@ const Input = ({ directionId,close }: InputPropsT) => {
         }}
       />
       <div className="border w-full border-gray-200 rounded">
-        {foundUsers.map((user : TUser,index : number) => (
+        {foundUsers.map((user: TUser, index: number) => (
           <SearchItem
             label={user.displayName}
             addUser={() => addNewUser(user)}
@@ -90,13 +93,13 @@ const Input = ({ directionId,close }: InputPropsT) => {
 type SearchItemProps = {
   label: string;
   addUser: Function;
-}
+};
 
-const SearchItem = ({ label, addUser } : SearchItemProps) => {
+const SearchItem = ({ label, addUser }: SearchItemProps) => {
   return (
     <div
       className="border w-full border-gray-200 bg-slate-100 pl-1 pr-2 p-1 cursor-pointer hover:font-semibold"
-      onClick={(e)=>addUser()}
+      onClick={(e) => addUser()}
     >
       {label}
     </div>

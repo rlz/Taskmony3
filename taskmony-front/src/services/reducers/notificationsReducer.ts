@@ -1,4 +1,4 @@
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { TNotification } from "../../utils/types";
 import {
   GET_NOTIFICATIONS_REQUEST,

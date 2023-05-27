@@ -9,7 +9,7 @@ type CommentsInputProps = {
   send: Function;
 };
 
-export const Comments = ({comments,send} : CommentsInputProps) => {
+export const Comments = ({ comments, send }: CommentsInputProps) => {
   const [showInput, setShowInput] = useState<boolean>(false);
   const [commentInput, setCommentInput] = useState<string>("");
   const sendComment = () => {
@@ -20,24 +20,27 @@ export const Comments = ({comments,send} : CommentsInputProps) => {
 
   return (
     <>
-      {comments?.map((comment : TComment, index: number) => (
+      {comments?.map((comment: TComment, index: number) => (
         <Comment
           key={index}
           text={comment.text}
           author={comment.createdBy.displayName}
-          time={comment.createdAt} />
+          time={comment.createdAt}
+        />
       ))}
       {showInput && (
         <CommentInput
           commentValue={commentInput}
           changeComment={setCommentInput}
-          send={sendComment} />
+          send={sendComment}
+        />
       )}
       <div className="flex justify-center p-1">
         <AddBtn
           label={commentInput ? "send comment" : "add a new comment"}
           icon={commentInput ? undefined : add}
-          onClick={showInput ? sendComment : () => setShowInput(true)} />
+          onClick={showInput ? sendComment : () => setShowInput(true)}
+        />
       </div>
     </>
   );

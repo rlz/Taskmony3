@@ -1,6 +1,9 @@
 import backI from "../images/arrow-left.svg";
 import { useEffect, useRef, useState } from "react";
-import useIsFirstRender, { useAppDispatch, useAppSelector } from "../utils/hooks";
+import useIsFirstRender, {
+  useAppDispatch,
+  useAppSelector,
+} from "../utils/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Description } from "../components/task-idea/task/open-task/description";
 import { About } from "../components/task-idea/task/open-task/about";
@@ -10,13 +13,20 @@ import { CHANGE_OPEN_TASK } from "../services/actions/tasksAPI";
 import { Comments } from "../components/task-idea/open-items-components/comments/comments";
 
 export const TaskPage = () => {
-    const location = useLocation();
-    const from = location.state?.from;
-    const navigate = useNavigate();
- 
+  const location = useLocation();
+  const from = location.state?.from;
+  const navigate = useNavigate();
+
   return (
     <>
-      <img src={backI} alt="" className={`w-4 m-5 cursor-pointer ${!from?'invisible':''}`} onClick={() => {if(from) navigate(from)}}/>
+      <img
+        src={backI}
+        alt=""
+        className={`w-4 m-5 cursor-pointer ${!from ? "invisible" : ""}`}
+        onClick={() => {
+          if (from) navigate(from);
+        }}
+      />
       <TaskInfo save={undefined} />
     </>
   );
@@ -44,14 +54,14 @@ const TaskInfo = ({
   followed,
   recurrent,
 }: TaskProps) => {
-    const dispatch = useAppDispatch();
-    const isFirst = useIsFirstRender();
-    // eslint-disable-next-line no-restricted-globals
-    const taskId = location.pathname.split("/")[2];
-    const tasks = useAppSelector((store) => store.tasks.items);
-    const myTasks = tasks.filter(i=> i.id === taskId)
-    if(myTasks[0]) dispatch({type: CHANGE_OPEN_TASK, task: myTasks[0]});
-    const [description, setDescription] = useState(myTasks[0]?.description);
+  const dispatch = useAppDispatch();
+  const isFirst = useIsFirstRender();
+  // eslint-disable-next-line no-restricted-globals
+  const taskId = location.pathname.split("/")[2];
+  const tasks = useAppSelector((store) => store.tasks.items);
+  const myTasks = tasks.filter((i) => i.id === taskId);
+  if (myTasks[0]) dispatch({ type: CHANGE_OPEN_TASK, task: myTasks[0] });
+  const [description, setDescription] = useState(myTasks[0]?.description);
   const task = useAppSelector((store) => store.editedTask);
   const saveBtn = useRef(null);
   const onKeyPress = (event: any) => {
@@ -62,7 +72,6 @@ const TaskInfo = ({
     if (event.key === "Enter") {
       console.log("Enter");
       if (task.id && saveBtn.current) saveBtn.current.click();
-
     }
   };
   useEffect(() => {
@@ -71,27 +80,30 @@ const TaskInfo = ({
       document.removeEventListener("keydown", onKeyPress);
     };
   }, []);
-  if(isFirst && task.id === "")
-  return(
-    <div className="flex items-center justify-center mt-8">
-    </div>
-  )
-  if(myTasks && myTasks.length === 0 && !isFirst)
-  return(
-    <div className="flex items-center justify-center mt-8">
-    <p className="font-semibold">You cannot access this task or it does not exist</p>
-    </div>
-  )
+  if (isFirst && task.id === "")
+    return <div className="flex items-center justify-center mt-8"></div>;
+  if (myTasks && myTasks.length === 0 && !isFirst)
+    return (
+      <div className="flex items-center justify-center mt-8">
+        <p className="font-semibold">
+          You cannot access this task or it does not exist
+        </p>
+      </div>
+    );
   return (
     <div className="m-4 editedTask rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
-        <Description description={description} setDescription={setDescription} closeBtnRef={undefined} />
+        <Description
+          description={description}
+          setDescription={setDescription}
+          closeBtnRef={undefined}
+        />
       </div>
       <About />
       <Details fromDirection={direction} />
       {task.id && (
         <Comments
-          send={(input : string) => {
+          send={(input: string) => {
             dispatch(sendTaskComment(task.id, input));
           }}
           comments={task.comments}

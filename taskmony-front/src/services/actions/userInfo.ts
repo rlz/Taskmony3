@@ -17,20 +17,23 @@ export const USERS_RESET = "USERS_RESET";
 export function getUserInfo() {
   return function (dispatch: any) {
     dispatch({ type: USER_INFO_REQUEST });
-    getAccessToken().then((cookie)=>fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookie,
-      },
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookie,
+          },
 
-      body: JSON.stringify({
-        query: `{users{
+          body: JSON.stringify({
+            query: `{users{
           displayName
           email
         }}`,
-      }),
-    }))
+          }),
+        })
+      )
       .then((data) => {
         if (data.status === 401 || data.status === 403) {
           dispatch(refreshToken());
@@ -63,20 +66,23 @@ export function getUser(login: string) {
   return function (dispatch: any) {
     dispatch({ type: USERS_REQUEST });
     //console.log("getting user");
-    getAccessToken().then((cookie)=>fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookie,
-      },
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookie,
+          },
 
-      body: JSON.stringify({
-        query: `{users(login:"${login}"){
+          body: JSON.stringify({
+            query: `{users(login:"${login}"){
           displayName
           id
         }}`,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -109,26 +115,29 @@ export const CHANGE_USER_PASSWORD_REQUEST = "CHANGE_USER_PASSWORD_REQUEST";
 export const CHANGE_USER_PASSWORD_SUCCESS = "CHANGE_USER_PASSWORD_SUCCESS";
 export const CHANGE_USER_PASSWORD_FAILED = "CHANGE_USER_PASSWORD_FAILED";
 
-export function changeUserPassword(oldPassword: string,newPassword: string) {
+export function changeUserPassword(oldPassword: string, newPassword: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_USER_PASSWORD_REQUEST });
-    getAccessToken().then((cookie)=>fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookie,
-      },
-      body: JSON.stringify({
-        query: `mutation {
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookie,
+          },
+          body: JSON.stringify({
+            query: `mutation {
           userSetPassword(oldPassword:"${oldPassword}",newPassword:"${newPassword}") 
         }`,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
           dispatch({
-            type: CHANGE_USER_PASSWORD_SUCCESS
+            type: CHANGE_USER_PASSWORD_SUCCESS,
           });
         } else {
           dispatch({
@@ -146,18 +155,21 @@ export function changeUserPassword(oldPassword: string,newPassword: string) {
 export function changeUserName(name: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_USER_NAME_REQUEST });
-    getAccessToken().then((cookie)=>fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookie,
-      },
-      body: JSON.stringify({
-        query: `mutation {
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookie,
+          },
+          body: JSON.stringify({
+            query: `mutation {
           userSetDisplayName(displayName:"${name}") 
         }`,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -181,18 +193,21 @@ export function changeUserName(name: string) {
 export function changeUserEmail(email: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_USER_EMAIL_REQUEST });
-    getAccessToken().then((cookie)=>fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookie,
-      },
-      body: JSON.stringify({
-        query: `mutation {
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookie,
+          },
+          body: JSON.stringify({
+            query: `mutation {
           userSetEmail(email:"${email}") 
         }`,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {

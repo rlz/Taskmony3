@@ -62,9 +62,13 @@ export const Details = ({ fromDirection }: DetailsProps) => {
   const members = directions.filter((d) => d.id == task.direction?.id)[0]
     ?.members;
   const [showModal, setShowModal] = useState<string | null>(null);
-  const isSmallScreen = useMediaQuery({ query: '(max-width: 640px)' })
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 640px)" });
   return (
-    <div className={`gap flex flex-wrap justify-start pb-2 w-full pl-1 ${isSmallScreen && 'flex-col'}` }>
+    <div
+      className={`gap flex flex-wrap justify-start pb-2 w-full pl-1 ${
+        isSmallScreen && "flex-col"
+      }`}
+    >
       {showModal && (
         <ChangeRepeatedValueModal
           changeThis={() => {
@@ -176,9 +180,11 @@ export const Details = ({ fromDirection }: DetailsProps) => {
                   repeatModeTranslator(repeatOptions[index]),
                   task.repeatEvery,
                   task.weekDays,
-                  task.repeatUntil ? task.repeatUntil : new Date(defaultUntilDateWeekly())
-                  .toISOString()
-                  .substring(0, 10),
+                  task.repeatUntil
+                    ? task.repeatUntil
+                    : new Date(defaultUntilDateWeekly())
+                        .toISOString()
+                        .substring(0, 10),
                   task.groupId
                 )
               );
@@ -189,9 +195,11 @@ export const Details = ({ fromDirection }: DetailsProps) => {
                   repeatModeTranslator(repeatOptions[index]),
                   task.repeatEvery,
                   task.weekDays,
-                  task.repeatUntil ? task.repeatUntil : new Date(defaultUntilDateWeekly())
-                  .toISOString()
-                  .substring(0, 10)
+                  task.repeatUntil
+                    ? task.repeatUntil
+                    : new Date(defaultUntilDateWeekly())
+                        .toISOString()
+                        .substring(0, 10)
                 )
               );
           }

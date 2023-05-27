@@ -18,54 +18,56 @@ type TNotification = {
     description?: string;
     details?: string;
     text?: string;
-    }
+  };
   actionType: string;
   field: string;
   id: string;
   modifiedAt: string;
-  modifiedBy: { displayName: string; };
+  modifiedBy: { displayName: string };
   newValue: string;
-  oldValue: string; 
+  oldValue: string;
 };
 
 type TTaskNotification = {
   id: string;
   description: string;
   direction: {
-      name: string;
-      id: string;
-  }
+    name: string;
+    id: string;
+  };
   notifications: Array<TNotification>;
-}
+};
 
 type TIdeaNotification = {
   id: string;
   description: string;
   direction: {
-      name: string;
-      id: string;
-  }
+    name: string;
+    id: string;
+  };
   notifications: Array<TNotification>;
-}
+};
 
 type TDirectionNotification = {
   id: string;
   name: string;
   notifications: Array<TNotification>;
-}
+};
 
 export function getNotifications() {
   return function (dispatch: Dispatch) {
     dispatch({ type: GET_NOTIFICATIONS_REQUEST });
     //console.log("getting notifications");
-    getAccessToken().then((cookie)=>fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookie,
-      },
-      body: JSON.stringify({
-        query: `{
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookie,
+          },
+          body: JSON.stringify({
+            query: `{
             tasks{
             id
             description
@@ -96,33 +98,62 @@ export function getNotifications() {
             }
           }
         }`,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
           const tasksNotifications = res.data.tasks
-            .filter((n : TTaskNotification) => n.notifications.length)
-            .map((t : TTaskNotification) => {
+            .filter((n: TTaskNotification) => n.notifications.length)
+            .map((t: TTaskNotification) => {
               return t.notifications.map((n: TNotification) => {
-                return { type: "task", direction:t.direction, name: t.description, ...n };
+                return {
+                  type: "task",
+                  direction: t.direction,
+                  name: t.description,
+                  ...n,
+                };
               });
-            }).flat();
-            const ideasNotifications = res.data.ideas
-            .filter((notifs : TIdeaNotification) => notifs.notifications.length)
-            .map((t : TIdeaNotification) => {
+            })
+            .flat();
+          const ideasNotifications = res.data.ideas
+            .filter((notifs: TIdeaNotification) => notifs.notifications.length)
+            .map((t: TIdeaNotification) => {
               return t.notifications.map((n: TNotification) => {
-                return { type: "idea",direction:t.direction, name: t.description, ...n };
+                return {
+                  type: "idea",
+                  direction: t.direction,
+                  name: t.description,
+                  ...n,
+                };
               });
-            }).flat();
-            const directionsNotifications = res.data.directions
-            .filter((n : TDirectionNotification) => n.notifications.length)
+            })
+            .flat();
+          const directionsNotifications = res.data.directions
+            .filter((n: TDirectionNotification) => n.notifications.length)
             .map((t: TDirectionNotification) => {
               return t.notifications.map((n: TNotification) => {
-                return { type: "direction", direction:{name:t.name,id:t.id},name: t.name, ...n };
+                return {
+                  type: "direction",
+                  direction: { name: t.name, id: t.id },
+                  name: t.name,
+                  ...n,
+                };
               });
-            }).flat();
-          const notifications = [...tasksNotifications,...directionsNotifications,...ideasNotifications].sort((a,b) => (a.modifiedAt < b.modifiedAt) ? 1 : ((b.modifiedAt < a.modifiedAt) ? -1 : 0))
+            })
+            .flat();
+          const notifications = [
+            ...tasksNotifications,
+            ...directionsNotifications,
+            ...ideasNotifications,
+          ].sort((a, b) =>
+            a.modifiedAt < b.modifiedAt
+              ? 1
+              : b.modifiedAt < a.modifiedAt
+              ? -1
+              : 0
+          );
           dispatch({
             type: GET_NOTIFICATIONS_SUCCESS,
             notifications: notifications,

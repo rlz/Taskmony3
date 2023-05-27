@@ -8,7 +8,12 @@ export const REGISTER_FAILED = "REGISTER_FAILED";
 
 const REGISTER_URL = BASE_URL + "/api/account/register";
 
-export function register(email: string, password: string, displayName: string, login: string) {
+export function register(
+  email: string,
+  password: string,
+  displayName: string,
+  login: string
+) {
   return function (dispatch: Dispatch) {
     dispatch({ type: REGISTER_REQUEST });
     fetch(REGISTER_URL, {
@@ -23,10 +28,13 @@ export function register(email: string, password: string, displayName: string, l
         login: login,
       }),
     })
-    .then(async (res) => {     
-      if (res.status === 204) return res
-      else{let data = await res.json(); throw new Error(getErrorMessages(data));}
-    })
+      .then(async (res) => {
+        if (res.status === 204) return res;
+        else {
+          let data = await res.json();
+          throw new Error(getErrorMessages(data));
+        }
+      })
       .then((res) => {
         if (res) {
           // Cookies.set("accessToken", res.accessToken, {
@@ -41,14 +49,14 @@ export function register(email: string, password: string, displayName: string, l
         } else {
           dispatch({
             type: REGISTER_FAILED,
-            error: "something went wrong"
+            error: "something went wrong",
           });
         }
       })
       .catch((error) => {
         dispatch({
           type: REGISTER_FAILED,
-          error: error.message
+          error: error.message,
         });
       });
   };

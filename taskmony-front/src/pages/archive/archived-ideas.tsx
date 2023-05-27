@@ -11,31 +11,30 @@ export const ArchivedIdeas = () => {
   const endDate = searchParams.get("endDate");
   const chosenDirection = searchParams.getAll("direction");
   const ideas = useAppSelector((store) => store.ideas.items);
-  let chosenIdeas = ideas.filter(
-    (i) => i.deletedAt != null
-  );
-  if(startDate){
-    chosenIdeas = chosenIdeas.filter(
-      (i) => i.deletedAt > startDate)
+  let chosenIdeas = ideas.filter((i) => i.deletedAt != null);
+  if (startDate) {
+    chosenIdeas = chosenIdeas.filter((i) => i.deletedAt > startDate);
   }
-  if(endDate){
-    chosenIdeas = chosenIdeas.filter(
-      (i) => i.deletedAt < endDate)
+  if (endDate) {
+    chosenIdeas = chosenIdeas.filter((i) => i.deletedAt < endDate);
   }
   if (chosenDirection.length > 0)
-  chosenIdeas = chosenIdeas.filter(
-    (i) =>
-      chosenDirection.includes(i.direction?.name) ||
-      (chosenDirection.includes("unassigned") && !i.direction)
-  );
+    chosenIdeas = chosenIdeas.filter(
+      (i) =>
+        chosenDirection.includes(i.direction?.name) ||
+        (chosenDirection.includes("unassigned") && !i.direction)
+    );
   return (
     <div className="flex w-full">
       <div className="w-full    m-3 ml-0 mainBody">
-      {chosenIdeas.map((idea,index)=><ArchivedItem             
-      label={idea.description}
+        {chosenIdeas.map((idea, index) => (
+          <ArchivedItem
+            label={idea.description}
             date={idea.deletedAt}
             direction={idea.direction?.name}
-            key={index} />)}
+            key={index}
+          />
+        ))}
       </div>
       <Filter />
     </div>

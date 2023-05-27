@@ -7,7 +7,6 @@ import commentsI from "../../../images/comment2.svg";
 import createdByI from "../../../images/by.svg";
 import recurrentI from "../../../images/arrows-rotate.svg";
 
-
 type TaskClosedProps = {
   label: string;
   checked?: boolean;
@@ -78,14 +77,16 @@ export const ClosedTask = ({
             hasBorder
           />
         }
-        {date.slice(0,10) > new Date().toISOString().slice(0,10) && <TaskDetails label={date.slice(0,10)} hasBorder />}
-        {assignee &&
+        {date.slice(0, 10) > new Date().toISOString().slice(0, 10) && (
+          <TaskDetails label={date.slice(0, 10)} hasBorder />
+        )}
+        {assignee && (
           <TaskDetails
-            label={`assignee: ${assignee? assignee.displayName : "none"}`}
+            label={`assignee: ${assignee ? assignee.displayName : "none"}`}
             hasBorder
             textColor={assignee ? undefined : "text-red-500"}
           />
-        }
+        )}
         {<TaskDetails label={direction} textColor="text-yellow-500" />}
       </div>
     </div>
@@ -106,11 +107,16 @@ export const TaskDetails = ({
   textColor,
 }: TaskDetailsProps) => {
   return (
-    <div className={`flex flex-nowrap gap-1 ml-1  ${icon !== undefined ? "mr-5" : "mr-1"}`}>
+    <div
+      className={`flex flex-nowrap gap-1 ml-1  ${
+        icon !== undefined ? "mr-5" : "mr-1"
+      }`}
+    >
       {icon && <img src={icon} alt=""></img>}
       <span
-        className={
-          `font-semibold inline whitespace-nowrap text-xs mr-1 ${textColor?textColor:"text-blue-500"}`}
+        className={`font-semibold inline whitespace-nowrap text-xs mr-1 ${
+          textColor ? textColor : "text-blue-500"
+        }`}
       >
         {label}
       </span>

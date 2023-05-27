@@ -1,9 +1,5 @@
 import { useEffect } from "react";
-import {
-  NavLink,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../utils/hooks";
 import { Archive } from "./archive";
 import { About } from "./about";
@@ -26,7 +22,9 @@ function Direction() {
           <Tasks directionId={directionId} directionName={direction?.name} />
         );
       case "ideas":
-        return <Ideas directionId={directionId} directionName={direction?.name}/>;
+        return (
+          <Ideas directionId={directionId} directionName={direction?.name} />
+        );
       case "archive":
         return <Archive directionId={directionId} />;
     }
@@ -43,10 +41,10 @@ function Direction() {
   );
 }
 type MenuProps = {
-  directionId: string
-}
-  
-const Menu = ({ directionId } : MenuProps) => {
+  directionId: string;
+};
+
+const Menu = ({ directionId }: MenuProps) => {
   return (
     <div className="flex gap-6 mt-4">
       <MenuItem link={`/directions/${directionId}/tasks`} label={"Tasks"} />

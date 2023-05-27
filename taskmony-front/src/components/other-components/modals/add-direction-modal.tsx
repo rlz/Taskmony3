@@ -36,12 +36,12 @@ export const AddDirectionModal = ({ close }: ModalPropsT) => {
             alt=""
           ></img>
           {/* <h1 className="font-bold text-3xl">New Direction</h1> */}
-          <Input
-            label={"direction name"}
-            value={name}
-            onChange={setName}
+          <Input label={"direction name"} value={name} onChange={setName} />
+          <AddBtn
+            label={"add a new direction"}
+            onClick={addNewDirection}
+            unactive={name === ""}
           />
-          <AddBtn label={"add a new direction"} onClick={addNewDirection} unactive={name===""}/>
         </div>
       </div>
     </>

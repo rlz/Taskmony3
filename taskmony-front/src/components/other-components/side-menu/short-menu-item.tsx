@@ -13,12 +13,12 @@ export const ShortMenuItem = ({ to, name, icon, isActive }: MenuItemProps) => {
       {to ? (
         <Link to={to}>
           <div className="w-8">
-          <img src={icon} alt="" ></img>
+            <img src={icon} alt=""></img>
           </div>
         </Link>
       ) : (
         <div className="w-8">
-        <img src={icon} alt="" className="w-max"></img>
+          <img src={icon} alt="" className="w-max"></img>
         </div>
       )}
     </div>

@@ -8,16 +8,12 @@ export const ArchivedDirections = () => {
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
   const directions = useAppSelector((store) => store.directions.items);
-  let chosenDirections = directions.filter(
-    (i) => i.deletedAt != null
-  );
-  if(startDate){
-    chosenDirections = chosenDirections.filter(
-      (i) => i.deletedAt > startDate)
+  let chosenDirections = directions.filter((i) => i.deletedAt != null);
+  if (startDate) {
+    chosenDirections = chosenDirections.filter((i) => i.deletedAt > startDate);
   }
-  if(endDate){
-    chosenDirections = chosenDirections.filter(
-      (i) => i.deletedAt < endDate)
+  if (endDate) {
+    chosenDirections = chosenDirections.filter((i) => i.deletedAt < endDate);
   }
   return (
     <div className="flex w-full">

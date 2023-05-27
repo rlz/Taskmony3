@@ -61,8 +61,7 @@ export const CHANGE_TASKS_DESCRIPTION_SUCCESS =
 export const CHANGE_TASKS_DIRECTION_SUCCESS = "CHANGE_TASKS_DIRECTION_SUCCESS";
 export const CHANGE_TASKS_DETAILS_SUCCESS = "CHANGE_TASKS_DETAILS_SUCCESS";
 export const CHANGE_TASKS_ASSIGNEE_SUCCESS = "CHANGE_TASKS_ASSIGNEE_SUCCESS";
-export const CHANGE_TASK_START_DATE_SUCCESS =
-  "CHANGE_TASK_START_DATE_SUCCESS";
+export const CHANGE_TASK_START_DATE_SUCCESS = "CHANGE_TASK_START_DATE_SUCCESS";
 export const CHANGE_TASK_REPEAT_MODE_FROM_NONE_SUCCESS =
   "CHANGE_TASK_REPEAT_MODE_FROM_NONE_SUCCESS";
 export const CHANGE_TASK_REPEAT_MODE_FROM_REPEATED_SUCCESS =
@@ -138,7 +137,9 @@ export function addTask(task: TTask, direction: string | null) {
           },
           body: JSON.stringify({
             query: `mutation {
-      taskAdd(description:"${task.description}", startAt:"${task.startAt}",details:"${task.details}",
+      taskAdd(description:"${task.description}", startAt:"${
+              task.startAt
+            }",details:"${task.details}",
       ${
         direction
           ? `,directionId:"${direction}"`
@@ -191,7 +192,9 @@ export function addRepeatedTasks(task: TTask, direction: string | null) {
           },
           body: JSON.stringify({
             query: `mutation {
-      tasksGenerate(description:"${task.description}", startAt:"${task.startAt}",details:"${task.details}"
+      tasksGenerate(description:"${task.description}", startAt:"${
+              task.startAt
+            }",details:"${task.details}"
       ${
         direction
           ? `,directionId:"${direction}"`
@@ -605,14 +608,20 @@ export function changeTaskRepeatMode(
           body: JSON.stringify({
             query: `mutation {
       taskSetRepeatMode(taskId:"${taskId}"${
-        groupId ? `,groupId:"${groupId}"` : ``
-      },repeatMode:${repeatMode}
+              groupId ? `,groupId:"${groupId}"` : ``
+            },repeatMode:${repeatMode}
       ${
         repeatMode == null
           ? ""
-          : `,repeatEvery:${repeatEvery ? repeatEvery : 1},repeatUntil:"${repeatUntil}"`
+          : `,repeatEvery:${
+              repeatEvery ? repeatEvery : 1
+            },repeatUntil:"${repeatUntil}"`
       }
-      ${repeatMode === "WEEK" ? `,weekDays:[${weekDays ? weekDays : `MONDAY`}]` : ""}) }
+      ${
+        repeatMode === "WEEK"
+          ? `,weekDays:[${weekDays ? weekDays : `MONDAY`}]`
+          : ""
+      }) }
     `,
           }),
         })

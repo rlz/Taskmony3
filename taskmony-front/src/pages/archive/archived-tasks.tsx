@@ -14,15 +14,20 @@ export const ArchivedTasks = () => {
   let tasks = useAppSelector((store) => store.tasks.items);
   let chosenTasks;
   if (archiveType == "deleted") {
-    chosenTasks = tasks.filter((i) => i.deletedAt != null).sort((a,b)=>{
-      return b.deletedAt.localeCompare(a.deletedAt)});
-  }
-  else{
-    chosenTasks = tasks.filter((i) => i.completedAt != null).sort((a,b)=>{
-      return b.completedAt.localeCompare(a.completedAt)});  
+    chosenTasks = tasks
+      .filter((i) => i.deletedAt != null)
+      .sort((a, b) => {
+        return b.deletedAt.localeCompare(a.deletedAt);
+      });
+  } else {
+    chosenTasks = tasks
+      .filter((i) => i.completedAt != null)
+      .sort((a, b) => {
+        return b.completedAt.localeCompare(a.completedAt);
+      });
   }
   if (chosenDirection.length > 0)
-  chosenTasks = chosenTasks.filter(
+    chosenTasks = chosenTasks.filter(
       (i) =>
         chosenDirection.includes(i.direction?.name) ||
         (chosenDirection.includes("unassigned") && !i.direction)
@@ -43,11 +48,11 @@ export const ArchivedTasks = () => {
   }
   return (
     <div className="flex w-full ">
-      <div className="w-full m-3 ml-0 h-full overflow-scroll mainBody">
+      <div className="w-full m-3 ml-0 mainBody">
         {chosenTasks.map((task, index) => (
           <ArchivedItem
             label={task.description}
-            date={archiveType == "deleted"?task.deletedAt:task.completedAt}
+            date={archiveType == "deleted" ? task.deletedAt : task.completedAt}
             direction={task.direction?.name}
             key={index}
           />

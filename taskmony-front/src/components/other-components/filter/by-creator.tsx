@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { ArrayParam, useQueryParam, withDefault } from "use-query-params";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { useAppSelector } from "../../../utils/hooks";
 import { FilterDivider } from "./filter-divider";
 import { FilterItem } from "./filter-item";
 
 type FilterByCreatorProps = {
   id: string;
-}
-export const FilterByCreator = ({ id } : FilterByCreatorProps) => {
+};
+export const FilterByCreator = ({ id }: FilterByCreatorProps) => {
   const MyFiltersParam = withDefault(ArrayParam, []);
   const [createdBy, setCreatedBy] = useQueryParam("createdBy", MyFiltersParam);
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -28,9 +28,9 @@ export const FilterByCreator = ({ id } : FilterByCreatorProps) => {
           {users?.map((u) => (
             <FilterItem
               key={u.id}
-              label={u.id == myId? "me" : u.displayName}
+              label={u.id == myId ? "me" : u.displayName}
               checked={createdBy.includes(u.id)}
-              onChange={(value : boolean, label : string) => {
+              onChange={(value: boolean, label: string) => {
                 if (value) {
                   setCreatedBy([...createdBy, u.id]);
                 } else {

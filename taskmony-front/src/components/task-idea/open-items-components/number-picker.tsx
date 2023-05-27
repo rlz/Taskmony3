@@ -9,7 +9,7 @@ type Props = {
   value: number;
   onChange: Function;
   disabled: Boolean;
-}
+};
 export const NumberPicker = ({
   title,
   min,
@@ -18,7 +18,7 @@ export const NumberPicker = ({
   after,
   value,
   onChange,
-  disabled
+  disabled,
 }: Props) => {
   return (
     <div className={"flex justify-between items-center pl-2"}>

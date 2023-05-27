@@ -1,7 +1,10 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { TaskmonyTitle } from "../../components/other-components/taskmony-title";
-import useIsFirstRender, { useAppDispatch, useAppSelector } from "../../utils/hooks";
+import useIsFirstRender, {
+  useAppDispatch,
+  useAppSelector,
+} from "../../utils/hooks";
 import { Btn } from "./btn";
 import { Input } from "./input";
 import { login } from "../../services/actions/auth/login";
@@ -49,8 +52,7 @@ export const Login = () => {
             value={password}
             onChange={setPassword}
           />
-          {error && <p className="text-red-400">{error}</p>
-          }
+          {error && <p className="text-red-400">{error}</p>}
           {/* <NavLink to="/forgot-password">
             <p className="mt-2">forgot your password?</p>
           </NavLink> */}

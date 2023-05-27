@@ -1,6 +1,5 @@
 import divider from "../../../images/divider.svg";
 
-
 type Props = {
   title: string;
   date: Date;
@@ -15,7 +14,7 @@ export const DatePicker = ({
   onChange,
   hasBorder,
   min,
-  disabled
+  disabled,
 }: Props) => {
   return (
     <div className={"flex justify-between items-center pl-2"}>

@@ -23,7 +23,7 @@ export function login(login: string, password: string) {
       }),
     })
       .then(async (res) => {
-        let data = await res.json();      
+        let data = await res.json();
         if (res.status !== 200) throw new Error(getErrorMessages(data));
         else return data;
       })
@@ -44,14 +44,14 @@ export function login(login: string, password: string) {
         } else {
           dispatch({
             type: LOGIN_FAILED,
-            error: "something went wrong"
+            error: "something went wrong",
           });
         }
       })
       .catch((error) => {
         dispatch({
           type: LOGIN_FAILED,
-          error: error.message
+          error: error.message,
         });
       });
   };

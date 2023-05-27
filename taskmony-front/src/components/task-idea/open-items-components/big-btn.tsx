@@ -13,7 +13,8 @@ export const BigBtn = ({ label, onClick, unactive, ref }: BtnProps) => {
       className={`w-auto inline-block p-1 m-1 mr-2 ${
         unactive === true ? "bg-gray-300" : "bg-blue-500 cursor-pointer"
       } rounded-lg `}
-      onClick={(e) => {onClick();     
+      onClick={(e) => {
+        onClick();
       }}
       ref={ref}
     >

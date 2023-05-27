@@ -12,6 +12,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   scrollbar-color: rgb(203 213 225) rgb(248 250 252);
   scrollbar-width: thin;
+  background-color: rgb(248 250 252);
 }
 
 @media (max-width: 640px) {

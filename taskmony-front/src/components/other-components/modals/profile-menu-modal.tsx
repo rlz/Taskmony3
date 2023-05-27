@@ -6,7 +6,7 @@ import {
   changeUserName,
   changeUserPassword,
 } from "../../../services/actions/userInfo";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { useAppDispatch, useAppSelector } from "../../../utils/hooks";
 
 type ModalPropsT = {
@@ -25,8 +25,9 @@ export const ProfileMenuModal = ({ close }: ModalPropsT) => {
   const navigate = useNavigate();
   const logout = () => {
     Cookies.remove("refreshToken");
-    Cookies.remove("accessToken");      
-    navigate("/login")}
+    Cookies.remove("accessToken");
+    navigate("/login");
+  };
   return (
     <div className="w-1/4 absolute top-0 left-0 p-3 m-4 pb-2 bg-slate-50 rounded-lg drop-shadow-lg z-40">
       <img
@@ -37,25 +38,25 @@ export const ProfileMenuModal = ({ close }: ModalPropsT) => {
       ></img>
       <Input
         label={displayName}
-        onBlur={(val : string) => {
+        onBlur={(val: string) => {
           dispatch(changeUserName(val));
         }}
       />
       <Input
         label={email}
-        onBlur={(val : string) => {
+        onBlur={(val: string) => {
           dispatch(changeUserEmail(val));
         }}
       />
       {changePassword && (
         <>
           <PasswordInput
-          label={"old password"}
+            label={"old password"}
             value={oldPassword}
             onChange={setOldPassword}
           />
           <PasswordInput
-          label={"new password"}
+            label={"new password"}
             value={newPassword}
             onChange={setNewPassword}
           />
@@ -98,7 +99,11 @@ type PasswordInputProps = {
   value: string;
   onChange: Function;
 };
-export const PasswordInput = ({ label,value, onChange } : PasswordInputProps) => {
+export const PasswordInput = ({
+  label,
+  value,
+  onChange,
+}: PasswordInputProps) => {
   return (
     <input
       type="password"
@@ -118,7 +123,9 @@ type BtnPropsT = {
 export const Btn = ({ onClick, label }: BtnPropsT) => {
   return (
     <div
-      className={"p-1 w-fit mt-2 mb-2 pl-2 pr-2 bg-blue-500 rounded-md cursor-pointer"}
+      className={
+        "p-1 w-fit mt-2 mb-2 pl-2 pr-2 bg-blue-500 rounded-md cursor-pointer"
+      }
       onClick={() => onClick()}
     >
       <span className={"text-white"}>{label}</span>

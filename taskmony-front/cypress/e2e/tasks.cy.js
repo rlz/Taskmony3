@@ -21,7 +21,6 @@ describe("task tests", () => {
   });
 
   it("can add task", function () {
-    
     cy.get("div").contains("add a new task").click();
     cy.get('input[id="description"]').type(`${date}{enter}`);
     cy.get("div").contains("add a task").click();
@@ -30,39 +29,46 @@ describe("task tests", () => {
   });
 
   it("can edit a task", function () {
-    cy.get("div").get('[class^=uneditedTask]').contains(taskName).click();
-    cy.get("div").get('[class^=uneditedTask]').contains(taskName).should("not.exist");
-    cy.get("div").get('[class^=editedTask]').as("taskContainer")
-    cy.get("@taskContainer").get("input").eq(0).as("taskDescriptionInput")
-    cy.get("@taskDescriptionInput").should('have.value', taskName);
+    cy.get("div").get("[class^=uneditedTask]").contains(taskName).click();
+    cy.get("div")
+      .get("[class^=uneditedTask]")
+      .contains(taskName)
+      .should("not.exist");
+    cy.get("div").get("[class^=editedTask]").as("taskContainer");
+    cy.get("@taskContainer").get("input").eq(0).as("taskDescriptionInput");
+    cy.get("@taskDescriptionInput").should("have.value", taskName);
     cy.get("@taskDescriptionInput").type(`123{enter}`);
-    cy.get("@taskContainer").get('img').get('[class^=closeBtn]').click();
+    cy.get("@taskContainer").get("img").get("[class^=closeBtn]").click();
     cy.get("@taskContainer").should("not.exist");
-    cy.get("div").get('[class^=uneditedTask]').contains(`${taskName}123`).should("exist");
+    cy.get("div")
+      .get("[class^=uneditedTask]")
+      .contains(`${taskName}123`)
+      .should("exist");
     cy.visit(baseUrl);
-    cy.get("div").get('[class^=uneditedTask]').contains(`${taskName}123`).should("exist");
+    cy.get("div")
+      .get("[class^=uneditedTask]")
+      .contains(`${taskName}123`)
+      .should("exist");
   });
-  it("can add a comment", function () {
-
-  });
+  it("can add a comment", function () {});
   it("can delete a task", function () {
-    cy.get("div").get('[class^=uneditedTask]').contains(`${taskName}123`).click();
-    cy.get("div").get('[class^=editedTask]').as("taskContainer")
-    cy.get("@taskContainer").get('img').get('[class^=deleteBtn]').click();
+    cy.get("div")
+      .get("[class^=uneditedTask]")
+      .contains(`${taskName}123`)
+      .click();
+    cy.get("div").get("[class^=editedTask]").as("taskContainer");
+    cy.get("@taskContainer").get("img").get("[class^=deleteBtn]").click();
     cy.get("@taskContainer").should("not.exist");
-    cy.get("div").get('[class^=uneditedTask]').contains(`${taskName}123`).should("not.exist");
+    cy.get("div")
+      .get("[class^=uneditedTask]")
+      .contains(`${taskName}123`)
+      .should("not.exist");
     cy.visit(baseUrl);
-    cy.get("div").get('[class^=uneditedTask]').contains(`${taskName}123`).should("not.exist");
+    cy.get("div")
+      .get("[class^=uneditedTask]")
+      .contains(`${taskName}123`)
+      .should("not.exist");
   });
-  it("can add a repeated task", function () {
-
-  });
-  it("can add a future task", function () {
-
-  });
-
-
-
-
-  
+  it("can add a repeated task", function () {});
+  it("can add a future task", function () {});
 });

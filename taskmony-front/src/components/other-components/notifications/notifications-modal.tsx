@@ -1,7 +1,7 @@
 import { NotificationItem } from "./notification";
 import deleteI from "../../../images/delete.svg";
 import { useAppDispatch, useAppSelector } from "../../../utils/hooks";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { useState } from "react";
 import { RESET_COUNT } from "../../../services/actions/notifications";
 import { useMediaQuery } from "react-responsive";
@@ -11,7 +11,7 @@ type NotificationsModalPropsT = {
 };
 
 export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
-  const isSmallScreen = useMediaQuery({ query: '(max-width: 975px)' })
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 975px)" });
   const dispatch = useAppDispatch();
   const notifications = useAppSelector(
     (store) => store.notifications.notifications
@@ -64,7 +64,10 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
       details = `${notif.field.toLowerCase()}:${notif.oldValue}->${
         notif.newValue
       }`;
-    } else if (notif.type !== "direction" && notif.actionType === "ITEM_ADDED") {
+    } else if (
+      notif.type !== "direction" &&
+      notif.actionType === "ITEM_ADDED"
+    ) {
       label = `New comment on ${notif.type} “${notif.name}”:`;
       type = "commentAdded";
       details = notif.actionItem.text;
@@ -91,13 +94,17 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
         direction={notif.direction}
         createdBy={notif.modifiedBy.displayName}
         time={date.toLocaleString()}
-        details={details?details:undefined}
+        details={details ? details : undefined}
         type={type}
       />
     );
   });
   return (
-    <div className={`${isSmallScreen?"w-full":"w-1/3 m-4 p-3 mt-0"} ${newCount < 5 && !showOld?"max-h-3/4" : "h-3/4"} overflow-y-hidden absolute top-0 right-0 bg-slate-50 rounded-lg drop-shadow-lg `}>
+    <div
+      className={`${isSmallScreen ? "w-full" : "w-1/3 m-4 p-3 mt-0"} ${
+        newCount < 5 && !showOld ? "max-h-3/4" : "h-3/4"
+      } overflow-y-hidden absolute top-0 right-0 bg-slate-50 rounded-lg drop-shadow-lg `}
+    >
       <img
         src={deleteI}
         className="cursor-pointer mr-0 ml-auto"
@@ -109,7 +116,10 @@ export const NotificationsModal = ({ close }: NotificationsModalPropsT) => {
       ></img>
       <div className="h-full w-full overflow-y-scroll overflow-x-hidden">
         {notificationsItems.slice(0, newCount)}
-        <p onClick={() => setShowOld(!showOld)} className="cursor-pointer text-center">
+        <p
+          onClick={() => setShowOld(!showOld)}
+          className="cursor-pointer text-center"
+        >
           {showOld ? "hide old notifications" : "show old notifications"}
         </p>
         {showOld && notificationsItems.slice(newCount)}

@@ -112,7 +112,9 @@ export const ideasReducer = (
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id === action.ideaId ? { ...item, reviewedAt: action.date } : item
+          item.id === action.ideaId
+            ? { ...item, reviewedAt: action.date }
+            : item
         ),
       };
     }

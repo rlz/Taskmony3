@@ -32,7 +32,7 @@ export const tasksAllQuery = `id
     repeatUntil
     weekDays`;
 
-    export const ideasAllQuery = `id
+export const ideasAllQuery = `id
     description
     deletedAt
     reviewedAt
@@ -56,7 +56,7 @@ export const tasksAllQuery = `id
      createdBy { displayName } 
     }`;
 
-    export const notificationsAllQuery = `
+export const notificationsAllQuery = `
     actionItem {
       __typename
       ... on User {
@@ -85,7 +85,7 @@ export const tasksAllQuery = `id
     modifiedAt
     modifiedBy { displayName }
     newValue
-    oldValue`
+    oldValue`;
 
 export const directionsAllQuery = `{directions{
     id

@@ -16,7 +16,7 @@ export const FilterItem = ({
   checked,
   radio,
   onChange,
-  style
+  style,
 }: FilterProps) => {
   return (
     <div className={"gap-4 flex m-4"}>
@@ -26,7 +26,7 @@ export const FilterItem = ({
         onClick={() => onChange(!checked, label)}
         alt=""
       ></img>
-      <span className={"font-semibold text-sm "+ style}>{label}</span>
+      <span className={"font-semibold text-sm " + style}>{label}</span>
     </div>
   );
 };

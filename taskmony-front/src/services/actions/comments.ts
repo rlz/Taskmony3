@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { checkResponse, getAccessToken } from "../../utils/api-utils";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { BASE_URL } from "../../utils/base-api-url";
 
 export const SEND_COMMENT_REQUEST = "SEND_COMMENT_REQUEST";
@@ -14,15 +14,17 @@ export function sendTaskComment(taskId: string, text: string) {
   return function (dispatch: Dispatch) {
     //console.log("sending_comment");
     dispatch({ type: SEND_COMMENT_REQUEST });
-   getAccessToken().then((cookie)=> fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
-      },
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("accessToken"),
+          },
 
-      body: JSON.stringify({
-        query: `mutation {
+          body: JSON.stringify({
+            query: `mutation {
           taskAddComment(taskId:"${taskId}", text:"${text}") {
             text
             createdAt
@@ -30,8 +32,9 @@ export function sendTaskComment(taskId: string, text: string) {
         }
     }
         `,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -59,15 +62,17 @@ export function sendIdeaComment(ideaId: string, text: string) {
   return function (dispatch: Dispatch) {
     //console.log("sending_comment");
     dispatch({ type: SEND_COMMENT_REQUEST });
-   getAccessToken().then((cookie)=> fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
-      },
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("accessToken"),
+          },
 
-      body: JSON.stringify({
-        query: `mutation {
+          body: JSON.stringify({
+            query: `mutation {
           ideaAddComment(ideaId:"${ideaId}", text:"${text}") {
             text
             createdAt
@@ -75,8 +80,9 @@ export function sendIdeaComment(ideaId: string, text: string) {
         }
     }
         `,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {

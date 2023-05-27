@@ -88,4 +88,3 @@ export const Task = ({ task, direction }: TaskProps) => {
     </div>
   );
 };
-

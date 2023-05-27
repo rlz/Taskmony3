@@ -7,7 +7,7 @@ import useIsFirstRender, {
   useAppDispatch,
   useAppSelector,
 } from "../../utils/hooks";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import {
   changeDetails,
   deleteDirection,
@@ -18,9 +18,9 @@ import { useNavigate } from "react-router-dom";
 
 type AboutProps = {
   directionId: string;
-}  
+};
 
-export const About = ({ directionId } : AboutProps) => {
+export const About = ({ directionId }: AboutProps) => {
   const dispatch = useAppDispatch();
   const myId = Cookies.get("id");
   const directions = useAppSelector((store) => store.directions.items);
@@ -60,7 +60,7 @@ export const About = ({ directionId } : AboutProps) => {
       directionId: directionId,
     });
     //do to start page
-    navigate("/")
+    navigate("/");
   };
   const deleteThisDirection = () => {
     //setDeletedAt
@@ -70,7 +70,8 @@ export const About = ({ directionId } : AboutProps) => {
   };
 
   const saveDescription = () => dispatch(changeDetails(about, directionId));
-  const removeThisUser = (user : {id: string}) => dispatch(removeUser(directionId, user));
+  const removeThisUser = (user: { id: string }) =>
+    dispatch(removeUser(directionId, user));
 
   return (
     <div>
@@ -124,7 +125,7 @@ export const User = ({ label, onClick }: UserPropsT) => {
   return (
     <div
       className="w-full bg-white rounded-lg drop-shadow-sm"
-      onClick={(e)=>onClick()}
+      onClick={(e) => onClick()}
     >
       <div className={"gap-4 flex justify-between p-2 mt-4 mb"}>
         <div className="flex  gap-2">
@@ -136,9 +137,15 @@ export const User = ({ label, onClick }: UserPropsT) => {
   );
 };
 type AboutElementProps = {
-  value: string; onChange: Function; saveDescription: Function;
-}
-export const AboutElement = ({ value, onChange, saveDescription } : AboutElementProps) => {
+  value: string;
+  onChange: Function;
+  saveDescription: Function;
+};
+export const AboutElement = ({
+  value,
+  onChange,
+  saveDescription,
+}: AboutElementProps) => {
   return (
     <div className="w-full bg-white rounded-lg drop-shadow-sm">
       <textarea
@@ -163,7 +170,7 @@ export const AboutElement = ({ value, onChange, saveDescription } : AboutElement
 type BtnPropsT = {
   onClick: Function;
   label: string;
-  color: string
+  color: string;
 };
 
 const Btn = ({ onClick, label, color }: BtnPropsT) => {

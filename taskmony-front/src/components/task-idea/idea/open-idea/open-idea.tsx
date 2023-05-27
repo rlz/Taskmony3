@@ -6,9 +6,7 @@ import shareI from "../../../../images/share.svg";
 import { BigBtn } from "../../open-items-components/big-btn";
 import arrowUpGray from "../../../../images/arrow-up-gray.svg";
 import { useAppDispatch, useAppSelector } from "../../../../utils/hooks";
-import {
-  RESET_IDEA
-} from "../../../../services/actions/ideasAPI";
+import { RESET_IDEA } from "../../../../services/actions/ideasAPI";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Comments } from "../../open-items-components/comments/comments";
 import { Details } from "./idea-details";
@@ -73,8 +71,8 @@ export const OpenIdea = ({
   return (
     <div className="editedIdea w-full bg-white rounded-lg drop-shadow-sm  pb-1">
       <div className={"gap-4 flex justify-between p-2 mb"}>
-      <div className="flex  gap-2">
-        <Description/>
+        <div className="flex  gap-2">
+          <Description />
         </div>
         {idea.id ? (
           <div className="relative z-30 flex gap-2">
@@ -110,7 +108,7 @@ export const OpenIdea = ({
       <Details fromDirection={direction} />
       {idea.id && (
         <Comments
-          send={(input : string) => {
+          send={(input: string) => {
             dispatch(sendIdeaComment(idea.id, input));
           }}
           comments={idea.comments}
@@ -122,7 +120,7 @@ export const OpenIdea = ({
             <BigBtn label={"add an idea"} onClick={closeModal} />
           ) : (
             <img
-            alt=""
+              alt=""
               src={arrowUp}
               ref={saveBtn}
               onClick={closeModal}
@@ -133,7 +131,7 @@ export const OpenIdea = ({
           <BigBtn label={"add an idea"} onClick={() => {}} unactive={true} />
         ) : (
           <img
-          alt=""
+            alt=""
             src={arrowUpGray}
             onClick={() => {}}
             className={"closeBtn w-4 mr-3 m-2"}

@@ -10,7 +10,7 @@ import {
 
 import { Idea } from "../components/task-idea/idea/idea";
 import { addIdea, RESET_IDEA } from "../services/actions/ideasAPI";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
 
 function MyIdeas() {
@@ -21,18 +21,22 @@ function MyIdeas() {
   const chosenGeneration = searchParams.get("ideaCategory");
   const followed = searchParams.get("followed");
   const idea = useAppSelector((store) => store.editedIdea);
-  useEffect(()=>{
-    if(idea.id !== "") setNewIdea(false);
-    },[idea.id])
+  useEffect(() => {
+    if (idea.id !== "") setNewIdea(false);
+  }, [idea.id]);
   let ideasToShow = useAppSelector((store) => store.ideas.items)
     .filter((i) => i.deletedAt == null)
-    .filter((i) => i.createdBy.id === myId || i.subscribers.some((s) => s.id === myId))
+    .filter(
+      (i) => i.createdBy.id === myId || i.subscribers.some((s) => s.id === myId)
+    )
     .sort((a, b) => {
       //console.log("sorting")
-      if(b.reviewedAt == null && a.reviewedAt == null) return 0
-      else if(a.reviewedAt == null) return -1
-      else if(b.reviewedAt == null) return 1
-      else {return b.reviewedAt < a.reviewedAt?1:-1 }
+      if (b.reviewedAt == null && a.reviewedAt == null) return 0;
+      else if (a.reviewedAt == null) return -1;
+      else if (b.reviewedAt == null) return 1;
+      else {
+        return b.reviewedAt < a.reviewedAt ? 1 : -1;
+      }
     });
   if (chosenDirection.length > 0)
     ideasToShow = ideasToShow.filter(
@@ -44,8 +48,10 @@ function MyIdeas() {
     ideasToShow = ideasToShow.filter((i) => i.generation === chosenGeneration);
   }
   if (!followed || followed === "0") {
-    ideasToShow = ideasToShow.filter((i) => 
-    (!(i.subscribers.some((s) => s.id === myId) && i.createdBy.id !== myId)));
+    ideasToShow = ideasToShow.filter(
+      (i) =>
+        !(i.subscribers.some((s) => s.id === myId) && i.createdBy.id !== myId)
+    );
   }
 
   const dispatch = useAppDispatch();
@@ -65,7 +71,13 @@ function MyIdeas() {
     <div className="flex w-full">
       <div className="w-full  p-3 flex flex-col overflow-hidden h-screen mainBody">
         <h1 className="font-bold text-3xl">My Ideas</h1>
-        <AddBtn label={"add a new idea"} onClick={() => {dispatch({ type: RESET_IDEA });setNewIdea(true)}} />
+        <AddBtn
+          label={"add a new idea"}
+          onClick={() => {
+            dispatch({ type: RESET_IDEA });
+            setNewIdea(true);
+          }}
+        />
         {newIdea && idea.id === "" && (
           <OpenIdea
             label={"new idea"}

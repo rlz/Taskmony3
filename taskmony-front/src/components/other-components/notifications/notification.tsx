@@ -19,7 +19,7 @@ type NotificationProps = {
   label: string;
   time?: string;
   createdBy?: string;
-  direction?: {"name":string,id?:string};
+  direction?: { name: string; id?: string };
   details?: string;
   notRead?: boolean;
 };
@@ -52,10 +52,14 @@ export const NotificationItem = ({
     }
   };
   const navigate = useNavigate();
-  const goToDirection = (id? : string) => {if(id) navigate(`directions/${id}`)}
+  const goToDirection = (id?: string) => {
+    if (id) navigate(`directions/${id}`);
+  };
   return (
     <div className={`w-full drop-shadow-sm bg-white rounded-lg`}>
-      <div className={"gap-4 flex justify-between p-2 mt-2 mb  overflow-hidden"}>
+      <div
+        className={"gap-4 flex justify-between p-2 mt-2 mb  overflow-hidden"}
+      >
         <div>
           <div className="flex  gap-2">
             <img src={iconByType(type)} alt=""></img>
@@ -65,8 +69,11 @@ export const NotificationItem = ({
         </div>
       </div>
       <div className={"gap flex justify-start pb-2 w-full ml-1"}>
-        <div onClick={()=>goToDirection(direction?.id)} className={"cursor-pointer"}>
-        <Details label={direction?.name} hasBorder />
+        <div
+          onClick={() => goToDirection(direction?.id)}
+          className={"cursor-pointer"}
+        >
+          <Details label={direction?.name} hasBorder />
         </div>
         {createdBy && (
           <Details icon={createdByI} label={`by ${createdBy}`} hasBorder />

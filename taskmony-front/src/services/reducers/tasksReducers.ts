@@ -61,18 +61,17 @@ export const tasksReducer = (
         groupId: string;
         payload: string;
       }
-      | {
+    | {
         type: typeof REMOVE_TASK;
         id: string;
       }
-      | {
+    | {
         type: typeof CHANGE_TASK_REPEAT_MODE_FROM_NONE_SUCCESS;
         groupId: string;
         taskId: string;
         payload: string;
       }
-      
-      | {
+    | {
         type: typeof REMOVE_TASKS;
         groupId: string;
         except: string;

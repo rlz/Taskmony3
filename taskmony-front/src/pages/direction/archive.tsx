@@ -7,32 +7,38 @@ import { useAppSelector } from "../../utils/hooks";
 
 type ArchiveProps = {
   directionId: string;
-}
+};
 
-export const Archive = ({ directionId } : ArchiveProps) => {
+export const Archive = ({ directionId }: ArchiveProps) => {
   const loc = useLocation();
   const navigate = useNavigate();
   let [searchParams, setSearchParams] = useSearchParams();
   const tasksType = searchParams.get("archiveType");
   const type = loc.pathname.split("/")[3];
   const archiveType = loc.pathname.split("/")[4];
-  const tasks = useAppSelector((store) => store.tasks.items).filter(
-    (i) => (tasksType == "deleted" ? i.deletedAt != null : i.completedAt != null) && i.direction?.id == directionId
-  ).sort((a,b)=>{
-    return tasksType == "deleted"?b.deletedAt.localeCompare(a.deletedAt):b.completedAt.localeCompare(a.completedAt)});;
-  const ideas = useAppSelector((store) => store.ideas.items).filter(
-    (i) => i.deletedAt != null && i.direction?.id == directionId
-  ).sort((a,b)=>b.deletedAt.localeCompare(a.deletedAt));
-  let items = archiveType === "tasks"? tasks : ideas;
+  const tasks = useAppSelector((store) => store.tasks.items)
+    .filter(
+      (i) =>
+        (tasksType == "deleted"
+          ? i.deletedAt != null
+          : i.completedAt != null) && i.direction?.id == directionId
+    )
+    .sort((a, b) => {
+      return tasksType == "deleted"
+        ? b.deletedAt.localeCompare(a.deletedAt)
+        : b.completedAt.localeCompare(a.completedAt);
+    });
+  const ideas = useAppSelector((store) => store.ideas.items)
+    .filter((i) => i.deletedAt != null && i.direction?.id == directionId)
+    .sort((a, b) => b.deletedAt.localeCompare(a.deletedAt));
+  let items = archiveType === "tasks" ? tasks : ideas;
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
-  if(startDate){
-    items = items.filter(
-      (i) => i.deletedAt == null || i.deletedAt > startDate)
+  if (startDate) {
+    items = items.filter((i) => i.deletedAt == null || i.deletedAt > startDate);
   }
-  if(endDate){
-    items = items.filter(
-      (i) => i.deletedAt == null || i.deletedAt < endDate)
+  if (endDate) {
+    items = items.filter((i) => i.deletedAt == null || i.deletedAt < endDate);
   }
   return (
     <div className="flex w-full">
@@ -40,7 +46,7 @@ export const Archive = ({ directionId } : ArchiveProps) => {
         {items.map((task) => (
           <ArchivedItem
             label={task.description}
-            date={tasksType == "completed"?task.completedAt : task.deletedAt}
+            date={tasksType == "completed" ? task.completedAt : task.deletedAt}
             direction={task.direction?.name}
             key={task.id}
           />
@@ -52,12 +58,13 @@ export const Archive = ({ directionId } : ArchiveProps) => {
 };
 
 type FilterProps = {
-  archiveType: string; directionId: string;
-}
-  
-function Filter({ archiveType, directionId } : FilterProps) {
+  archiveType: string;
+  directionId: string;
+};
+
+function Filter({ archiveType, directionId }: FilterProps) {
   const navigate = useNavigate();
-  const changeType = (type : string) => {
+  const changeType = (type: string) => {
     navigate(`/directions/${directionId}/archive/${type}`);
   };
   return (

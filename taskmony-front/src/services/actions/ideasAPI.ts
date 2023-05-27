@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { checkResponse, getAccessToken, nowDate } from "../../utils/api-utils";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { BASE_URL } from "../../utils/base-api-url";
 import { ideasAllQuery } from "../../utils/queries";
 import { TDirection, TIdea } from "../../utils/types";
@@ -36,16 +36,16 @@ export const CHANGE_IDEA_DESCRIPTION_FAILED = "CHANGE_IDEA_DESCRIPTION_FAILED";
 export const CHANGE_IDEA_DIRECTION_FAILED = "CHANGE_IDEA_DIRECTION_FAILED";
 export const CHANGE_IDEA_GENERATION_FAILED = "CHANGE_IDEA_GENERATION_FAILED";
 export const CHANGE_IDEA_DETAILS_FAILED = "CHANGE_IDEA_DETAILS_FAILED";
-export const CHANGE_IDEA_REVIEWED_DATE_FAILED = "CHANGE_IDEA_REVIEWED_DATE_FAILED";
-
+export const CHANGE_IDEA_REVIEWED_DATE_FAILED =
+  "CHANGE_IDEA_REVIEWED_DATE_FAILED";
 
 export const CHANGE_IDEA_DESCRIPTION_SUCCESS =
   "CHANGE_IDEA_DESCRIPTION_SUCCESS";
 export const CHANGE_IDEA_DIRECTION_SUCCESS = "CHANGE_IDEA_DIRECTION_SUCCESS";
 export const CHANGE_IDEA_GENERATION_SUCCESS = "CHANGE_IDEA_GENERATION_SUCCESS";
 export const CHANGE_IDEA_DETAILS_SUCCESS = "CHANGE_IDEA_DETAILS_SUCCESS";
-export const CHANGE_IDEA_REVIEWED_DATE_SUCCESS = "CHANGE_IDEA_REVIEWED_DATE_SUCCESS";
-
+export const CHANGE_IDEA_REVIEWED_DATE_SUCCESS =
+  "CHANGE_IDEA_REVIEWED_DATE_SUCCESS";
 
 export const CHANGE_SAVED = "CHANGE_SAVED";
 
@@ -58,17 +58,20 @@ export function getIdeas() {
   return function (dispatch: Dispatch) {
     //console.log("getting ideas");
     dispatch({ type: GET_IDEAS_REQUEST });
-    getAccessToken().then((cookie)=>fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + cookie,
-      },
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + cookie,
+          },
 
-      body: JSON.stringify({
-        query: `{ideas{${ideasAllQuery}}}`,
-      }),
-    }))
+          body: JSON.stringify({
+            query: `{ideas{${ideasAllQuery}}}`,
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -90,19 +93,21 @@ export function getIdeas() {
   };
 }
 
-export function addIdea(idea : TIdea, direction: string | null) {
+export function addIdea(idea: TIdea, direction: string | null) {
   return function (dispatch: Dispatch) {
     dispatch({ type: ADD_IDEA_REQUEST });
     //console.log("adding");
-   getAccessToken().then((cookie)=> fetch(URL, {
-      method: "POST",
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
-      },
-      body: JSON.stringify({
-        query: `mutation {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("accessToken"),
+          },
+          body: JSON.stringify({
+            query: `mutation {
       ideaAdd(description:"${idea.description}"
       ${
         direction
@@ -111,14 +116,19 @@ export function addIdea(idea : TIdea, direction: string | null) {
           ? `,directionId:"${idea.direction?.id}"`
           : ""
       }
-      , generation: ${idea.generation ? idea.generation.toUpperCase().replaceAll(' ', '_') : "HOT"}
+      , generation: ${
+        idea.generation
+          ? idea.generation.toUpperCase().replaceAll(" ", "_")
+          : "HOT"
+      }
       ) {
         ${ideasAllQuery}
       }
     }
     `,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -140,24 +150,27 @@ export function addIdea(idea : TIdea, direction: string | null) {
   };
 }
 
-export function changeIdeaFollowed(ideaId: string, markFollowed : boolean) {
+export function changeIdeaFollowed(ideaId: string, markFollowed: boolean) {
   return function (dispatch: Dispatch) {
     dispatch({ type: CHANGE_IDEA_FOLLOWED_REQUEST });
     //console.log("change followed");
-   getAccessToken().then((cookie)=> fetch(URL, {
-      method: "POST",
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
-      },
-      body: JSON.stringify({
-        query: `mutation {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("accessToken"),
+          },
+          body: JSON.stringify({
+            query: `mutation {
       ${markFollowed ? "ideaSubscribe" : "ideaUnsubscribe"}(ideaId:"${ideaId}") 
     }
     `,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -183,19 +196,22 @@ export function changeIdeaFollowed(ideaId: string, markFollowed : boolean) {
 export function changeIdeaDescription(ideaId: string, description: string) {
   return function (dispatch: Dispatch) {
     //console.log("change description");
-   getAccessToken().then((cookie)=> fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
-      },
-      body: JSON.stringify({
-        query: `mutation {
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("accessToken"),
+          },
+          body: JSON.stringify({
+            query: `mutation {
       ideaSetDescription(ideaId:"${ideaId}",description:"${description}") 
     }
     `,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -220,19 +236,24 @@ export function changeIdeaDescription(ideaId: string, description: string) {
 export function changeIdeaDetails(ideaId: string, details: string | null) {
   return function (dispatch: Dispatch) {
     //console.log("change details");
-   getAccessToken().then((cookie)=> fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
-      },
-      body: JSON.stringify({
-        query: `mutation {
-      ideaSetDetails(ideaId:"${ideaId}",details:${details === null ? "null" : `"${details}"`}) 
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("accessToken"),
+          },
+          body: JSON.stringify({
+            query: `mutation {
+      ideaSetDetails(ideaId:"${ideaId}",details:${
+              details === null ? "null" : `"${details}"`
+            }) 
     }
     `,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -254,22 +275,25 @@ export function changeIdeaDetails(ideaId: string, details: string | null) {
       });
   };
 }
-export function changeIdeaDirection(ideaId: string, direction : TDirection) {
+export function changeIdeaDirection(ideaId: string, direction: TDirection) {
   return function (dispatch: Dispatch) {
     //console.log("change direction");
-   getAccessToken().then((cookie)=> fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
-      },
-      body: JSON.stringify({
-        query: `mutation {
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("accessToken"),
+          },
+          body: JSON.stringify({
+            query: `mutation {
       ideaSetDirection(ideaId:"${ideaId}",directionId:"${direction.id}") 
     }
     `,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -295,19 +319,24 @@ export function changeIdeaDirection(ideaId: string, direction : TDirection) {
 export function changeIdeaGeneration(ideaId: string, generation: string) {
   return function (dispatch: Dispatch) {
     //console.log("change category");
-   getAccessToken().then((cookie)=> fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
-      },
-      body: JSON.stringify({
-        query: `mutation {
-      ideaSetGeneration(ideaId:"${ideaId}",generation:${generation.toUpperCase().replaceAll(' ', '_')}) 
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("accessToken"),
+          },
+          body: JSON.stringify({
+            query: `mutation {
+      ideaSetGeneration(ideaId:"${ideaId}",generation:${generation
+              .toUpperCase()
+              .replaceAll(" ", "_")}) 
     }
     `,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
@@ -335,27 +364,30 @@ export function deleteIdea(ideaId: string) {
   return function (dispatch: Dispatch) {
     dispatch({ type: DELETE_IDEA_REQUEST });
     //console.log("delete idea");
-   getAccessToken().then((cookie)=> fetch(URL, {
-      method: "POST",
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
-      },
-      body: JSON.stringify({
-        query: `mutation {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("accessToken"),
+          },
+          body: JSON.stringify({
+            query: `mutation {
       ideaSetDeletedAt(ideaId:"${ideaId}",deletedAt:"${date}") 
     }
     `,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
           dispatch({
             type: DELETE_IDEA_SUCCESS,
             ideaId: ideaId,
-            date:date
+            date: date,
           });
         } else {
           dispatch({
@@ -375,27 +407,30 @@ export function reviewIdea(ideaId: string) {
   const date = new Date().toISOString();
   return function (dispatch: Dispatch) {
     //console.log("review idea");
-   getAccessToken().then((cookie)=> fetch(URL, {
-      method: "POST",
+    getAccessToken()
+      .then((cookie) =>
+        fetch(URL, {
+          method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + Cookies.get("accessToken"),
-      },
-      body: JSON.stringify({
-        query: `mutation {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + Cookies.get("accessToken"),
+          },
+          body: JSON.stringify({
+            query: `mutation {
       ideaSetReviewedAt(ideaId:"${ideaId}",reviewedAt:"${date}") 
     }
     `,
-      }),
-    }))
+          }),
+        })
+      )
       .then(checkResponse)
       .then((res) => {
         if (res) {
           dispatch({
             type: CHANGE_IDEA_REVIEWED_DATE_SUCCESS,
             ideaId: ideaId,
-            date:date
+            date: date,
           });
         } else {
           dispatch({

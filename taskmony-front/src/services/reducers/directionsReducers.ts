@@ -1,4 +1,3 @@
-
 import { TDirection } from "../../utils/types";
 import {
   ADD_DIRECTION_FAILED,
@@ -220,7 +219,9 @@ export const directionsReducer = (
           item.id === action.directionId
             ? {
                 ...item,
-                members: item.members.filter((mem) => mem.id !== action.user.id),
+                members: item.members.filter(
+                  (mem) => mem.id !== action.user.id
+                ),
               }
             : item
         ),

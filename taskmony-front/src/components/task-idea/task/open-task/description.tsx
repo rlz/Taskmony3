@@ -6,22 +6,25 @@ import {
 import { useAppDispatch, useAppSelector } from "../../../../utils/hooks";
 import { ChangeRepeatedValueModal } from "./repeated-modal";
 
-export const Description = ({description,setDescription,closeBtnRef}) => {
+export const Description = ({ description, setDescription, closeBtnRef }) => {
   const dispatch = useAppDispatch();
   const [showModal, setShowModal] = useState(null);
   const task = useAppSelector((store) => store.editedTask);
   return (
     <>
       {showModal && (
-        <ChangeRepeatedValueModal changeThis={() => {
-          setShowModal(null);
-          dispatch(changeTaskDescription(task.id, description));
-          closeBtnRef.click();
-        }} changeAll={() => {
-          setShowModal(null);
-          dispatch(changeTaskDescription(task.id,description,task.groupId));
-          closeBtnRef.click();
-        }} />
+        <ChangeRepeatedValueModal
+          changeThis={() => {
+            setShowModal(null);
+            dispatch(changeTaskDescription(task.id, description));
+            closeBtnRef.click();
+          }}
+          changeAll={() => {
+            setShowModal(null);
+            dispatch(changeTaskDescription(task.id, description, task.groupId));
+            closeBtnRef.click();
+          }}
+        />
       )}
       <input
         className={
@@ -35,16 +38,16 @@ export const Description = ({description,setDescription,closeBtnRef}) => {
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === "Escape") e.target.blur();
         }}
-        onChange={(e) => setDescription(e.target.value)
-        }
+        onChange={(e) => setDescription(e.target.value)}
         onBlur={(e) => {
           if (description == task.description) return;
           dispatch({
             type: CHANGE_TASK_DESCRIPTION,
             payload: e.target.value,
-          })
-          if (task.groupId) {setShowModal(true);}
-          else if (task.id)
+          });
+          if (task.groupId) {
+            setShowModal(true);
+          } else if (task.id)
             dispatch(changeTaskDescription(task.id, e.target.value));
         }}
       />

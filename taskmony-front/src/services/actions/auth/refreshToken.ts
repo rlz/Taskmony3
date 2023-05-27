@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 import { checkResponse } from "../../../utils/api-utils";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { BASE_URL } from "../../../utils/base-api-url";
 
 export const REFRESH_TOKEN_REQUEST = "REFRESH_TOKEN_REQUEST";
@@ -18,16 +18,16 @@ export function refreshToken() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        refreshToken: Cookies.get("refreshToken")
+        refreshToken: Cookies.get("refreshToken"),
       }),
     })
       .then(checkResponse)
       .then((res) => {
         if (res) {
-          Cookies.set("accessToken", res.accessToken,{
-            expires: 1/48,
+          Cookies.set("accessToken", res.accessToken, {
+            expires: 1 / 48,
           });
-          Cookies.set("refreshToken", res.refreshToken,{
+          Cookies.set("refreshToken", res.refreshToken, {
             expires: 30,
           });
           dispatch({

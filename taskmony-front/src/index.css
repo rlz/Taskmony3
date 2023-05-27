@@ -14,11 +14,7 @@ body {
   scrollbar-width: thin;
 }
 
-
 @media (max-width: 640px) {
-  html{
-    font-size: 75%;
-  }
   .filter{
   display: none;
   }

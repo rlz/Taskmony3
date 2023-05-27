@@ -18,7 +18,7 @@ export const WeekPicker = ({ hasBorder, width, value, onChange }: Props) => {
     { name: "S", value: "SUNDAY" },
   ]);
   return (
-    <div className={"flex justify-between pl-2"}>
+    <div className={"flex justify-between pl-2 pr-2"}>
       <p className={"font-semibold text-sm text-blue-500 pt-0.5"}>repeat on:</p>
       {days.map((day, index) => {
         return (

@@ -19,6 +19,7 @@ import { ItemPicker } from "../../open-items-components/item-picker";
 import { NumberPicker } from "../../open-items-components/number-picker";
 import { WeekPicker } from "../../open-items-components/week-picker";
 import { ChangeRepeatedValueModal } from "./repeated-modal";
+import { useMediaQuery } from "react-responsive";
 
 type DetailsProps = { fromDirection?: string | null };
 export const Details = ({ fromDirection }: DetailsProps) => {
@@ -61,8 +62,9 @@ export const Details = ({ fromDirection }: DetailsProps) => {
   const members = directions.filter((d) => d.id == task.direction?.id)[0]
     ?.members;
   const [showModal, setShowModal] = useState<string | null>(null);
+  const isSmallScreen = useMediaQuery({ query: '(max-width: 640px)' })
   return (
-    <div className={"gap flex justify-start pb-2 w-full ml-1"}>
+    <div className={`gap flex flex-wrap justify-start pb-2 w-full pl-1 ${isSmallScreen && 'flex-col'}` }>
       {showModal && (
         <ChangeRepeatedValueModal
           changeThis={() => {

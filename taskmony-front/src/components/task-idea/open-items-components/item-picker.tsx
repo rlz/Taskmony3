@@ -29,7 +29,7 @@ export const ItemPicker = ({
           {option}
         </p>
         {showMenu && (
-          <ul className={"absolute top-0 left-0 bg-white pl-1 pr-1 z-50 h-20 overflow-scroll"}>
+          <ul className={"absolute top-0 left-0 bg-white pl-1 pr-1 z-50 h-20 overflow-scroll border-solid border-b border-t"}>
             {options.map((option, index) => (
               <li
                 className="whitespace-nowrap bg-white z-50 cursor-pointer select-none hover:underline font-semibold text-sm text-blue-500"

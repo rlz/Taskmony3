@@ -78,12 +78,12 @@ export const OpenIdea = ({
         </div>
         {idea.id ? (
           <div className="relative z-30 flex gap-2">
-            <img
+            {/* <img
             alt=""
               src={shareI}
               onClick={() => navigate(`/idea/${idea.id}`,{ state: { from: pathname } })}
               className={"shareBtn w-4 mt-1 mr-1 cursor-pointer"}
-            />
+            /> */}
             <img
               alt="delete button"
               src={deleteI}

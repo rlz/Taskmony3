@@ -7,6 +7,7 @@ type Props = {
   hasBorder?: boolean;
   onChange: Function;
   min?: Date;
+  disabled?: Boolean;
 };
 export const DatePicker = ({
   title,
@@ -14,6 +15,7 @@ export const DatePicker = ({
   onChange,
   hasBorder,
   min,
+  disabled
 }: Props) => {
   return (
     <div className={"flex justify-between items-center pl-2"}>
@@ -22,7 +24,9 @@ export const DatePicker = ({
       </p>
       <input
         type="date"
-        className="font-semibold border-none text-sm text-blue-500 focus:outline-none w-28 pr-1"
+        disabled={!!disabled}
+        className={`font-semibold border-none text-sm text-blue-500 
+        focus:outline-none w-28 pr-1 ${disabled && "text-blue-300"}`}
         value={new Date(date).toISOString().substring(0, 10)}
         min={
           min

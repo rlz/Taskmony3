@@ -8,6 +8,7 @@ type Props = {
   hasBorder: boolean;
   onChange: Function;
   width?: string;
+  disabled?:boolean;
 };
 export const ItemPicker = ({
   title,
@@ -16,6 +17,7 @@ export const ItemPicker = ({
   hasBorder,
   onChange,
   width,
+  disabled
 }: Props) => {
   const [showMenu, setShowMenu] = useState(false);
   return (
@@ -23,8 +25,9 @@ export const ItemPicker = ({
       <p className={"font-semibold text-sm text-blue-500"}>{title}:</p>
       <div className={"relative  pl-1 pr-1"}>
         <p
-          className={"font-semibold text-sm text-blue-500 cursor-pointer"}
-          onClick={() => setShowMenu(true)}
+          className={`font-semibold text-sm text-blue-500 cursor-pointer 
+          ${disabled && "text-blue-300"}`}
+          onClick={() => {if(!disabled) setShowMenu(true)}}
         >
           {option}
         </p>

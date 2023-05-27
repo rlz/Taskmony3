@@ -8,6 +8,7 @@ type Props = {
   hasBorder?: boolean;
   value: number;
   onChange: Function;
+  disabled: Boolean;
 }
 export const NumberPicker = ({
   title,
@@ -17,6 +18,7 @@ export const NumberPicker = ({
   after,
   value,
   onChange,
+  disabled
 }: Props) => {
   return (
     <div className={"flex justify-between items-center pl-2"}>
@@ -25,7 +27,9 @@ export const NumberPicker = ({
       </p>
       <input
         type="number"
-        className="font-semibold text-sm text-blue-500 focus:outline-none w-8"
+        disabled={!!disabled}
+        className={`font-semibold text-sm text-blue-500 focus:outline-none w-8
+        ${disabled && "text-blue-300"}`}
         defaultValue={value}
         onChange={(e) => onChange(e.target.value)}
         min={min}

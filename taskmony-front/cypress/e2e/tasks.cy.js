@@ -1,10 +1,10 @@
 const email = "tom123";
 const password = "Password123!";
-const baseUrl = "http://taskmony.ru/";
+const baseUrl = "http://localhost:3000";
 
 describe("task tests", () => {
   const date = `${new Date()}`;
-  const taskName = `New task`+date;
+  const taskName = date;
   beforeEach(() => {
     cy.visit(baseUrl + "/login");
     if (cy.contains("Sign in")) {

@@ -123,6 +123,7 @@ export const Details = ({ fromDirection }: DetailsProps) => {
       )}
       <DatePicker
         title={"start date"}
+        disabled={!!task.id && task.repeatMode}
         date={task.startAt ? new Date(task.startAt) : new Date()}
         hasBorder
         onChange={(value: string) => {
@@ -131,6 +132,7 @@ export const Details = ({ fromDirection }: DetailsProps) => {
         }}
       />
       <ItemPicker
+        disabled={!!task.id}
         title={"repeated"}
         options={repeatOptions}
         option={repeatModeTranslator(task.repeatMode) || "no"}
@@ -198,6 +200,7 @@ export const Details = ({ fromDirection }: DetailsProps) => {
       />
       {task.repeatMode && (
         <DatePicker
+          disabled={!!task.id}
           title={"until"}
           min={new Date(task.startAt)}
           date={
@@ -224,6 +227,7 @@ export const Details = ({ fromDirection }: DetailsProps) => {
         <>
           <NumberPicker
             title={"every"}
+            disabled={!!task.id}
             min={1}
             max={9}
             after={"week(s)"}
@@ -246,6 +250,7 @@ export const Details = ({ fromDirection }: DetailsProps) => {
           />
           <WeekPicker
             value={task.weekDays}
+            disabled={!!task.id}
             onChange={(value: Array<string>) => {
               dispatch({ type: CHANGE_TASK_REPEAT_WEEK_DAYS, payload: value });
               if (task.id && task.groupId) {

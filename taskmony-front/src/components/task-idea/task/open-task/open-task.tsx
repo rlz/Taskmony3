@@ -126,14 +126,14 @@ export const OpenTask = ({
         </div>
         {task.id ? (
           <div className="relative z-30 flex gap-2">
-            <img
+            {/* <img
             alt=""
               src={shareI}
               onClick={() => {
                 navigate(`/task/${task.id}`, { state: { from: pathname } });
               }}
               className={"shareBtn w-4 mt-1 mr-1 cursor-pointer"}
-            />
+            /> */}
             <img
               src={deleteI}
               alt=""

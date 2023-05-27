@@ -6,8 +6,9 @@ type Props = {
   width?: string;
   value: Array<string>;
   onChange: Function;
+  disabled?:boolean;
 };
-export const WeekPicker = ({ hasBorder, width, value, onChange }: Props) => {
+export const WeekPicker = ({ hasBorder, width, value, onChange, disabled }: Props) => {
   const [days, setDays] = useState([
     { name: "M", value: "MONDAY" },
     { name: "T", value: "TUESDAY" },
@@ -23,10 +24,14 @@ export const WeekPicker = ({ hasBorder, width, value, onChange }: Props) => {
       {days.map((day, index) => {
         return (
           <span
-            className={`font-semibold text-sm text-blue-500 p-0.5 ml-0.5 cursor-pointer ${
+            className={`font-semibold text-sm text-blue-500 p-0.5 ml-0.5 cursor-pointer
+             ${
               value && value.includes(day.value) ? "underline" : ""
-            }`}
+            }
+            ${disabled && "text-blue-300"}
+            `}
             onClick={() => {
+              if (disabled) return;
               if (!value) onChange([day.value]);
               else {
                 if (value.includes(day.value) && value?.length == 1) return;

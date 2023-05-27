@@ -4,7 +4,7 @@ const baseUrl = "http://localhost:3000";
 
 describe("ideas tests", () => {
   const date = `${new Date()}`;
-  const ideaName = `New idea`+date;
+  const ideaName = date;
   beforeEach(() => {
     cy.visit(baseUrl + "/login");
     if (cy.contains("Sign in")) {

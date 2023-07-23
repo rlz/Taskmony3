@@ -28,7 +28,7 @@ public class RefreshToken : Entity
         UserId = userId;
         Token = token;
         CreatedAt = createdAt ?? DateTime.UtcNow;
-        ExpiresAt = expiresAt ?? DateTime.UtcNow.AddDays(7);
+        ExpiresAt = expiresAt ?? DateTime.UtcNow.AddDays(30);
     }
 
     public void Use()

@@ -6,7 +6,7 @@ using Task = Taskmony.Models.Tasks.Task;
 
 namespace Taskmony.Repositories;
 
-public class AssignmentRepository : BaseRepository<Assignment>, IAssignmentRepository
+public sealed class AssignmentRepository : BaseRepository<Assignment>, IAssignmentRepository
 {
     public AssignmentRepository(IDbContextFactory<TaskmonyDbContext> contextFactory) : base(contextFactory)
     {

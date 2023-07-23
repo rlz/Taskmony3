@@ -5,7 +5,7 @@ using Taskmony.Repositories.Abstract;
 
 namespace Taskmony.Repositories;
 
-public class RefreshTokenRepository : BaseRepository<RefreshToken>, IRefreshTokenRepository
+public sealed class RefreshTokenRepository : BaseRepository<RefreshToken>, IRefreshTokenRepository
 {
     public RefreshTokenRepository(IDbContextFactory<TaskmonyDbContext> contextFactory) : base(contextFactory)
     {

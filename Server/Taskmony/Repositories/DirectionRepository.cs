@@ -36,7 +36,7 @@ public sealed class DirectionRepository : BaseRepository<Direction>, IDirectionR
     public async Task<IEnumerable<Guid>> GetUserDirectionIdsAsync(Guid userId)
     {
         return await Context.Directions
-            .Where(d => d.CreatedById == userId || d.Members!.Any(m => m.Id == userId))
+            .Where(d => d.Members!.Any(m => m.Id == userId))
             .Select(d => d.Id)
             .ToListAsync();
     }
